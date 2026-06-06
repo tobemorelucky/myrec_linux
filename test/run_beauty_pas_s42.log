@@ -1,0 +1,8 @@
+nohup: 忽略输入
+Launch beauty_pas_base_s42 -> ./log/MyModel/beauty/pas_s42_small_sweep/nohup_beauty_pas_base_s42.out
+Launch beauty_pas_conservative_s42 -> ./log/MyModel/beauty/pas_s42_small_sweep/nohup_beauty_pas_conservative_s42.out
+Launch beauty_pas_conservative_lowaux_s42 -> ./log/MyModel/beauty/pas_s42_small_sweep/nohup_beauty_pas_conservative_lowaux_s42.out
+Launch beauty_pas_soft_s42 -> ./log/MyModel/beauty/pas_s42_small_sweep/nohup_beauty_pas_soft_s42.out
+Launch beauty_pas_soft_conservative_s42 -> ./log/MyModel/beauty/pas_s42_small_sweep/nohup_beauty_pas_soft_conservative_s42.out
+Launch beauty_pas_nosc_s42 -> ./log/MyModel/beauty/pas_s42_small_sweep/nohup_beauty_pas_nosc_s42.out
+Beauty PAS small sweep finished. Logs in ./log/MyModel/beauty/pas_s42_small_sweep

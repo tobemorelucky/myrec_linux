@@ -1,0 +1,16 @@
+nohup: 忽略输入
+Launch beauty_sadir_ho_gate0000_s42 -> ./log/MyModel/beauty/sadir_history_only_sweep_s42/nohup_beauty_sadir_ho_gate0000_s42.out
+Launch beauty_sadir_ho_gate0005_s42 -> ./log/MyModel/beauty/sadir_history_only_sweep_s42/nohup_beauty_sadir_ho_gate0005_s42.out
+Launch beauty_sadir_ho_gate0010_s42 -> ./log/MyModel/beauty/sadir_history_only_sweep_s42/nohup_beauty_sadir_ho_gate0010_s42.out
+Launch beauty_sadir_ho_gate0020_s42 -> ./log/MyModel/beauty/sadir_history_only_sweep_s42/nohup_beauty_sadir_ho_gate0020_s42.out
+Launch beauty_sadir_ho_prior030_s42 -> ./log/MyModel/beauty/sadir_history_only_sweep_s42/nohup_beauty_sadir_ho_prior030_s42.out
+Launch beauty_sadir_ho_prior050_s42 -> ./log/MyModel/beauty/sadir_history_only_sweep_s42/nohup_beauty_sadir_ho_prior050_s42.out
+Launch beauty_sadir_ho_prior070_s42 -> ./log/MyModel/beauty/sadir_history_only_sweep_s42/nohup_beauty_sadir_ho_prior070_s42.out
+Launch beauty_sadir_ho_prior090_s42 -> ./log/MyModel/beauty/sadir_history_only_sweep_s42/nohup_beauty_sadir_ho_prior090_s42.out
+Launch beauty_sadir_ho_trans_e025_a070_s42 -> ./log/MyModel/beauty/sadir_history_only_sweep_s42/nohup_beauty_sadir_ho_trans_e025_a070_s42.out
+Launch beauty_sadir_ho_trans_e035_a085_s42 -> ./log/MyModel/beauty/sadir_history_only_sweep_s42/nohup_beauty_sadir_ho_trans_e035_a085_s42.out
+Launch beauty_sadir_ho_trans_e045_a100_s42 -> ./log/MyModel/beauty/sadir_history_only_sweep_s42/nohup_beauty_sadir_ho_trans_e045_a100_s42.out
+Launch beauty_sadir_ho_res_e015_a012_s42 -> ./log/MyModel/beauty/sadir_history_only_sweep_s42/nohup_beauty_sadir_ho_res_e015_a012_s42.out
+Launch beauty_sadir_ho_res_e025_a020_s42 -> ./log/MyModel/beauty/sadir_history_only_sweep_s42/nohup_beauty_sadir_ho_res_e025_a020_s42.out
+Launch beauty_sadir_ho_res_e035_a028_s42 -> ./log/MyModel/beauty/sadir_history_only_sweep_s42/nohup_beauty_sadir_ho_res_e035_a028_s42.out
+Beauty history-only SADIR sweep finished. Logs in ./log/MyModel/beauty/sadir_history_only_sweep_s42

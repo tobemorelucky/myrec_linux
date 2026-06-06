@@ -1,0 +1,32 @@
+datastart_claude.local.sh
+start_claude.sh
+
+
+*.env
+*.key
+*.pem
+config.ini
+secret.py
+
+# 忽略数据集和模型权重
+data
+model/
+weights/
+checkpoints/
+log/
+# 忽略日志和临时文件
+tmp/
+*.out
+*.err
+
+# 忽略Python缓存
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 忽略IDE文件
+.vscode/
+.idea/
+*.swp
+

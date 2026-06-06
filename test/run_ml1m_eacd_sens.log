@@ -1,0 +1,11 @@
+nohup: 忽略输入
+Launch ml1m_eacd_s42_ea0.005 -> ./log/MyModel/ml-1m/eacd_sens_s42/nohup_ml1m_eacd_s42_ea0.005.out
+Launch ml1m_eacd_s42_ea0.02 -> ./log/MyModel/ml-1m/eacd_sens_s42/nohup_ml1m_eacd_s42_ea0.02.out
+Launch ml1m_eacd_s42_ea0.05 -> ./log/MyModel/ml-1m/eacd_sens_s42/nohup_ml1m_eacd_s42_ea0.05.out
+Launch ml1m_eacd_s42_beta0.5 -> ./log/MyModel/ml-1m/eacd_sens_s42/nohup_ml1m_eacd_s42_beta0.5.out
+Launch ml1m_eacd_s42_beta1.0 -> ./log/MyModel/ml-1m/eacd_sens_s42/nohup_ml1m_eacd_s42_beta1.0.out
+Launch ml1m_eacd_s42_beta1.5 -> ./log/MyModel/ml-1m/eacd_sens_s42/nohup_ml1m_eacd_s42_beta1.5.out
+Launch ml1m_eacd_s42_elam0.5 -> ./log/MyModel/ml-1m/eacd_sens_s42/nohup_ml1m_eacd_s42_elam0.5.out
+Launch ml1m_eacd_s42_elam1.0 -> ./log/MyModel/ml-1m/eacd_sens_s42/nohup_ml1m_eacd_s42_elam1.0.out
+Launch ml1m_eacd_s42_elam1.5 -> ./log/MyModel/ml-1m/eacd_sens_s42/nohup_ml1m_eacd_s42_elam1.5.out
+ML-1M EACD sensitivity finished. Logs in ./log/MyModel/ml-1m/eacd_sens_s42

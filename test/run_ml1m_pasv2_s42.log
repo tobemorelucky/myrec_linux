@@ -1,0 +1,8 @@
+nohup: 忽略输入
+Launch ml1m_lgd_only_s42 -> ./log/MyModel/ml-1m/pasv2_lgd_s42_small_sweep/nohup_ml1m_lgd_only_s42.out
+Launch ml1m_pasv2_bE005_bA003_s42 -> ./log/MyModel/ml-1m/pasv2_lgd_s42_small_sweep/nohup_ml1m_pasv2_bE005_bA003_s42.out
+Launch ml1m_pasv2_bE010_bA005_s42 -> ./log/MyModel/ml-1m/pasv2_lgd_s42_small_sweep/nohup_ml1m_pasv2_bE010_bA005_s42.out
+Launch ml1m_pasv2_bE015_bA008_s42 -> ./log/MyModel/ml-1m/pasv2_lgd_s42_small_sweep/nohup_ml1m_pasv2_bE015_bA008_s42.out
+Launch ml1m_pasv2_bE010_bA005_lowaux_s42 -> ./log/MyModel/ml-1m/pasv2_lgd_s42_small_sweep/nohup_ml1m_pasv2_bE010_bA005_lowaux_s42.out
+Launch ml1m_pasv2_bE010_bA005_nosc_s42 -> ./log/MyModel/ml-1m/pasv2_lgd_s42_small_sweep/nohup_ml1m_pasv2_bE010_bA005_nosc_s42.out
+ML-1M PAS-v2 small sweep finished. Logs in ./log/MyModel/ml-1m/pasv2_lgd_s42_small_sweep

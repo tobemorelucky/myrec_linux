@@ -1,0 +1,6 @@
+nohup: 忽略输入
+Launch ml1m_confaware_mix05_floor010_s42 -> ./log/MyModel/ml-1m/sadir_confaware_s42/nohup_ml1m_confaware_mix05_floor010_s42.out
+Launch ml1m_confaware_mix05_floor015_s42 -> ./log/MyModel/ml-1m/sadir_confaware_s42/nohup_ml1m_confaware_mix05_floor015_s42.out
+Launch ml1m_confaware_mix07_floor010_s42 -> ./log/MyModel/ml-1m/sadir_confaware_s42/nohup_ml1m_confaware_mix07_floor010_s42.out
+Launch ml1m_confaware_mix07_floor015_s42 -> ./log/MyModel/ml-1m/sadir_confaware_s42/nohup_ml1m_confaware_mix07_floor015_s42.out
+ML-1M conf-aware SADIR finished. Logs in ./log/MyModel/ml-1m/sadir_confaware_s42

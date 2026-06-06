@@ -1,0 +1,11 @@
+nohup: 忽略输入
+Launch ml1m_sadir_s42_bridge000 -> ./log/MyModel/ml-1m/sadir_s42/nohup_ml1m_sadir_s42_bridge000.out
+Launch ml1m_sadir_s42_bridge002 -> ./log/MyModel/ml-1m/sadir_s42/nohup_ml1m_sadir_s42_bridge002.out
+Launch ml1m_sadir_s42_bridge005 -> ./log/MyModel/ml-1m/sadir_s42/nohup_ml1m_sadir_s42_bridge005.out
+Launch ml1m_sadir_s42_gate0000 -> ./log/MyModel/ml-1m/sadir_s42/nohup_ml1m_sadir_s42_gate0000.out
+Launch ml1m_sadir_s42_gate0005 -> ./log/MyModel/ml-1m/sadir_s42/nohup_ml1m_sadir_s42_gate0005.out
+Launch ml1m_sadir_s42_gate0010 -> ./log/MyModel/ml-1m/sadir_s42/nohup_ml1m_sadir_s42_gate0010.out
+Launch ml1m_sadir_s42_prior020 -> ./log/MyModel/ml-1m/sadir_s42/nohup_ml1m_sadir_s42_prior020.out
+Launch ml1m_sadir_s42_prior030 -> ./log/MyModel/ml-1m/sadir_s42/nohup_ml1m_sadir_s42_prior030.out
+Launch ml1m_sadir_s42_prior040 -> ./log/MyModel/ml-1m/sadir_s42/nohup_ml1m_sadir_s42_prior040.out
+ML-1M SADIR sweep finished. Logs in ./log/MyModel/ml-1m/sadir_s42

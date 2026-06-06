@@ -1,0 +1,8 @@
+nohup: 忽略输入
+Launch beauty_lgd_only_s42 -> ./log/MyModel/beauty/pasv3_lgd_s42_small_sweep/nohup_beauty_lgd_only_s42.out
+Launch beauty_pasv3_bE003_bA002_scE0000_s42 -> ./log/MyModel/beauty/pasv3_lgd_s42_small_sweep/nohup_beauty_pasv3_bE003_bA002_scE0000_s42.out
+Launch beauty_pasv3_bE005_bA003_scE0000_s42 -> ./log/MyModel/beauty/pasv3_lgd_s42_small_sweep/nohup_beauty_pasv3_bE005_bA003_scE0000_s42.out
+Launch beauty_pasv3_bE005_bA003_scE0005_s42 -> ./log/MyModel/beauty/pasv3_lgd_s42_small_sweep/nohup_beauty_pasv3_bE005_bA003_scE0005_s42.out
+Launch beauty_pasv3_bE003_bA002_scE0005_s42 -> ./log/MyModel/beauty/pasv3_lgd_s42_small_sweep/nohup_beauty_pasv3_bE003_bA002_scE0005_s42.out
+Launch beauty_pasv3_bE008_bA005_scE0000_s42 -> ./log/MyModel/beauty/pasv3_lgd_s42_small_sweep/nohup_beauty_pasv3_bE008_bA005_scE0000_s42.out
+Beauty PAS-v3 small sweep finished. Logs in ./log/MyModel/beauty/pasv3_lgd_s42_small_sweep
