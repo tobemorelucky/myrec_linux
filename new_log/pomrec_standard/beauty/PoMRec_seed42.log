@@ -1,0 +1,78 @@
+INFO:root:Namespace(model_name='PoMRec')
+INFO:root:--------------------------------------------- BEGIN: 2026-06-06 15:25:49 ---------------------------------------------
+INFO:root:
+=====================================
+ Arguments              | Values     
+=====================================
+ K                      | 4         
+ align_on               | pos       
+ align_ramp             | 15        
+ align_sample_k         | 0         
+ align_warmup           | 5         
+ alpha                  | 0.01      
+ attn_size              | 8         
+ batch_size             | 256       
+ dataset                | beauty    
+ dropout                | 0.0       
+ early_stop             | 10        
+ emb_size               | 64        
+ epoch                  | 200       
+ eval_batch_size        | 256       
+ freeze_emb             | False     
+ gamma_init             | 0.05      
+ gamma_trainable        | 1         
+ gpu                    | 1         
+ history_max            | 20        
+ init_ckpt              |           
+ init_strict            | 0         
+ l2                     | 1e-06     
+ lamb                   | 4.0       
+ llm_emb_path           |           
+ llm_fuse               | 1         
+ lr                     | 0.002     
+ n_layers               | 2         
+ num_neg                | 1         
+ num_workers            | 5         
+ optimizer              | Adam      
+ prompt_num             | 3         
+ random_seed            | 42        
+ rat_alpha_warmup_steps | 0         
+ srs_emb_path           |           
+ tau                    | 0.2       
+ test_all               | 0         
+ topk                   | 5,10,20,50
+ use_llmemb             | 0         
+=====================================
+INFO:root:Device: cuda
+INFO:root:Load corpus from ./data/beauty/SeqReader.pkl
+INFO:root:[PoMRec] Train from scratch
+INFO:root:#params: 781763
+INFO:root:PoMRec(
+  (interest_extractor): MultiInterestExtractor(
+    (i_embeddings): Embedding(12102, 64)
+    (p_embeddings): Embedding(21, 64)
+    (prompt1): Embedding(3, 64)
+    (prompt2): Embedding(3, 64)
+    (W1): Linear(in_features=64, out_features=8, bias=True)
+    (W2): Linear(in_features=8, out_features=4, bias=True)
+    (W3): Linear(in_features=64, out_features=8, bias=True)
+    (W4): Linear(in_features=8, out_features=1, bias=True)
+  )
+  (proj): Sequential(
+    (proj_0): Linear(in_features=64, out_features=64, bias=True)
+    (dropout_0): Dropout(p=0.5, inplace=False)
+    (relu_0): ReLU(inplace=True)
+    (proj_final): Linear(in_features=64, out_features=4, bias=True)
+  )
+)
+INFO:root:Optimizer: Adam
+INFO:root:Epoch 1     loss=0.5558 [20.1 s]    dev=(HR@5:0.0463,NDCG@5:0.0322) [2.8 s] *
+INFO:root:Epoch 2     loss=0.4896 [16.8 s]    dev=(HR@5:0.0534,NDCG@5:0.0359) [2.8 s] *
+INFO:root:Epoch 3     loss=0.4599 [17.0 s]    dev=(HR@5:0.0598,NDCG@5:0.0383) [2.8 s] *
+INFO:root:Epoch 4     loss=0.4330 [16.9 s]    dev=(HR@5:0.0693,NDCG@5:0.0454) [2.8 s] *
+INFO:root:Epoch 5     loss=0.4113 [16.7 s]    dev=(HR@5:0.0710,NDCG@5:0.0458) [2.8 s] *
+INFO:root:Epoch 6     loss=0.3899 [16.8 s]    dev=(HR@5:0.0776,NDCG@5:0.0513) [2.8 s] *
+INFO:root:Epoch 7     loss=0.3669 [16.8 s]    dev=(HR@5:0.0871,NDCG@5:0.0584) [2.8 s] *
+INFO:root:Epoch 8     loss=0.3380 [16.9 s]    dev=(HR@5:0.0965,NDCG@5:0.0648) [2.8 s] *
+INFO:root:Epoch 9     loss=0.3070 [16.9 s]    dev=(HR@5:0.1057,NDCG@5:0.0709) [2.8 s] *
+INFO:root:Epoch 10    loss=0.2758 [17.2 s]    dev=(HR@5:0.1154,NDCG@5:0.0778) [2.8 s] *

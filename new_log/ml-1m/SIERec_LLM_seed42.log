@@ -117,3 +117,19 @@ INFO:root:Epoch 39    loss=0.0874 [132.0 s]    dev=(HR@5:0.3215,NDCG@5:0.2224) [
 INFO:root:Epoch 40    loss=0.0870 [131.2 s]    dev=(HR@5:0.3338,NDCG@5:0.2308) [3.0 s] *
 INFO:root:Epoch 41    loss=0.0865 [131.6 s]    dev=(HR@5:0.3258,NDCG@5:0.2272) [3.0 s]
 INFO:root:Epoch 42    loss=0.0864 [132.3 s]    dev=(HR@5:0.3283,NDCG@5:0.2295) [3.0 s]
+INFO:root:Epoch 43    loss=0.0863 [131.4 s]    dev=(HR@5:0.3298,NDCG@5:0.2290) [3.0 s]
+INFO:root:Epoch 44    loss=0.0855 [131.0 s]    dev=(HR@5:0.3268,NDCG@5:0.2263) [3.0 s]
+INFO:root:Epoch 45    loss=0.0858 [132.2 s]    dev=(HR@5:0.3320,NDCG@5:0.2300) [3.0 s]
+INFO:root:Epoch 46    loss=0.0853 [133.1 s]    dev=(HR@5:0.3369,NDCG@5:0.2315) [3.0 s] *
+INFO:root:Epoch 47    loss=0.0854 [133.2 s]    dev=(HR@5:0.3283,NDCG@5:0.2288) [3.0 s]
+INFO:root:Epoch 48    loss=0.0849 [132.7 s]    dev=(HR@5:0.3339,NDCG@5:0.2319) [3.0 s] *
+INFO:root:Epoch 49    loss=0.0846 [133.8 s]    dev=(HR@5:0.3321,NDCG@5:0.2313) [3.0 s]
+INFO:root:Epoch 50    loss=0.0847 [132.9 s]    dev=(HR@5:0.3278,NDCG@5:0.2261) [3.0 s]
+INFO:root:Epoch 51    loss=0.0848 [133.1 s]    dev=(HR@5:0.3343,NDCG@5:0.2310) [3.0 s]
+INFO:root:Epoch 52    loss=0.0847 [133.2 s]    dev=(HR@5:0.3323,NDCG@5:0.2292) [3.0 s]
+INFO:root:Epoch 53    loss=0.0841 [132.5 s]    dev=(HR@5:0.3255,NDCG@5:0.2272) [3.0 s]
+INFO:root:Epoch 54    loss=0.0845 [133.2 s]    dev=(HR@5:0.3392,NDCG@5:0.2334) [3.0 s] *
+INFO:root:Epoch 55    loss=0.0842 [132.5 s]    dev=(HR@5:0.3386,NDCG@5:0.2357) [3.0 s] *
+INFO:root:Epoch 56    loss=0.0841 [133.1 s]    dev=(HR@5:0.3341,NDCG@5:0.2324) [3.0 s]
+INFO:root:Epoch 57    loss=0.0836 [132.6 s]    dev=(HR@5:0.3253,NDCG@5:0.2251) [3.4 s]
+INFO:root:Epoch 58    loss=0.0841 [132.1 s]    dev=(HR@5:0.3293,NDCG@5:0.2285) [3.4 s]

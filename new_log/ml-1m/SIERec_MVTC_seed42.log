@@ -167,3 +167,13 @@ INFO:root:Epoch 89    loss=0.0809 [134.7 s]    dev=(HR@5:0.3305,NDCG@5:0.2302) [
 INFO:root:Epoch 90    loss=0.0811 [133.8 s]    dev=(HR@5:0.3351,NDCG@5:0.2345) [3.0 s]
 INFO:root:Epoch 91    loss=0.0814 [134.3 s]    dev=(HR@5:0.3369,NDCG@5:0.2353) [3.0 s]
 INFO:root:Epoch 92    loss=0.0808 [134.6 s]    dev=(HR@5:0.3401,NDCG@5:0.2364) [3.0 s]
+INFO:root:Epoch 93    loss=0.0814 [134.1 s]    dev=(HR@5:0.3389,NDCG@5:0.2341) [3.0 s]
+INFO:root:Epoch 94    loss=0.0804 [133.1 s]    dev=(HR@5:0.3394,NDCG@5:0.2353) [3.0 s]
+INFO:root:Early stop at 94 based on dev result.
+INFO:root:
+Best Iter(dev)=   74	 dev=(HR@5:0.3416,NDCG@5:0.2395) [12729.1 s] 
+INFO:root:Load model from new_model/ml-1m/SIERec_MVTC_seed42.pt
+INFO:root:
+Test After Training: (HR@5:0.3108,NDCG@5:0.2178,HR@10:0.4399,NDCG@10:0.2597,HR@20:0.5743,NDCG@20:0.2938,HR@50:0.7281,NDCG@50:0.3246)
+INFO:root:
+--------------------------------------------- END: 2026-06-06 14:58:06 ---------------------------------------------
