@@ -20,6 +20,7 @@ from helpers import *
 from models.sequential import PoMRec
 from utils import utils
 import models.sequential.MyModel as MyModel
+import models.sequential.SIERec as SIERec
 
 def parse_global_args(parser):
     default_gpu = os.environ.get('CUDA_VISIBLE_DEVICES', '0')
