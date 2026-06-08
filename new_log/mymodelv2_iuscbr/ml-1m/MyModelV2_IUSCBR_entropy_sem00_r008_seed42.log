@@ -1,0 +1,722 @@
+INFO:root:Namespace(model_name='MyModelV2')
+INFO:root:--------------------------------------------- BEGIN: 2026-06-08 10:47:51 ---------------------------------------------
+INFO:root:
+================================================
+ Arguments               | Values               
+================================================
+ K                       | 2                   
+ align_ramp              | 15                  
+ align_warmup            | 5                   
+ alpha                   | 0.001               
+ attn_size               | 8                   
+ batch_size              | 256                 
+ dataset                 | ml-1m               
+ dropout                 | 0                   
+ early_stop              | 10                  
+ emb_size                | 64                  
+ emile_use_fused_itememb | 0                   
+ emile_warmup_steps      | 5000                
+ epoch                   | 200                 
+ eval_batch_size         | 256                 
+ gamma_init              | 0.08                
+ gamma_trainable         | 0                   
+ gpu                     | 0                   
+ history_max             | 20                  
+ ilr_neg_weight          | 1.0                 
+ init_ckpt               |                     
+ init_strict             | 0                   
+ ipd_margin              | 0.1                 
+ l2                      | 1e-06               
+ lamb                    | 3.0                 
+ lambda_ipd              | 0.02                
+ llm_emb_path            | ./data/ml-1m/hand...
+ llm_fuse                | 1                   
+ lr                      | 0.001               
+ n_layers                | 2                   
+ num_neg                 | 1                   
+ num_workers             | 5                   
+ optimizer               | Adam                
+ prompt_num              | 3                   
+ random_seed             | 42                  
+ rat_alpha_warmup_steps  | 5000                
+ sicr_beta               | 0.0                 
+ sicr_center             | 1                   
+ sicr_detach             | 1                   
+ sicr_entropy_adapt      | 1                   
+ sicr_entropy_gamma      | 1.0                 
+ sicr_entropy_min        | 0.5                 
+ sicr_global_alpha       | 8.0                 
+ sicr_global_b           | 0.4                 
+ sicr_global_gate        | 1                   
+ sicr_global_r           | 0.08                
+ sicr_global_sem_weight  | 0.0                 
+ sicr_intent_weight      | 0.0                 
+ sicr_residual           | 0.2                 
+ sicr_sem_weight         | 0.0                 
+ sicr_train_only         | 1                   
+ sicr_warmup_steps       | 5000                
+ srs_emb_path            | ./data/ml-1m/hand...
+ tau                     | 0.3                 
+ test_all                | 0                   
+ topk                    | 5,10,20,50          
+ use_emile               | 1                   
+ use_llmemb              | 1                   
+ use_sicr                | 1                   
+================================================
+INFO:root:Device: cuda
+INFO:root:Load corpus from ./data/ml-1m/SeqReader.pkl
+INFO:root:[MyModelV2] Train from scratch
+INFO:root:#params: 1474093
+INFO:root:MyModelV2(
+  (interest_extractor): MultiInterestExtractor(
+    (i_embeddings): Embedding(3707, 64)
+    (p_embeddings): Embedding(21, 64)
+    (adapter): Sequential(
+      (0): Linear(in_features=1536, out_features=768, bias=True)
+      (1): GELU(approximate='none')
+      (2): Linear(in_features=768, out_features=64, bias=True)
+      (3): LayerNorm((64,), eps=1e-05, elementwise_affine=True)
+    )
+    (srs_emb): Embedding(3707, 64)
+    (prompt1): Embedding(3, 64)
+    (prompt2): Embedding(3, 64)
+    (W1): Linear(in_features=64, out_features=8, bias=True)
+    (W2): Linear(in_features=8, out_features=2, bias=True)
+    (W3): Linear(in_features=64, out_features=8, bias=True)
+    (W4): Linear(in_features=8, out_features=1, bias=True)
+  )
+  (proj): Sequential(
+    (proj_0): Linear(in_features=64, out_features=64, bias=True)
+    (dropout_0): Dropout(p=0.5, inplace=False)
+    (relu_0): ReLU(inplace=True)
+    (proj_final): Linear(in_features=64, out_features=2, bias=True)
+  )
+  (align_loss_func): InfoNCEAlign()
+)
+INFO:root:Optimizer: Adam
+INFO:root:Early stop manually
+INFO:root:Namespace(model_name='MyModelV2')
+INFO:root:--------------------------------------------- BEGIN: 2026-06-08 10:51:20 ---------------------------------------------
+INFO:root:
+================================================
+ Arguments               | Values               
+================================================
+ K                       | 2                   
+ align_ramp              | 15                  
+ align_warmup            | 5                   
+ alpha                   | 0.001               
+ attn_size               | 8                   
+ batch_size              | 256                 
+ dataset                 | ml-1m               
+ dropout                 | 0                   
+ early_stop              | 10                  
+ emb_size                | 64                  
+ emile_use_fused_itememb | 0                   
+ emile_warmup_steps      | 5000                
+ epoch                   | 200                 
+ eval_batch_size         | 256                 
+ gamma_init              | 0.08                
+ gamma_trainable         | 0                   
+ gpu                     | 0                   
+ history_max             | 20                  
+ ilr_neg_weight          | 1.0                 
+ init_ckpt               |                     
+ init_strict             | 0                   
+ ipd_margin              | 0.1                 
+ l2                      | 1e-06               
+ lamb                    | 3.0                 
+ lambda_ipd              | 0.02                
+ llm_emb_path            | ./data/ml-1m/hand...
+ llm_fuse                | 1                   
+ lr                      | 0.001               
+ n_layers                | 2                   
+ num_neg                 | 1                   
+ num_workers             | 5                   
+ optimizer               | Adam                
+ prompt_num              | 3                   
+ random_seed             | 42                  
+ rat_alpha_warmup_steps  | 5000                
+ sicr_beta               | 0.0                 
+ sicr_center             | 1                   
+ sicr_detach             | 1                   
+ sicr_entropy_adapt      | 1                   
+ sicr_entropy_gamma      | 1.0                 
+ sicr_entropy_min        | 0.5                 
+ sicr_global_alpha       | 8.0                 
+ sicr_global_b           | 0.4                 
+ sicr_global_gate        | 1                   
+ sicr_global_r           | 0.08                
+ sicr_global_sem_weight  | 0.0                 
+ sicr_intent_weight      | 0.0                 
+ sicr_residual           | 0.2                 
+ sicr_sem_weight         | 0.0                 
+ sicr_train_only         | 1                   
+ sicr_warmup_steps       | 5000                
+ srs_emb_path            | ./data/ml-1m/hand...
+ tau                     | 0.3                 
+ test_all                | 0                   
+ topk                    | 5,10,20,50          
+ use_emile               | 1                   
+ use_llmemb              | 1                   
+ use_sicr                | 1                   
+================================================
+INFO:root:Device: cuda
+INFO:root:Load corpus from ./data/ml-1m/SeqReader.pkl
+INFO:root:[MyModelV2] Train from scratch
+INFO:root:#params: 1474093
+INFO:root:MyModelV2(
+  (interest_extractor): MultiInterestExtractor(
+    (i_embeddings): Embedding(3707, 64)
+    (p_embeddings): Embedding(21, 64)
+    (adapter): Sequential(
+      (0): Linear(in_features=1536, out_features=768, bias=True)
+      (1): GELU(approximate='none')
+      (2): Linear(in_features=768, out_features=64, bias=True)
+      (3): LayerNorm((64,), eps=1e-05, elementwise_affine=True)
+    )
+    (srs_emb): Embedding(3707, 64)
+    (prompt1): Embedding(3, 64)
+    (prompt2): Embedding(3, 64)
+    (W1): Linear(in_features=64, out_features=8, bias=True)
+    (W2): Linear(in_features=8, out_features=2, bias=True)
+    (W3): Linear(in_features=64, out_features=8, bias=True)
+    (W4): Linear(in_features=8, out_features=1, bias=True)
+  )
+  (proj): Sequential(
+    (proj_0): Linear(in_features=64, out_features=64, bias=True)
+    (dropout_0): Dropout(p=0.5, inplace=False)
+    (relu_0): ReLU(inplace=True)
+    (proj_final): Linear(in_features=64, out_features=2, bias=True)
+  )
+  (align_loss_func): InfoNCEAlign()
+)
+INFO:root:Optimizer: Adam
+INFO:root:[IU-SCBR] step=1000 train_only=1 w=0.2000 base_global_r=0.016000 r_mean=0.008003 r_min=0.008000 r_max=0.008146 entropy_mean=0.000423 gate_mean=0.722039 gate_abs=0.722039 local_beta=0.000000
+INFO:root:[IU-SCBR] step=2000 train_only=1 w=0.4000 base_global_r=0.032000 r_mean=0.016051 r_min=0.016000 r_max=0.019226 entropy_mean=0.003204 gate_mean=0.680010 gate_abs=0.680010 local_beta=0.000000
+INFO:root:[IU-SCBR] step=3000 train_only=1 w=0.6000 base_global_r=0.048000 r_mean=0.024036 r_min=0.024000 r_max=0.027522 entropy_mean=0.001520 gate_mean=0.639439 gate_abs=0.639439 local_beta=0.000000
+INFO:root:Epoch 1     loss=0.2199 [195.2 s]    dev=(HR@5:0.1624,NDCG@5:0.1073) [5.3 s] *
+INFO:root:[IU-SCBR] step=4000 train_only=1 w=0.8000 base_global_r=0.064000 r_mean=0.032053 r_min=0.032000 r_max=0.033593 entropy_mean=0.001658 gate_mean=0.634946 gate_abs=0.634946 local_beta=0.000000
+INFO:root:[IU-SCBR] step=5000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040280 r_min=0.040000 r_max=0.050350 entropy_mean=0.007010 gate_mean=0.604660 gate_abs=0.604660 local_beta=0.000000
+INFO:root:[IU-SCBR] step=6000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040624 r_min=0.040000 r_max=0.071776 entropy_mean=0.015598 gate_mean=0.590719 gate_abs=0.590719 local_beta=0.000000
+INFO:root:[IU-SCBR] step=7000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040579 r_min=0.040000 r_max=0.058535 entropy_mean=0.014487 gate_mean=0.577655 gate_abs=0.577655 local_beta=0.000000
+INFO:root:Epoch 2     loss=0.1832 [190.9 s]    dev=(HR@5:0.2113,NDCG@5:0.1403) [3.9 s] *
+INFO:root:[IU-SCBR] step=8000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040479 r_min=0.040000 r_max=0.057315 entropy_mean=0.011987 gate_mean=0.580021 gate_abs=0.580021 local_beta=0.000000
+INFO:root:[IU-SCBR] step=9000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040357 r_min=0.040000 r_max=0.048460 entropy_mean=0.008914 gate_mean=0.564534 gate_abs=0.564534 local_beta=0.000000
+INFO:root:[IU-SCBR] step=10000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040213 r_min=0.040000 r_max=0.045825 entropy_mean=0.005318 gate_mean=0.561239 gate_abs=0.561239 local_beta=0.000000
+INFO:root:[IU-SCBR] step=11000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040486 r_min=0.040000 r_max=0.055727 entropy_mean=0.012140 gate_mean=0.556502 gate_abs=0.556502 local_beta=0.000000
+INFO:root:Epoch 3     loss=0.1676 [193.9 s]    dev=(HR@5:0.2318,NDCG@5:0.1550) [3.8 s] *
+INFO:root:[IU-SCBR] step=12000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040407 r_min=0.040000 r_max=0.054032 entropy_mean=0.010167 gate_mean=0.543982 gate_abs=0.543982 local_beta=0.000000
+INFO:root:[IU-SCBR] step=13000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040537 r_min=0.040002 r_max=0.049972 entropy_mean=0.013418 gate_mean=0.533979 gate_abs=0.533979 local_beta=0.000000
+INFO:root:[IU-SCBR] step=14000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040299 r_min=0.040000 r_max=0.056476 entropy_mean=0.007466 gate_mean=0.532814 gate_abs=0.532814 local_beta=0.000000
+INFO:root:[IU-SCBR] step=15000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041347 r_min=0.040014 r_max=0.056839 entropy_mean=0.033665 gate_mean=0.537088 gate_abs=0.537088 local_beta=0.000000
+INFO:root:Epoch 4     loss=0.1596 [195.1 s]    dev=(HR@5:0.2573,NDCG@5:0.1725) [3.8 s] *
+INFO:root:[IU-SCBR] step=16000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041195 r_min=0.040003 r_max=0.050973 entropy_mean=0.029868 gate_mean=0.532481 gate_abs=0.532481 local_beta=0.000000
+INFO:root:[IU-SCBR] step=17000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040750 r_min=0.040002 r_max=0.049926 entropy_mean=0.018754 gate_mean=0.536216 gate_abs=0.536216 local_beta=0.000000
+INFO:root:[IU-SCBR] step=18000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.044851 r_min=0.040220 r_max=0.064672 entropy_mean=0.121263 gate_mean=0.523811 gate_abs=0.523811 local_beta=0.000000
+INFO:root:[IU-SCBR] step=19000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.043132 r_min=0.040001 r_max=0.075564 entropy_mean=0.078303 gate_mean=0.529757 gate_abs=0.529757 local_beta=0.000000
+INFO:root:Epoch 5     loss=0.1541 [194.6 s]    dev=(HR@5:0.2619,NDCG@5:0.1744) [3.8 s] *
+INFO:root:[IU-SCBR] step=20000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.042164 r_min=0.040000 r_max=0.079957 entropy_mean=0.054090 gate_mean=0.529199 gate_abs=0.529199 local_beta=0.000000
+INFO:root:[IU-SCBR] step=21000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041685 r_min=0.040000 r_max=0.079955 entropy_mean=0.042118 gate_mean=0.516033 gate_abs=0.516033 local_beta=0.000000
+INFO:root:[IU-SCBR] step=22000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.042140 r_min=0.040000 r_max=0.079245 entropy_mean=0.053505 gate_mean=0.525776 gate_abs=0.525776 local_beta=0.000000
+INFO:root:[IU-SCBR] step=23000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041859 r_min=0.040000 r_max=0.079971 entropy_mean=0.046469 gate_mean=0.524244 gate_abs=0.524244 local_beta=0.000000
+INFO:root:Epoch 6     loss=0.1487 [194.4 s]    dev=(HR@5:0.2821,NDCG@5:0.1921) [4.6 s] *
+INFO:root:[IU-SCBR] step=24000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.042210 r_min=0.040000 r_max=0.078821 entropy_mean=0.055239 gate_mean=0.533788 gate_abs=0.533788 local_beta=0.000000
+INFO:root:[IU-SCBR] step=25000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041892 r_min=0.040000 r_max=0.079439 entropy_mean=0.047295 gate_mean=0.527472 gate_abs=0.527472 local_beta=0.000000
+INFO:root:[IU-SCBR] step=26000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041666 r_min=0.040000 r_max=0.079985 entropy_mean=0.041638 gate_mean=0.534429 gate_abs=0.534429 local_beta=0.000000
+INFO:root:[IU-SCBR] step=27000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041428 r_min=0.040000 r_max=0.075779 entropy_mean=0.035698 gate_mean=0.526073 gate_abs=0.526073 local_beta=0.000000
+INFO:root:Epoch 7     loss=0.1446 [192.1 s]    dev=(HR@5:0.2836,NDCG@5:0.1916) [4.8 s]
+INFO:root:[IU-SCBR] step=28000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041280 r_min=0.040000 r_max=0.078704 entropy_mean=0.032012 gate_mean=0.553793 gate_abs=0.553793 local_beta=0.000000
+INFO:root:[IU-SCBR] step=29000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041209 r_min=0.040000 r_max=0.078148 entropy_mean=0.030222 gate_mean=0.537757 gate_abs=0.537757 local_beta=0.000000
+INFO:root:[IU-SCBR] step=30000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040743 r_min=0.040000 r_max=0.079780 entropy_mean=0.018572 gate_mean=0.527926 gate_abs=0.527926 local_beta=0.000000
+INFO:root:Epoch 8     loss=0.1423 [192.8 s]    dev=(HR@5:0.2922,NDCG@5:0.1971) [3.8 s] *
+INFO:root:[IU-SCBR] step=31000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041250 r_min=0.040000 r_max=0.079999 entropy_mean=0.031251 gate_mean=0.536428 gate_abs=0.536428 local_beta=0.000000
+INFO:root:[IU-SCBR] step=32000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041647 r_min=0.040000 r_max=0.079308 entropy_mean=0.041187 gate_mean=0.519408 gate_abs=0.519408 local_beta=0.000000
+INFO:root:[IU-SCBR] step=33000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041270 r_min=0.040000 r_max=0.079405 entropy_mean=0.031757 gate_mean=0.512278 gate_abs=0.512278 local_beta=0.000000
+INFO:root:[IU-SCBR] step=34000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041846 r_min=0.040000 r_max=0.079997 entropy_mean=0.046162 gate_mean=0.538890 gate_abs=0.538890 local_beta=0.000000
+INFO:root:Epoch 9     loss=0.1400 [193.2 s]    dev=(HR@5:0.2997,NDCG@5:0.2030) [3.8 s] *
+INFO:root:[IU-SCBR] step=35000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041347 r_min=0.040000 r_max=0.075822 entropy_mean=0.033663 gate_mean=0.540685 gate_abs=0.540685 local_beta=0.000000
+INFO:root:[IU-SCBR] step=36000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041408 r_min=0.040000 r_max=0.079631 entropy_mean=0.035196 gate_mean=0.533087 gate_abs=0.533087 local_beta=0.000000
+INFO:root:[IU-SCBR] step=37000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041430 r_min=0.040000 r_max=0.079956 entropy_mean=0.035743 gate_mean=0.550165 gate_abs=0.550165 local_beta=0.000000
+INFO:root:[IU-SCBR] step=38000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040996 r_min=0.040000 r_max=0.075949 entropy_mean=0.024903 gate_mean=0.536409 gate_abs=0.536409 local_beta=0.000000
+INFO:root:Epoch 10    loss=0.1381 [194.3 s]    dev=(HR@5:0.2983,NDCG@5:0.2036) [3.8 s] *
+INFO:root:[IU-SCBR] step=39000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041479 r_min=0.040000 r_max=0.073039 entropy_mean=0.036966 gate_mean=0.532524 gate_abs=0.532524 local_beta=0.000000
+INFO:root:[IU-SCBR] step=40000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040965 r_min=0.040000 r_max=0.076213 entropy_mean=0.024137 gate_mean=0.529961 gate_abs=0.529961 local_beta=0.000000
+INFO:root:[IU-SCBR] step=41000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040814 r_min=0.040000 r_max=0.073798 entropy_mean=0.020343 gate_mean=0.526422 gate_abs=0.526422 local_beta=0.000000
+INFO:root:[IU-SCBR] step=42000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041073 r_min=0.040000 r_max=0.079956 entropy_mean=0.026818 gate_mean=0.518248 gate_abs=0.518248 local_beta=0.000000
+INFO:root:Epoch 11    loss=0.1365 [193.9 s]    dev=(HR@5:0.3060,NDCG@5:0.2083) [3.8 s] *
+INFO:root:[IU-SCBR] step=43000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041573 r_min=0.040000 r_max=0.078378 entropy_mean=0.039331 gate_mean=0.520894 gate_abs=0.520894 local_beta=0.000000
+INFO:root:[IU-SCBR] step=44000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041085 r_min=0.040000 r_max=0.079266 entropy_mean=0.027135 gate_mean=0.518718 gate_abs=0.518718 local_beta=0.000000
+INFO:root:[IU-SCBR] step=45000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041640 r_min=0.040000 r_max=0.079951 entropy_mean=0.041010 gate_mean=0.529305 gate_abs=0.529305 local_beta=0.000000
+INFO:root:[IU-SCBR] step=46000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041129 r_min=0.040000 r_max=0.072448 entropy_mean=0.028219 gate_mean=0.519085 gate_abs=0.519085 local_beta=0.000000
+INFO:root:Epoch 12    loss=0.1361 [194.0 s]    dev=(HR@5:0.3121,NDCG@5:0.2113) [3.4 s] *
+INFO:root:[IU-SCBR] step=47000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040992 r_min=0.040000 r_max=0.068537 entropy_mean=0.024799 gate_mean=0.511347 gate_abs=0.511347 local_beta=0.000000
+INFO:root:[IU-SCBR] step=48000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040960 r_min=0.040000 r_max=0.074985 entropy_mean=0.023991 gate_mean=0.499387 gate_abs=0.499387 local_beta=0.000000
+INFO:root:[IU-SCBR] step=49000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040963 r_min=0.040000 r_max=0.074894 entropy_mean=0.024068 gate_mean=0.518938 gate_abs=0.518938 local_beta=0.000000
+INFO:root:[IU-SCBR] step=50000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041039 r_min=0.040000 r_max=0.077548 entropy_mean=0.025968 gate_mean=0.515164 gate_abs=0.515164 local_beta=0.000000
+INFO:root:Epoch 13    loss=0.1347 [194.8 s]    dev=(HR@5:0.3046,NDCG@5:0.2107) [3.0 s]
+INFO:root:[IU-SCBR] step=51000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040814 r_min=0.040000 r_max=0.078539 entropy_mean=0.020338 gate_mean=0.527595 gate_abs=0.527595 local_beta=0.000000
+INFO:root:[IU-SCBR] step=52000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040586 r_min=0.040000 r_max=0.064102 entropy_mean=0.014653 gate_mean=0.527894 gate_abs=0.527894 local_beta=0.000000
+INFO:root:[IU-SCBR] step=53000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041139 r_min=0.040000 r_max=0.079594 entropy_mean=0.028483 gate_mean=0.515369 gate_abs=0.515369 local_beta=0.000000
+INFO:root:[IU-SCBR] step=54000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041228 r_min=0.040000 r_max=0.074290 entropy_mean=0.030709 gate_mean=0.506989 gate_abs=0.506989 local_beta=0.000000
+INFO:root:Epoch 14    loss=0.1330 [193.9 s]    dev=(HR@5:0.3108,NDCG@5:0.2133) [3.0 s] *
+INFO:root:[IU-SCBR] step=55000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041217 r_min=0.040000 r_max=0.079838 entropy_mean=0.030427 gate_mean=0.520571 gate_abs=0.520571 local_beta=0.000000
+INFO:root:[IU-SCBR] step=56000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041352 r_min=0.040000 r_max=0.079635 entropy_mean=0.033793 gate_mean=0.507403 gate_abs=0.507403 local_beta=0.000000
+INFO:root:[IU-SCBR] step=57000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041695 r_min=0.040000 r_max=0.077601 entropy_mean=0.042384 gate_mean=0.492803 gate_abs=0.492803 local_beta=0.000000
+INFO:root:Epoch 15    loss=0.1328 [194.2 s]    dev=(HR@5:0.3141,NDCG@5:0.2181) [3.0 s] *
+INFO:root:[IU-SCBR] step=58000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041153 r_min=0.040000 r_max=0.079991 entropy_mean=0.028834 gate_mean=0.503470 gate_abs=0.503470 local_beta=0.000000
+INFO:root:[IU-SCBR] step=59000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040946 r_min=0.040000 r_max=0.071084 entropy_mean=0.023647 gate_mean=0.516848 gate_abs=0.516848 local_beta=0.000000
+INFO:root:[IU-SCBR] step=60000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040938 r_min=0.040000 r_max=0.067777 entropy_mean=0.023460 gate_mean=0.518107 gate_abs=0.518107 local_beta=0.000000
+INFO:root:[IU-SCBR] step=61000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040918 r_min=0.040000 r_max=0.075247 entropy_mean=0.022941 gate_mean=0.503324 gate_abs=0.503324 local_beta=0.000000
+INFO:root:Epoch 16    loss=0.1314 [192.3 s]    dev=(HR@5:0.3124,NDCG@5:0.2156) [3.0 s]
+INFO:root:[IU-SCBR] step=62000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040840 r_min=0.040000 r_max=0.072845 entropy_mean=0.020990 gate_mean=0.504577 gate_abs=0.504577 local_beta=0.000000
+INFO:root:[IU-SCBR] step=63000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041192 r_min=0.040000 r_max=0.078861 entropy_mean=0.029812 gate_mean=0.499697 gate_abs=0.499697 local_beta=0.000000
+INFO:root:[IU-SCBR] step=64000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041537 r_min=0.040000 r_max=0.079990 entropy_mean=0.038432 gate_mean=0.508755 gate_abs=0.508755 local_beta=0.000000
+INFO:root:[IU-SCBR] step=65000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040881 r_min=0.040000 r_max=0.079715 entropy_mean=0.022025 gate_mean=0.520055 gate_abs=0.520055 local_beta=0.000000
+INFO:root:Epoch 17    loss=0.1301 [192.0 s]    dev=(HR@5:0.3195,NDCG@5:0.2188) [3.0 s] *
+INFO:root:[IU-SCBR] step=66000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041132 r_min=0.040000 r_max=0.071170 entropy_mean=0.028294 gate_mean=0.520086 gate_abs=0.520086 local_beta=0.000000
+INFO:root:[IU-SCBR] step=67000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041196 r_min=0.040000 r_max=0.078998 entropy_mean=0.029902 gate_mean=0.514694 gate_abs=0.514694 local_beta=0.000000
+INFO:root:[IU-SCBR] step=68000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041167 r_min=0.040000 r_max=0.079925 entropy_mean=0.029170 gate_mean=0.501687 gate_abs=0.501687 local_beta=0.000000
+INFO:root:[IU-SCBR] step=69000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041962 r_min=0.040000 r_max=0.079997 entropy_mean=0.049062 gate_mean=0.505373 gate_abs=0.505373 local_beta=0.000000
+INFO:root:Epoch 18    loss=0.1303 [190.9 s]    dev=(HR@5:0.3219,NDCG@5:0.2210) [3.0 s] *
+INFO:root:[IU-SCBR] step=70000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041641 r_min=0.040000 r_max=0.075524 entropy_mean=0.041026 gate_mean=0.490953 gate_abs=0.490953 local_beta=0.000000
+INFO:root:[IU-SCBR] step=71000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041302 r_min=0.040000 r_max=0.079003 entropy_mean=0.032559 gate_mean=0.511672 gate_abs=0.511672 local_beta=0.000000
+INFO:root:[IU-SCBR] step=72000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041379 r_min=0.040000 r_max=0.079855 entropy_mean=0.034465 gate_mean=0.499923 gate_abs=0.499923 local_beta=0.000000
+INFO:root:[IU-SCBR] step=73000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040898 r_min=0.040000 r_max=0.078803 entropy_mean=0.022439 gate_mean=0.499164 gate_abs=0.499164 local_beta=0.000000
+INFO:root:Epoch 19    loss=0.1290 [193.5 s]    dev=(HR@5:0.3238,NDCG@5:0.2231) [3.0 s] *
+INFO:root:[IU-SCBR] step=74000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040877 r_min=0.040000 r_max=0.079763 entropy_mean=0.021936 gate_mean=0.501470 gate_abs=0.501470 local_beta=0.000000
+INFO:root:[IU-SCBR] step=75000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040675 r_min=0.040000 r_max=0.074744 entropy_mean=0.016866 gate_mean=0.491080 gate_abs=0.491080 local_beta=0.000000
+INFO:root:[IU-SCBR] step=76000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041688 r_min=0.040000 r_max=0.079822 entropy_mean=0.042205 gate_mean=0.507060 gate_abs=0.507060 local_beta=0.000000
+INFO:root:[IU-SCBR] step=77000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040774 r_min=0.040000 r_max=0.079061 entropy_mean=0.019356 gate_mean=0.494263 gate_abs=0.494263 local_beta=0.000000
+INFO:root:Epoch 20    loss=0.1288 [192.0 s]    dev=(HR@5:0.3215,NDCG@5:0.2230) [3.0 s]
+INFO:root:[IU-SCBR] step=78000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041216 r_min=0.040000 r_max=0.079857 entropy_mean=0.030390 gate_mean=0.485545 gate_abs=0.485545 local_beta=0.000000
+INFO:root:[IU-SCBR] step=79000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040914 r_min=0.040000 r_max=0.079985 entropy_mean=0.022849 gate_mean=0.515210 gate_abs=0.515210 local_beta=0.000000
+INFO:root:[IU-SCBR] step=80000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041361 r_min=0.040000 r_max=0.076389 entropy_mean=0.034017 gate_mean=0.494935 gate_abs=0.494935 local_beta=0.000000
+INFO:root:[IU-SCBR] step=81000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041543 r_min=0.040000 r_max=0.079267 entropy_mean=0.038586 gate_mean=0.500349 gate_abs=0.500349 local_beta=0.000000
+INFO:root:Epoch 21    loss=0.1275 [195.4 s]    dev=(HR@5:0.3291,NDCG@5:0.2254) [3.0 s] *
+INFO:root:[IU-SCBR] step=82000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041229 r_min=0.040000 r_max=0.079504 entropy_mean=0.030727 gate_mean=0.489313 gate_abs=0.489313 local_beta=0.000000
+INFO:root:[IU-SCBR] step=83000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040690 r_min=0.040000 r_max=0.071089 entropy_mean=0.017246 gate_mean=0.520618 gate_abs=0.520618 local_beta=0.000000
+INFO:root:[IU-SCBR] step=84000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041735 r_min=0.040000 r_max=0.075680 entropy_mean=0.043372 gate_mean=0.499497 gate_abs=0.499497 local_beta=0.000000
+INFO:root:Epoch 22    loss=0.1275 [192.6 s]    dev=(HR@5:0.3315,NDCG@5:0.2286) [3.0 s] *
+INFO:root:[IU-SCBR] step=85000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041508 r_min=0.040000 r_max=0.079938 entropy_mean=0.037693 gate_mean=0.473902 gate_abs=0.473902 local_beta=0.000000
+INFO:root:[IU-SCBR] step=86000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041243 r_min=0.040000 r_max=0.078354 entropy_mean=0.031082 gate_mean=0.483690 gate_abs=0.483690 local_beta=0.000000
+INFO:root:[IU-SCBR] step=87000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040724 r_min=0.040000 r_max=0.079758 entropy_mean=0.018111 gate_mean=0.498370 gate_abs=0.498370 local_beta=0.000000
+INFO:root:[IU-SCBR] step=88000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041495 r_min=0.040000 r_max=0.078508 entropy_mean=0.037373 gate_mean=0.500054 gate_abs=0.500054 local_beta=0.000000
+INFO:root:Epoch 23    loss=0.1265 [191.2 s]    dev=(HR@5:0.3296,NDCG@5:0.2279) [3.0 s]
+INFO:root:[IU-SCBR] step=89000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041065 r_min=0.040000 r_max=0.078396 entropy_mean=0.026618 gate_mean=0.482160 gate_abs=0.482160 local_beta=0.000000
+INFO:root:[IU-SCBR] step=90000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040530 r_min=0.040000 r_max=0.063449 entropy_mean=0.013239 gate_mean=0.479675 gate_abs=0.479675 local_beta=0.000000
+INFO:root:[IU-SCBR] step=91000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040911 r_min=0.040000 r_max=0.074589 entropy_mean=0.022767 gate_mean=0.479420 gate_abs=0.479420 local_beta=0.000000
+INFO:root:[IU-SCBR] step=92000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040887 r_min=0.040000 r_max=0.079832 entropy_mean=0.022172 gate_mean=0.492985 gate_abs=0.492985 local_beta=0.000000
+INFO:root:Epoch 24    loss=0.1259 [192.0 s]    dev=(HR@5:0.3305,NDCG@5:0.2275) [3.0 s]
+INFO:root:[IU-SCBR] step=93000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040834 r_min=0.040000 r_max=0.078735 entropy_mean=0.020857 gate_mean=0.493720 gate_abs=0.493720 local_beta=0.000000
+INFO:root:[IU-SCBR] step=94000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041664 r_min=0.040000 r_max=0.079839 entropy_mean=0.041595 gate_mean=0.493107 gate_abs=0.493107 local_beta=0.000000
+INFO:root:[IU-SCBR] step=95000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041075 r_min=0.040000 r_max=0.077916 entropy_mean=0.026873 gate_mean=0.492710 gate_abs=0.492710 local_beta=0.000000
+INFO:root:[IU-SCBR] step=96000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041544 r_min=0.040000 r_max=0.079429 entropy_mean=0.038588 gate_mean=0.469748 gate_abs=0.469748 local_beta=0.000000
+INFO:root:Epoch 25    loss=0.1261 [193.1 s]    dev=(HR@5:0.3325,NDCG@5:0.2305) [3.0 s] *
+INFO:root:[IU-SCBR] step=97000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041193 r_min=0.040000 r_max=0.079926 entropy_mean=0.029816 gate_mean=0.488118 gate_abs=0.488118 local_beta=0.000000
+INFO:root:[IU-SCBR] step=98000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040950 r_min=0.040000 r_max=0.075462 entropy_mean=0.023740 gate_mean=0.501149 gate_abs=0.501149 local_beta=0.000000
+INFO:root:[IU-SCBR] step=99000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040789 r_min=0.040000 r_max=0.072046 entropy_mean=0.019721 gate_mean=0.476421 gate_abs=0.476421 local_beta=0.000000
+INFO:root:[IU-SCBR] step=100000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040716 r_min=0.040000 r_max=0.068852 entropy_mean=0.017900 gate_mean=0.491696 gate_abs=0.491696 local_beta=0.000000
+INFO:root:Epoch 26    loss=0.1253 [193.6 s]    dev=(HR@5:0.3275,NDCG@5:0.2255) [3.0 s]
+INFO:root:[IU-SCBR] step=101000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041236 r_min=0.040000 r_max=0.079791 entropy_mean=0.030901 gate_mean=0.486258 gate_abs=0.486258 local_beta=0.000000
+INFO:root:[IU-SCBR] step=102000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040535 r_min=0.040000 r_max=0.079998 entropy_mean=0.013382 gate_mean=0.500438 gate_abs=0.500438 local_beta=0.000000
+INFO:root:[IU-SCBR] step=103000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041242 r_min=0.040000 r_max=0.078368 entropy_mean=0.031051 gate_mean=0.487368 gate_abs=0.487368 local_beta=0.000000
+INFO:root:[IU-SCBR] step=104000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041191 r_min=0.040000 r_max=0.070939 entropy_mean=0.029779 gate_mean=0.484335 gate_abs=0.484335 local_beta=0.000000
+INFO:root:Epoch 27    loss=0.1252 [193.7 s]    dev=(HR@5:0.3210,NDCG@5:0.2236) [3.0 s]
+INFO:root:[IU-SCBR] step=105000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041428 r_min=0.040000 r_max=0.079781 entropy_mean=0.035696 gate_mean=0.482738 gate_abs=0.482738 local_beta=0.000000
+INFO:root:[IU-SCBR] step=106000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041789 r_min=0.040000 r_max=0.079997 entropy_mean=0.044717 gate_mean=0.488752 gate_abs=0.488752 local_beta=0.000000
+INFO:root:[IU-SCBR] step=107000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041198 r_min=0.040000 r_max=0.079805 entropy_mean=0.029960 gate_mean=0.473853 gate_abs=0.473853 local_beta=0.000000
+INFO:root:[IU-SCBR] step=108000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041203 r_min=0.040000 r_max=0.079611 entropy_mean=0.030074 gate_mean=0.490195 gate_abs=0.490195 local_beta=0.000000
+INFO:root:Epoch 28    loss=0.1247 [194.5 s]    dev=(HR@5:0.3293,NDCG@5:0.2287) [3.0 s]
+INFO:root:[IU-SCBR] step=109000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040854 r_min=0.040000 r_max=0.079947 entropy_mean=0.021338 gate_mean=0.483945 gate_abs=0.483945 local_beta=0.000000
+INFO:root:[IU-SCBR] step=110000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041046 r_min=0.040000 r_max=0.079420 entropy_mean=0.026153 gate_mean=0.488642 gate_abs=0.488642 local_beta=0.000000
+INFO:root:[IU-SCBR] step=111000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041141 r_min=0.040000 r_max=0.074010 entropy_mean=0.028524 gate_mean=0.485178 gate_abs=0.485178 local_beta=0.000000
+INFO:root:Epoch 29    loss=0.1239 [195.0 s]    dev=(HR@5:0.3295,NDCG@5:0.2300) [3.0 s]
+INFO:root:[IU-SCBR] step=112000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040650 r_min=0.040000 r_max=0.079072 entropy_mean=0.016250 gate_mean=0.485568 gate_abs=0.485568 local_beta=0.000000
+INFO:root:[IU-SCBR] step=113000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041255 r_min=0.040000 r_max=0.079407 entropy_mean=0.031375 gate_mean=0.470556 gate_abs=0.470556 local_beta=0.000000
+INFO:root:[IU-SCBR] step=114000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040650 r_min=0.040000 r_max=0.071192 entropy_mean=0.016260 gate_mean=0.483667 gate_abs=0.483667 local_beta=0.000000
+INFO:root:[IU-SCBR] step=115000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041596 r_min=0.040000 r_max=0.079859 entropy_mean=0.039908 gate_mean=0.467819 gate_abs=0.467819 local_beta=0.000000
+INFO:root:Epoch 30    loss=0.1241 [195.4 s]    dev=(HR@5:0.3295,NDCG@5:0.2289) [3.0 s]
+INFO:root:[IU-SCBR] step=116000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041485 r_min=0.040000 r_max=0.079970 entropy_mean=0.037137 gate_mean=0.466506 gate_abs=0.466506 local_beta=0.000000
+INFO:root:[IU-SCBR] step=117000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041979 r_min=0.040000 r_max=0.078478 entropy_mean=0.049469 gate_mean=0.479993 gate_abs=0.479993 local_beta=0.000000
+INFO:root:[IU-SCBR] step=118000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040813 r_min=0.040000 r_max=0.079824 entropy_mean=0.020332 gate_mean=0.476540 gate_abs=0.476540 local_beta=0.000000
+INFO:root:[IU-SCBR] step=119000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041382 r_min=0.040000 r_max=0.076828 entropy_mean=0.034544 gate_mean=0.486224 gate_abs=0.486224 local_beta=0.000000
+INFO:root:Epoch 31    loss=0.1234 [192.5 s]    dev=(HR@5:0.3321,NDCG@5:0.2321) [3.0 s] *
+INFO:root:[IU-SCBR] step=120000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041042 r_min=0.040000 r_max=0.079904 entropy_mean=0.026060 gate_mean=0.460540 gate_abs=0.460540 local_beta=0.000000
+INFO:root:[IU-SCBR] step=121000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040770 r_min=0.040000 r_max=0.079935 entropy_mean=0.019252 gate_mean=0.495464 gate_abs=0.495464 local_beta=0.000000
+INFO:root:[IU-SCBR] step=122000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041116 r_min=0.040000 r_max=0.069340 entropy_mean=0.027889 gate_mean=0.479518 gate_abs=0.479518 local_beta=0.000000
+INFO:root:[IU-SCBR] step=123000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040708 r_min=0.040000 r_max=0.064436 entropy_mean=0.017697 gate_mean=0.482595 gate_abs=0.482595 local_beta=0.000000
+INFO:root:Epoch 32    loss=0.1231 [193.2 s]    dev=(HR@5:0.3339,NDCG@5:0.2328) [3.0 s] *
+INFO:root:[IU-SCBR] step=124000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040898 r_min=0.040000 r_max=0.078524 entropy_mean=0.022457 gate_mean=0.463573 gate_abs=0.463573 local_beta=0.000000
+INFO:root:[IU-SCBR] step=125000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041374 r_min=0.040000 r_max=0.078767 entropy_mean=0.034343 gate_mean=0.457350 gate_abs=0.457350 local_beta=0.000000
+INFO:root:[IU-SCBR] step=126000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040938 r_min=0.040000 r_max=0.079993 entropy_mean=0.023442 gate_mean=0.493692 gate_abs=0.493692 local_beta=0.000000
+INFO:root:[IU-SCBR] step=127000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041316 r_min=0.040000 r_max=0.079882 entropy_mean=0.032893 gate_mean=0.481501 gate_abs=0.481501 local_beta=0.000000
+INFO:root:Epoch 33    loss=0.1228 [193.5 s]    dev=(HR@5:0.3283,NDCG@5:0.2299) [3.0 s]
+INFO:root:[IU-SCBR] step=128000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041003 r_min=0.040000 r_max=0.079961 entropy_mean=0.025082 gate_mean=0.481097 gate_abs=0.481097 local_beta=0.000000
+INFO:root:[IU-SCBR] step=129000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040694 r_min=0.040000 r_max=0.077739 entropy_mean=0.017345 gate_mean=0.476441 gate_abs=0.476441 local_beta=0.000000
+INFO:root:[IU-SCBR] step=130000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040603 r_min=0.040000 r_max=0.070573 entropy_mean=0.015084 gate_mean=0.477318 gate_abs=0.477318 local_beta=0.000000
+INFO:root:[IU-SCBR] step=131000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040949 r_min=0.040000 r_max=0.079070 entropy_mean=0.023737 gate_mean=0.482789 gate_abs=0.482789 local_beta=0.000000
+INFO:root:Epoch 34    loss=0.1228 [194.1 s]    dev=(HR@5:0.3391,NDCG@5:0.2343) [3.1 s] *
+INFO:root:[IU-SCBR] step=132000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041021 r_min=0.040000 r_max=0.079992 entropy_mean=0.025532 gate_mean=0.493749 gate_abs=0.493749 local_beta=0.000000
+INFO:root:[IU-SCBR] step=133000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040911 r_min=0.040000 r_max=0.078933 entropy_mean=0.022764 gate_mean=0.486525 gate_abs=0.486525 local_beta=0.000000
+INFO:root:[IU-SCBR] step=134000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041127 r_min=0.040000 r_max=0.079736 entropy_mean=0.028178 gate_mean=0.496416 gate_abs=0.496416 local_beta=0.000000
+INFO:root:[IU-SCBR] step=135000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041362 r_min=0.040000 r_max=0.077242 entropy_mean=0.034058 gate_mean=0.466970 gate_abs=0.466970 local_beta=0.000000
+INFO:root:Epoch 35    loss=0.1225 [193.0 s]    dev=(HR@5:0.3283,NDCG@5:0.2278) [3.0 s]
+INFO:root:[IU-SCBR] step=136000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041393 r_min=0.040000 r_max=0.079986 entropy_mean=0.034835 gate_mean=0.452314 gate_abs=0.452314 local_beta=0.000000
+INFO:root:[IU-SCBR] step=137000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041692 r_min=0.040000 r_max=0.076067 entropy_mean=0.042295 gate_mean=0.471974 gate_abs=0.471974 local_beta=0.000000
+INFO:root:[IU-SCBR] step=138000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040863 r_min=0.040000 r_max=0.068474 entropy_mean=0.021584 gate_mean=0.473839 gate_abs=0.473839 local_beta=0.000000
+INFO:root:Epoch 36    loss=0.1220 [194.6 s]    dev=(HR@5:0.3366,NDCG@5:0.2319) [3.0 s]
+INFO:root:[IU-SCBR] step=139000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041126 r_min=0.040000 r_max=0.079148 entropy_mean=0.028140 gate_mean=0.502532 gate_abs=0.502532 local_beta=0.000000
+INFO:root:[IU-SCBR] step=140000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040504 r_min=0.040000 r_max=0.061440 entropy_mean=0.012598 gate_mean=0.487755 gate_abs=0.487755 local_beta=0.000000
+INFO:root:[IU-SCBR] step=141000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.042025 r_min=0.040000 r_max=0.079967 entropy_mean=0.050634 gate_mean=0.465081 gate_abs=0.465081 local_beta=0.000000
+INFO:root:[IU-SCBR] step=142000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041159 r_min=0.040000 r_max=0.079664 entropy_mean=0.028986 gate_mean=0.487131 gate_abs=0.487131 local_beta=0.000000
+INFO:root:Epoch 37    loss=0.1215 [193.6 s]    dev=(HR@5:0.3336,NDCG@5:0.2322) [3.0 s]
+INFO:root:[IU-SCBR] step=143000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041020 r_min=0.040000 r_max=0.079998 entropy_mean=0.025512 gate_mean=0.470221 gate_abs=0.470221 local_beta=0.000000
+INFO:root:[IU-SCBR] step=144000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041505 r_min=0.040000 r_max=0.077001 entropy_mean=0.037624 gate_mean=0.466660 gate_abs=0.466660 local_beta=0.000000
+INFO:root:[IU-SCBR] step=145000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040802 r_min=0.040000 r_max=0.074536 entropy_mean=0.020051 gate_mean=0.484149 gate_abs=0.484149 local_beta=0.000000
+INFO:root:[IU-SCBR] step=146000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041195 r_min=0.040000 r_max=0.079261 entropy_mean=0.029877 gate_mean=0.489873 gate_abs=0.489873 local_beta=0.000000
+INFO:root:Epoch 38    loss=0.1214 [192.1 s]    dev=(HR@5:0.3386,NDCG@5:0.2335) [3.0 s]
+INFO:root:[IU-SCBR] step=147000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041041 r_min=0.040000 r_max=0.076872 entropy_mean=0.026033 gate_mean=0.463291 gate_abs=0.463291 local_beta=0.000000
+INFO:root:[IU-SCBR] step=148000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041068 r_min=0.040000 r_max=0.078873 entropy_mean=0.026710 gate_mean=0.461377 gate_abs=0.461377 local_beta=0.000000
+INFO:root:[IU-SCBR] step=149000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040765 r_min=0.040000 r_max=0.079989 entropy_mean=0.019115 gate_mean=0.475455 gate_abs=0.475455 local_beta=0.000000
+INFO:root:[IU-SCBR] step=150000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040753 r_min=0.040000 r_max=0.074186 entropy_mean=0.018816 gate_mean=0.498166 gate_abs=0.498166 local_beta=0.000000
+INFO:root:Epoch 39    loss=0.1217 [193.9 s]    dev=(HR@5:0.3361,NDCG@5:0.2311) [3.0 s]
+INFO:root:[IU-SCBR] step=151000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041052 r_min=0.040000 r_max=0.064145 entropy_mean=0.026296 gate_mean=0.471783 gate_abs=0.471783 local_beta=0.000000
+INFO:root:[IU-SCBR] step=152000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040522 r_min=0.040000 r_max=0.066161 entropy_mean=0.013058 gate_mean=0.479271 gate_abs=0.479271 local_beta=0.000000
+INFO:root:[IU-SCBR] step=153000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041061 r_min=0.040000 r_max=0.072569 entropy_mean=0.026513 gate_mean=0.469172 gate_abs=0.469172 local_beta=0.000000
+INFO:root:[IU-SCBR] step=154000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041402 r_min=0.040000 r_max=0.079880 entropy_mean=0.035042 gate_mean=0.467493 gate_abs=0.467493 local_beta=0.000000
+INFO:root:Epoch 40    loss=0.1212 [192.9 s]    dev=(HR@5:0.3401,NDCG@5:0.2359) [3.0 s] *
+INFO:root:[IU-SCBR] step=155000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.042232 r_min=0.040000 r_max=0.079593 entropy_mean=0.055810 gate_mean=0.466110 gate_abs=0.466110 local_beta=0.000000
+INFO:root:[IU-SCBR] step=156000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041033 r_min=0.040000 r_max=0.079491 entropy_mean=0.025814 gate_mean=0.469136 gate_abs=0.469136 local_beta=0.000000
+INFO:root:[IU-SCBR] step=157000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040967 r_min=0.040000 r_max=0.079794 entropy_mean=0.024172 gate_mean=0.485773 gate_abs=0.485773 local_beta=0.000000
+INFO:root:[IU-SCBR] step=158000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041512 r_min=0.040000 r_max=0.079925 entropy_mean=0.037794 gate_mean=0.447692 gate_abs=0.447692 local_beta=0.000000
+INFO:root:Epoch 41    loss=0.1209 [194.1 s]    dev=(HR@5:0.3334,NDCG@5:0.2325) [3.0 s]
+INFO:root:[IU-SCBR] step=159000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040709 r_min=0.040000 r_max=0.077554 entropy_mean=0.017713 gate_mean=0.460082 gate_abs=0.460082 local_beta=0.000000
+INFO:root:[IU-SCBR] step=160000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041014 r_min=0.040000 r_max=0.078152 entropy_mean=0.025350 gate_mean=0.471496 gate_abs=0.471496 local_beta=0.000000
+INFO:root:[IU-SCBR] step=161000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041138 r_min=0.040000 r_max=0.068271 entropy_mean=0.028441 gate_mean=0.479906 gate_abs=0.479906 local_beta=0.000000
+INFO:root:[IU-SCBR] step=162000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041146 r_min=0.040000 r_max=0.073478 entropy_mean=0.028660 gate_mean=0.475416 gate_abs=0.475416 local_beta=0.000000
+INFO:root:Epoch 42    loss=0.1207 [192.3 s]    dev=(HR@5:0.3359,NDCG@5:0.2345) [3.0 s]
+INFO:root:[IU-SCBR] step=163000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041405 r_min=0.040000 r_max=0.079901 entropy_mean=0.035125 gate_mean=0.453115 gate_abs=0.453115 local_beta=0.000000
+INFO:root:[IU-SCBR] step=164000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041670 r_min=0.040000 r_max=0.079993 entropy_mean=0.041745 gate_mean=0.453807 gate_abs=0.453807 local_beta=0.000000
+INFO:root:[IU-SCBR] step=165000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041172 r_min=0.040000 r_max=0.078468 entropy_mean=0.029309 gate_mean=0.472435 gate_abs=0.472435 local_beta=0.000000
+INFO:root:Epoch 43    loss=0.1205 [193.8 s]    dev=(HR@5:0.3351,NDCG@5:0.2331) [3.0 s]
+INFO:root:[IU-SCBR] step=167000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041105 r_min=0.040000 r_max=0.067064 entropy_mean=0.027615 gate_mean=0.465549 gate_abs=0.465549 local_beta=0.000000
+INFO:root:[IU-SCBR] step=168000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040714 r_min=0.040000 r_max=0.078108 entropy_mean=0.017846 gate_mean=0.472781 gate_abs=0.472781 local_beta=0.000000
+INFO:root:[IU-SCBR] step=169000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040688 r_min=0.040000 r_max=0.075358 entropy_mean=0.017210 gate_mean=0.488576 gate_abs=0.488576 local_beta=0.000000
+INFO:root:Epoch 44    loss=0.1197 [194.1 s]    dev=(HR@5:0.3348,NDCG@5:0.2316) [3.0 s]
+INFO:root:[IU-SCBR] step=170000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041182 r_min=0.040000 r_max=0.079787 entropy_mean=0.029550 gate_mean=0.463204 gate_abs=0.463204 local_beta=0.000000
+INFO:root:[IU-SCBR] step=171000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041118 r_min=0.040000 r_max=0.079294 entropy_mean=0.027942 gate_mean=0.468832 gate_abs=0.468832 local_beta=0.000000
+INFO:root:[IU-SCBR] step=172000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041080 r_min=0.040000 r_max=0.078749 entropy_mean=0.026992 gate_mean=0.469321 gate_abs=0.469321 local_beta=0.000000
+INFO:root:[IU-SCBR] step=173000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041220 r_min=0.040000 r_max=0.079889 entropy_mean=0.030511 gate_mean=0.479379 gate_abs=0.479379 local_beta=0.000000
+INFO:root:Epoch 45    loss=0.1202 [191.4 s]    dev=(HR@5:0.3356,NDCG@5:0.2327) [3.0 s]
+INFO:root:[IU-SCBR] step=174000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041336 r_min=0.040000 r_max=0.077610 entropy_mean=0.033409 gate_mean=0.446944 gate_abs=0.446944 local_beta=0.000000
+INFO:root:[IU-SCBR] step=175000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041334 r_min=0.040000 r_max=0.078983 entropy_mean=0.033344 gate_mean=0.465323 gate_abs=0.465323 local_beta=0.000000
+INFO:root:[IU-SCBR] step=176000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041088 r_min=0.040000 r_max=0.079625 entropy_mean=0.027212 gate_mean=0.479373 gate_abs=0.479373 local_beta=0.000000
+INFO:root:[IU-SCBR] step=177000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041402 r_min=0.040000 r_max=0.077013 entropy_mean=0.035041 gate_mean=0.444833 gate_abs=0.444833 local_beta=0.000000
+INFO:root:Epoch 46    loss=0.1194 [194.8 s]    dev=(HR@5:0.3349,NDCG@5:0.2324) [3.0 s]
+INFO:root:[IU-SCBR] step=178000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041059 r_min=0.040000 r_max=0.074621 entropy_mean=0.026471 gate_mean=0.470655 gate_abs=0.470655 local_beta=0.000000
+INFO:root:[IU-SCBR] step=179000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040713 r_min=0.040000 r_max=0.079956 entropy_mean=0.017836 gate_mean=0.459062 gate_abs=0.459062 local_beta=0.000000
+INFO:root:[IU-SCBR] step=180000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040507 r_min=0.040000 r_max=0.071745 entropy_mean=0.012687 gate_mean=0.465190 gate_abs=0.465190 local_beta=0.000000
+INFO:root:[IU-SCBR] step=181000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040664 r_min=0.040000 r_max=0.079882 entropy_mean=0.016595 gate_mean=0.454220 gate_abs=0.454220 local_beta=0.000000
+INFO:root:Epoch 47    loss=0.1195 [192.2 s]    dev=(HR@5:0.3427,NDCG@5:0.2357) [3.0 s]
+INFO:root:[IU-SCBR] step=182000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041396 r_min=0.040000 r_max=0.079379 entropy_mean=0.034899 gate_mean=0.478500 gate_abs=0.478500 local_beta=0.000000
+INFO:root:[IU-SCBR] step=183000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041303 r_min=0.040000 r_max=0.079862 entropy_mean=0.032572 gate_mean=0.448092 gate_abs=0.448092 local_beta=0.000000
+INFO:root:[IU-SCBR] step=184000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040525 r_min=0.040000 r_max=0.072164 entropy_mean=0.013118 gate_mean=0.485370 gate_abs=0.485370 local_beta=0.000000
+INFO:root:[IU-SCBR] step=185000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040685 r_min=0.040000 r_max=0.078366 entropy_mean=0.017135 gate_mean=0.471250 gate_abs=0.471250 local_beta=0.000000
+INFO:root:Epoch 48    loss=0.1190 [193.7 s]    dev=(HR@5:0.3368,NDCG@5:0.2339) [3.0 s]
+INFO:root:[IU-SCBR] step=186000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040660 r_min=0.040000 r_max=0.078952 entropy_mean=0.016493 gate_mean=0.460355 gate_abs=0.460355 local_beta=0.000000
+INFO:root:[IU-SCBR] step=187000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041275 r_min=0.040000 r_max=0.079938 entropy_mean=0.031885 gate_mean=0.441362 gate_abs=0.441362 local_beta=0.000000
+INFO:root:[IU-SCBR] step=188000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040780 r_min=0.040000 r_max=0.074955 entropy_mean=0.019493 gate_mean=0.460409 gate_abs=0.460409 local_beta=0.000000
+INFO:root:[IU-SCBR] step=189000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040670 r_min=0.040000 r_max=0.079975 entropy_mean=0.016752 gate_mean=0.458766 gate_abs=0.458766 local_beta=0.000000
+INFO:root:Epoch 49    loss=0.1187 [194.3 s]    dev=(HR@5:0.3391,NDCG@5:0.2349) [3.0 s]
+INFO:root:[IU-SCBR] step=190000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041049 r_min=0.040000 r_max=0.078070 entropy_mean=0.026217 gate_mean=0.480706 gate_abs=0.480706 local_beta=0.000000
+INFO:root:[IU-SCBR] step=191000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041261 r_min=0.040000 r_max=0.078159 entropy_mean=0.031522 gate_mean=0.465124 gate_abs=0.465124 local_beta=0.000000
+INFO:root:[IU-SCBR] step=192000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040984 r_min=0.040000 r_max=0.079520 entropy_mean=0.024595 gate_mean=0.462770 gate_abs=0.462770 local_beta=0.000000
+INFO:root:[IU-SCBR] step=193000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040820 r_min=0.040000 r_max=0.076382 entropy_mean=0.020490 gate_mean=0.463192 gate_abs=0.463192 local_beta=0.000000
+INFO:root:Epoch 50    loss=0.1188 [192.8 s]    dev=(HR@5:0.3326,NDCG@5:0.2300) [3.0 s]
+INFO:root:[IU-SCBR] step=194000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041337 r_min=0.040000 r_max=0.074907 entropy_mean=0.033425 gate_mean=0.449484 gate_abs=0.449484 local_beta=0.000000
+INFO:root:[IU-SCBR] step=195000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041230 r_min=0.040000 r_max=0.078050 entropy_mean=0.030756 gate_mean=0.459223 gate_abs=0.459223 local_beta=0.000000
+INFO:root:[IU-SCBR] step=196000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040927 r_min=0.040000 r_max=0.078232 entropy_mean=0.023183 gate_mean=0.458077 gate_abs=0.458077 local_beta=0.000000
+INFO:root:Epoch 51    loss=0.1190 [193.7 s]    dev=(HR@5:0.3374,NDCG@5:0.2354) [3.0 s]
+INFO:root:[IU-SCBR] step=197000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040595 r_min=0.040000 r_max=0.071757 entropy_mean=0.014864 gate_mean=0.474174 gate_abs=0.474174 local_beta=0.000000
+INFO:root:[IU-SCBR] step=198000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040545 r_min=0.040000 r_max=0.079866 entropy_mean=0.013633 gate_mean=0.466727 gate_abs=0.466727 local_beta=0.000000
+INFO:root:[IU-SCBR] step=199000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041323 r_min=0.040000 r_max=0.078603 entropy_mean=0.033076 gate_mean=0.446633 gate_abs=0.446633 local_beta=0.000000
+INFO:root:[IU-SCBR] step=200000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040727 r_min=0.040000 r_max=0.075773 entropy_mean=0.018165 gate_mean=0.479942 gate_abs=0.479942 local_beta=0.000000
+INFO:root:Epoch 52    loss=0.1187 [195.3 s]    dev=(HR@5:0.3346,NDCG@5:0.2324) [3.0 s]
+INFO:root:[IU-SCBR] step=201000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040739 r_min=0.040000 r_max=0.076454 entropy_mean=0.018469 gate_mean=0.460387 gate_abs=0.460387 local_beta=0.000000
+INFO:root:[IU-SCBR] step=202000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040895 r_min=0.040000 r_max=0.079876 entropy_mean=0.022381 gate_mean=0.452525 gate_abs=0.452525 local_beta=0.000000
+INFO:root:[IU-SCBR] step=203000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041308 r_min=0.040000 r_max=0.077960 entropy_mean=0.032699 gate_mean=0.464408 gate_abs=0.464408 local_beta=0.000000
+INFO:root:[IU-SCBR] step=204000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041012 r_min=0.040000 r_max=0.078881 entropy_mean=0.025302 gate_mean=0.476590 gate_abs=0.476590 local_beta=0.000000
+INFO:root:Epoch 53    loss=0.1181 [193.0 s]    dev=(HR@5:0.3411,NDCG@5:0.2376) [3.0 s] *
+INFO:root:[IU-SCBR] step=205000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041398 r_min=0.040000 r_max=0.078455 entropy_mean=0.034960 gate_mean=0.440046 gate_abs=0.440046 local_beta=0.000000
+INFO:root:[IU-SCBR] step=206000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041004 r_min=0.040000 r_max=0.075494 entropy_mean=0.025096 gate_mean=0.450086 gate_abs=0.450086 local_beta=0.000000
+INFO:root:[IU-SCBR] step=207000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041038 r_min=0.040000 r_max=0.079728 entropy_mean=0.025950 gate_mean=0.442503 gate_abs=0.442503 local_beta=0.000000
+INFO:root:[IU-SCBR] step=208000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040955 r_min=0.040000 r_max=0.075445 entropy_mean=0.023867 gate_mean=0.484764 gate_abs=0.484764 local_beta=0.000000
+INFO:root:Epoch 54    loss=0.1183 [194.0 s]    dev=(HR@5:0.3368,NDCG@5:0.2342) [3.0 s]
+INFO:root:[IU-SCBR] step=209000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040774 r_min=0.040000 r_max=0.079844 entropy_mean=0.019346 gate_mean=0.467762 gate_abs=0.467762 local_beta=0.000000
+INFO:root:[IU-SCBR] step=210000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041082 r_min=0.040000 r_max=0.078437 entropy_mean=0.027038 gate_mean=0.446419 gate_abs=0.446419 local_beta=0.000000
+INFO:root:[IU-SCBR] step=211000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041065 r_min=0.040000 r_max=0.078798 entropy_mean=0.026629 gate_mean=0.463266 gate_abs=0.463266 local_beta=0.000000
+INFO:root:[IU-SCBR] step=212000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040969 r_min=0.040000 r_max=0.077296 entropy_mean=0.024214 gate_mean=0.465478 gate_abs=0.465478 local_beta=0.000000
+INFO:root:Epoch 55    loss=0.1184 [194.7 s]    dev=(HR@5:0.3416,NDCG@5:0.2376) [3.0 s]
+INFO:root:[IU-SCBR] step=213000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041032 r_min=0.040000 r_max=0.079859 entropy_mean=0.025804 gate_mean=0.469774 gate_abs=0.469774 local_beta=0.000000
+INFO:root:[IU-SCBR] step=214000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040569 r_min=0.040000 r_max=0.067017 entropy_mean=0.014222 gate_mean=0.451281 gate_abs=0.451281 local_beta=0.000000
+INFO:root:[IU-SCBR] step=215000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041187 r_min=0.040000 r_max=0.079995 entropy_mean=0.029681 gate_mean=0.464924 gate_abs=0.464924 local_beta=0.000000
+INFO:root:[IU-SCBR] step=216000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040546 r_min=0.040000 r_max=0.079632 entropy_mean=0.013649 gate_mean=0.465446 gate_abs=0.465446 local_beta=0.000000
+INFO:root:Epoch 56    loss=0.1180 [195.2 s]    dev=(HR@5:0.3406,NDCG@5:0.2358) [3.0 s]
+INFO:root:[IU-SCBR] step=217000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040907 r_min=0.040000 r_max=0.078452 entropy_mean=0.022682 gate_mean=0.456902 gate_abs=0.456902 local_beta=0.000000
+INFO:root:[IU-SCBR] step=218000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041160 r_min=0.040000 r_max=0.079942 entropy_mean=0.029005 gate_mean=0.442312 gate_abs=0.442312 local_beta=0.000000
+INFO:root:[IU-SCBR] step=219000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040552 r_min=0.040000 r_max=0.076939 entropy_mean=0.013790 gate_mean=0.468206 gate_abs=0.468206 local_beta=0.000000
+INFO:root:[IU-SCBR] step=220000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040985 r_min=0.040000 r_max=0.079622 entropy_mean=0.024628 gate_mean=0.465170 gate_abs=0.465170 local_beta=0.000000
+INFO:root:Epoch 57    loss=0.1175 [192.1 s]    dev=(HR@5:0.3328,NDCG@5:0.2312) [3.0 s]
+INFO:root:[IU-SCBR] step=221000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041545 r_min=0.040000 r_max=0.077997 entropy_mean=0.038630 gate_mean=0.443978 gate_abs=0.443978 local_beta=0.000000
+INFO:root:[IU-SCBR] step=222000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041141 r_min=0.040000 r_max=0.078147 entropy_mean=0.028525 gate_mean=0.464459 gate_abs=0.464459 local_beta=0.000000
+INFO:root:[IU-SCBR] step=223000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040815 r_min=0.040000 r_max=0.079864 entropy_mean=0.020367 gate_mean=0.463975 gate_abs=0.463975 local_beta=0.000000
+INFO:root:Epoch 58    loss=0.1181 [194.7 s]    dev=(HR@5:0.3377,NDCG@5:0.2354) [3.0 s]
+INFO:root:[IU-SCBR] step=224000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041191 r_min=0.040000 r_max=0.071122 entropy_mean=0.029784 gate_mean=0.456265 gate_abs=0.456265 local_beta=0.000000
+INFO:root:[IU-SCBR] step=225000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040685 r_min=0.040000 r_max=0.079920 entropy_mean=0.017115 gate_mean=0.462333 gate_abs=0.462333 local_beta=0.000000
+INFO:root:[IU-SCBR] step=226000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041234 r_min=0.040000 r_max=0.079664 entropy_mean=0.030861 gate_mean=0.459664 gate_abs=0.459664 local_beta=0.000000
+INFO:root:[IU-SCBR] step=227000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041492 r_min=0.040000 r_max=0.074471 entropy_mean=0.037294 gate_mean=0.447979 gate_abs=0.447979 local_beta=0.000000
+INFO:root:Epoch 59    loss=0.1175 [194.3 s]    dev=(HR@5:0.3344,NDCG@5:0.2329) [3.0 s]
+INFO:root:[IU-SCBR] step=228000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040926 r_min=0.040000 r_max=0.067854 entropy_mean=0.023155 gate_mean=0.458575 gate_abs=0.458575 local_beta=0.000000
+INFO:root:[IU-SCBR] step=229000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040323 r_min=0.040000 r_max=0.062690 entropy_mean=0.008070 gate_mean=0.462961 gate_abs=0.462961 local_beta=0.000000
+INFO:root:[IU-SCBR] step=230000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041088 r_min=0.040000 r_max=0.079040 entropy_mean=0.027210 gate_mean=0.456913 gate_abs=0.456913 local_beta=0.000000
+INFO:root:[IU-SCBR] step=231000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041227 r_min=0.040000 r_max=0.076960 entropy_mean=0.030678 gate_mean=0.444052 gate_abs=0.444052 local_beta=0.000000
+INFO:root:Epoch 60    loss=0.1175 [194.1 s]    dev=(HR@5:0.3373,NDCG@5:0.2356) [3.0 s]
+INFO:root:[IU-SCBR] step=232000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041325 r_min=0.040000 r_max=0.079947 entropy_mean=0.033129 gate_mean=0.450361 gate_abs=0.450361 local_beta=0.000000
+INFO:root:[IU-SCBR] step=233000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040519 r_min=0.040000 r_max=0.069286 entropy_mean=0.012973 gate_mean=0.456313 gate_abs=0.456313 local_beta=0.000000
+INFO:root:[IU-SCBR] step=234000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041212 r_min=0.040000 r_max=0.079909 entropy_mean=0.030312 gate_mean=0.445408 gate_abs=0.445408 local_beta=0.000000
+INFO:root:[IU-SCBR] step=235000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041489 r_min=0.040000 r_max=0.079813 entropy_mean=0.037227 gate_mean=0.453174 gate_abs=0.453174 local_beta=0.000000
+INFO:root:Epoch 61    loss=0.1175 [192.7 s]    dev=(HR@5:0.3298,NDCG@5:0.2292) [3.0 s]
+INFO:root:[IU-SCBR] step=236000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040281 r_min=0.040000 r_max=0.070293 entropy_mean=0.007030 gate_mean=0.465888 gate_abs=0.465888 local_beta=0.000000
+INFO:root:[IU-SCBR] step=237000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040892 r_min=0.040000 r_max=0.077587 entropy_mean=0.022302 gate_mean=0.441725 gate_abs=0.441725 local_beta=0.000000
+INFO:root:[IU-SCBR] step=238000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040898 r_min=0.040000 r_max=0.066509 entropy_mean=0.022452 gate_mean=0.456423 gate_abs=0.456423 local_beta=0.000000
+INFO:root:[IU-SCBR] step=239000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041445 r_min=0.040000 r_max=0.078242 entropy_mean=0.036131 gate_mean=0.461659 gate_abs=0.461659 local_beta=0.000000
+INFO:root:Epoch 62    loss=0.1171 [194.1 s]    dev=(HR@5:0.3371,NDCG@5:0.2340) [3.0 s]
+INFO:root:[IU-SCBR] step=240000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040618 r_min=0.040000 r_max=0.079547 entropy_mean=0.015456 gate_mean=0.458893 gate_abs=0.458893 local_beta=0.000000
+INFO:root:[IU-SCBR] step=241000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040891 r_min=0.040000 r_max=0.078810 entropy_mean=0.022283 gate_mean=0.471205 gate_abs=0.471205 local_beta=0.000000
+INFO:root:[IU-SCBR] step=242000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041258 r_min=0.040000 r_max=0.077343 entropy_mean=0.031448 gate_mean=0.462002 gate_abs=0.462002 local_beta=0.000000
+INFO:root:[IU-SCBR] step=243000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040500 r_min=0.040000 r_max=0.078109 entropy_mean=0.012501 gate_mean=0.460879 gate_abs=0.460879 local_beta=0.000000
+INFO:root:Epoch 63    loss=0.1166 [193.8 s]    dev=(HR@5:0.3356,NDCG@5:0.2323) [3.0 s]
+INFO:root:[IU-SCBR] step=244000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041028 r_min=0.040000 r_max=0.070384 entropy_mean=0.025688 gate_mean=0.437295 gate_abs=0.437295 local_beta=0.000000
+INFO:root:[IU-SCBR] step=245000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040742 r_min=0.040000 r_max=0.065718 entropy_mean=0.018562 gate_mean=0.446942 gate_abs=0.446942 local_beta=0.000000
+INFO:root:[IU-SCBR] step=246000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041038 r_min=0.040000 r_max=0.078485 entropy_mean=0.025957 gate_mean=0.454909 gate_abs=0.454909 local_beta=0.000000
+INFO:root:[IU-SCBR] step=247000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040877 r_min=0.040000 r_max=0.073886 entropy_mean=0.021931 gate_mean=0.460651 gate_abs=0.460651 local_beta=0.000000
+INFO:root:Epoch 64    loss=0.1170 [193.5 s]    dev=(HR@5:0.3401,NDCG@5:0.2358) [3.0 s]
+INFO:root:[IU-SCBR] step=248000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040961 r_min=0.040000 r_max=0.072302 entropy_mean=0.024015 gate_mean=0.439015 gate_abs=0.439015 local_beta=0.000000
+INFO:root:[IU-SCBR] step=249000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040842 r_min=0.040000 r_max=0.078610 entropy_mean=0.021057 gate_mean=0.449449 gate_abs=0.449449 local_beta=0.000000
+INFO:root:[IU-SCBR] step=250000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040924 r_min=0.040000 r_max=0.078779 entropy_mean=0.023091 gate_mean=0.462680 gate_abs=0.462680 local_beta=0.000000
+INFO:root:Epoch 65    loss=0.1173 [195.3 s]    dev=(HR@5:0.3326,NDCG@5:0.2314) [3.0 s]
+INFO:root:[IU-SCBR] step=251000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041229 r_min=0.040000 r_max=0.066343 entropy_mean=0.030717 gate_mean=0.447114 gate_abs=0.447114 local_beta=0.000000
+INFO:root:[IU-SCBR] step=252000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041740 r_min=0.040000 r_max=0.079129 entropy_mean=0.043490 gate_mean=0.440462 gate_abs=0.440462 local_beta=0.000000
+INFO:root:[IU-SCBR] step=253000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040791 r_min=0.040000 r_max=0.074181 entropy_mean=0.019776 gate_mean=0.455198 gate_abs=0.455198 local_beta=0.000000
+INFO:root:[IU-SCBR] step=254000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041740 r_min=0.040000 r_max=0.079440 entropy_mean=0.043489 gate_mean=0.450804 gate_abs=0.450804 local_beta=0.000000
+INFO:root:Epoch 66    loss=0.1169 [191.7 s]    dev=(HR@5:0.3382,NDCG@5:0.2361) [3.0 s]
+INFO:root:[IU-SCBR] step=255000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040947 r_min=0.040000 r_max=0.078178 entropy_mean=0.023686 gate_mean=0.458445 gate_abs=0.458445 local_beta=0.000000
+INFO:root:[IU-SCBR] step=256000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040863 r_min=0.040000 r_max=0.076107 entropy_mean=0.021574 gate_mean=0.451585 gate_abs=0.451585 local_beta=0.000000
+INFO:root:[IU-SCBR] step=257000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040546 r_min=0.040000 r_max=0.079836 entropy_mean=0.013655 gate_mean=0.454115 gate_abs=0.454115 local_beta=0.000000
+INFO:root:[IU-SCBR] step=258000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040605 r_min=0.040000 r_max=0.063123 entropy_mean=0.015115 gate_mean=0.463950 gate_abs=0.463950 local_beta=0.000000
+INFO:root:Epoch 67    loss=0.1168 [193.7 s]    dev=(HR@5:0.3344,NDCG@5:0.2323) [3.0 s]
+INFO:root:[IU-SCBR] step=259000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041063 r_min=0.040000 r_max=0.077911 entropy_mean=0.026571 gate_mean=0.451989 gate_abs=0.451989 local_beta=0.000000
+INFO:root:[IU-SCBR] step=260000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041023 r_min=0.040000 r_max=0.078073 entropy_mean=0.025567 gate_mean=0.458609 gate_abs=0.458609 local_beta=0.000000
+INFO:root:[IU-SCBR] step=261000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040582 r_min=0.040000 r_max=0.079786 entropy_mean=0.014540 gate_mean=0.472334 gate_abs=0.472334 local_beta=0.000000
+INFO:root:[IU-SCBR] step=262000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040969 r_min=0.040000 r_max=0.076953 entropy_mean=0.024226 gate_mean=0.452552 gate_abs=0.452552 local_beta=0.000000
+INFO:root:Epoch 68    loss=0.1168 [193.1 s]    dev=(HR@5:0.3354,NDCG@5:0.2340) [3.0 s]
+INFO:root:[IU-SCBR] step=263000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041409 r_min=0.040000 r_max=0.077138 entropy_mean=0.035233 gate_mean=0.449543 gate_abs=0.449543 local_beta=0.000000
+INFO:root:[IU-SCBR] step=264000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040985 r_min=0.040000 r_max=0.079662 entropy_mean=0.024626 gate_mean=0.452599 gate_abs=0.452599 local_beta=0.000000
+INFO:root:[IU-SCBR] step=265000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041373 r_min=0.040000 r_max=0.079946 entropy_mean=0.034324 gate_mean=0.440408 gate_abs=0.440408 local_beta=0.000000
+INFO:root:[IU-SCBR] step=266000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041121 r_min=0.040000 r_max=0.072224 entropy_mean=0.028032 gate_mean=0.434465 gate_abs=0.434465 local_beta=0.000000
+INFO:root:Epoch 69    loss=0.1163 [192.4 s]    dev=(HR@5:0.3318,NDCG@5:0.2312) [3.3 s]
+INFO:root:[IU-SCBR] step=267000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.042070 r_min=0.040000 r_max=0.079698 entropy_mean=0.051757 gate_mean=0.438865 gate_abs=0.438865 local_beta=0.000000
+INFO:root:[IU-SCBR] step=268000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040414 r_min=0.040000 r_max=0.062305 entropy_mean=0.010343 gate_mean=0.456574 gate_abs=0.456574 local_beta=0.000000
+INFO:root:[IU-SCBR] step=269000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041014 r_min=0.040000 r_max=0.079641 entropy_mean=0.025355 gate_mean=0.461508 gate_abs=0.461508 local_beta=0.000000
+INFO:root:[IU-SCBR] step=270000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040703 r_min=0.040000 r_max=0.079438 entropy_mean=0.017583 gate_mean=0.463551 gate_abs=0.463551 local_beta=0.000000
+INFO:root:Epoch 70    loss=0.1164 [182.5 s]    dev=(HR@5:0.3310,NDCG@5:0.2319) [3.3 s]
+INFO:root:[IU-SCBR] step=271000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040462 r_min=0.040000 r_max=0.061831 entropy_mean=0.011551 gate_mean=0.458419 gate_abs=0.458419 local_beta=0.000000
+INFO:root:[IU-SCBR] step=272000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041547 r_min=0.040000 r_max=0.079994 entropy_mean=0.038681 gate_mean=0.456243 gate_abs=0.456243 local_beta=0.000000
+INFO:root:[IU-SCBR] step=273000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041657 r_min=0.040000 r_max=0.075841 entropy_mean=0.041420 gate_mean=0.458274 gate_abs=0.458274 local_beta=0.000000
+INFO:root:[IU-SCBR] step=274000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040964 r_min=0.040000 r_max=0.073989 entropy_mean=0.024105 gate_mean=0.461452 gate_abs=0.461452 local_beta=0.000000
+INFO:root:Epoch 71    loss=0.1161 [179.4 s]    dev=(HR@5:0.3353,NDCG@5:0.2345) [3.3 s]
+INFO:root:[IU-SCBR] step=275000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040960 r_min=0.040000 r_max=0.079825 entropy_mean=0.024009 gate_mean=0.451191 gate_abs=0.451191 local_beta=0.000000
+INFO:root:[IU-SCBR] step=276000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040994 r_min=0.040000 r_max=0.079394 entropy_mean=0.024858 gate_mean=0.450345 gate_abs=0.450345 local_beta=0.000000
+INFO:root:[IU-SCBR] step=277000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040880 r_min=0.040000 r_max=0.079881 entropy_mean=0.021995 gate_mean=0.450238 gate_abs=0.450238 local_beta=0.000000
+INFO:root:Epoch 72    loss=0.1165 [180.4 s]    dev=(HR@5:0.3411,NDCG@5:0.2387) [3.3 s] *
+INFO:root:[IU-SCBR] step=278000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040800 r_min=0.040000 r_max=0.080000 entropy_mean=0.020005 gate_mean=0.451116 gate_abs=0.451116 local_beta=0.000000
+INFO:root:[IU-SCBR] step=279000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041075 r_min=0.040000 r_max=0.079847 entropy_mean=0.026867 gate_mean=0.455196 gate_abs=0.455196 local_beta=0.000000
+INFO:root:[IU-SCBR] step=280000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040867 r_min=0.040000 r_max=0.079833 entropy_mean=0.021686 gate_mean=0.468563 gate_abs=0.468563 local_beta=0.000000
+INFO:root:[IU-SCBR] step=281000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040571 r_min=0.040000 r_max=0.073028 entropy_mean=0.014276 gate_mean=0.458268 gate_abs=0.458268 local_beta=0.000000
+INFO:root:Epoch 73    loss=0.1161 [179.6 s]    dev=(HR@5:0.3310,NDCG@5:0.2304) [3.4 s]
+INFO:root:[IU-SCBR] step=282000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040978 r_min=0.040000 r_max=0.076292 entropy_mean=0.024462 gate_mean=0.464525 gate_abs=0.464525 local_beta=0.000000
+INFO:root:[IU-SCBR] step=283000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040707 r_min=0.040000 r_max=0.073124 entropy_mean=0.017665 gate_mean=0.444441 gate_abs=0.444441 local_beta=0.000000
+INFO:root:[IU-SCBR] step=284000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040921 r_min=0.040000 r_max=0.077536 entropy_mean=0.023037 gate_mean=0.462839 gate_abs=0.462839 local_beta=0.000000
+INFO:root:[IU-SCBR] step=285000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041445 r_min=0.040000 r_max=0.079757 entropy_mean=0.036120 gate_mean=0.442689 gate_abs=0.442689 local_beta=0.000000
+INFO:root:Epoch 74    loss=0.1159 [179.6 s]    dev=(HR@5:0.3407,NDCG@5:0.2385) [3.4 s]
+INFO:root:[IU-SCBR] step=286000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041000 r_min=0.040000 r_max=0.079177 entropy_mean=0.024992 gate_mean=0.448763 gate_abs=0.448763 local_beta=0.000000
+INFO:root:[IU-SCBR] step=287000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041209 r_min=0.040000 r_max=0.078809 entropy_mean=0.030226 gate_mean=0.460463 gate_abs=0.460463 local_beta=0.000000
+INFO:root:[IU-SCBR] step=288000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041394 r_min=0.040000 r_max=0.079446 entropy_mean=0.034841 gate_mean=0.444531 gate_abs=0.444531 local_beta=0.000000
+INFO:root:[IU-SCBR] step=289000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041025 r_min=0.040000 r_max=0.079922 entropy_mean=0.025624 gate_mean=0.437326 gate_abs=0.437326 local_beta=0.000000
+INFO:root:Epoch 75    loss=0.1156 [181.1 s]    dev=(HR@5:0.3396,NDCG@5:0.2364) [3.3 s]
+INFO:root:[IU-SCBR] step=290000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041046 r_min=0.040000 r_max=0.079900 entropy_mean=0.026153 gate_mean=0.443115 gate_abs=0.443115 local_beta=0.000000
+INFO:root:[IU-SCBR] step=291000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040375 r_min=0.040000 r_max=0.064242 entropy_mean=0.009372 gate_mean=0.459295 gate_abs=0.459295 local_beta=0.000000
+INFO:root:[IU-SCBR] step=292000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040522 r_min=0.040000 r_max=0.075077 entropy_mean=0.013050 gate_mean=0.455741 gate_abs=0.455741 local_beta=0.000000
+INFO:root:[IU-SCBR] step=293000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041179 r_min=0.040000 r_max=0.079592 entropy_mean=0.029478 gate_mean=0.457373 gate_abs=0.457373 local_beta=0.000000
+INFO:root:Epoch 76    loss=0.1155 [180.7 s]    dev=(HR@5:0.3401,NDCG@5:0.2378) [3.3 s]
+INFO:root:[IU-SCBR] step=294000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041552 r_min=0.040000 r_max=0.079996 entropy_mean=0.038792 gate_mean=0.447642 gate_abs=0.447642 local_beta=0.000000
+INFO:root:[IU-SCBR] step=295000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040812 r_min=0.040000 r_max=0.079161 entropy_mean=0.020290 gate_mean=0.433306 gate_abs=0.433306 local_beta=0.000000
+INFO:root:[IU-SCBR] step=296000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041461 r_min=0.040000 r_max=0.079473 entropy_mean=0.036534 gate_mean=0.452134 gate_abs=0.452134 local_beta=0.000000
+INFO:root:[IU-SCBR] step=297000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041235 r_min=0.040000 r_max=0.079415 entropy_mean=0.030864 gate_mean=0.459203 gate_abs=0.459203 local_beta=0.000000
+INFO:root:Epoch 77    loss=0.1158 [181.2 s]    dev=(HR@5:0.3379,NDCG@5:0.2366) [3.2 s]
+INFO:root:[IU-SCBR] step=298000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040874 r_min=0.040000 r_max=0.071281 entropy_mean=0.021851 gate_mean=0.441570 gate_abs=0.441570 local_beta=0.000000
+INFO:root:[IU-SCBR] step=299000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041035 r_min=0.040000 r_max=0.079815 entropy_mean=0.025868 gate_mean=0.454625 gate_abs=0.454625 local_beta=0.000000
+INFO:root:[IU-SCBR] step=300000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040897 r_min=0.040000 r_max=0.072045 entropy_mean=0.022426 gate_mean=0.445029 gate_abs=0.445029 local_beta=0.000000
+INFO:root:[IU-SCBR] step=301000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040823 r_min=0.040000 r_max=0.062382 entropy_mean=0.020586 gate_mean=0.453817 gate_abs=0.453817 local_beta=0.000000
+INFO:root:Epoch 78    loss=0.1152 [179.6 s]    dev=(HR@5:0.3422,NDCG@5:0.2383) [3.3 s]
+INFO:root:[IU-SCBR] step=302000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040836 r_min=0.040000 r_max=0.073942 entropy_mean=0.020900 gate_mean=0.478430 gate_abs=0.478430 local_beta=0.000000
+INFO:root:[IU-SCBR] step=303000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041248 r_min=0.040000 r_max=0.079336 entropy_mean=0.031198 gate_mean=0.429620 gate_abs=0.429620 local_beta=0.000000
+INFO:root:[IU-SCBR] step=304000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040946 r_min=0.040000 r_max=0.076197 entropy_mean=0.023660 gate_mean=0.455954 gate_abs=0.455954 local_beta=0.000000
+INFO:root:Epoch 79    loss=0.1154 [180.7 s]    dev=(HR@5:0.3366,NDCG@5:0.2338) [3.3 s]
+INFO:root:[IU-SCBR] step=306000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040989 r_min=0.040000 r_max=0.079890 entropy_mean=0.024737 gate_mean=0.452386 gate_abs=0.452386 local_beta=0.000000
+INFO:root:[IU-SCBR] step=307000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041297 r_min=0.040000 r_max=0.079908 entropy_mean=0.032416 gate_mean=0.460332 gate_abs=0.460332 local_beta=0.000000
+INFO:root:[IU-SCBR] step=308000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040850 r_min=0.040000 r_max=0.079169 entropy_mean=0.021255 gate_mean=0.443216 gate_abs=0.443216 local_beta=0.000000
+INFO:root:Epoch 80    loss=0.1154 [180.9 s]    dev=(HR@5:0.3359,NDCG@5:0.2331) [3.1 s]
+INFO:root:[IU-SCBR] step=309000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040761 r_min=0.040000 r_max=0.079936 entropy_mean=0.019017 gate_mean=0.455784 gate_abs=0.455784 local_beta=0.000000
+INFO:root:[IU-SCBR] step=310000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040458 r_min=0.040000 r_max=0.079640 entropy_mean=0.011458 gate_mean=0.474337 gate_abs=0.474337 local_beta=0.000000
+INFO:root:[IU-SCBR] step=311000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040602 r_min=0.040000 r_max=0.061538 entropy_mean=0.015042 gate_mean=0.447209 gate_abs=0.447209 local_beta=0.000000
+INFO:root:[IU-SCBR] step=312000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040770 r_min=0.040000 r_max=0.062380 entropy_mean=0.019250 gate_mean=0.457710 gate_abs=0.457710 local_beta=0.000000
+INFO:root:Epoch 81    loss=0.1156 [181.8 s]    dev=(HR@5:0.3379,NDCG@5:0.2360) [3.3 s]
+INFO:root:[IU-SCBR] step=313000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040744 r_min=0.040000 r_max=0.079992 entropy_mean=0.018594 gate_mean=0.446515 gate_abs=0.446515 local_beta=0.000000
+INFO:root:[IU-SCBR] step=314000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041074 r_min=0.040000 r_max=0.079696 entropy_mean=0.026857 gate_mean=0.444689 gate_abs=0.444689 local_beta=0.000000
+INFO:root:[IU-SCBR] step=315000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040692 r_min=0.040000 r_max=0.078487 entropy_mean=0.017311 gate_mean=0.468815 gate_abs=0.468815 local_beta=0.000000
+INFO:root:[IU-SCBR] step=316000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041017 r_min=0.040000 r_max=0.068276 entropy_mean=0.025421 gate_mean=0.441636 gate_abs=0.441636 local_beta=0.000000
+INFO:root:Epoch 82    loss=0.1156 [180.5 s]    dev=(HR@5:0.3339,NDCG@5:0.2334) [3.3 s]
+INFO:root:[IU-SCBR] step=317000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040844 r_min=0.040000 r_max=0.079979 entropy_mean=0.021103 gate_mean=0.462771 gate_abs=0.462771 local_beta=0.000000
+INFO:root:[IU-SCBR] step=318000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041316 r_min=0.040000 r_max=0.079496 entropy_mean=0.032905 gate_mean=0.443364 gate_abs=0.443364 local_beta=0.000000
+INFO:root:[IU-SCBR] step=319000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040597 r_min=0.040000 r_max=0.064576 entropy_mean=0.014927 gate_mean=0.441511 gate_abs=0.441511 local_beta=0.000000
+INFO:root:[IU-SCBR] step=320000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041009 r_min=0.040000 r_max=0.079639 entropy_mean=0.025217 gate_mean=0.443019 gate_abs=0.443019 local_beta=0.000000
+INFO:root:Epoch 83    loss=0.1151 [179.4 s]    dev=(HR@5:0.3425,NDCG@5:0.2373) [3.2 s]
+INFO:root:[IU-SCBR] step=321000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041278 r_min=0.040000 r_max=0.079521 entropy_mean=0.031944 gate_mean=0.467693 gate_abs=0.467693 local_beta=0.000000
+INFO:root:[IU-SCBR] step=322000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041289 r_min=0.040000 r_max=0.079980 entropy_mean=0.032227 gate_mean=0.454280 gate_abs=0.454280 local_beta=0.000000
+INFO:root:[IU-SCBR] step=323000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040901 r_min=0.040000 r_max=0.079999 entropy_mean=0.022523 gate_mean=0.447923 gate_abs=0.447923 local_beta=0.000000
+INFO:root:[IU-SCBR] step=324000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040691 r_min=0.040000 r_max=0.076488 entropy_mean=0.017278 gate_mean=0.461081 gate_abs=0.461081 local_beta=0.000000
+INFO:root:Epoch 84    loss=0.1150 [179.6 s]    dev=(HR@5:0.3336,NDCG@5:0.2334) [3.3 s]
+INFO:root:[IU-SCBR] step=325000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040745 r_min=0.040000 r_max=0.067997 entropy_mean=0.018618 gate_mean=0.455890 gate_abs=0.455890 local_beta=0.000000
+INFO:root:[IU-SCBR] step=326000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041191 r_min=0.040000 r_max=0.079603 entropy_mean=0.029779 gate_mean=0.447660 gate_abs=0.447660 local_beta=0.000000
+INFO:root:[IU-SCBR] step=327000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041216 r_min=0.040000 r_max=0.078758 entropy_mean=0.030409 gate_mean=0.457506 gate_abs=0.457506 local_beta=0.000000
+INFO:root:[IU-SCBR] step=328000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.042015 r_min=0.040000 r_max=0.079945 entropy_mean=0.050375 gate_mean=0.435322 gate_abs=0.435322 local_beta=0.000000
+INFO:root:Epoch 85    loss=0.1150 [179.8 s]    dev=(HR@5:0.3371,NDCG@5:0.2348) [3.2 s]
+INFO:root:[IU-SCBR] step=329000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041368 r_min=0.040000 r_max=0.079052 entropy_mean=0.034209 gate_mean=0.446978 gate_abs=0.446978 local_beta=0.000000
+INFO:root:[IU-SCBR] step=330000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041007 r_min=0.040000 r_max=0.064426 entropy_mean=0.025171 gate_mean=0.439933 gate_abs=0.439933 local_beta=0.000000
+INFO:root:[IU-SCBR] step=331000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040595 r_min=0.040000 r_max=0.071101 entropy_mean=0.014880 gate_mean=0.449138 gate_abs=0.449138 local_beta=0.000000
+INFO:root:[IU-SCBR] step=332000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041014 r_min=0.040000 r_max=0.073942 entropy_mean=0.025354 gate_mean=0.440206 gate_abs=0.440206 local_beta=0.000000
+INFO:root:Epoch 86    loss=0.1152 [179.0 s]    dev=(HR@5:0.3384,NDCG@5:0.2355) [3.4 s]
+INFO:root:[IU-SCBR] step=333000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040661 r_min=0.040000 r_max=0.074236 entropy_mean=0.016536 gate_mean=0.451373 gate_abs=0.451373 local_beta=0.000000
+INFO:root:[IU-SCBR] step=334000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041100 r_min=0.040000 r_max=0.079943 entropy_mean=0.027489 gate_mean=0.442908 gate_abs=0.442908 local_beta=0.000000
+INFO:root:[IU-SCBR] step=335000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040882 r_min=0.040000 r_max=0.078528 entropy_mean=0.022048 gate_mean=0.440253 gate_abs=0.440253 local_beta=0.000000
+INFO:root:Epoch 87    loss=0.1154 [179.9 s]    dev=(HR@5:0.3361,NDCG@5:0.2324) [3.3 s]
+INFO:root:[IU-SCBR] step=336000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041043 r_min=0.040000 r_max=0.079844 entropy_mean=0.026074 gate_mean=0.443845 gate_abs=0.443845 local_beta=0.000000
+INFO:root:[IU-SCBR] step=337000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040690 r_min=0.040000 r_max=0.079987 entropy_mean=0.017238 gate_mean=0.452484 gate_abs=0.452484 local_beta=0.000000
+INFO:root:[IU-SCBR] step=338000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041022 r_min=0.040000 r_max=0.072811 entropy_mean=0.025543 gate_mean=0.453848 gate_abs=0.453848 local_beta=0.000000
+INFO:root:[IU-SCBR] step=339000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041126 r_min=0.040000 r_max=0.079686 entropy_mean=0.028146 gate_mean=0.456535 gate_abs=0.456535 local_beta=0.000000
+INFO:root:Epoch 88    loss=0.1150 [180.7 s]    dev=(HR@5:0.3402,NDCG@5:0.2368) [3.2 s]
+INFO:root:[IU-SCBR] step=340000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040957 r_min=0.040000 r_max=0.079925 entropy_mean=0.023917 gate_mean=0.447662 gate_abs=0.447662 local_beta=0.000000
+INFO:root:[IU-SCBR] step=341000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041034 r_min=0.040000 r_max=0.080000 entropy_mean=0.025856 gate_mean=0.463364 gate_abs=0.463364 local_beta=0.000000
+INFO:root:[IU-SCBR] step=342000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041107 r_min=0.040000 r_max=0.077662 entropy_mean=0.027663 gate_mean=0.449534 gate_abs=0.449534 local_beta=0.000000
+INFO:root:[IU-SCBR] step=343000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041409 r_min=0.040000 r_max=0.077310 entropy_mean=0.035222 gate_mean=0.440135 gate_abs=0.440135 local_beta=0.000000
+INFO:root:Epoch 89    loss=0.1148 [179.9 s]    dev=(HR@5:0.3371,NDCG@5:0.2359) [3.3 s]
+INFO:root:[IU-SCBR] step=344000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040554 r_min=0.040000 r_max=0.076094 entropy_mean=0.013853 gate_mean=0.432372 gate_abs=0.432372 local_beta=0.000000
+INFO:root:[IU-SCBR] step=345000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040912 r_min=0.040000 r_max=0.079175 entropy_mean=0.022810 gate_mean=0.452460 gate_abs=0.452460 local_beta=0.000000
+INFO:root:[IU-SCBR] step=346000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041057 r_min=0.040000 r_max=0.078459 entropy_mean=0.026415 gate_mean=0.442806 gate_abs=0.442806 local_beta=0.000000
+INFO:root:[IU-SCBR] step=347000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041467 r_min=0.040000 r_max=0.079638 entropy_mean=0.036668 gate_mean=0.447530 gate_abs=0.447530 local_beta=0.000000
+INFO:root:Epoch 90    loss=0.1145 [180.2 s]    dev=(HR@5:0.3374,NDCG@5:0.2383) [3.2 s]
+INFO:root:[IU-SCBR] step=348000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040814 r_min=0.040000 r_max=0.077040 entropy_mean=0.020346 gate_mean=0.441062 gate_abs=0.441062 local_beta=0.000000
+INFO:root:[IU-SCBR] step=349000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041053 r_min=0.040000 r_max=0.078527 entropy_mean=0.026329 gate_mean=0.440132 gate_abs=0.440132 local_beta=0.000000
+INFO:root:[IU-SCBR] step=350000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040846 r_min=0.040000 r_max=0.079967 entropy_mean=0.021148 gate_mean=0.434272 gate_abs=0.434272 local_beta=0.000000
+INFO:root:[IU-SCBR] step=351000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040376 r_min=0.040000 r_max=0.065322 entropy_mean=0.009411 gate_mean=0.467070 gate_abs=0.467070 local_beta=0.000000
+INFO:root:Epoch 91    loss=0.1152 [179.8 s]    dev=(HR@5:0.3389,NDCG@5:0.2363) [3.3 s]
+INFO:root:[IU-SCBR] step=352000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040794 r_min=0.040000 r_max=0.079106 entropy_mean=0.019850 gate_mean=0.451024 gate_abs=0.451024 local_beta=0.000000
+INFO:root:[IU-SCBR] step=353000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040822 r_min=0.040000 r_max=0.079578 entropy_mean=0.020544 gate_mean=0.446767 gate_abs=0.446767 local_beta=0.000000
+INFO:root:[IU-SCBR] step=354000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041000 r_min=0.040000 r_max=0.077734 entropy_mean=0.024995 gate_mean=0.428904 gate_abs=0.428904 local_beta=0.000000
+INFO:root:[IU-SCBR] step=355000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040543 r_min=0.040000 r_max=0.078426 entropy_mean=0.013578 gate_mean=0.458796 gate_abs=0.458796 local_beta=0.000000
+INFO:root:Epoch 92    loss=0.1148 [180.9 s]    dev=(HR@5:0.3419,NDCG@5:0.2393) [3.2 s] *
+INFO:root:[IU-SCBR] step=356000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041199 r_min=0.040000 r_max=0.079885 entropy_mean=0.029978 gate_mean=0.439887 gate_abs=0.439887 local_beta=0.000000
+INFO:root:[IU-SCBR] step=357000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040572 r_min=0.040000 r_max=0.078052 entropy_mean=0.014304 gate_mean=0.444950 gate_abs=0.444950 local_beta=0.000000
+INFO:root:[IU-SCBR] step=358000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040940 r_min=0.040000 r_max=0.063523 entropy_mean=0.023504 gate_mean=0.454635 gate_abs=0.454635 local_beta=0.000000
+INFO:root:[IU-SCBR] step=359000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040775 r_min=0.040000 r_max=0.074855 entropy_mean=0.019386 gate_mean=0.444690 gate_abs=0.444690 local_beta=0.000000
+INFO:root:Epoch 93    loss=0.1147 [179.4 s]    dev=(HR@5:0.3366,NDCG@5:0.2353) [3.5 s]
+INFO:root:[IU-SCBR] step=360000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041176 r_min=0.040000 r_max=0.079631 entropy_mean=0.029411 gate_mean=0.439925 gate_abs=0.439925 local_beta=0.000000
+INFO:root:[IU-SCBR] step=361000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041211 r_min=0.040000 r_max=0.076446 entropy_mean=0.030270 gate_mean=0.456972 gate_abs=0.456972 local_beta=0.000000
+INFO:root:[IU-SCBR] step=362000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040819 r_min=0.040000 r_max=0.066331 entropy_mean=0.020467 gate_mean=0.464227 gate_abs=0.464227 local_beta=0.000000
+INFO:root:Epoch 94    loss=0.1140 [186.0 s]    dev=(HR@5:0.3377,NDCG@5:0.2355) [3.4 s]
+INFO:root:[IU-SCBR] step=363000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041158 r_min=0.040000 r_max=0.079102 entropy_mean=0.028959 gate_mean=0.431360 gate_abs=0.431360 local_beta=0.000000
+INFO:root:[IU-SCBR] step=364000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040667 r_min=0.040000 r_max=0.079936 entropy_mean=0.016663 gate_mean=0.449375 gate_abs=0.449375 local_beta=0.000000
+INFO:root:[IU-SCBR] step=365000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040819 r_min=0.040000 r_max=0.075413 entropy_mean=0.020474 gate_mean=0.429474 gate_abs=0.429474 local_beta=0.000000
+INFO:root:[IU-SCBR] step=366000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040879 r_min=0.040000 r_max=0.071944 entropy_mean=0.021982 gate_mean=0.443064 gate_abs=0.443064 local_beta=0.000000
+INFO:root:Epoch 95    loss=0.1143 [184.3 s]    dev=(HR@5:0.3336,NDCG@5:0.2344) [3.2 s]
+INFO:root:[IU-SCBR] step=367000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041770 r_min=0.040000 r_max=0.079764 entropy_mean=0.044243 gate_mean=0.451816 gate_abs=0.451816 local_beta=0.000000
+INFO:root:[IU-SCBR] step=368000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040823 r_min=0.040000 r_max=0.079790 entropy_mean=0.020584 gate_mean=0.454583 gate_abs=0.454583 local_beta=0.000000
+INFO:root:[IU-SCBR] step=369000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040409 r_min=0.040000 r_max=0.062715 entropy_mean=0.010237 gate_mean=0.457870 gate_abs=0.457870 local_beta=0.000000
+INFO:root:[IU-SCBR] step=370000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040972 r_min=0.040000 r_max=0.069881 entropy_mean=0.024299 gate_mean=0.438678 gate_abs=0.438678 local_beta=0.000000
+INFO:root:Epoch 96    loss=0.1147 [185.1 s]    dev=(HR@5:0.3361,NDCG@5:0.2353) [3.2 s]
+INFO:root:[IU-SCBR] step=371000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040824 r_min=0.040000 r_max=0.078576 entropy_mean=0.020599 gate_mean=0.451239 gate_abs=0.451239 local_beta=0.000000
+INFO:root:[IU-SCBR] step=372000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040813 r_min=0.040000 r_max=0.079778 entropy_mean=0.020329 gate_mean=0.441853 gate_abs=0.441853 local_beta=0.000000
+INFO:root:[IU-SCBR] step=373000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041488 r_min=0.040000 r_max=0.079104 entropy_mean=0.037192 gate_mean=0.432665 gate_abs=0.432665 local_beta=0.000000
+INFO:root:[IU-SCBR] step=374000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040508 r_min=0.040000 r_max=0.061049 entropy_mean=0.012700 gate_mean=0.445220 gate_abs=0.445220 local_beta=0.000000
+INFO:root:Epoch 97    loss=0.1141 [193.0 s]    dev=(HR@5:0.3377,NDCG@5:0.2376) [3.4 s]
+INFO:root:[IU-SCBR] step=375000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040899 r_min=0.040000 r_max=0.079130 entropy_mean=0.022474 gate_mean=0.457647 gate_abs=0.457647 local_beta=0.000000
+INFO:root:[IU-SCBR] step=376000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041037 r_min=0.040000 r_max=0.075413 entropy_mean=0.025936 gate_mean=0.451636 gate_abs=0.451636 local_beta=0.000000
+INFO:root:[IU-SCBR] step=377000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040961 r_min=0.040000 r_max=0.077155 entropy_mean=0.024024 gate_mean=0.455188 gate_abs=0.455188 local_beta=0.000000
+INFO:root:[IU-SCBR] step=378000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041175 r_min=0.040000 r_max=0.079303 entropy_mean=0.029372 gate_mean=0.442723 gate_abs=0.442723 local_beta=0.000000
+INFO:root:Epoch 98    loss=0.1149 [186.7 s]    dev=(HR@5:0.3457,NDCG@5:0.2389) [3.1 s]
+INFO:root:[IU-SCBR] step=379000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040625 r_min=0.040000 r_max=0.073249 entropy_mean=0.015633 gate_mean=0.440623 gate_abs=0.440623 local_beta=0.000000
+INFO:root:[IU-SCBR] step=380000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040858 r_min=0.040000 r_max=0.079743 entropy_mean=0.021462 gate_mean=0.456216 gate_abs=0.456216 local_beta=0.000000
+INFO:root:[IU-SCBR] step=381000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040790 r_min=0.040000 r_max=0.071095 entropy_mean=0.019751 gate_mean=0.450356 gate_abs=0.450356 local_beta=0.000000
+INFO:root:[IU-SCBR] step=382000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040587 r_min=0.040000 r_max=0.070508 entropy_mean=0.014667 gate_mean=0.452602 gate_abs=0.452602 local_beta=0.000000
+INFO:root:Epoch 99    loss=0.1144 [178.0 s]    dev=(HR@5:0.3353,NDCG@5:0.2347) [3.3 s]
+INFO:root:[IU-SCBR] step=383000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041484 r_min=0.040000 r_max=0.079416 entropy_mean=0.037090 gate_mean=0.445819 gate_abs=0.445819 local_beta=0.000000
+INFO:root:[IU-SCBR] step=384000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040909 r_min=0.040000 r_max=0.074476 entropy_mean=0.022723 gate_mean=0.430298 gate_abs=0.430298 local_beta=0.000000
+INFO:root:[IU-SCBR] step=385000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040913 r_min=0.040000 r_max=0.079940 entropy_mean=0.022834 gate_mean=0.445704 gate_abs=0.445704 local_beta=0.000000
+INFO:root:[IU-SCBR] step=386000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041233 r_min=0.040000 r_max=0.063311 entropy_mean=0.030821 gate_mean=0.441433 gate_abs=0.441433 local_beta=0.000000
+INFO:root:Epoch 100   loss=0.1146 [180.7 s]    dev=(HR@5:0.3396,NDCG@5:0.2359) [3.2 s]
+INFO:root:[IU-SCBR] step=387000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041215 r_min=0.040000 r_max=0.079902 entropy_mean=0.030377 gate_mean=0.451155 gate_abs=0.451155 local_beta=0.000000
+INFO:root:[IU-SCBR] step=388000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040506 r_min=0.040000 r_max=0.064930 entropy_mean=0.012662 gate_mean=0.463032 gate_abs=0.463032 local_beta=0.000000
+INFO:root:[IU-SCBR] step=389000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041401 r_min=0.040000 r_max=0.079968 entropy_mean=0.035017 gate_mean=0.451641 gate_abs=0.451641 local_beta=0.000000
+INFO:root:Epoch 101   loss=0.1141 [182.5 s]    dev=(HR@5:0.3349,NDCG@5:0.2346) [3.3 s]
+INFO:root:[IU-SCBR] step=390000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041424 r_min=0.040000 r_max=0.079958 entropy_mean=0.035611 gate_mean=0.455280 gate_abs=0.455280 local_beta=0.000000
+INFO:root:[IU-SCBR] step=391000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040748 r_min=0.040000 r_max=0.073633 entropy_mean=0.018695 gate_mean=0.464248 gate_abs=0.464248 local_beta=0.000000
+INFO:root:[IU-SCBR] step=392000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040997 r_min=0.040000 r_max=0.079999 entropy_mean=0.024930 gate_mean=0.428899 gate_abs=0.428899 local_beta=0.000000
+INFO:root:[IU-SCBR] step=393000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040772 r_min=0.040000 r_max=0.079709 entropy_mean=0.019308 gate_mean=0.451674 gate_abs=0.451674 local_beta=0.000000
+INFO:root:Epoch 102   loss=0.1140 [187.2 s]    dev=(HR@5:0.3442,NDCG@5:0.2394) [3.2 s] *
+INFO:root:[IU-SCBR] step=394000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040722 r_min=0.040000 r_max=0.079982 entropy_mean=0.018058 gate_mean=0.449831 gate_abs=0.449831 local_beta=0.000000
+INFO:root:[IU-SCBR] step=395000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040790 r_min=0.040000 r_max=0.075331 entropy_mean=0.019754 gate_mean=0.452208 gate_abs=0.452208 local_beta=0.000000
+INFO:root:[IU-SCBR] step=396000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041100 r_min=0.040000 r_max=0.079698 entropy_mean=0.027512 gate_mean=0.445136 gate_abs=0.445136 local_beta=0.000000
+INFO:root:[IU-SCBR] step=397000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040897 r_min=0.040000 r_max=0.061282 entropy_mean=0.022417 gate_mean=0.460348 gate_abs=0.460348 local_beta=0.000000
+INFO:root:Epoch 103   loss=0.1135 [185.5 s]    dev=(HR@5:0.3414,NDCG@5:0.2392) [3.4 s]
+INFO:root:[IU-SCBR] step=398000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041230 r_min=0.040000 r_max=0.079953 entropy_mean=0.030754 gate_mean=0.441534 gate_abs=0.441534 local_beta=0.000000
+INFO:root:[IU-SCBR] step=399000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041269 r_min=0.040000 r_max=0.069578 entropy_mean=0.031734 gate_mean=0.431019 gate_abs=0.431019 local_beta=0.000000
+INFO:root:[IU-SCBR] step=400000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040476 r_min=0.040000 r_max=0.077412 entropy_mean=0.011903 gate_mean=0.455328 gate_abs=0.455328 local_beta=0.000000
+INFO:root:[IU-SCBR] step=401000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041171 r_min=0.040000 r_max=0.079721 entropy_mean=0.029278 gate_mean=0.450496 gate_abs=0.450496 local_beta=0.000000
+INFO:root:Epoch 104   loss=0.1142 [190.4 s]    dev=(HR@5:0.3366,NDCG@5:0.2361) [3.2 s]
+INFO:root:[IU-SCBR] step=402000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040462 r_min=0.040000 r_max=0.062911 entropy_mean=0.011556 gate_mean=0.447148 gate_abs=0.447148 local_beta=0.000000
+INFO:root:[IU-SCBR] step=403000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040574 r_min=0.040000 r_max=0.077496 entropy_mean=0.014344 gate_mean=0.437732 gate_abs=0.437732 local_beta=0.000000
+INFO:root:[IU-SCBR] step=404000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041401 r_min=0.040000 r_max=0.068848 entropy_mean=0.035022 gate_mean=0.432736 gate_abs=0.432736 local_beta=0.000000
+INFO:root:[IU-SCBR] step=405000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040973 r_min=0.040000 r_max=0.078086 entropy_mean=0.024333 gate_mean=0.441225 gate_abs=0.441225 local_beta=0.000000
+INFO:root:Epoch 105   loss=0.1145 [187.3 s]    dev=(HR@5:0.3371,NDCG@5:0.2336) [3.4 s]
+INFO:root:[IU-SCBR] step=406000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040645 r_min=0.040000 r_max=0.072450 entropy_mean=0.016117 gate_mean=0.443908 gate_abs=0.443908 local_beta=0.000000
+INFO:root:[IU-SCBR] step=407000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041366 r_min=0.040000 r_max=0.079867 entropy_mean=0.034152 gate_mean=0.453581 gate_abs=0.453581 local_beta=0.000000
+INFO:root:[IU-SCBR] step=408000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040880 r_min=0.040000 r_max=0.077924 entropy_mean=0.021999 gate_mean=0.442814 gate_abs=0.442814 local_beta=0.000000
+INFO:root:[IU-SCBR] step=409000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040821 r_min=0.040000 r_max=0.074048 entropy_mean=0.020522 gate_mean=0.430987 gate_abs=0.430987 local_beta=0.000000
+INFO:root:Epoch 106   loss=0.1139 [185.2 s]    dev=(HR@5:0.3354,NDCG@5:0.2352) [3.4 s]
+INFO:root:[IU-SCBR] step=410000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040769 r_min=0.040000 r_max=0.076269 entropy_mean=0.019215 gate_mean=0.440073 gate_abs=0.440073 local_beta=0.000000
+INFO:root:[IU-SCBR] step=411000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040546 r_min=0.040000 r_max=0.062887 entropy_mean=0.013658 gate_mean=0.437507 gate_abs=0.437507 local_beta=0.000000
+INFO:root:[IU-SCBR] step=412000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041025 r_min=0.040000 r_max=0.079871 entropy_mean=0.025630 gate_mean=0.446837 gate_abs=0.446837 local_beta=0.000000
+INFO:root:[IU-SCBR] step=413000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041360 r_min=0.040000 r_max=0.079642 entropy_mean=0.034012 gate_mean=0.417450 gate_abs=0.417450 local_beta=0.000000
+INFO:root:Epoch 107   loss=0.1148 [202.5 s]    dev=(HR@5:0.3384,NDCG@5:0.2371) [3.3 s]
+INFO:root:[IU-SCBR] step=414000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041477 r_min=0.040000 r_max=0.079617 entropy_mean=0.036934 gate_mean=0.439334 gate_abs=0.439334 local_beta=0.000000
+INFO:root:[IU-SCBR] step=415000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040471 r_min=0.040000 r_max=0.078087 entropy_mean=0.011773 gate_mean=0.459056 gate_abs=0.459056 local_beta=0.000000
+INFO:root:[IU-SCBR] step=416000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040864 r_min=0.040000 r_max=0.079997 entropy_mean=0.021607 gate_mean=0.445986 gate_abs=0.445986 local_beta=0.000000
+INFO:root:Epoch 108   loss=0.1146 [200.0 s]    dev=(HR@5:0.3392,NDCG@5:0.2386) [3.3 s]
+INFO:root:[IU-SCBR] step=417000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.041205 r_min=0.040000 r_max=0.079544 entropy_mean=0.030124 gate_mean=0.452241 gate_abs=0.452241 local_beta=0.000000
+INFO:root:[IU-SCBR] step=418000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040743 r_min=0.040000 r_max=0.077086 entropy_mean=0.018570 gate_mean=0.435381 gate_abs=0.435381 local_beta=0.000000
+INFO:root:[IU-SCBR] step=419000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040727 r_min=0.040000 r_max=0.079813 entropy_mean=0.018173 gate_mean=0.463806 gate_abs=0.463806 local_beta=0.000000
+INFO:root:[IU-SCBR] step=420000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040526 r_min=0.040000 r_max=0.063683 entropy_mean=0.013142 gate_mean=0.437569 gate_abs=0.437569 local_beta=0.000000
+INFO:root:Epoch 109   loss=0.1145 [191.0 s]    dev=(HR@5:0.3435,NDCG@5:0.2408) [3.5 s] *
+INFO:root:[IU-SCBR] step=421000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040629 r_min=0.040000 r_max=0.079917 entropy_mean=0.015720 gate_mean=0.458652 gate_abs=0.458652 local_beta=0.000000
+INFO:root:[IU-SCBR] step=422000 train_only=1 w=1.0000 base_global_r=0.080000 r_mean=0.040895 r_min=0.040000 r_max=0.072401 entropy_mean=0.022386 gate_mean=0.438967 gate_abs=0.438967 local_beta=0.000000

@@ -94,3 +94,23 @@ INFO:root:Epoch 25    loss=0.1093 [131.8 s]    dev=(HR@5:0.2052,NDCG@5:0.1464) [
 INFO:root:Epoch 26    loss=0.1086 [132.7 s]    dev=(HR@5:0.2041,NDCG@5:0.1456) [23.3 s]
 INFO:root:Epoch 27    loss=0.1087 [129.1 s]    dev=(HR@5:0.2045,NDCG@5:0.1457) [23.5 s]
 INFO:root:Epoch 28    loss=0.1079 [131.9 s]    dev=(HR@5:0.2015,NDCG@5:0.1443) [23.5 s]
+INFO:root:Epoch 29    loss=0.1076 [132.2 s]    dev=(HR@5:0.2020,NDCG@5:0.1442) [23.5 s]
+INFO:root:Epoch 30    loss=0.1069 [131.1 s]    dev=(HR@5:0.2030,NDCG@5:0.1453) [23.4 s]
+INFO:root:Epoch 31    loss=0.1070 [132.1 s]    dev=(HR@5:0.2022,NDCG@5:0.1444) [23.5 s]
+INFO:root:Epoch 32    loss=0.1068 [131.4 s]    dev=(HR@5:0.2006,NDCG@5:0.1435) [23.4 s]
+INFO:root:Epoch 33    loss=0.1070 [133.0 s]    dev=(HR@5:0.2014,NDCG@5:0.1434) [23.5 s]
+INFO:root:Epoch 34    loss=0.1060 [131.9 s]    dev=(HR@5:0.2024,NDCG@5:0.1445) [23.4 s]
+INFO:root:Epoch 35    loss=0.1059 [131.7 s]    dev=(HR@5:0.2004,NDCG@5:0.1431) [23.5 s]
+INFO:root:Epoch 36    loss=0.1062 [133.6 s]    dev=(HR@5:0.2005,NDCG@5:0.1434) [23.5 s]
+INFO:root:Epoch 37    loss=0.1058 [131.0 s]    dev=(HR@5:0.2010,NDCG@5:0.1436) [23.6 s]
+INFO:root:Epoch 38    loss=0.1056 [131.3 s]    dev=(HR@5:0.2013,NDCG@5:0.1437) [23.9 s]
+INFO:root:Epoch 39    loss=0.1055 [125.4 s]    dev=(HR@5:0.2018,NDCG@5:0.1439) [24.2 s]
+INFO:root:Epoch 40    loss=0.1049 [128.3 s]    dev=(HR@5:0.2000,NDCG@5:0.1424) [23.8 s]
+INFO:root:Early stop at 40 based on dev result.
+INFO:root:
+Best Iter(dev)=   20	 dev=(HR@5:0.2064,NDCG@5:0.1477) [6238.3 s] 
+INFO:root:Load model from new_model/pomrec_standard/toys/PoMRec_seed42.pt
+INFO:root:
+Test After Training: (HR@5:0.1613,NDCG@5:0.1134,HR@10:0.2263,NDCG@10:0.1343,HR@20:0.3081,NDCG@20:0.1549,HR@50:0.4408,NDCG@50:0.1812)
+INFO:root:
+--------------------------------------------- END: 2026-06-06 20:02:15 ---------------------------------------------

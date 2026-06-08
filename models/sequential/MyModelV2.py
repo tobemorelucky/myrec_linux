@@ -4,7 +4,7 @@ MyModelV2: Re-submission main model.
 
 PoMRec backbone + 3 modules:
   3.1 LLM Semantic Alignment & Controllable Injection
-  3.2 SICR: Semantic-Intent Consistent Reallocation (NEW, replaces old LGD)
+  3.2 IU-SCBR: Interest-Uncertainty-Aware Self-Conditioned Behavior Reliability Estimation
   3.3 IPD: Target-Interest Consistency (unchanged from MyModel)
 """
 
@@ -103,6 +103,7 @@ class MultiInterestExtractor(nn.Module):
         llm_fuse: int = 1,
         gamma_init: float = 0.05,
         gamma_trainable: int = 1,
+        sicr_global_r: float = 0.1,
     ):
         super().__init__()
         self.K = int(k)
@@ -114,6 +115,7 @@ class MultiInterestExtractor(nn.Module):
         self.use_llmemb = int(use_llmemb)
         self.llm_fuse = int(llm_fuse)
         self.gamma_trainable = int(gamma_trainable)
+        self.sicr_global_r = float(sicr_global_r)
 
         # --- CF embedding (trainable) ---
         self.i_embeddings = nn.Embedding(item_num, emb_size)
@@ -196,12 +198,15 @@ class MultiInterestExtractor(nn.Module):
         attn = (values - values.max()).softmax(dim=-1)
         return attn.masked_fill(torch.isnan(attn), 0)
 
-    def forward(self, history, lengths, interest_bias=None, return_aux=False):
+    def forward(self, history, lengths, interest_bias=None, history_gate=None,
+                history_gate_r=None, return_aux=False):
         """
         Args:
             history: (B, L)
             lengths: (B,)
-            interest_bias: (B, K, L) optional SICR attention bias on history positions
+            interest_bias: (B, K, L) optional attention bias on history positions
+            history_gate:  (B, L) optional global behavior reliability gate
+            history_gate_r: float or (B,) tensor, adaptive gate strength
             return_aux: if True, also return attention maps and valid mask
         Returns:
             interest_vectors: (B, K, D)
@@ -213,11 +218,23 @@ class MultiInterestExtractor(nn.Module):
 
         valid_his = (history > 0).long()
 
-        his_vectors = self.get_item_emb(history)
+        # Item content embedding (CF + optional LLM fusion)
+        item_vectors = self.get_item_emb(history)
 
+        # Global behavior reliability gate: scales item content before adding position
+        if history_gate is not None:
+            g = history_gate.unsqueeze(-1)  # (B, L, 1)
+            # Support both scalar float and per-sample (B,) tensor
+            if torch.is_tensor(history_gate_r):
+                r_g = history_gate_r.view(-1, 1, 1)
+            else:
+                r_g = float(history_gate_r) if history_gate_r is not None else self.sicr_global_r
+            item_vectors = item_vectors * ((1.0 - r_g) + r_g * g)
+
+        # Add position embedding
         len_range = torch.arange(self.max_his, device=device)
         position = (lengths[:, None] - len_range[None, :seq_len]) * valid_his
-        his_vectors = his_vectors + self.p_embeddings(position)
+        his_vectors = item_vectors + self.p_embeddings(position)
 
         valid_his_ext = torch.cat([valid_his, torch.ones([B, self.max_prompt], device=device)], dim=1)
 
@@ -284,6 +301,17 @@ class MyModelV2(SequentialModel):
         "sicr_intent_weight",
         "sicr_warmup_steps",
         "sicr_detach",
+        "sicr_center",
+        "sicr_residual",
+        "sicr_global_gate",
+        "sicr_global_alpha",
+        "sicr_global_b",
+        "sicr_global_r",
+        "sicr_train_only",
+        "sicr_entropy_adapt",
+        "sicr_entropy_min",
+        "sicr_entropy_gamma",
+        "sicr_global_sem_weight",
     ]
 
     @staticmethod
@@ -332,6 +360,32 @@ class MyModelV2(SequentialModel):
                             help="warmup steps for SICR bias")
         parser.add_argument("--sicr_detach", type=int, default=1,
                             help="1: detach SICR bias for stable training")
+        parser.add_argument("--sicr_center", type=int, default=1,
+                            help="1: center SICR bias within valid history positions")
+        parser.add_argument("--sicr_residual", type=float, default=0.3,
+                            help="residual ratio of SICR second-pass representations")
+
+        # ---- SICR global behavior reliability gate ----
+        parser.add_argument("--sicr_global_gate", type=int, default=1,
+                            help="1: enable global behavior reliability gate in SICR")
+        parser.add_argument("--sicr_global_alpha", type=float, default=8.0,
+                            help="sharpness of global reliability gate")
+        parser.add_argument("--sicr_global_b", type=float, default=0.3,
+                            help="threshold of global reliability gate")
+        parser.add_argument("--sicr_global_r", type=float, default=0.1,
+                            help="residual strength of global reliability gate")
+
+        # ---- IU-SCBR: uncertainty-aware adaptive gate ----
+        parser.add_argument("--sicr_train_only", type=int, default=1,
+                            help="1: use IU-SCBR only during training; inference uses single-pass")
+        parser.add_argument("--sicr_entropy_adapt", type=int, default=1,
+                            help="1: adapt global gate strength by first-pass interest entropy")
+        parser.add_argument("--sicr_entropy_min", type=float, default=0.5,
+                            help="minimum entropy factor for global gate strength")
+        parser.add_argument("--sicr_entropy_gamma", type=float, default=1.0,
+                            help="exponent for entropy-adaptive global gate strength")
+        parser.add_argument("--sicr_global_sem_weight", type=float, default=0.0,
+                            help="optional semantic similarity weight in global reliability gate")
 
         return SequentialModel.parse_model_args(parser)
 
@@ -383,6 +437,25 @@ class MyModelV2(SequentialModel):
         self.sicr_intent_weight = float(getattr(args, "sicr_intent_weight", 0.3))
         self.sicr_warmup_steps = int(getattr(args, "sicr_warmup_steps", 5000))
         self.sicr_detach = int(getattr(args, "sicr_detach", 1))
+        self.sicr_center = int(getattr(args, "sicr_center", 1))
+        self.sicr_residual = float(getattr(args, "sicr_residual", 0.3))
+        self.sicr_residual = max(0.0, min(1.0, self.sicr_residual))
+
+        # sicr global gate
+        self.sicr_global_gate = int(getattr(args, "sicr_global_gate", 1))
+        self.sicr_global_alpha = float(getattr(args, "sicr_global_alpha", 8.0))
+        self.sicr_global_b = float(getattr(args, "sicr_global_b", 0.3))
+        self.sicr_global_r = float(getattr(args, "sicr_global_r", 0.1))
+        self.sicr_global_r = max(0.0, min(1.0, self.sicr_global_r))
+
+        # sicr train/inference control
+        self.sicr_train_only = int(getattr(args, "sicr_train_only", 1))
+        self.sicr_entropy_adapt = int(getattr(args, "sicr_entropy_adapt", 1))
+        self.sicr_entropy_min = float(getattr(args, "sicr_entropy_min", 0.5))
+        self.sicr_entropy_gamma = float(getattr(args, "sicr_entropy_gamma", 1.0))
+        self.sicr_global_sem_weight = float(getattr(args, "sicr_global_sem_weight", 0.0))
+        self.sicr_entropy_min = max(0.0, min(1.0, self.sicr_entropy_min))
+        self.sicr_entropy_gamma = max(0.0, self.sicr_entropy_gamma)
 
         # build modules
         self._define_params()
@@ -415,6 +488,7 @@ class MyModelV2(SequentialModel):
             llm_fuse=self.llm_fuse,
             gamma_init=self.gamma_init,
             gamma_trainable=self.gamma_trainable,
+            sicr_global_r=self.sicr_global_r,
         )
 
         self.proj = nn.Sequential()
@@ -463,6 +537,23 @@ class MyModelV2(SequentialModel):
             return 1.0
         t = min(self.global_step, self.sicr_warmup_steps)
         return t / float(self.sicr_warmup_steps)
+
+    def compute_interest_entropy(self, w0):
+        """
+        Compute normalized interest distribution entropy.
+
+        Args:
+            w0: (B, K), first-pass interest distribution (softmaxed)
+
+        Returns:
+            entropy: (B,), normalized to [0, 1]
+        """
+        K = w0.size(-1)
+        eps = 1e-8
+        entropy = -(w0 * torch.log(w0 + eps)).sum(dim=-1)
+        entropy = entropy / (np.log(K) + eps)
+        entropy = torch.clamp(entropy, 0.0, 1.0)
+        return entropy
 
     @staticmethod
     def _cos_sim(a: torch.Tensor, b: torch.Tensor, eps: float = 1e-8) -> torch.Tensor:
@@ -534,8 +625,16 @@ class MyModelV2(SequentialModel):
              + self.sicr_intent_weight * intent_score
 
         # Mask padding positions
-        valid = (history > 0).float()
-        bias = bias * valid[:, None, :]
+        valid = (history > 0).float()          # (B, L)
+        valid_k = valid[:, None, :]            # (B, 1, L)
+        bias = bias * valid_k
+
+        # Center within each user's valid history positions (per-interest)
+        # Prevents SICR from globally lifting history attention logits vs. prompts
+        if self.sicr_center:
+            denom = valid_k.sum(dim=-1, keepdim=True).clamp_min(1.0)
+            mean = (bias * valid_k).sum(dim=-1, keepdim=True) / denom
+            bias = (bias - mean) * valid_k
 
         # Stabilize and scale
         bias = torch.clamp(bias, min=-2.0, max=2.0)
@@ -545,6 +644,59 @@ class MyModelV2(SequentialModel):
             bias = bias.detach()
 
         return bias
+
+    # -------------------------
+    # SICR: compute global behavior reliability gate
+    # -------------------------
+    def compute_sicr_global_gate(self, history, iv0, w0, aux0=None):
+        """
+        Compute per-item global reliability gate from first-pass intent.
+
+        Supports optional semantic-augmented similarity via sicr_global_sem_weight.
+
+        Args:
+            history: (B, L)
+            iv0: (B, K, D) first-pass interest vectors
+            w0: (B, K) first-pass interest distribution weights
+            aux0: optional dict with "attn_hist" (B,K,L)
+
+        Returns:
+            history_gate: (B, L), values in [0, 1]
+            gate_aux: dict with "cf_sim_mean", "sem_sim_mean"
+        """
+        hist_cf = self.interest_extractor.get_cf_emb(history)  # (B, L, D)
+
+        q0 = (iv0 * w0[:, :, None]).sum(dim=1)  # (B, D)
+
+        cf_sim = self._cos_sim(hist_cf, q0[:, None, :])  # (B, L)
+
+        sem_sim = None
+        # Optional semantic reliability term
+        if (self.use_llmemb and self.sicr_global_sem_weight > 0
+                and aux0 is not None and "attn_hist" in aux0):
+            hist_sem = self.interest_extractor.get_llm_emb(history)  # (B, L, D)
+            attn_hist = aux0["attn_hist"]                            # (B, K, L)
+            sem_centers = torch.matmul(attn_hist, hist_sem)          # (B, K, D)
+            q_sem = (sem_centers * w0[:, :, None]).sum(dim=1)        # (B, D)
+            sem_sim = self._cos_sim(hist_sem, q_sem[:, None, :])     # (B, L)
+            sim = cf_sim + self.sicr_global_sem_weight * sem_sim
+        else:
+            sim = cf_sim
+
+        gate = torch.sigmoid(self.sicr_global_alpha * (sim - self.sicr_global_b))
+
+        valid = (history > 0).float()
+        gate = gate * valid
+
+        if self.sicr_detach:
+            gate = gate.detach()
+
+        gate_aux = {
+            "cf_sim_mean": cf_sim.detach().mean(),
+            "sem_sim_mean": sem_sim.detach().mean() if sem_sim is not None else None,
+        }
+
+        return gate, gate_aux
 
     # =========================
     # forward
@@ -557,42 +709,98 @@ class MyModelV2(SequentialModel):
         lengths = feed_dict["lengths"]        # (B,)
 
         # =========================================================
-        # SICR: two-pass interest extraction with consistency bias
+        # IU-SCBR: uncertainty-aware self-conditioned behavior re-estimation
         # =========================================================
-        if self.use_sicr:
-            # Pass 1: extract without bias, get attention maps
+        use_sicr_now = bool(self.use_sicr)
+
+        # Train-only mode: inference uses single-pass backbone for stability
+        if self.sicr_train_only and (not self.training):
+            use_sicr_now = False
+
+        if use_sicr_now:
+            # Pass 1: extract without bias or gate, get attention maps
             iv0, dv0, aux0 = self.interest_extractor(
                 history, lengths,
                 interest_bias=None,
+                history_gate=None,
+                history_gate_r=None,
                 return_aux=True,
             )
 
             logits0 = self.proj(dv0)              # (B, K)
             w0 = torch.softmax(logits0, dim=-1)   # (B, K)
 
-            # Compute SICR bias from first-pass results
-            interest_bias = self.compute_sicr_bias(history, iv0, w0, aux0)
+            # Global behavior reliability gate (item-level)
+            history_gate = None
+            gate_aux = {"cf_sim_mean": torch.tensor(0.0), "sem_sim_mean": None}
+            if self.sicr_global_gate:
+                history_gate, gate_aux = self.compute_sicr_global_gate(history, iv0, w0, aux0)
 
-            # Pass 2: extract with SICR bias
-            interest_vectors, distri_vectors = self.interest_extractor(
+            # Interest entropy for adaptive gate strength
+            entropy = self.compute_interest_entropy(w0)  # (B,)
+
+            # Base gate strength with warmup
+            base_r = self.sicr_global_r * self._sicr_w()
+
+            # Entropy-adaptive gate strength:
+            # High entropy (uncertain) → stronger gate (correct more)
+            # Low entropy (confident) → weaker gate (less correction needed)
+            if self.sicr_entropy_adapt:
+                entropy_factor = self.sicr_entropy_min + (1.0 - self.sicr_entropy_min) * entropy
+                entropy_factor = torch.pow(entropy_factor, self.sicr_entropy_gamma)
+            else:
+                entropy_factor = torch.ones_like(entropy)
+
+            effective_global_r = base_r * entropy_factor  # (B,)
+
+            # Local interest-wise routing bias (interest-level)
+            # Disabled by default (sicr_beta=0)
+            interest_bias = None
+            if self.sicr_beta > 0:
+                interest_bias = self.compute_sicr_bias(history, iv0, w0, aux0)
+
+            # Pass 2: extract with global gate and optional local bias
+            iv1, dv1, aux1 = self.interest_extractor(
                 history, lengths,
                 interest_bias=interest_bias,
-                return_aux=False,
+                history_gate=history_gate,
+                history_gate_r=effective_global_r,
+                return_aux=True,
             )
+
+            # Residual fusion: stabilize early-stage metrics
+            r = self.sicr_residual
+            interest_vectors = (1.0 - r) * iv0 + r * iv1
+            distri_vectors = (1.0 - r) * dv0 + r * dv1
 
             # Debug
             if self.training and self.global_step % 1000 == 0:
-                logging.info(
-                    f"[SICR] step={self.global_step} "
+                gate_mean_val = history_gate.mean().item() if history_gate is not None else -1.0
+                log_msg = (
+                    f"[IU-SCBR] step={self.global_step} "
+                    f"train_only={self.sicr_train_only} "
                     f"w={self._sicr_w():.4f} "
-                    f"beta={self.sicr_beta:.4f} "
-                    f"bias_mean={interest_bias.mean().item():.6f} "
-                    f"bias_abs={interest_bias.abs().mean().item():.6f}"
+                    f"base_global_r={base_r:.6f} "
+                    f"r_mean={effective_global_r.mean().item():.6f} "
+                    f"r_min={effective_global_r.min().item():.6f} "
+                    f"r_max={effective_global_r.max().item():.6f} "
+                    f"entropy_mean={entropy.mean().item():.6f} "
+                    f"gate_mean={gate_mean_val:.6f} "
+                    f"gate_abs={history_gate.abs().mean().item() if history_gate is not None else -1:.6f} "
+                    f"local_beta={self.sicr_beta:.6f}"
                 )
+                if interest_bias is not None:
+                    log_msg += (
+                        f" bias_mean={interest_bias.mean().item():.6f}"
+                        f" bias_abs={interest_bias.abs().mean().item():.6f}"
+                    )
+                logging.info(log_msg)
         else:
             interest_vectors, distri_vectors = self.interest_extractor(
                 history, lengths,
                 interest_bias=None,
+                history_gate=None,
+                history_gate_r=None,
                 return_aux=False,
             )
 

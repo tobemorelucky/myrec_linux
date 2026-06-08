@@ -1,0 +1,289 @@
+INFO:root:Namespace(model_name='MyModelV2')
+INFO:root:--------------------------------------------- BEGIN: 2026-06-08 10:47:51 ---------------------------------------------
+INFO:root:
+================================================
+ Arguments               | Values               
+================================================
+ K                       | 4                   
+ align_ramp              | 15                  
+ align_warmup            | 5                   
+ alpha                   | 0.001               
+ attn_size               | 8                   
+ batch_size              | 256                 
+ dataset                 | beauty              
+ dropout                 | 0                   
+ early_stop              | 10                  
+ emb_size                | 64                  
+ emile_use_fused_itememb | 0                   
+ emile_warmup_steps      | 5000                
+ epoch                   | 200                 
+ eval_batch_size         | 256                 
+ gamma_init              | 0.1                 
+ gamma_trainable         | 0                   
+ gpu                     | 1                   
+ history_max             | 20                  
+ ilr_neg_weight          | 1.0                 
+ init_ckpt               |                     
+ init_strict             | 0                   
+ ipd_margin              | 0.2                 
+ l2                      | 1e-06               
+ lamb                    | 3.0                 
+ lambda_ipd              | 0.05                
+ llm_emb_path            | ./data/beauty/han...
+ llm_fuse                | 1                   
+ lr                      | 0.002               
+ n_layers                | 2                   
+ num_neg                 | 1                   
+ num_workers             | 5                   
+ optimizer               | Adam                
+ prompt_num              | 3                   
+ random_seed             | 42                  
+ rat_alpha_warmup_steps  | 5000                
+ sicr_beta               | 0.0                 
+ sicr_center             | 1                   
+ sicr_detach             | 1                   
+ sicr_entropy_adapt      | 1                   
+ sicr_entropy_gamma      | 1.0                 
+ sicr_entropy_min        | 0.5                 
+ sicr_global_alpha       | 8.0                 
+ sicr_global_b           | 0.3                 
+ sicr_global_gate        | 1                   
+ sicr_global_r           | 0.15                
+ sicr_global_sem_weight  | 0.2                 
+ sicr_intent_weight      | 0.0                 
+ sicr_residual           | 0.2                 
+ sicr_sem_weight         | 0.0                 
+ sicr_train_only         | 1                   
+ sicr_warmup_steps       | 5000                
+ srs_emb_path            | ./data/beauty/han...
+ tau                     | 0.2                 
+ test_all                | 0                   
+ topk                    | 5,10,20,50          
+ use_emile               | 1                   
+ use_llmemb              | 1                   
+ use_sicr                | 1                   
+================================================
+INFO:root:Device: cuda
+INFO:root:Load corpus from ./data/beauty/SeqReader.pkl
+INFO:root:[MyModelV2] Train from scratch
+INFO:root:#params: 2011521
+INFO:root:MyModelV2(
+  (interest_extractor): MultiInterestExtractor(
+    (i_embeddings): Embedding(12102, 64)
+    (p_embeddings): Embedding(21, 64)
+    (adapter): Sequential(
+      (0): Linear(in_features=1536, out_features=768, bias=True)
+      (1): GELU(approximate='none')
+      (2): Linear(in_features=768, out_features=64, bias=True)
+      (3): LayerNorm((64,), eps=1e-05, elementwise_affine=True)
+    )
+    (srs_emb): Embedding(12102, 64)
+    (prompt1): Embedding(3, 64)
+    (prompt2): Embedding(3, 64)
+    (W1): Linear(in_features=64, out_features=8, bias=True)
+    (W2): Linear(in_features=8, out_features=4, bias=True)
+    (W3): Linear(in_features=64, out_features=8, bias=True)
+    (W4): Linear(in_features=8, out_features=1, bias=True)
+  )
+  (proj): Sequential(
+    (proj_0): Linear(in_features=64, out_features=64, bias=True)
+    (dropout_0): Dropout(p=0.5, inplace=False)
+    (relu_0): ReLU(inplace=True)
+    (proj_final): Linear(in_features=64, out_features=4, bias=True)
+  )
+  (align_loss_func): InfoNCEAlign()
+)
+INFO:root:Optimizer: Adam
+INFO:root:Early stop manually
+INFO:root:Namespace(model_name='MyModelV2')
+INFO:root:--------------------------------------------- BEGIN: 2026-06-08 10:51:16 ---------------------------------------------
+INFO:root:
+================================================
+ Arguments               | Values               
+================================================
+ K                       | 4                   
+ align_ramp              | 15                  
+ align_warmup            | 5                   
+ alpha                   | 0.001               
+ attn_size               | 8                   
+ batch_size              | 256                 
+ dataset                 | beauty              
+ dropout                 | 0                   
+ early_stop              | 10                  
+ emb_size                | 64                  
+ emile_use_fused_itememb | 0                   
+ emile_warmup_steps      | 5000                
+ epoch                   | 200                 
+ eval_batch_size         | 256                 
+ gamma_init              | 0.1                 
+ gamma_trainable         | 0                   
+ gpu                     | 1                   
+ history_max             | 20                  
+ ilr_neg_weight          | 1.0                 
+ init_ckpt               |                     
+ init_strict             | 0                   
+ ipd_margin              | 0.2                 
+ l2                      | 1e-06               
+ lamb                    | 3.0                 
+ lambda_ipd              | 0.05                
+ llm_emb_path            | ./data/beauty/han...
+ llm_fuse                | 1                   
+ lr                      | 0.002               
+ n_layers                | 2                   
+ num_neg                 | 1                   
+ num_workers             | 5                   
+ optimizer               | Adam                
+ prompt_num              | 3                   
+ random_seed             | 42                  
+ rat_alpha_warmup_steps  | 5000                
+ sicr_beta               | 0.0                 
+ sicr_center             | 1                   
+ sicr_detach             | 1                   
+ sicr_entropy_adapt      | 1                   
+ sicr_entropy_gamma      | 1.0                 
+ sicr_entropy_min        | 0.5                 
+ sicr_global_alpha       | 8.0                 
+ sicr_global_b           | 0.3                 
+ sicr_global_gate        | 1                   
+ sicr_global_r           | 0.15                
+ sicr_global_sem_weight  | 0.2                 
+ sicr_intent_weight      | 0.0                 
+ sicr_residual           | 0.2                 
+ sicr_sem_weight         | 0.0                 
+ sicr_train_only         | 1                   
+ sicr_warmup_steps       | 5000                
+ srs_emb_path            | ./data/beauty/han...
+ tau                     | 0.2                 
+ test_all                | 0                   
+ topk                    | 5,10,20,50          
+ use_emile               | 1                   
+ use_llmemb              | 1                   
+ use_sicr                | 1                   
+================================================
+INFO:root:Device: cuda
+INFO:root:Load corpus from ./data/beauty/SeqReader.pkl
+INFO:root:[MyModelV2] Train from scratch
+INFO:root:#params: 2011521
+INFO:root:MyModelV2(
+  (interest_extractor): MultiInterestExtractor(
+    (i_embeddings): Embedding(12102, 64)
+    (p_embeddings): Embedding(21, 64)
+    (adapter): Sequential(
+      (0): Linear(in_features=1536, out_features=768, bias=True)
+      (1): GELU(approximate='none')
+      (2): Linear(in_features=768, out_features=64, bias=True)
+      (3): LayerNorm((64,), eps=1e-05, elementwise_affine=True)
+    )
+    (srs_emb): Embedding(12102, 64)
+    (prompt1): Embedding(3, 64)
+    (prompt2): Embedding(3, 64)
+    (W1): Linear(in_features=64, out_features=8, bias=True)
+    (W2): Linear(in_features=8, out_features=4, bias=True)
+    (W3): Linear(in_features=64, out_features=8, bias=True)
+    (W4): Linear(in_features=8, out_features=1, bias=True)
+  )
+  (proj): Sequential(
+    (proj_0): Linear(in_features=64, out_features=64, bias=True)
+    (dropout_0): Dropout(p=0.5, inplace=False)
+    (relu_0): ReLU(inplace=True)
+    (proj_final): Linear(in_features=64, out_features=4, bias=True)
+  )
+  (align_loss_func): InfoNCEAlign()
+)
+INFO:root:Optimizer: Adam
+INFO:root:Epoch 1     loss=0.4331 [31.6 s]    dev=(HR@5:0.1146,NDCG@5:0.0768) [12.8 s] *
+INFO:root:[IU-SCBR] step=1000 train_only=1 w=0.2000 base_global_r=0.030000 r_mean=0.015005 r_min=0.015000 r_max=0.015434 entropy_mean=0.000350 gate_mean=0.210794 gate_abs=0.210794 local_beta=0.000000
+INFO:root:Epoch 2     loss=0.3336 [27.9 s]    dev=(HR@5:0.1293,NDCG@5:0.0870) [13.0 s] *
+INFO:root:Epoch 3     loss=0.3055 [27.7 s]    dev=(HR@5:0.1395,NDCG@5:0.0933) [13.1 s] *
+INFO:root:[IU-SCBR] step=2000 train_only=1 w=0.4000 base_global_r=0.060000 r_mean=0.030001 r_min=0.030000 r_max=0.030085 entropy_mean=0.000022 gate_mean=0.240202 gate_abs=0.240202 local_beta=0.000000
+INFO:root:Epoch 4     loss=0.2932 [27.9 s]    dev=(HR@5:0.1471,NDCG@5:0.0984) [13.2 s] *
+INFO:root:Epoch 5     loss=0.2864 [28.2 s]    dev=(HR@5:0.1559,NDCG@5:0.1042) [13.3 s] *
+INFO:root:Epoch 6     loss=0.2783 [27.9 s]    dev=(HR@5:0.1673,NDCG@5:0.1119) [13.3 s] *
+INFO:root:[IU-SCBR] step=4000 train_only=1 w=0.8000 base_global_r=0.120000 r_mean=0.076550 r_min=0.060000 r_max=0.119705 entropy_mean=0.275840 gate_mean=0.237394 gate_abs=0.237394 local_beta=0.000000
+INFO:root:Epoch 7     loss=0.2771 [28.1 s]    dev=(HR@5:0.1701,NDCG@5:0.1144) [13.3 s] *
+INFO:root:Epoch 8     loss=0.2734 [28.0 s]    dev=(HR@5:0.1699,NDCG@5:0.1150) [13.3 s] *
+INFO:root:[IU-SCBR] step=5000 train_only=1 w=1.0000 base_global_r=0.150000 r_mean=0.085052 r_min=0.075000 r_max=0.149956 entropy_mean=0.134024 gate_mean=0.275066 gate_abs=0.275066 local_beta=0.000000
+INFO:root:Epoch 9     loss=0.2721 [27.8 s]    dev=(HR@5:0.1740,NDCG@5:0.1180) [13.3 s] *
+INFO:root:Epoch 10    loss=0.2577 [29.0 s]    dev=(HR@5:0.1741,NDCG@5:0.1182) [13.3 s] *
+INFO:root:Epoch 11    loss=0.2483 [28.3 s]    dev=(HR@5:0.1752,NDCG@5:0.1196) [13.4 s] *
+INFO:root:[IU-SCBR] step=7000 train_only=1 w=1.0000 base_global_r=0.150000 r_mean=0.102958 r_min=0.075000 r_max=0.149960 entropy_mean=0.372772 gate_mean=0.259107 gate_abs=0.259107 local_beta=0.000000
+INFO:root:Epoch 12    loss=0.2407 [28.3 s]    dev=(HR@5:0.1759,NDCG@5:0.1208) [13.4 s] *
+INFO:root:Epoch 13    loss=0.2292 [28.4 s]    dev=(HR@5:0.1767,NDCG@5:0.1209) [13.5 s] *
+INFO:root:[IU-SCBR] step=8000 train_only=1 w=1.0000 base_global_r=0.150000 r_mean=0.096726 r_min=0.075000 r_max=0.149953 entropy_mean=0.289679 gate_mean=0.255323 gate_abs=0.255323 local_beta=0.000000
+INFO:root:Epoch 14    loss=0.2213 [28.5 s]    dev=(HR@5:0.1811,NDCG@5:0.1236) [13.4 s] *
+INFO:root:Epoch 15    loss=0.2169 [29.5 s]    dev=(HR@5:0.1832,NDCG@5:0.1253) [13.4 s] *
+INFO:root:Epoch 16    loss=0.2098 [28.5 s]    dev=(HR@5:0.1872,NDCG@5:0.1284) [13.4 s] *
+INFO:root:[IU-SCBR] step=10000 train_only=1 w=1.0000 base_global_r=0.150000 r_mean=0.094230 r_min=0.075000 r_max=0.149919 entropy_mean=0.256399 gate_mean=0.255111 gate_abs=0.255111 local_beta=0.000000
+INFO:root:Epoch 17    loss=0.2035 [28.3 s]    dev=(HR@5:0.1897,NDCG@5:0.1305) [13.4 s] *
+INFO:root:Epoch 18    loss=0.1991 [28.5 s]    dev=(HR@5:0.1887,NDCG@5:0.1303) [13.4 s]
+INFO:root:[IU-SCBR] step=11000 train_only=1 w=1.0000 base_global_r=0.150000 r_mean=0.115537 r_min=0.075000 r_max=0.149928 entropy_mean=0.540498 gate_mean=0.216130 gate_abs=0.216130 local_beta=0.000000
+INFO:root:Epoch 19    loss=0.1939 [28.5 s]    dev=(HR@5:0.1866,NDCG@5:0.1285) [13.3 s]
+INFO:root:Epoch 20    loss=0.1884 [29.2 s]    dev=(HR@5:0.1881,NDCG@5:0.1289) [13.5 s]
+INFO:root:Epoch 21    loss=0.1857 [28.5 s]    dev=(HR@5:0.1865,NDCG@5:0.1288) [13.4 s]
+INFO:root:[IU-SCBR] step=13000 train_only=1 w=1.0000 base_global_r=0.150000 r_mean=0.100540 r_min=0.075000 r_max=0.149865 entropy_mean=0.340537 gate_mean=0.234769 gate_abs=0.234769 local_beta=0.000000
+INFO:root:Epoch 22    loss=0.1838 [28.5 s]    dev=(HR@5:0.1885,NDCG@5:0.1304) [13.4 s]
+INFO:root:Epoch 23    loss=0.1792 [28.3 s]    dev=(HR@5:0.1850,NDCG@5:0.1293) [13.4 s]
+INFO:root:[IU-SCBR] step=14000 train_only=1 w=1.0000 base_global_r=0.150000 r_mean=0.105672 r_min=0.075000 r_max=0.149853 entropy_mean=0.408959 gate_mean=0.244132 gate_abs=0.244132 local_beta=0.000000
+INFO:root:Epoch 24    loss=0.1767 [29.0 s]    dev=(HR@5:0.1875,NDCG@5:0.1289) [13.5 s]
+INFO:root:Epoch 25    loss=0.1727 [28.6 s]    dev=(HR@5:0.1872,NDCG@5:0.1304) [13.4 s]
+INFO:root:Epoch 26    loss=0.1703 [28.2 s]    dev=(HR@5:0.1861,NDCG@5:0.1295) [13.4 s]
+INFO:root:[IU-SCBR] step=16000 train_only=1 w=1.0000 base_global_r=0.150000 r_mean=0.096135 r_min=0.075000 r_max=0.149708 entropy_mean=0.281794 gate_mean=0.215203 gate_abs=0.215203 local_beta=0.000000
+INFO:root:Epoch 27    loss=0.1676 [28.5 s]    dev=(HR@5:0.1870,NDCG@5:0.1288) [13.4 s]
+INFO:root:Epoch 28    loss=0.1662 [28.4 s]    dev=(HR@5:0.1865,NDCG@5:0.1291) [13.4 s]
+INFO:root:[IU-SCBR] step=17000 train_only=1 w=1.0000 base_global_r=0.150000 r_mean=0.096354 r_min=0.075000 r_max=0.149882 entropy_mean=0.284723 gate_mean=0.254487 gate_abs=0.254487 local_beta=0.000000
+INFO:root:Epoch 29    loss=0.1646 [29.8 s]    dev=(HR@5:0.1865,NDCG@5:0.1299) [13.4 s]
+INFO:root:Epoch 30    loss=0.1630 [28.3 s]    dev=(HR@5:0.1894,NDCG@5:0.1316) [13.5 s] *
+INFO:root:Epoch 31    loss=0.1615 [28.3 s]    dev=(HR@5:0.1892,NDCG@5:0.1302) [13.5 s]
+INFO:root:[IU-SCBR] step=19000 train_only=1 w=1.0000 base_global_r=0.150000 r_mean=0.093931 r_min=0.075000 r_max=0.149899 entropy_mean=0.252420 gate_mean=0.239124 gate_abs=0.239124 local_beta=0.000000
+INFO:root:Epoch 32    loss=0.1578 [28.4 s]    dev=(HR@5:0.1896,NDCG@5:0.1309) [13.4 s]
+INFO:root:Epoch 33    loss=0.1589 [28.2 s]    dev=(HR@5:0.1877,NDCG@5:0.1308) [13.4 s]
+INFO:root:[IU-SCBR] step=20000 train_only=1 w=1.0000 base_global_r=0.150000 r_mean=0.095707 r_min=0.075001 r_max=0.149940 entropy_mean=0.276097 gate_mean=0.236071 gate_abs=0.236071 local_beta=0.000000
+INFO:root:Epoch 34    loss=0.1568 [29.0 s]    dev=(HR@5:0.1887,NDCG@5:0.1307) [13.4 s]
+INFO:root:Epoch 35    loss=0.1551 [28.2 s]    dev=(HR@5:0.1873,NDCG@5:0.1303) [13.4 s]
+INFO:root:Epoch 36    loss=0.1531 [27.9 s]    dev=(HR@5:0.1906,NDCG@5:0.1319) [13.5 s] *
+INFO:root:[IU-SCBR] step=22000 train_only=1 w=1.0000 base_global_r=0.150000 r_mean=0.098726 r_min=0.075000 r_max=0.149886 entropy_mean=0.316344 gate_mean=0.242307 gate_abs=0.242307 local_beta=0.000000
+INFO:root:Epoch 37    loss=0.1515 [28.1 s]    dev=(HR@5:0.1855,NDCG@5:0.1295) [13.4 s]
+INFO:root:Epoch 38    loss=0.1512 [28.1 s]    dev=(HR@5:0.1832,NDCG@5:0.1268) [13.4 s]
+INFO:root:[IU-SCBR] step=23000 train_only=1 w=1.0000 base_global_r=0.150000 r_mean=0.099321 r_min=0.075000 r_max=0.149552 entropy_mean=0.324283 gate_mean=0.210467 gate_abs=0.210467 local_beta=0.000000
+INFO:root:Epoch 39    loss=0.1504 [28.9 s]    dev=(HR@5:0.1861,NDCG@5:0.1289) [13.4 s]
+INFO:root:Epoch 40    loss=0.1498 [27.7 s]    dev=(HR@5:0.1898,NDCG@5:0.1321) [13.5 s] *
+INFO:root:Epoch 41    loss=0.1484 [28.1 s]    dev=(HR@5:0.1898,NDCG@5:0.1319) [13.4 s]
+INFO:root:[IU-SCBR] step=25000 train_only=1 w=1.0000 base_global_r=0.150000 r_mean=0.097861 r_min=0.075000 r_max=0.149023 entropy_mean=0.304813 gate_mean=0.233719 gate_abs=0.233719 local_beta=0.000000
+INFO:root:Epoch 42    loss=0.1478 [28.0 s]    dev=(HR@5:0.1846,NDCG@5:0.1278) [13.4 s]
+INFO:root:Epoch 43    loss=0.1474 [28.1 s]    dev=(HR@5:0.1845,NDCG@5:0.1286) [14.4 s]
+INFO:root:[IU-SCBR] step=26000 train_only=1 w=1.0000 base_global_r=0.150000 r_mean=0.094824 r_min=0.075000 r_max=0.148066 entropy_mean=0.264323 gate_mean=0.251485 gate_abs=0.251485 local_beta=0.000000
+INFO:root:Epoch 44    loss=0.1470 [27.7 s]    dev=(HR@5:0.1857,NDCG@5:0.1283) [13.3 s]
+INFO:root:[IU-SCBR] step=27000 train_only=1 w=1.0000 base_global_r=0.150000 r_mean=0.095198 r_min=0.075000 r_max=0.148344 entropy_mean=0.269300 gate_mean=0.220612 gate_abs=0.220612 local_beta=0.000000
+INFO:root:Epoch 45    loss=0.1450 [27.7 s]    dev=(HR@5:0.1877,NDCG@5:0.1308) [13.4 s]
+INFO:root:Epoch 46    loss=0.1452 [27.5 s]    dev=(HR@5:0.1861,NDCG@5:0.1292) [13.5 s]
+INFO:root:[IU-SCBR] step=28000 train_only=1 w=1.0000 base_global_r=0.150000 r_mean=0.093871 r_min=0.075000 r_max=0.147345 entropy_mean=0.251620 gate_mean=0.240030 gate_abs=0.240030 local_beta=0.000000
+INFO:root:Epoch 47    loss=0.1443 [27.7 s]    dev=(HR@5:0.1867,NDCG@5:0.1290) [13.4 s]
+INFO:root:Epoch 48    loss=0.1423 [28.8 s]    dev=(HR@5:0.1893,NDCG@5:0.1305) [12.3 s]
+INFO:root:[IU-SCBR] step=29000 train_only=1 w=1.0000 base_global_r=0.150000 r_mean=0.096676 r_min=0.075000 r_max=0.147065 entropy_mean=0.289015 gate_mean=0.225733 gate_abs=0.225733 local_beta=0.000000
+INFO:root:Epoch 49    loss=0.1428 [27.7 s]    dev=(HR@5:0.1874,NDCG@5:0.1302) [13.5 s]
+INFO:root:[IU-SCBR] step=30000 train_only=1 w=1.0000 base_global_r=0.150000 r_mean=0.095528 r_min=0.075000 r_max=0.145900 entropy_mean=0.273707 gate_mean=0.247221 gate_abs=0.247221 local_beta=0.000000
+INFO:root:Epoch 50    loss=0.1420 [27.6 s]    dev=(HR@5:0.1856,NDCG@5:0.1294) [13.4 s]
+INFO:root:Epoch 51    loss=0.1427 [27.6 s]    dev=(HR@5:0.1888,NDCG@5:0.1305) [13.3 s]
+INFO:root:[IU-SCBR] step=31000 train_only=1 w=1.0000 base_global_r=0.150000 r_mean=0.093247 r_min=0.075000 r_max=0.146921 entropy_mean=0.243293 gate_mean=0.234916 gate_abs=0.234916 local_beta=0.000000
+INFO:root:Epoch 52    loss=0.1418 [27.8 s]    dev=(HR@5:0.1855,NDCG@5:0.1286) [13.4 s]
+INFO:root:Epoch 53    loss=0.1408 [29.1 s]    dev=(HR@5:0.1863,NDCG@5:0.1295) [13.3 s]
+INFO:root:[IU-SCBR] step=32000 train_only=1 w=1.0000 base_global_r=0.150000 r_mean=0.096510 r_min=0.075000 r_max=0.147499 entropy_mean=0.286795 gate_mean=0.246825 gate_abs=0.246825 local_beta=0.000000
+INFO:root:Epoch 54    loss=0.1398 [27.7 s]    dev=(HR@5:0.1856,NDCG@5:0.1296) [13.4 s]
+INFO:root:[IU-SCBR] step=33000 train_only=1 w=1.0000 base_global_r=0.150000 r_mean=0.092143 r_min=0.075000 r_max=0.145338 entropy_mean=0.228575 gate_mean=0.224919 gate_abs=0.224919 local_beta=0.000000
+INFO:root:Epoch 55    loss=0.1404 [27.9 s]    dev=(HR@5:0.1885,NDCG@5:0.1304) [13.4 s]
+INFO:root:Epoch 56    loss=0.1388 [27.8 s]    dev=(HR@5:0.1860,NDCG@5:0.1298) [13.4 s]
+INFO:root:[IU-SCBR] step=34000 train_only=1 w=1.0000 base_global_r=0.150000 r_mean=0.093896 r_min=0.075000 r_max=0.145461 entropy_mean=0.251952 gate_mean=0.239514 gate_abs=0.239514 local_beta=0.000000
+INFO:root:Epoch 57    loss=0.1408 [28.1 s]    dev=(HR@5:0.1865,NDCG@5:0.1297) [13.4 s]
+INFO:root:Epoch 58    loss=0.1385 [28.9 s]    dev=(HR@5:0.1840,NDCG@5:0.1289) [13.4 s]
+INFO:root:[IU-SCBR] step=35000 train_only=1 w=1.0000 base_global_r=0.150000 r_mean=0.095820 r_min=0.075000 r_max=0.146604 entropy_mean=0.277606 gate_mean=0.230807 gate_abs=0.230807 local_beta=0.000000
+INFO:root:Epoch 59    loss=0.1384 [28.1 s]    dev=(HR@5:0.1877,NDCG@5:0.1306) [13.4 s]
+INFO:root:[IU-SCBR] step=36000 train_only=1 w=1.0000 base_global_r=0.150000 r_mean=0.093332 r_min=0.075000 r_max=0.144249 entropy_mean=0.244421 gate_mean=0.255702 gate_abs=0.255702 local_beta=0.000000
+INFO:root:Epoch 60    loss=0.1382 [29.8 s]    dev=(HR@5:0.1874,NDCG@5:0.1298) [13.3 s]
+INFO:root:Early stop at 60 based on dev result.
+INFO:root:
+Best Iter(dev)=   40	 dev=(HR@5:0.1898,NDCG@5:0.1321) [2503.2 s] 
+INFO:root:Load model from new_model/mymodelv2_iuscbr/beauty/MyModelV2_IUSCBR_entropy_sem02_r015_seed42.pt
+INFO:root:
+Test After Training: (HR@5:0.1554,NDCG@5:0.1057,HR@10:0.2204,NDCG@10:0.1266,HR@20:0.3032,NDCG@20:0.1474,HR@50:0.4309,NDCG@50:0.1727)
+INFO:root:
+--------------------------------------------- END: 2026-06-08 11:33:24 ---------------------------------------------

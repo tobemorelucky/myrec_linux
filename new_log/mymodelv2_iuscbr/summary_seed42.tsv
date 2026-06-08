@@ -1,0 +1,5 @@
+dataset	variant	gpu	seed	start_time	end_time	total_seconds	best_dev	test_after_training	status
+ml-1m	MyModelV2_IUSCBR_entropy_sem00_r008_seed42	0	42	2026-06-08 10:47:47	2026-06-08 10:48:10	23			FAILED_EXIT_120
+ml-1m	MyModelV2_IUSCBR_entropy_sem00_r006_seed42	1	42	2026-06-08 10:47:47	2026-06-08 10:48:10	23			FAILED_EXIT_120
+beauty	MyModelV2_IUSCBR_entropy_sem00_r015_seed42	0	42	2026-06-08 10:47:47	2026-06-08 10:48:11	24			FAILED_EXIT_120
+beauty	MyModelV2_IUSCBR_entropy_sem02_r015_seed42	1	42	2026-06-08 10:47:47	2026-06-08 10:48:11	24			FAILED_EXIT_120

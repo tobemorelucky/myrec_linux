@@ -1,0 +1,499 @@
+INFO:root:Namespace(model_name='MyModelV2')
+INFO:root:--------------------------------------------- BEGIN: 2026-06-06 21:42:40 ---------------------------------------------
+INFO:root:
+================================================
+ Arguments               | Values               
+================================================
+ K                       | 2                   
+ align_ramp              | 15                  
+ align_warmup            | 5                   
+ alpha                   | 0.001               
+ attn_size               | 8                   
+ batch_size              | 256                 
+ dataset                 | ml-1m               
+ dropout                 | 0                   
+ early_stop              | 10                  
+ emb_size                | 64                  
+ emile_use_fused_itememb | 0                   
+ emile_warmup_steps      | 5000                
+ epoch                   | 200                 
+ eval_batch_size         | 256                 
+ gamma_init              | 0.08                
+ gamma_trainable         | 0                   
+ gpu                     | 0                   
+ history_max             | 20                  
+ ilr_neg_weight          | 1.0                 
+ init_ckpt               |                     
+ init_strict             | 0                   
+ ipd_margin              | 0.1                 
+ l2                      | 1e-06               
+ lamb                    | 3.0                 
+ lambda_ipd              | 0.02                
+ llm_emb_path            | ./data/ml-1m/hand...
+ llm_fuse                | 1                   
+ lr                      | 0.001               
+ n_layers                | 2                   
+ num_neg                 | 1                   
+ num_workers             | 5                   
+ optimizer               | Adam                
+ prompt_num              | 3                   
+ random_seed             | 42                  
+ rat_alpha_warmup_steps  | 5000                
+ sicr_beta               | 0.02                
+ sicr_detach             | 1                   
+ sicr_intent_weight      | 0.3                 
+ sicr_sem_weight         | 0.0                 
+ sicr_warmup_steps       | 5000                
+ srs_emb_path            | ./data/ml-1m/hand...
+ tau                     | 0.3                 
+ test_all                | 0                   
+ topk                    | 5,10,20,50          
+ use_emile               | 1                   
+ use_llmemb              | 1                   
+ use_sicr                | 1                   
+================================================
+INFO:root:Device: cuda
+INFO:root:Load corpus from ./data/ml-1m/SeqReader.pkl
+INFO:root:[MyModelV2] Train from scratch
+INFO:root:#params: 1474093
+INFO:root:MyModelV2(
+  (interest_extractor): MultiInterestExtractor(
+    (i_embeddings): Embedding(3707, 64)
+    (p_embeddings): Embedding(21, 64)
+    (adapter): Sequential(
+      (0): Linear(in_features=1536, out_features=768, bias=True)
+      (1): GELU(approximate='none')
+      (2): Linear(in_features=768, out_features=64, bias=True)
+      (3): LayerNorm((64,), eps=1e-05, elementwise_affine=True)
+    )
+    (srs_emb): Embedding(3707, 64)
+    (prompt1): Embedding(3, 64)
+    (prompt2): Embedding(3, 64)
+    (W1): Linear(in_features=64, out_features=8, bias=True)
+    (W2): Linear(in_features=8, out_features=2, bias=True)
+    (W3): Linear(in_features=64, out_features=8, bias=True)
+    (W4): Linear(in_features=8, out_features=1, bias=True)
+  )
+  (proj): Sequential(
+    (proj_0): Linear(in_features=64, out_features=64, bias=True)
+    (dropout_0): Dropout(p=0.5, inplace=False)
+    (relu_0): ReLU(inplace=True)
+    (proj_final): Linear(in_features=64, out_features=2, bias=True)
+  )
+  (align_loss_func): InfoNCEAlign()
+)
+INFO:root:Optimizer: Adam
+INFO:root:[SICR] step=1000 w=0.2000 beta=0.0200 bias_mean=0.002893 bias_abs=0.003659
+INFO:root:[SICR] step=2000 w=0.4000 beta=0.0200 bias_mean=0.005224 bias_abs=0.006666
+INFO:root:[SICR] step=3000 w=0.6000 beta=0.0200 bias_mean=0.007105 bias_abs=0.008787
+INFO:root:Epoch 1     loss=0.2198 [166.7 s]    dev=(HR@5:0.1631,NDCG@5:0.1075) [3.2 s] *
+INFO:root:[SICR] step=4000 w=0.8000 beta=0.0200 bias_mean=0.009309 bias_abs=0.011424
+INFO:root:[SICR] step=5000 w=1.0000 beta=0.0200 bias_mean=0.010960 bias_abs=0.013475
+INFO:root:[SICR] step=6000 w=1.0000 beta=0.0200 bias_mean=0.010812 bias_abs=0.013092
+INFO:root:[SICR] step=7000 w=1.0000 beta=0.0200 bias_mean=0.010497 bias_abs=0.012808
+INFO:root:Epoch 2     loss=0.1830 [164.2 s]    dev=(HR@5:0.2129,NDCG@5:0.1415) [3.2 s] *
+INFO:root:[SICR] step=8000 w=1.0000 beta=0.0200 bias_mean=0.010604 bias_abs=0.012846
+INFO:root:[SICR] step=9000 w=1.0000 beta=0.0200 bias_mean=0.010236 bias_abs=0.012526
+INFO:root:[SICR] step=10000 w=1.0000 beta=0.0200 bias_mean=0.010400 bias_abs=0.012365
+INFO:root:[SICR] step=11000 w=1.0000 beta=0.0200 bias_mean=0.010386 bias_abs=0.012278
+INFO:root:Epoch 3     loss=0.1668 [167.7 s]    dev=(HR@5:0.2376,NDCG@5:0.1593) [3.2 s] *
+INFO:root:[SICR] step=12000 w=1.0000 beta=0.0200 bias_mean=0.010150 bias_abs=0.012020
+INFO:root:[SICR] step=13000 w=1.0000 beta=0.0200 bias_mean=0.009823 bias_abs=0.011853
+INFO:root:[SICR] step=14000 w=1.0000 beta=0.0200 bias_mean=0.010028 bias_abs=0.011633
+INFO:root:[SICR] step=15000 w=1.0000 beta=0.0200 bias_mean=0.009989 bias_abs=0.011908
+INFO:root:Epoch 4     loss=0.1587 [158.3 s]    dev=(HR@5:0.2584,NDCG@5:0.1740) [3.2 s] *
+INFO:root:[SICR] step=16000 w=1.0000 beta=0.0200 bias_mean=0.009864 bias_abs=0.011795
+INFO:root:[SICR] step=17000 w=1.0000 beta=0.0200 bias_mean=0.010083 bias_abs=0.011751
+INFO:root:[SICR] step=18000 w=1.0000 beta=0.0200 bias_mean=0.009839 bias_abs=0.011480
+INFO:root:[SICR] step=19000 w=1.0000 beta=0.0200 bias_mean=0.009923 bias_abs=0.011541
+INFO:root:Epoch 5     loss=0.1531 [173.4 s]    dev=(HR@5:0.2659,NDCG@5:0.1788) [3.2 s] *
+INFO:root:[SICR] step=20000 w=1.0000 beta=0.0200 bias_mean=0.009910 bias_abs=0.011489
+INFO:root:[SICR] step=21000 w=1.0000 beta=0.0200 bias_mean=0.009683 bias_abs=0.011249
+INFO:root:[SICR] step=22000 w=1.0000 beta=0.0200 bias_mean=0.009885 bias_abs=0.011306
+INFO:root:[SICR] step=23000 w=1.0000 beta=0.0200 bias_mean=0.009972 bias_abs=0.011404
+INFO:root:Epoch 6     loss=0.1493 [168.7 s]    dev=(HR@5:0.2849,NDCG@5:0.1960) [3.2 s] *
+INFO:root:[SICR] step=24000 w=1.0000 beta=0.0200 bias_mean=0.010194 bias_abs=0.011440
+INFO:root:[SICR] step=25000 w=1.0000 beta=0.0200 bias_mean=0.009881 bias_abs=0.011374
+INFO:root:[SICR] step=26000 w=1.0000 beta=0.0200 bias_mean=0.009914 bias_abs=0.011466
+INFO:root:[SICR] step=27000 w=1.0000 beta=0.0200 bias_mean=0.009820 bias_abs=0.011264
+INFO:root:Epoch 7     loss=0.1461 [168.7 s]    dev=(HR@5:0.2765,NDCG@5:0.1879) [3.2 s]
+INFO:root:[SICR] step=28000 w=1.0000 beta=0.0200 bias_mean=0.010404 bias_abs=0.011658
+INFO:root:[SICR] step=29000 w=1.0000 beta=0.0200 bias_mean=0.010137 bias_abs=0.011385
+INFO:root:[SICR] step=30000 w=1.0000 beta=0.0200 bias_mean=0.009890 bias_abs=0.011266
+INFO:root:Epoch 8     loss=0.1442 [171.5 s]    dev=(HR@5:0.2881,NDCG@5:0.1984) [3.2 s] *
+INFO:root:[SICR] step=31000 w=1.0000 beta=0.0200 bias_mean=0.010175 bias_abs=0.011222
+INFO:root:[SICR] step=32000 w=1.0000 beta=0.0200 bias_mean=0.009710 bias_abs=0.010946
+INFO:root:[SICR] step=33000 w=1.0000 beta=0.0200 bias_mean=0.009546 bias_abs=0.010806
+INFO:root:[SICR] step=34000 w=1.0000 beta=0.0200 bias_mean=0.010179 bias_abs=0.011202
+INFO:root:Epoch 9     loss=0.1420 [170.8 s]    dev=(HR@5:0.2944,NDCG@5:0.2033) [3.2 s] *
+INFO:root:[SICR] step=35000 w=1.0000 beta=0.0200 bias_mean=0.010227 bias_abs=0.011269
+INFO:root:[SICR] step=36000 w=1.0000 beta=0.0200 bias_mean=0.010056 bias_abs=0.011162
+INFO:root:[SICR] step=37000 w=1.0000 beta=0.0200 bias_mean=0.010330 bias_abs=0.011236
+INFO:root:[SICR] step=38000 w=1.0000 beta=0.0200 bias_mean=0.010102 bias_abs=0.011023
+INFO:root:Epoch 10    loss=0.1400 [163.8 s]    dev=(HR@5:0.3025,NDCG@5:0.2062) [3.2 s] *
+INFO:root:[SICR] step=39000 w=1.0000 beta=0.0200 bias_mean=0.009968 bias_abs=0.010999
+INFO:root:[SICR] step=40000 w=1.0000 beta=0.0200 bias_mean=0.009851 bias_abs=0.010957
+INFO:root:[SICR] step=41000 w=1.0000 beta=0.0200 bias_mean=0.009832 bias_abs=0.010893
+INFO:root:[SICR] step=42000 w=1.0000 beta=0.0200 bias_mean=0.009716 bias_abs=0.010675
+INFO:root:Epoch 11    loss=0.1383 [167.2 s]    dev=(HR@5:0.3048,NDCG@5:0.2094) [3.2 s] *
+INFO:root:[SICR] step=43000 w=1.0000 beta=0.0200 bias_mean=0.009616 bias_abs=0.010656
+INFO:root:[SICR] step=44000 w=1.0000 beta=0.0200 bias_mean=0.009637 bias_abs=0.010642
+INFO:root:[SICR] step=45000 w=1.0000 beta=0.0200 bias_mean=0.010018 bias_abs=0.010882
+INFO:root:[SICR] step=46000 w=1.0000 beta=0.0200 bias_mean=0.009618 bias_abs=0.010666
+INFO:root:Epoch 12    loss=0.1380 [167.2 s]    dev=(HR@5:0.3134,NDCG@5:0.2154) [3.2 s] *
+INFO:root:[SICR] step=47000 w=1.0000 beta=0.0200 bias_mean=0.009621 bias_abs=0.010550
+INFO:root:[SICR] step=48000 w=1.0000 beta=0.0200 bias_mean=0.009166 bias_abs=0.010290
+INFO:root:[SICR] step=49000 w=1.0000 beta=0.0200 bias_mean=0.009702 bias_abs=0.010555
+INFO:root:[SICR] step=50000 w=1.0000 beta=0.0200 bias_mean=0.009725 bias_abs=0.010608
+INFO:root:Epoch 13    loss=0.1365 [171.9 s]    dev=(HR@5:0.3103,NDCG@5:0.2148) [3.2 s]
+INFO:root:[SICR] step=51000 w=1.0000 beta=0.0200 bias_mean=0.009857 bias_abs=0.010768
+INFO:root:[SICR] step=52000 w=1.0000 beta=0.0200 bias_mean=0.009803 bias_abs=0.010706
+INFO:root:[SICR] step=53000 w=1.0000 beta=0.0200 bias_mean=0.009639 bias_abs=0.010628
+INFO:root:[SICR] step=54000 w=1.0000 beta=0.0200 bias_mean=0.009430 bias_abs=0.010293
+INFO:root:Epoch 14    loss=0.1348 [167.2 s]    dev=(HR@5:0.3118,NDCG@5:0.2142) [3.2 s]
+INFO:root:[SICR] step=55000 w=1.0000 beta=0.0200 bias_mean=0.009763 bias_abs=0.010552
+INFO:root:[SICR] step=56000 w=1.0000 beta=0.0200 bias_mean=0.009425 bias_abs=0.010374
+INFO:root:[SICR] step=57000 w=1.0000 beta=0.0200 bias_mean=0.009162 bias_abs=0.010037
+INFO:root:Epoch 15    loss=0.1345 [168.9 s]    dev=(HR@5:0.3121,NDCG@5:0.2189) [3.2 s] *
+INFO:root:[SICR] step=58000 w=1.0000 beta=0.0200 bias_mean=0.009464 bias_abs=0.010137
+INFO:root:[SICR] step=59000 w=1.0000 beta=0.0200 bias_mean=0.009663 bias_abs=0.010406
+INFO:root:[SICR] step=60000 w=1.0000 beta=0.0200 bias_mean=0.009658 bias_abs=0.010450
+INFO:root:[SICR] step=61000 w=1.0000 beta=0.0200 bias_mean=0.009480 bias_abs=0.010176
+INFO:root:Epoch 16    loss=0.1331 [172.2 s]    dev=(HR@5:0.3204,NDCG@5:0.2224) [3.2 s] *
+INFO:root:[SICR] step=62000 w=1.0000 beta=0.0200 bias_mean=0.009456 bias_abs=0.010225
+INFO:root:[SICR] step=63000 w=1.0000 beta=0.0200 bias_mean=0.009285 bias_abs=0.010034
+INFO:root:[SICR] step=64000 w=1.0000 beta=0.0200 bias_mean=0.009414 bias_abs=0.010210
+INFO:root:[SICR] step=65000 w=1.0000 beta=0.0200 bias_mean=0.009664 bias_abs=0.010363
+INFO:root:Epoch 17    loss=0.1318 [167.6 s]    dev=(HR@5:0.3162,NDCG@5:0.2203) [3.2 s]
+INFO:root:[SICR] step=66000 w=1.0000 beta=0.0200 bias_mean=0.009596 bias_abs=0.010263
+INFO:root:[SICR] step=67000 w=1.0000 beta=0.0200 bias_mean=0.009560 bias_abs=0.010189
+INFO:root:[SICR] step=68000 w=1.0000 beta=0.0200 bias_mean=0.009374 bias_abs=0.010133
+INFO:root:[SICR] step=69000 w=1.0000 beta=0.0200 bias_mean=0.009344 bias_abs=0.010168
+INFO:root:Epoch 18    loss=0.1318 [172.3 s]    dev=(HR@5:0.3214,NDCG@5:0.2217) [3.2 s]
+INFO:root:[SICR] step=70000 w=1.0000 beta=0.0200 bias_mean=0.009181 bias_abs=0.009840
+INFO:root:[SICR] step=71000 w=1.0000 beta=0.0200 bias_mean=0.009515 bias_abs=0.010172
+INFO:root:[SICR] step=72000 w=1.0000 beta=0.0200 bias_mean=0.009328 bias_abs=0.010034
+INFO:root:[SICR] step=73000 w=1.0000 beta=0.0200 bias_mean=0.009291 bias_abs=0.010100
+INFO:root:Epoch 19    loss=0.1308 [164.8 s]    dev=(HR@5:0.3262,NDCG@5:0.2247) [3.2 s] *
+INFO:root:[SICR] step=74000 w=1.0000 beta=0.0200 bias_mean=0.009330 bias_abs=0.010015
+INFO:root:[SICR] step=75000 w=1.0000 beta=0.0200 bias_mean=0.009306 bias_abs=0.009978
+INFO:root:[SICR] step=76000 w=1.0000 beta=0.0200 bias_mean=0.009436 bias_abs=0.010050
+INFO:root:[SICR] step=77000 w=1.0000 beta=0.0200 bias_mean=0.009172 bias_abs=0.009895
+INFO:root:Epoch 20    loss=0.1303 [170.8 s]    dev=(HR@5:0.3267,NDCG@5:0.2262) [3.2 s] *
+INFO:root:[SICR] step=78000 w=1.0000 beta=0.0200 bias_mean=0.009096 bias_abs=0.009782
+INFO:root:[SICR] step=79000 w=1.0000 beta=0.0200 bias_mean=0.009551 bias_abs=0.010169
+INFO:root:[SICR] step=80000 w=1.0000 beta=0.0200 bias_mean=0.009275 bias_abs=0.009952
+INFO:root:[SICR] step=81000 w=1.0000 beta=0.0200 bias_mean=0.009275 bias_abs=0.009999
+INFO:root:Epoch 21    loss=0.1290 [167.0 s]    dev=(HR@5:0.3285,NDCG@5:0.2262) [3.2 s]
+INFO:root:[SICR] step=82000 w=1.0000 beta=0.0200 bias_mean=0.008961 bias_abs=0.009746
+INFO:root:[SICR] step=83000 w=1.0000 beta=0.0200 bias_mean=0.009742 bias_abs=0.010325
+INFO:root:[SICR] step=84000 w=1.0000 beta=0.0200 bias_mean=0.009283 bias_abs=0.009791
+INFO:root:Epoch 22    loss=0.1287 [167.3 s]    dev=(HR@5:0.3281,NDCG@5:0.2266) [3.2 s] *
+INFO:root:[SICR] step=85000 w=1.0000 beta=0.0200 bias_mean=0.008779 bias_abs=0.009435
+INFO:root:[SICR] step=86000 w=1.0000 beta=0.0200 bias_mean=0.009044 bias_abs=0.009642
+INFO:root:[SICR] step=87000 w=1.0000 beta=0.0200 bias_mean=0.009266 bias_abs=0.009897
+INFO:root:[SICR] step=88000 w=1.0000 beta=0.0200 bias_mean=0.009291 bias_abs=0.009809
+INFO:root:Epoch 23    loss=0.1277 [169.3 s]    dev=(HR@5:0.3288,NDCG@5:0.2274) [3.2 s] *
+INFO:root:[SICR] step=89000 w=1.0000 beta=0.0200 bias_mean=0.008870 bias_abs=0.009496
+INFO:root:[SICR] step=90000 w=1.0000 beta=0.0200 bias_mean=0.008855 bias_abs=0.009473
+INFO:root:[SICR] step=91000 w=1.0000 beta=0.0200 bias_mean=0.008973 bias_abs=0.009585
+INFO:root:[SICR] step=92000 w=1.0000 beta=0.0200 bias_mean=0.009019 bias_abs=0.009679
+INFO:root:Epoch 24    loss=0.1271 [168.9 s]    dev=(HR@5:0.3323,NDCG@5:0.2285) [3.2 s] *
+INFO:root:[SICR] step=93000 w=1.0000 beta=0.0200 bias_mean=0.009171 bias_abs=0.009730
+INFO:root:[SICR] step=94000 w=1.0000 beta=0.0200 bias_mean=0.009305 bias_abs=0.009837
+INFO:root:[SICR] step=95000 w=1.0000 beta=0.0200 bias_mean=0.009127 bias_abs=0.009661
+INFO:root:[SICR] step=96000 w=1.0000 beta=0.0200 bias_mean=0.008785 bias_abs=0.009408
+INFO:root:Epoch 25    loss=0.1272 [175.6 s]    dev=(HR@5:0.3310,NDCG@5:0.2311) [3.2 s] *
+INFO:root:[SICR] step=97000 w=1.0000 beta=0.0200 bias_mean=0.009036 bias_abs=0.009563
+INFO:root:[SICR] step=98000 w=1.0000 beta=0.0200 bias_mean=0.009174 bias_abs=0.009716
+INFO:root:[SICR] step=99000 w=1.0000 beta=0.0200 bias_mean=0.008843 bias_abs=0.009447
+INFO:root:[SICR] step=100000 w=1.0000 beta=0.0200 bias_mean=0.009143 bias_abs=0.009739
+INFO:root:Epoch 26    loss=0.1263 [160.2 s]    dev=(HR@5:0.3316,NDCG@5:0.2303) [3.2 s]
+INFO:root:[SICR] step=101000 w=1.0000 beta=0.0200 bias_mean=0.009000 bias_abs=0.009500
+INFO:root:[SICR] step=102000 w=1.0000 beta=0.0200 bias_mean=0.009286 bias_abs=0.009799
+INFO:root:[SICR] step=103000 w=1.0000 beta=0.0200 bias_mean=0.009047 bias_abs=0.009599
+INFO:root:[SICR] step=104000 w=1.0000 beta=0.0200 bias_mean=0.009051 bias_abs=0.009526
+INFO:root:Epoch 27    loss=0.1264 [164.6 s]    dev=(HR@5:0.3253,NDCG@5:0.2276) [3.2 s]
+INFO:root:[SICR] step=105000 w=1.0000 beta=0.0200 bias_mean=0.008977 bias_abs=0.009472
+INFO:root:[SICR] step=106000 w=1.0000 beta=0.0200 bias_mean=0.009097 bias_abs=0.009569
+INFO:root:[SICR] step=107000 w=1.0000 beta=0.0200 bias_mean=0.008809 bias_abs=0.009377
+INFO:root:[SICR] step=108000 w=1.0000 beta=0.0200 bias_mean=0.009146 bias_abs=0.009582
+INFO:root:Epoch 28    loss=0.1258 [162.0 s]    dev=(HR@5:0.3334,NDCG@5:0.2317) [3.2 s] *
+INFO:root:[SICR] step=109000 w=1.0000 beta=0.0200 bias_mean=0.008860 bias_abs=0.009403
+INFO:root:[SICR] step=110000 w=1.0000 beta=0.0200 bias_mean=0.009021 bias_abs=0.009637
+INFO:root:[SICR] step=111000 w=1.0000 beta=0.0200 bias_mean=0.008978 bias_abs=0.009397
+INFO:root:Epoch 29    loss=0.1248 [169.4 s]    dev=(HR@5:0.3334,NDCG@5:0.2325) [3.2 s] *
+INFO:root:[SICR] step=112000 w=1.0000 beta=0.0200 bias_mean=0.009075 bias_abs=0.009543
+INFO:root:[SICR] step=113000 w=1.0000 beta=0.0200 bias_mean=0.008824 bias_abs=0.009301
+INFO:root:[SICR] step=114000 w=1.0000 beta=0.0200 bias_mean=0.009162 bias_abs=0.009643
+INFO:root:[SICR] step=115000 w=1.0000 beta=0.0200 bias_mean=0.008703 bias_abs=0.009185
+INFO:root:Epoch 30    loss=0.1250 [168.9 s]    dev=(HR@5:0.3295,NDCG@5:0.2297) [3.2 s]
+INFO:root:[SICR] step=116000 w=1.0000 beta=0.0200 bias_mean=0.008626 bias_abs=0.009121
+INFO:root:[SICR] step=117000 w=1.0000 beta=0.0200 bias_mean=0.008885 bias_abs=0.009269
+INFO:root:[SICR] step=118000 w=1.0000 beta=0.0200 bias_mean=0.008881 bias_abs=0.009287
+INFO:root:[SICR] step=119000 w=1.0000 beta=0.0200 bias_mean=0.009121 bias_abs=0.009543
+INFO:root:Epoch 31    loss=0.1241 [175.5 s]    dev=(HR@5:0.3303,NDCG@5:0.2316) [3.2 s]
+INFO:root:[SICR] step=120000 w=1.0000 beta=0.0200 bias_mean=0.008690 bias_abs=0.009070
+INFO:root:[SICR] step=121000 w=1.0000 beta=0.0200 bias_mean=0.009273 bias_abs=0.009663
+INFO:root:[SICR] step=122000 w=1.0000 beta=0.0200 bias_mean=0.008911 bias_abs=0.009326
+INFO:root:[SICR] step=123000 w=1.0000 beta=0.0200 bias_mean=0.008802 bias_abs=0.009327
+INFO:root:Epoch 32    loss=0.1238 [166.7 s]    dev=(HR@5:0.3371,NDCG@5:0.2363) [3.2 s] *
+INFO:root:[SICR] step=124000 w=1.0000 beta=0.0200 bias_mean=0.008592 bias_abs=0.009089
+INFO:root:[SICR] step=125000 w=1.0000 beta=0.0200 bias_mean=0.008392 bias_abs=0.008802
+INFO:root:[SICR] step=126000 w=1.0000 beta=0.0200 bias_mean=0.009252 bias_abs=0.009599
+INFO:root:[SICR] step=127000 w=1.0000 beta=0.0200 bias_mean=0.008973 bias_abs=0.009345
+INFO:root:Epoch 33    loss=0.1236 [166.3 s]    dev=(HR@5:0.3333,NDCG@5:0.2321) [3.2 s]
+INFO:root:[SICR] step=128000 w=1.0000 beta=0.0200 bias_mean=0.008865 bias_abs=0.009359
+INFO:root:[SICR] step=129000 w=1.0000 beta=0.0200 bias_mean=0.008735 bias_abs=0.009209
+INFO:root:[SICR] step=130000 w=1.0000 beta=0.0200 bias_mean=0.008960 bias_abs=0.009299
+INFO:root:[SICR] step=131000 w=1.0000 beta=0.0200 bias_mean=0.008971 bias_abs=0.009333
+INFO:root:Epoch 34    loss=0.1235 [170.7 s]    dev=(HR@5:0.3379,NDCG@5:0.2332) [3.2 s]
+INFO:root:[SICR] step=132000 w=1.0000 beta=0.0200 bias_mean=0.009142 bias_abs=0.009546
+INFO:root:[SICR] step=133000 w=1.0000 beta=0.0200 bias_mean=0.009032 bias_abs=0.009445
+INFO:root:[SICR] step=134000 w=1.0000 beta=0.0200 bias_mean=0.009172 bias_abs=0.009529
+INFO:root:[SICR] step=135000 w=1.0000 beta=0.0200 bias_mean=0.008681 bias_abs=0.009092
+INFO:root:Epoch 35    loss=0.1231 [170.9 s]    dev=(HR@5:0.3329,NDCG@5:0.2305) [3.2 s]
+INFO:root:[SICR] step=136000 w=1.0000 beta=0.0200 bias_mean=0.008380 bias_abs=0.008841
+INFO:root:[SICR] step=137000 w=1.0000 beta=0.0200 bias_mean=0.008816 bias_abs=0.009132
+INFO:root:[SICR] step=138000 w=1.0000 beta=0.0200 bias_mean=0.008781 bias_abs=0.009162
+INFO:root:Epoch 36    loss=0.1225 [161.9 s]    dev=(HR@5:0.3373,NDCG@5:0.2326) [3.2 s]
+INFO:root:[SICR] step=139000 w=1.0000 beta=0.0200 bias_mean=0.009299 bias_abs=0.009650
+INFO:root:[SICR] step=140000 w=1.0000 beta=0.0200 bias_mean=0.008969 bias_abs=0.009380
+INFO:root:[SICR] step=141000 w=1.0000 beta=0.0200 bias_mean=0.008576 bias_abs=0.008905
+INFO:root:[SICR] step=142000 w=1.0000 beta=0.0200 bias_mean=0.009161 bias_abs=0.009544
+INFO:root:Epoch 37    loss=0.1222 [175.4 s]    dev=(HR@5:0.3450,NDCG@5:0.2373) [3.2 s] *
+INFO:root:[SICR] step=143000 w=1.0000 beta=0.0200 bias_mean=0.008702 bias_abs=0.009135
+INFO:root:[SICR] step=144000 w=1.0000 beta=0.0200 bias_mean=0.008680 bias_abs=0.009042
+INFO:root:[SICR] step=145000 w=1.0000 beta=0.0200 bias_mean=0.009041 bias_abs=0.009401
+INFO:root:[SICR] step=146000 w=1.0000 beta=0.0200 bias_mean=0.009013 bias_abs=0.009402
+INFO:root:Epoch 38    loss=0.1217 [168.4 s]    dev=(HR@5:0.3376,NDCG@5:0.2330) [3.2 s]
+INFO:root:[SICR] step=147000 w=1.0000 beta=0.0200 bias_mean=0.008599 bias_abs=0.009038
+INFO:root:[SICR] step=148000 w=1.0000 beta=0.0200 bias_mean=0.008577 bias_abs=0.008934
+INFO:root:[SICR] step=149000 w=1.0000 beta=0.0200 bias_mean=0.008846 bias_abs=0.009193
+INFO:root:[SICR] step=150000 w=1.0000 beta=0.0200 bias_mean=0.009385 bias_abs=0.009658
+INFO:root:Epoch 39    loss=0.1224 [171.0 s]    dev=(HR@5:0.3339,NDCG@5:0.2312) [3.2 s]
+INFO:root:[SICR] step=151000 w=1.0000 beta=0.0200 bias_mean=0.008737 bias_abs=0.009076
+INFO:root:[SICR] step=152000 w=1.0000 beta=0.0200 bias_mean=0.008838 bias_abs=0.009233
+INFO:root:[SICR] step=153000 w=1.0000 beta=0.0200 bias_mean=0.008714 bias_abs=0.009078
+INFO:root:[SICR] step=154000 w=1.0000 beta=0.0200 bias_mean=0.008736 bias_abs=0.009108
+INFO:root:Epoch 40    loss=0.1216 [171.8 s]    dev=(HR@5:0.3344,NDCG@5:0.2340) [3.2 s]
+INFO:root:[SICR] step=155000 w=1.0000 beta=0.0200 bias_mean=0.008695 bias_abs=0.009045
+INFO:root:[SICR] step=156000 w=1.0000 beta=0.0200 bias_mean=0.008618 bias_abs=0.009019
+INFO:root:[SICR] step=157000 w=1.0000 beta=0.0200 bias_mean=0.009040 bias_abs=0.009435
+INFO:root:[SICR] step=158000 w=1.0000 beta=0.0200 bias_mean=0.008434 bias_abs=0.008803
+INFO:root:Epoch 41    loss=0.1214 [166.4 s]    dev=(HR@5:0.3358,NDCG@5:0.2346) [3.2 s]
+INFO:root:[SICR] step=159000 w=1.0000 beta=0.0200 bias_mean=0.008604 bias_abs=0.009036
+INFO:root:[SICR] step=160000 w=1.0000 beta=0.0200 bias_mean=0.008721 bias_abs=0.009058
+INFO:root:[SICR] step=161000 w=1.0000 beta=0.0200 bias_mean=0.008917 bias_abs=0.009260
+INFO:root:[SICR] step=162000 w=1.0000 beta=0.0200 bias_mean=0.008870 bias_abs=0.009191
+INFO:root:Epoch 42    loss=0.1211 [170.7 s]    dev=(HR@5:0.3374,NDCG@5:0.2358) [3.2 s]
+INFO:root:[SICR] step=163000 w=1.0000 beta=0.0200 bias_mean=0.008409 bias_abs=0.008764
+INFO:root:[SICR] step=164000 w=1.0000 beta=0.0200 bias_mean=0.008425 bias_abs=0.008767
+INFO:root:[SICR] step=165000 w=1.0000 beta=0.0200 bias_mean=0.008821 bias_abs=0.009179
+INFO:root:Epoch 43    loss=0.1208 [163.5 s]    dev=(HR@5:0.3396,NDCG@5:0.2358) [3.2 s]
+INFO:root:[SICR] step=167000 w=1.0000 beta=0.0200 bias_mean=0.008680 bias_abs=0.009069
+INFO:root:[SICR] step=168000 w=1.0000 beta=0.0200 bias_mean=0.008758 bias_abs=0.009072
+INFO:root:[SICR] step=169000 w=1.0000 beta=0.0200 bias_mean=0.009134 bias_abs=0.009452
+INFO:root:Epoch 44    loss=0.1202 [167.0 s]    dev=(HR@5:0.3363,NDCG@5:0.2350) [3.2 s]
+INFO:root:[SICR] step=170000 w=1.0000 beta=0.0200 bias_mean=0.008717 bias_abs=0.009052
+INFO:root:[SICR] step=171000 w=1.0000 beta=0.0200 bias_mean=0.008747 bias_abs=0.009089
+INFO:root:[SICR] step=172000 w=1.0000 beta=0.0200 bias_mean=0.008780 bias_abs=0.009119
+INFO:root:[SICR] step=173000 w=1.0000 beta=0.0200 bias_mean=0.008951 bias_abs=0.009265
+INFO:root:Epoch 45    loss=0.1206 [165.8 s]    dev=(HR@5:0.3334,NDCG@5:0.2337) [3.2 s]
+INFO:root:[SICR] step=174000 w=1.0000 beta=0.0200 bias_mean=0.008326 bias_abs=0.008724
+INFO:root:[SICR] step=175000 w=1.0000 beta=0.0200 bias_mean=0.008659 bias_abs=0.008998
+INFO:root:[SICR] step=176000 w=1.0000 beta=0.0200 bias_mean=0.008888 bias_abs=0.009185
+INFO:root:[SICR] step=177000 w=1.0000 beta=0.0200 bias_mean=0.008489 bias_abs=0.008818
+INFO:root:Epoch 46    loss=0.1200 [173.8 s]    dev=(HR@5:0.3386,NDCG@5:0.2356) [3.2 s]
+INFO:root:[SICR] step=178000 w=1.0000 beta=0.0200 bias_mean=0.008771 bias_abs=0.009082
+INFO:root:[SICR] step=179000 w=1.0000 beta=0.0200 bias_mean=0.008621 bias_abs=0.008930
+INFO:root:[SICR] step=180000 w=1.0000 beta=0.0200 bias_mean=0.008801 bias_abs=0.009110
+INFO:root:[SICR] step=181000 w=1.0000 beta=0.0200 bias_mean=0.008590 bias_abs=0.008939
+INFO:root:Epoch 47    loss=0.1200 [164.4 s]    dev=(HR@5:0.3397,NDCG@5:0.2364) [3.2 s]
+INFO:root:[SICR] step=182000 w=1.0000 beta=0.0200 bias_mean=0.008884 bias_abs=0.009209
+INFO:root:[SICR] step=183000 w=1.0000 beta=0.0200 bias_mean=0.008385 bias_abs=0.008763
+INFO:root:[SICR] step=184000 w=1.0000 beta=0.0200 bias_mean=0.009114 bias_abs=0.009388
+INFO:root:[SICR] step=185000 w=1.0000 beta=0.0200 bias_mean=0.008851 bias_abs=0.009181
+INFO:root:Epoch 48    loss=0.1193 [166.7 s]    dev=(HR@5:0.3412,NDCG@5:0.2345) [3.2 s]
+INFO:root:[SICR] step=186000 w=1.0000 beta=0.0200 bias_mean=0.008485 bias_abs=0.008855
+INFO:root:[SICR] step=187000 w=1.0000 beta=0.0200 bias_mean=0.008242 bias_abs=0.008635
+INFO:root:[SICR] step=188000 w=1.0000 beta=0.0200 bias_mean=0.008620 bias_abs=0.008947
+INFO:root:[SICR] step=189000 w=1.0000 beta=0.0200 bias_mean=0.008637 bias_abs=0.009003
+INFO:root:Epoch 49    loss=0.1194 [170.5 s]    dev=(HR@5:0.3406,NDCG@5:0.2358) [3.2 s]
+INFO:root:[SICR] step=190000 w=1.0000 beta=0.0200 bias_mean=0.009032 bias_abs=0.009304
+INFO:root:[SICR] step=191000 w=1.0000 beta=0.0200 bias_mean=0.008695 bias_abs=0.008961
+INFO:root:[SICR] step=192000 w=1.0000 beta=0.0200 bias_mean=0.008786 bias_abs=0.009018
+INFO:root:[SICR] step=193000 w=1.0000 beta=0.0200 bias_mean=0.008772 bias_abs=0.009067
+INFO:root:Epoch 50    loss=0.1193 [169.0 s]    dev=(HR@5:0.3371,NDCG@5:0.2334) [3.2 s]
+INFO:root:[SICR] step=194000 w=1.0000 beta=0.0200 bias_mean=0.008455 bias_abs=0.008771
+INFO:root:[SICR] step=195000 w=1.0000 beta=0.0200 bias_mean=0.008515 bias_abs=0.008803
+INFO:root:[SICR] step=196000 w=1.0000 beta=0.0200 bias_mean=0.008684 bias_abs=0.008990
+INFO:root:Epoch 51    loss=0.1192 [167.5 s]    dev=(HR@5:0.3429,NDCG@5:0.2379) [3.2 s] *
+INFO:root:[SICR] step=197000 w=1.0000 beta=0.0200 bias_mean=0.008869 bias_abs=0.009176
+INFO:root:[SICR] step=198000 w=1.0000 beta=0.0200 bias_mean=0.008779 bias_abs=0.009085
+INFO:root:[SICR] step=199000 w=1.0000 beta=0.0200 bias_mean=0.008491 bias_abs=0.008796
+INFO:root:[SICR] step=200000 w=1.0000 beta=0.0200 bias_mean=0.009016 bias_abs=0.009244
+INFO:root:Epoch 52    loss=0.1191 [168.3 s]    dev=(HR@5:0.3376,NDCG@5:0.2348) [3.2 s]
+INFO:root:[SICR] step=201000 w=1.0000 beta=0.0200 bias_mean=0.008708 bias_abs=0.009041
+INFO:root:[SICR] step=202000 w=1.0000 beta=0.0200 bias_mean=0.008492 bias_abs=0.008835
+INFO:root:[SICR] step=203000 w=1.0000 beta=0.0200 bias_mean=0.008755 bias_abs=0.009039
+INFO:root:[SICR] step=204000 w=1.0000 beta=0.0200 bias_mean=0.008958 bias_abs=0.009219
+INFO:root:Epoch 53    loss=0.1187 [175.4 s]    dev=(HR@5:0.3366,NDCG@5:0.2357) [3.2 s]
+INFO:root:[SICR] step=205000 w=1.0000 beta=0.0200 bias_mean=0.008312 bias_abs=0.008648
+INFO:root:[SICR] step=206000 w=1.0000 beta=0.0200 bias_mean=0.008509 bias_abs=0.008824
+INFO:root:[SICR] step=207000 w=1.0000 beta=0.0200 bias_mean=0.008260 bias_abs=0.008663
+INFO:root:[SICR] step=208000 w=1.0000 beta=0.0200 bias_mean=0.009157 bias_abs=0.009407
+INFO:root:Epoch 54    loss=0.1193 [172.1 s]    dev=(HR@5:0.3401,NDCG@5:0.2366) [3.2 s]
+INFO:root:[SICR] step=209000 w=1.0000 beta=0.0200 bias_mean=0.008902 bias_abs=0.009170
+INFO:root:[SICR] step=210000 w=1.0000 beta=0.0200 bias_mean=0.008273 bias_abs=0.008655
+INFO:root:[SICR] step=211000 w=1.0000 beta=0.0200 bias_mean=0.008673 bias_abs=0.008951
+INFO:root:[SICR] step=212000 w=1.0000 beta=0.0200 bias_mean=0.008797 bias_abs=0.009109
+INFO:root:Epoch 55    loss=0.1188 [174.8 s]    dev=(HR@5:0.3427,NDCG@5:0.2398) [3.2 s] *
+INFO:root:[SICR] step=213000 w=1.0000 beta=0.0200 bias_mean=0.008894 bias_abs=0.009170
+INFO:root:[SICR] step=214000 w=1.0000 beta=0.0200 bias_mean=0.008632 bias_abs=0.009001
+INFO:root:[SICR] step=215000 w=1.0000 beta=0.0200 bias_mean=0.008782 bias_abs=0.009043
+INFO:root:[SICR] step=216000 w=1.0000 beta=0.0200 bias_mean=0.008826 bias_abs=0.009105
+INFO:root:Epoch 56    loss=0.1185 [172.6 s]    dev=(HR@5:0.3421,NDCG@5:0.2382) [3.2 s]
+INFO:root:[SICR] step=217000 w=1.0000 beta=0.0200 bias_mean=0.008600 bias_abs=0.008899
+INFO:root:[SICR] step=218000 w=1.0000 beta=0.0200 bias_mean=0.008496 bias_abs=0.008790
+INFO:root:[SICR] step=219000 w=1.0000 beta=0.0200 bias_mean=0.008764 bias_abs=0.009123
+INFO:root:[SICR] step=220000 w=1.0000 beta=0.0200 bias_mean=0.008793 bias_abs=0.009062
+INFO:root:Epoch 57    loss=0.1182 [175.1 s]    dev=(HR@5:0.3407,NDCG@5:0.2356) [3.2 s]
+INFO:root:[SICR] step=221000 w=1.0000 beta=0.0200 bias_mean=0.008386 bias_abs=0.008676
+INFO:root:[SICR] step=222000 w=1.0000 beta=0.0200 bias_mean=0.008733 bias_abs=0.009035
+INFO:root:[SICR] step=223000 w=1.0000 beta=0.0200 bias_mean=0.008755 bias_abs=0.009087
+INFO:root:Epoch 58    loss=0.1186 [163.2 s]    dev=(HR@5:0.3430,NDCG@5:0.2371) [3.2 s]
+INFO:root:[SICR] step=224000 w=1.0000 beta=0.0200 bias_mean=0.008742 bias_abs=0.008991
+INFO:root:[SICR] step=225000 w=1.0000 beta=0.0200 bias_mean=0.008646 bias_abs=0.008963
+INFO:root:[SICR] step=226000 w=1.0000 beta=0.0200 bias_mean=0.008642 bias_abs=0.008934
+INFO:root:[SICR] step=227000 w=1.0000 beta=0.0200 bias_mean=0.008405 bias_abs=0.008644
+INFO:root:Epoch 59    loss=0.1178 [164.4 s]    dev=(HR@5:0.3361,NDCG@5:0.2335) [3.2 s]
+INFO:root:[SICR] step=228000 w=1.0000 beta=0.0200 bias_mean=0.008770 bias_abs=0.009041
+INFO:root:[SICR] step=229000 w=1.0000 beta=0.0200 bias_mean=0.008746 bias_abs=0.009069
+INFO:root:[SICR] step=230000 w=1.0000 beta=0.0200 bias_mean=0.008551 bias_abs=0.008837
+INFO:root:[SICR] step=231000 w=1.0000 beta=0.0200 bias_mean=0.008490 bias_abs=0.008759
+INFO:root:Epoch 60    loss=0.1181 [161.7 s]    dev=(HR@5:0.3368,NDCG@5:0.2340) [3.2 s]
+INFO:root:[SICR] step=232000 w=1.0000 beta=0.0200 bias_mean=0.008465 bias_abs=0.008781
+INFO:root:[SICR] step=233000 w=1.0000 beta=0.0200 bias_mean=0.008607 bias_abs=0.008923
+INFO:root:[SICR] step=234000 w=1.0000 beta=0.0200 bias_mean=0.008557 bias_abs=0.008819
+INFO:root:[SICR] step=235000 w=1.0000 beta=0.0200 bias_mean=0.008640 bias_abs=0.008890
+INFO:root:Epoch 61    loss=0.1180 [170.4 s]    dev=(HR@5:0.3363,NDCG@5:0.2331) [3.2 s]
+INFO:root:[SICR] step=236000 w=1.0000 beta=0.0200 bias_mean=0.008850 bias_abs=0.009120
+INFO:root:[SICR] step=237000 w=1.0000 beta=0.0200 bias_mean=0.008314 bias_abs=0.008606
+INFO:root:[SICR] step=238000 w=1.0000 beta=0.0200 bias_mean=0.008657 bias_abs=0.008967
+INFO:root:[SICR] step=239000 w=1.0000 beta=0.0200 bias_mean=0.008655 bias_abs=0.008907
+INFO:root:Epoch 62    loss=0.1177 [168.5 s]    dev=(HR@5:0.3371,NDCG@5:0.2340) [3.2 s]
+INFO:root:[SICR] step=240000 w=1.0000 beta=0.0200 bias_mean=0.008785 bias_abs=0.009072
+INFO:root:[SICR] step=241000 w=1.0000 beta=0.0200 bias_mean=0.008962 bias_abs=0.009257
+INFO:root:[SICR] step=242000 w=1.0000 beta=0.0200 bias_mean=0.008840 bias_abs=0.009110
+INFO:root:[SICR] step=243000 w=1.0000 beta=0.0200 bias_mean=0.008718 bias_abs=0.008994
+INFO:root:Epoch 63    loss=0.1173 [177.6 s]    dev=(HR@5:0.3369,NDCG@5:0.2348) [3.2 s]
+INFO:root:[SICR] step=244000 w=1.0000 beta=0.0200 bias_mean=0.008349 bias_abs=0.008669
+INFO:root:[SICR] step=245000 w=1.0000 beta=0.0200 bias_mean=0.008507 bias_abs=0.008816
+INFO:root:[SICR] step=246000 w=1.0000 beta=0.0200 bias_mean=0.008718 bias_abs=0.009022
+INFO:root:[SICR] step=247000 w=1.0000 beta=0.0200 bias_mean=0.008798 bias_abs=0.009081
+INFO:root:Epoch 64    loss=0.1176 [173.1 s]    dev=(HR@5:0.3487,NDCG@5:0.2420) [3.2 s] *
+INFO:root:[SICR] step=248000 w=1.0000 beta=0.0200 bias_mean=0.008385 bias_abs=0.008713
+INFO:root:[SICR] step=249000 w=1.0000 beta=0.0200 bias_mean=0.008531 bias_abs=0.008801
+INFO:root:[SICR] step=250000 w=1.0000 beta=0.0200 bias_mean=0.008827 bias_abs=0.009084
+INFO:root:Epoch 65    loss=0.1176 [164.5 s]    dev=(HR@5:0.3382,NDCG@5:0.2351) [3.2 s]
+INFO:root:[SICR] step=251000 w=1.0000 beta=0.0200 bias_mean=0.008388 bias_abs=0.008674
+INFO:root:[SICR] step=252000 w=1.0000 beta=0.0200 bias_mean=0.008399 bias_abs=0.008655
+INFO:root:[SICR] step=253000 w=1.0000 beta=0.0200 bias_mean=0.008634 bias_abs=0.008908
+INFO:root:[SICR] step=254000 w=1.0000 beta=0.0200 bias_mean=0.008693 bias_abs=0.008941
+INFO:root:Epoch 66    loss=0.1174 [163.4 s]    dev=(HR@5:0.3377,NDCG@5:0.2359) [3.2 s]
+INFO:root:[SICR] step=255000 w=1.0000 beta=0.0200 bias_mean=0.008626 bias_abs=0.008867
+INFO:root:[SICR] step=256000 w=1.0000 beta=0.0200 bias_mean=0.008649 bias_abs=0.008916
+INFO:root:[SICR] step=257000 w=1.0000 beta=0.0200 bias_mean=0.008663 bias_abs=0.008941
+INFO:root:[SICR] step=258000 w=1.0000 beta=0.0200 bias_mean=0.008879 bias_abs=0.009126
+INFO:root:Epoch 67    loss=0.1172 [172.1 s]    dev=(HR@5:0.3373,NDCG@5:0.2334) [3.2 s]
+INFO:root:[SICR] step=259000 w=1.0000 beta=0.0200 bias_mean=0.008613 bias_abs=0.008856
+INFO:root:[SICR] step=260000 w=1.0000 beta=0.0200 bias_mean=0.008695 bias_abs=0.008983
+INFO:root:[SICR] step=261000 w=1.0000 beta=0.0200 bias_mean=0.009099 bias_abs=0.009352
+INFO:root:[SICR] step=262000 w=1.0000 beta=0.0200 bias_mean=0.008649 bias_abs=0.008937
+INFO:root:Epoch 68    loss=0.1174 [168.7 s]    dev=(HR@5:0.3384,NDCG@5:0.2348) [3.2 s]
+INFO:root:[SICR] step=263000 w=1.0000 beta=0.0200 bias_mean=0.008554 bias_abs=0.008867
+INFO:root:[SICR] step=264000 w=1.0000 beta=0.0200 bias_mean=0.008643 bias_abs=0.008910
+INFO:root:[SICR] step=265000 w=1.0000 beta=0.0200 bias_mean=0.008252 bias_abs=0.008543
+INFO:root:[SICR] step=266000 w=1.0000 beta=0.0200 bias_mean=0.008368 bias_abs=0.008655
+INFO:root:Epoch 69    loss=0.1169 [170.7 s]    dev=(HR@5:0.3369,NDCG@5:0.2345) [3.2 s]
+INFO:root:[SICR] step=267000 w=1.0000 beta=0.0200 bias_mean=0.008415 bias_abs=0.008707
+INFO:root:[SICR] step=268000 w=1.0000 beta=0.0200 bias_mean=0.008737 bias_abs=0.008995
+INFO:root:[SICR] step=269000 w=1.0000 beta=0.0200 bias_mean=0.008754 bias_abs=0.009016
+INFO:root:[SICR] step=270000 w=1.0000 beta=0.0200 bias_mean=0.008822 bias_abs=0.009135
+INFO:root:Epoch 70    loss=0.1170 [170.1 s]    dev=(HR@5:0.3394,NDCG@5:0.2342) [3.2 s]
+INFO:root:[SICR] step=271000 w=1.0000 beta=0.0200 bias_mean=0.008729 bias_abs=0.009053
+INFO:root:[SICR] step=272000 w=1.0000 beta=0.0200 bias_mean=0.008725 bias_abs=0.008965
+INFO:root:[SICR] step=273000 w=1.0000 beta=0.0200 bias_mean=0.008812 bias_abs=0.009017
+INFO:root:[SICR] step=274000 w=1.0000 beta=0.0200 bias_mean=0.008776 bias_abs=0.009037
+INFO:root:Epoch 71    loss=0.1167 [174.8 s]    dev=(HR@5:0.3371,NDCG@5:0.2355) [3.2 s]
+INFO:root:[SICR] step=275000 w=1.0000 beta=0.0200 bias_mean=0.008686 bias_abs=0.008947
+INFO:root:[SICR] step=276000 w=1.0000 beta=0.0200 bias_mean=0.008588 bias_abs=0.008874
+INFO:root:[SICR] step=277000 w=1.0000 beta=0.0200 bias_mean=0.008671 bias_abs=0.008943
+INFO:root:Epoch 72    loss=0.1173 [165.5 s]    dev=(HR@5:0.3437,NDCG@5:0.2377) [3.2 s]
+INFO:root:[SICR] step=278000 w=1.0000 beta=0.0200 bias_mean=0.008556 bias_abs=0.008854
+INFO:root:[SICR] step=279000 w=1.0000 beta=0.0200 bias_mean=0.008674 bias_abs=0.008967
+INFO:root:[SICR] step=280000 w=1.0000 beta=0.0200 bias_mean=0.008962 bias_abs=0.009175
+INFO:root:[SICR] step=281000 w=1.0000 beta=0.0200 bias_mean=0.008721 bias_abs=0.009015
+INFO:root:Epoch 73    loss=0.1170 [179.1 s]    dev=(HR@5:0.3329,NDCG@5:0.2290) [3.2 s]
+INFO:root:[SICR] step=282000 w=1.0000 beta=0.0200 bias_mean=0.008807 bias_abs=0.009113
+INFO:root:[SICR] step=283000 w=1.0000 beta=0.0200 bias_mean=0.008428 bias_abs=0.008695
+INFO:root:[SICR] step=284000 w=1.0000 beta=0.0200 bias_mean=0.008798 bias_abs=0.009062
+INFO:root:[SICR] step=285000 w=1.0000 beta=0.0200 bias_mean=0.008431 bias_abs=0.008672
+INFO:root:Epoch 74    loss=0.1164 [166.9 s]    dev=(HR@5:0.3439,NDCG@5:0.2399) [3.2 s]
+INFO:root:[SICR] step=286000 w=1.0000 beta=0.0200 bias_mean=0.008614 bias_abs=0.008872
+INFO:root:[SICR] step=287000 w=1.0000 beta=0.0200 bias_mean=0.008713 bias_abs=0.009006
+INFO:root:[SICR] step=288000 w=1.0000 beta=0.0200 bias_mean=0.008643 bias_abs=0.008863
+INFO:root:[SICR] step=289000 w=1.0000 beta=0.0200 bias_mean=0.008391 bias_abs=0.008673
+INFO:root:Epoch 75    loss=0.1163 [165.7 s]    dev=(HR@5:0.3389,NDCG@5:0.2352) [3.2 s]
+INFO:root:[SICR] step=290000 w=1.0000 beta=0.0200 bias_mean=0.008508 bias_abs=0.008778
+INFO:root:[SICR] step=291000 w=1.0000 beta=0.0200 bias_mean=0.008852 bias_abs=0.009089
+INFO:root:[SICR] step=292000 w=1.0000 beta=0.0200 bias_mean=0.008715 bias_abs=0.009014
+INFO:root:[SICR] step=293000 w=1.0000 beta=0.0200 bias_mean=0.008837 bias_abs=0.009079
+INFO:root:Epoch 76    loss=0.1162 [173.0 s]    dev=(HR@5:0.3469,NDCG@5:0.2403) [3.2 s]
+INFO:root:[SICR] step=294000 w=1.0000 beta=0.0200 bias_mean=0.008497 bias_abs=0.008817
+INFO:root:[SICR] step=295000 w=1.0000 beta=0.0200 bias_mean=0.008476 bias_abs=0.008797
+INFO:root:[SICR] step=296000 w=1.0000 beta=0.0200 bias_mean=0.008555 bias_abs=0.008804
+INFO:root:[SICR] step=297000 w=1.0000 beta=0.0200 bias_mean=0.008780 bias_abs=0.008991
+INFO:root:Epoch 77    loss=0.1165 [169.3 s]    dev=(HR@5:0.3454,NDCG@5:0.2393) [3.2 s]
+INFO:root:[SICR] step=298000 w=1.0000 beta=0.0200 bias_mean=0.008476 bias_abs=0.008714
+INFO:root:[SICR] step=299000 w=1.0000 beta=0.0200 bias_mean=0.008728 bias_abs=0.008956
+INFO:root:[SICR] step=300000 w=1.0000 beta=0.0200 bias_mean=0.008510 bias_abs=0.008794
+INFO:root:[SICR] step=301000 w=1.0000 beta=0.0200 bias_mean=0.008608 bias_abs=0.008922
+INFO:root:Epoch 78    loss=0.1158 [169.6 s]    dev=(HR@5:0.3475,NDCG@5:0.2417) [3.2 s]
+INFO:root:[SICR] step=302000 w=1.0000 beta=0.0200 bias_mean=0.009221 bias_abs=0.009427
+INFO:root:[SICR] step=303000 w=1.0000 beta=0.0200 bias_mean=0.008339 bias_abs=0.008591
+INFO:root:[SICR] step=304000 w=1.0000 beta=0.0200 bias_mean=0.008727 bias_abs=0.008976
+INFO:root:Epoch 79    loss=0.1161 [158.7 s]    dev=(HR@5:0.3376,NDCG@5:0.2361) [3.2 s]
+INFO:root:[SICR] step=306000 w=1.0000 beta=0.0200 bias_mean=0.008561 bias_abs=0.008831
+INFO:root:[SICR] step=307000 w=1.0000 beta=0.0200 bias_mean=0.008886 bias_abs=0.009135
+INFO:root:[SICR] step=308000 w=1.0000 beta=0.0200 bias_mean=0.008574 bias_abs=0.008830
+INFO:root:Epoch 80    loss=0.1160 [168.6 s]    dev=(HR@5:0.3351,NDCG@5:0.2353) [3.2 s]
+INFO:root:[SICR] step=309000 w=1.0000 beta=0.0200 bias_mean=0.008654 bias_abs=0.008985
+INFO:root:[SICR] step=310000 w=1.0000 beta=0.0200 bias_mean=0.009059 bias_abs=0.009296
+INFO:root:[SICR] step=311000 w=1.0000 beta=0.0200 bias_mean=0.008612 bias_abs=0.008912
+INFO:root:[SICR] step=312000 w=1.0000 beta=0.0200 bias_mean=0.008835 bias_abs=0.009094
+INFO:root:Epoch 81    loss=0.1162 [158.7 s]    dev=(HR@5:0.3377,NDCG@5:0.2362) [3.2 s]
+INFO:root:[SICR] step=313000 w=1.0000 beta=0.0200 bias_mean=0.008517 bias_abs=0.008803
+INFO:root:[SICR] step=314000 w=1.0000 beta=0.0200 bias_mean=0.008472 bias_abs=0.008792
+INFO:root:[SICR] step=315000 w=1.0000 beta=0.0200 bias_mean=0.008987 bias_abs=0.009212
+INFO:root:[SICR] step=316000 w=1.0000 beta=0.0200 bias_mean=0.008464 bias_abs=0.008720
+INFO:root:Epoch 82    loss=0.1164 [169.9 s]    dev=(HR@5:0.3439,NDCG@5:0.2373) [3.2 s]
+INFO:root:[SICR] step=317000 w=1.0000 beta=0.0200 bias_mean=0.008920 bias_abs=0.009173
+INFO:root:[SICR] step=318000 w=1.0000 beta=0.0200 bias_mean=0.008445 bias_abs=0.008748
+INFO:root:[SICR] step=319000 w=1.0000 beta=0.0200 bias_mean=0.008486 bias_abs=0.008784
+INFO:root:[SICR] step=320000 w=1.0000 beta=0.0200 bias_mean=0.008590 bias_abs=0.008877
+INFO:root:Epoch 83    loss=0.1160 [168.1 s]    dev=(HR@5:0.3399,NDCG@5:0.2354) [3.2 s]
+INFO:root:[SICR] step=321000 w=1.0000 beta=0.0200 bias_mean=0.009015 bias_abs=0.009245
+INFO:root:[SICR] step=322000 w=1.0000 beta=0.0200 bias_mean=0.008626 bias_abs=0.008891
+INFO:root:[SICR] step=323000 w=1.0000 beta=0.0200 bias_mean=0.008719 bias_abs=0.009006
+INFO:root:[SICR] step=324000 w=1.0000 beta=0.0200 bias_mean=0.008879 bias_abs=0.009111
+INFO:root:Epoch 84    loss=0.1158 [167.7 s]    dev=(HR@5:0.3391,NDCG@5:0.2327) [3.2 s]
+INFO:root:Early stop at 84 based on dev result.
+INFO:root:
+Best Iter(dev)=   64	 dev=(HR@5:0.3487,NDCG@5:0.2420) [14433.1 s] 
+INFO:root:Load model from new_model/ml1m_sicr/MyModelV2_SICR_b002_s00_i03_seed42.pt
+INFO:root:
+Test After Training: (HR@5:0.3104,NDCG@5:0.2173,HR@10:0.4392,NDCG@10:0.2589,HR@20:0.5702,NDCG@20:0.2921,HR@50:0.7219,NDCG@50:0.3224)
+INFO:root:
+--------------------------------------------- END: 2026-06-07 01:43:22 ---------------------------------------------
