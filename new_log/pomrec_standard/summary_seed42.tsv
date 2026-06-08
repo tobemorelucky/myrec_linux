@@ -1,4 +1,0 @@
-dataset	seed	start_time	end_time	total_seconds	epoch_count	avg_epoch_train_seconds	best_dev	test_after_training
-beauty	42	2026-06-06 15:25:46	2026-06-06 16:11:30	2744	138	16.930	Best Iter(dev)= 118 dev=(HR@5:0.1799,NDCG@5:0.1286) [2723.6 s] 	Test After Training: (HR@5:0.1436,NDCG@5:0.0986,HR@10:0.2003,NDCG@10:0.1169,HR@20:0.2679,NDCG@20:0.1339,HR@50:0.3664,NDCG@50:0.1535)
-ml-1m	42	2026-06-06 16:11:30	2026-06-06 18:15:59	7469	77	95.769	Best Iter(dev)= 57 dev=(HR@5:0.3334,NDCG@5:0.2333) [7456.6 s] 	Test After Training: (HR@5:0.3046,NDCG@5:0.2074,HR@10:0.4308,NDCG@10:0.2481,HR@20:0.5647,NDCG@20:0.2820,HR@50:0.7209,NDCG@50:0.3132)
-toys	42	2026-06-06 18:15:59	2026-06-06 20:02:35	6396	40	132.452	Best Iter(dev)= 20 dev=(HR@5:0.2064,NDCG@5:0.1477) [6238.3 s] 	Test After Training: (HR@5:0.1613,NDCG@5:0.1134,HR@10:0.2263,NDCG@10:0.1343,HR@20:0.3081,NDCG@20:0.1549,HR@50:0.4408,NDCG@50:0.1812)

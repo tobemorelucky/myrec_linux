@@ -30,3 +30,56 @@ __pycache__/
 .idea/
 *.swp
 
+
+
+
+# Claude / local scripts
+datastart_claude.local.sh
+start_claude.sh
+.claude/
+
+# secrets
+*.env
+*.key
+*.pem
+config.ini
+secret.py
+
+# data / embeddings / model weights
+data/
+model/
+models_saved/
+new_model/
+weights/
+checkpoints/
+*.pt
+*.pth
+*.ckpt
+*.pkl
+*.npy
+*.npz
+
+# logs / outputs
+log/
+logs/
+new_log/
+tmp/
+outputs/
+results/
+*.out
+*.err
+*.log
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store

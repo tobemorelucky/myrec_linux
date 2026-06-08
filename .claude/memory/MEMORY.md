@@ -1,1 +1,0 @@
-- [Conda Environment: hzg_py10](project-conda-environment.md) — Project uses conda env `hzg_py10`
