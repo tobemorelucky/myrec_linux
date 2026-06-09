@@ -83,3 +83,35 @@ __pycache__/
 
 # OS
 .DS_Store
+
+
+# speed test local generated files
+speed_test/myrec_speed/data/
+speed_test/myrec_speed/model/
+speed_test/myrec_speed/models_saved/
+speed_test/myrec_speed/new_model/
+speed_test/myrec_speed/weights/
+speed_test/myrec_speed/checkpoints/
+
+speed_test/myrec_speed/log/
+speed_test/myrec_speed/logs/
+speed_test/myrec_speed/new_log/
+speed_test/myrec_speed/tmp/
+speed_test/myrec_speed/outputs/
+speed_test/myrec_speed/results/
+
+speed_test/myrec_speed/*.out
+speed_test/myrec_speed/*.err
+speed_test/myrec_speed/*.log
+
+speed_test/myrec_speed/*.pt
+speed_test/myrec_speed/*.pth
+speed_test/myrec_speed/*.ckpt
+speed_test/myrec_speed/*.pkl
+speed_test/myrec_speed/*.npy
+speed_test/myrec_speed/*.npz
+
+speed_test/myrec_speed/__pycache__/
+speed_test/myrec_speed/**/*.pyc
+speed_test/myrec_speed/**/*.pyo
+speed_test/myrec_speed/**/*.pyd
