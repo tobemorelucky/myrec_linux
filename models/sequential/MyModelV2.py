@@ -5,10 +5,11 @@ MyModelV2: Re-submission main model.
 PoMRec backbone + 3 modules:
   3.1 LLM Semantic Alignment & Controllable Injection
   3.2 IU-SCBR: Interest-Uncertainty-Aware Self-Conditioned Behavior Reliability Estimation
-  3.3 Soft-TIC: Soft Target Interest Calibration (replaces hard-min in IPD)
+  3.3 UGC-TIC: Uncertainty-Gated Complementary Target Interest Calibration
 """
 
 import logging
+import math
 import pickle
 import numpy as np
 import torch
@@ -317,6 +318,9 @@ class MyModelV2(SequentialModel):
         "soft_tic_temp",
         "soft_tic_warmup_steps",
         "soft_tic_use_fused",
+        "soft_tic_gate",
+        "soft_tic_gate_gamma",
+        "soft_tic_min_weight",
     ]
 
     @staticmethod
@@ -403,6 +407,12 @@ class MyModelV2(SequentialModel):
                             help="warmup steps for soft target interest calibration")
         parser.add_argument("--soft_tic_use_fused", type=int, default=0,
                             help="1: use fused item embedding for target teacher; 0: use CF embedding")
+        parser.add_argument("--soft_tic_gate", type=str, default="none",
+                            help="gate mode: none/entropy/confidence/band")
+        parser.add_argument("--soft_tic_gate_gamma", type=float, default=1.0,
+                            help="exponent for gating weight")
+        parser.add_argument("--soft_tic_min_weight", type=float, default=0.0,
+                            help="minimum gating weight")
 
         return SequentialModel.parse_model_args(parser)
 
@@ -480,6 +490,10 @@ class MyModelV2(SequentialModel):
         self.soft_tic_temp = float(getattr(args, "soft_tic_temp", 0.5))
         self.soft_tic_warmup_steps = int(getattr(args, "soft_tic_warmup_steps", 5000))
         self.soft_tic_use_fused = int(getattr(args, "soft_tic_use_fused", 0))
+        self.soft_tic_gate = str(getattr(args, "soft_tic_gate", "none"))
+        self.soft_tic_gate_gamma = float(getattr(args, "soft_tic_gate_gamma", 1.0))
+        self.soft_tic_min_weight = float(getattr(args, "soft_tic_min_weight", 0.0))
+        self.soft_tic_min_weight = max(0.0, min(1.0, self.soft_tic_min_weight))
 
         # build modules
         self._define_params()
@@ -934,7 +948,7 @@ class MyModelV2(SequentialModel):
                 loss = loss + w_em * (self.lambda_ipd * L_ipd)
                 out_dict["loss_ipd"] = L_ipd.detach()
 
-        # Soft-TIC: soft target interest calibration
+        # UGC-TIC: uncertainty-gated complementary target interest calibration
         if self.use_soft_tic and ("intent_logits" in out_dict):
             logits = out_dict["intent_logits"]              # (B, K)
             iv = out_dict["interest_vectors"]               # (B, K, D)
@@ -947,25 +961,56 @@ class MyModelV2(SequentialModel):
 
             target_logits = self._cos_sim(iv, pos_emb[:, None, :])  # (B, K)
             p_tar = torch.softmax(target_logits / self.soft_tic_temp, dim=-1)
+            p = p_tar.detach()
 
             log_q = torch.log_softmax(logits / self.soft_tic_temp, dim=-1)
 
-            L_soft_tic = F.kl_div(
-                log_q,
-                p_tar.detach(),
-                reduction="batchmean"
-            ) * (self.soft_tic_temp ** 2)
+            # Sample-wise KL divergence
+            K = p.size(-1)
+            eps = 1e-8
+            log_p = torch.log(p + eps)
+            kl_each = (p * (log_p - log_q)).sum(dim=-1)  # (B,)
+
+            # Target entropy: measures how peaked/flat the teacher distribution is
+            entropy = -(p * log_p).sum(dim=-1) / math.log(K)  # (B,)
+            entropy = entropy.clamp(0.0, 1.0)
+
+            # Uncertainty-gated weight
+            gate_mode = self.soft_tic_gate
+            if gate_mode == "entropy":
+                gate = entropy
+            elif gate_mode == "confidence":
+                gate = 1.0 - entropy
+            elif gate_mode == "band":
+                gate = 4.0 * entropy * (1.0 - entropy)
+            else:  # "none" — fixed weight
+                gate = torch.ones_like(entropy)
+
+            gate = gate.clamp(0.0, 1.0)
+            gate = torch.pow(gate, self.soft_tic_gate_gamma)
+            gate = self.soft_tic_min_weight + (1.0 - self.soft_tic_min_weight) * gate
+            gate = gate.detach()
+
+            L_soft_tic = (gate * kl_each).mean() * (self.soft_tic_temp ** 2)
 
             loss = loss + self._soft_tic_w() * self.lambda_soft_tic * L_soft_tic
             out_dict["loss_soft_tic"] = L_soft_tic.detach()
 
             if self.training and self.global_step % 1000 == 0:
                 logging.info(
-                    f"[SoftTIC] step={self.global_step} "
+                    f"[UGC-TIC] step={self.global_step} "
                     f"w={self._soft_tic_w():.4f} "
                     f"loss={L_soft_tic.item():.6f} "
+                    f"lambda={self.lambda_soft_tic:.4f} "
                     f"temp={self.soft_tic_temp:.3f} "
-                    f"lambda={self.lambda_soft_tic:.4f}"
+                    f"gate_mode={gate_mode} "
+                    f"entropy_mean={entropy.mean().item():.4f} "
+                    f"entropy_min={entropy.min().item():.4f} "
+                    f"entropy_max={entropy.max().item():.4f} "
+                    f"gate_mean={gate.mean().item():.4f} "
+                    f"gate_min={gate.min().item():.4f} "
+                    f"gate_max={gate.max().item():.4f} "
+                    f"kl_mean={kl_each.mean().item():.6f}"
                 )
 
         return loss
