@@ -5,7 +5,7 @@ MyModelV2: Re-submission main model.
 PoMRec backbone + 3 modules:
   3.1 LLM Semantic Alignment & Controllable Injection
   3.2 IU-SCBR: Interest-Uncertainty-Aware Self-Conditioned Behavior Reliability Estimation
-  3.3 IPD: Target-Interest Consistency (unchanged from MyModel)
+  3.3 Soft-TIC: Soft Target Interest Calibration (replaces hard-min in IPD)
 """
 
 import logging
@@ -312,6 +312,11 @@ class MyModelV2(SequentialModel):
         "sicr_entropy_min",
         "sicr_entropy_gamma",
         "sicr_global_sem_weight",
+        "use_soft_tic",
+        "lambda_soft_tic",
+        "soft_tic_temp",
+        "soft_tic_warmup_steps",
+        "soft_tic_use_fused",
     ]
 
     @staticmethod
@@ -387,6 +392,18 @@ class MyModelV2(SequentialModel):
         parser.add_argument("--sicr_global_sem_weight", type=float, default=0.0,
                             help="optional semantic similarity weight in global reliability gate")
 
+        # ---- Soft-TIC: Soft Target Interest Calibration (replaces hard-min target interest selection) ----
+        parser.add_argument("--use_soft_tic", type=int, default=0,
+                            help="1: enable soft target interest calibration")
+        parser.add_argument("--lambda_soft_tic", type=float, default=0.02,
+                            help="weight for soft target interest calibration loss")
+        parser.add_argument("--soft_tic_temp", type=float, default=0.5,
+                            help="temperature for soft target interest distribution")
+        parser.add_argument("--soft_tic_warmup_steps", type=int, default=5000,
+                            help="warmup steps for soft target interest calibration")
+        parser.add_argument("--soft_tic_use_fused", type=int, default=0,
+                            help="1: use fused item embedding for target teacher; 0: use CF embedding")
+
         return SequentialModel.parse_model_args(parser)
 
     def __init__(self, args, corpus):
@@ -456,6 +473,13 @@ class MyModelV2(SequentialModel):
         self.sicr_global_sem_weight = float(getattr(args, "sicr_global_sem_weight", 0.0))
         self.sicr_entropy_min = max(0.0, min(1.0, self.sicr_entropy_min))
         self.sicr_entropy_gamma = max(0.0, self.sicr_entropy_gamma)
+
+        # soft_tic
+        self.use_soft_tic = int(getattr(args, "use_soft_tic", 0))
+        self.lambda_soft_tic = float(getattr(args, "lambda_soft_tic", 0.02))
+        self.soft_tic_temp = float(getattr(args, "soft_tic_temp", 0.5))
+        self.soft_tic_warmup_steps = int(getattr(args, "soft_tic_warmup_steps", 5000))
+        self.soft_tic_use_fused = int(getattr(args, "soft_tic_use_fused", 0))
 
         # build modules
         self._define_params()
@@ -537,6 +561,12 @@ class MyModelV2(SequentialModel):
             return 1.0
         t = min(self.global_step, self.sicr_warmup_steps)
         return t / float(self.sicr_warmup_steps)
+
+    def _soft_tic_w(self) -> float:
+        if self.soft_tic_warmup_steps <= 0:
+            return 1.0
+        t = min(self.global_step, self.soft_tic_warmup_steps)
+        return t / float(self.soft_tic_warmup_steps)
 
     def compute_interest_entropy(self, w0):
         """
@@ -825,6 +855,12 @@ class MyModelV2(SequentialModel):
             out_dict["emile_pos_ids"] = i_ids[:, 0]
             out_dict["emile_neg_ids"] = i_ids[:, 1] if i_ids.size(1) > 1 else None
 
+        # Soft-TIC stash (target interest calibration)
+        if self.use_soft_tic:
+            out_dict["intent_logits"] = base_logits          # (B, K)
+            out_dict["interest_vectors"] = interest_vectors  # (B, K, D)
+            out_dict["pos_ids"] = i_ids[:, 0]                # (B,)
+
         # Alignment (pos only)
         if self.use_llmemb:
             pos_ids = i_ids[:, 0]
@@ -897,5 +933,39 @@ class MyModelV2(SequentialModel):
                 w_em = self._emile_w()
                 loss = loss + w_em * (self.lambda_ipd * L_ipd)
                 out_dict["loss_ipd"] = L_ipd.detach()
+
+        # Soft-TIC: soft target interest calibration
+        if self.use_soft_tic and ("intent_logits" in out_dict):
+            logits = out_dict["intent_logits"]              # (B, K)
+            iv = out_dict["interest_vectors"]               # (B, K, D)
+            pos_ids = out_dict["pos_ids"]                   # (B,)
+
+            if self.soft_tic_use_fused:
+                pos_emb = self.interest_extractor.get_item_emb(pos_ids)
+            else:
+                pos_emb = self.interest_extractor.get_cf_emb(pos_ids)
+
+            target_logits = self._cos_sim(iv, pos_emb[:, None, :])  # (B, K)
+            p_tar = torch.softmax(target_logits / self.soft_tic_temp, dim=-1)
+
+            log_q = torch.log_softmax(logits / self.soft_tic_temp, dim=-1)
+
+            L_soft_tic = F.kl_div(
+                log_q,
+                p_tar.detach(),
+                reduction="batchmean"
+            ) * (self.soft_tic_temp ** 2)
+
+            loss = loss + self._soft_tic_w() * self.lambda_soft_tic * L_soft_tic
+            out_dict["loss_soft_tic"] = L_soft_tic.detach()
+
+            if self.training and self.global_step % 1000 == 0:
+                logging.info(
+                    f"[SoftTIC] step={self.global_step} "
+                    f"w={self._soft_tic_w():.4f} "
+                    f"loss={L_soft_tic.item():.6f} "
+                    f"temp={self.soft_tic_temp:.3f} "
+                    f"lambda={self.lambda_soft_tic:.4f}"
+                )
 
         return loss

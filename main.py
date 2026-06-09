@@ -18,6 +18,7 @@ import os
 # os.environ["NVIDIA_VISIBLE_DEVICES"] = "0"  # 明确指定卡号，避免查询
 from helpers import *
 from models.sequential import PoMRec
+import models.sequential.PoMRecLLMEmb as PoMRecLLMEmb
 from utils import utils
 import models.sequential.MyModel as MyModel
 import models.sequential.SIERec as SIERec
