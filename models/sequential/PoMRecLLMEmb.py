@@ -76,7 +76,9 @@ class PoMRecLLMEmb(PoMRec):
     extra_log_args = [
         "K", "prompt_num", "lamb", "random_seed",
         "llm_fuse_mode", "use_llm_align", "use_tic", "tic_score_mode", "use_mvtc",
-        "gamma_init", "gamma_trainable", "align_weight", "tic_weight", "mvtc_weight",
+        "gamma_init", "gamma_trainable",
+        "align_weight", "tic_weight", "mvtc_weight",
+        "tic_score_lambda", "tic_score_eta",
     ]
 
     @staticmethod
@@ -107,10 +109,14 @@ class PoMRecLLMEmb(PoMRec):
 
         # ---- Candidate-aware scoring ----
         parser.add_argument("--tic_score_mode", type=str, default="none",
-                            choices=["none", "candidate"],
-                            help="none: PoMRec user-vector scoring | candidate: target-weighted interest scoring")
+                            choices=["none", "candidate", "residual", "mix"],
+                            help="none: base PoMRec | candidate: pure cand-weight | residual: base+lambda*cand | mix: (1-eta)*q+eta*cand")
         parser.add_argument("--tic_score_tau", type=float, default=0.2,
                             help="Temperature for candidate-aware interest softmax")
+        parser.add_argument("--tic_score_lambda", type=float, default=0.1,
+                            help="Weight for residual cand_score (base + lambda * cand)")
+        parser.add_argument("--tic_score_eta", type=float, default=0.1,
+                            help="Interpolation weight for mix mode (1-eta)*q + eta*cand")
 
         # ---- MVTC: Multi-View Target Consistency (CF-teacher -> intent KL) ----
         parser.add_argument("--use_mvtc", type=int, default=0,
@@ -146,6 +152,8 @@ class PoMRecLLMEmb(PoMRec):
         # ---- Candidate-aware scoring args ----
         self._tic_score_mode = getattr(args, "tic_score_mode", "none")
         self._tic_score_tau = float(getattr(args, "tic_score_tau", 0.2))
+        self._tic_score_lambda = float(getattr(args, "tic_score_lambda", 0.1))
+        self._tic_score_eta = float(getattr(args, "tic_score_eta", 0.1))
 
         # ---- MVTC args ----
         self._use_mvtc = int(getattr(args, "use_mvtc", 0))
@@ -161,7 +169,8 @@ class PoMRecLLMEmb(PoMRec):
                      f"use_llm_align={self._use_llm_align} "
                      f"use_tic={self._use_tic} tic_score_mode={self._tic_score_mode} "
                      f"use_mvtc={self._use_mvtc} "
-                     f"tic_weight={self._tic_weight} mvtc_weight={self._mvtc_weight}")
+                     f"tic_weight={self._tic_weight} tic_score_lambda={self._tic_score_lambda} "
+                     f"tic_score_eta={self._tic_score_eta} mvtc_weight={self._mvtc_weight}")
 
         super().__init__(args, corpus)
 
@@ -300,19 +309,36 @@ class PoMRecLLMEmb(PoMRec):
         # Multi-interest extraction (uses patched get_item_emb internally)
         interest_vectors, distri_vectors = self.interest_extractor(history, lengths)
 
-        # Candidate scoring
+        # Candidate scoring — always compute base_score (PoMRec original path)
         i_vectors = self._fused_get_item_emb(i_ids)              # (B, C, D)
         pred_intent = self.proj(distri_vectors)                   # (B, K)
         q = pred_intent.softmax(dim=-1)                           # (B, K)
-        user_vector = (interest_vectors * q[:, :, None]).sum(-2)   # (B, D) — for TIC / debug
+        user_vector = (interest_vectors * q[:, :, None]).sum(-2)   # (B, D)
+        base_score = (user_vector[:, None, :] * i_vectors).sum(-1) # (B, C) — PoMRec original
 
-        if self._tic_score_mode == "candidate":
-            # sim[b,c,k] = cos(interest_k, item_c)
-            sim = torch.einsum("bke,bce->bck", F.normalize(interest_vectors, dim=-1), F.normalize(i_vectors, dim=-1))
-            target_weight = torch.softmax(sim / self._tic_score_tau, dim=-1)  # (B, C, K)
-            prediction = (target_weight * sim).sum(dim=-1)                     # (B, C)
+        # Raw dot-product sim (no normalize — keeps scale)
+        raw_sim = torch.einsum("bke,bce->bck", interest_vectors, i_vectors)  # (B, C, K)
+
+        mode = self._tic_score_mode
+        if mode == "none":
+            prediction = base_score
+
+        elif mode == "candidate":
+            cand_weight = torch.softmax(raw_sim / self._tic_score_tau, dim=-1)  # (B, C, K)
+            prediction = (cand_weight * raw_sim).sum(dim=-1)                     # (B, C)
+
+        elif mode == "residual":
+            cand_weight = torch.softmax(raw_sim / self._tic_score_tau, dim=-1)
+            cand_score = (cand_weight * raw_sim).sum(dim=-1)
+            prediction = base_score + self._tic_score_lambda * cand_score
+
+        elif mode == "mix":
+            cand_weight = torch.softmax(raw_sim / self._tic_score_tau, dim=-1)   # (B, C, K)
+            final_weight = (1.0 - self._tic_score_eta) * q[:, None, :] + self._tic_score_eta * cand_weight
+            prediction = (final_weight * raw_sim).sum(dim=-1)
+
         else:
-            prediction = (user_vector[:, None, :] * i_vectors).sum(-1)        # (B, C)
+            prediction = base_score  # fallback
 
         out_dict = {"prediction": prediction}
 
