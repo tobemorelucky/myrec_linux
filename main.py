@@ -19,6 +19,7 @@ import os
 from helpers import *
 from models.sequential import PoMRec
 import models.sequential.PoMRecLLMEmb as PoMRecLLMEmb
+import models.sequential.PoMRecLLMEmbLinear as PoMRecLLMEmbLinear
 from utils import utils
 import models.sequential.MyModel as MyModel
 import models.sequential.SIERec as SIERec

@@ -75,7 +75,8 @@ class PoMRecLLMEmb(PoMRec):
 
     extra_log_args = [
         "K", "prompt_num", "lamb", "random_seed",
-        "llm_fuse_mode", "use_llm_align", "use_tic", "tic_score_mode", "use_mvtc",
+        "llm_fuse_mode", "llm_adapter_arch", "llm_inject_scope",
+        "use_llm_align", "use_tic", "tic_score_mode", "use_mvtc",
         "gamma_init", "gamma_trainable",
         "align_weight", "tic_weight", "mvtc_weight",
         "tic_score_lambda", "tic_score_eta",
@@ -92,6 +93,14 @@ class PoMRecLLMEmb(PoMRec):
                             help="none: pure PoMRec | replace: LLMEmb-style e=adapter(llm) | residual: e=cf+gamma*adapter(llm)")
         parser.add_argument("--freeze_llm_emb", type=int, default=1,
                             help="1: freeze LLM table (buffer); 0: trainable Parameter")
+
+        # ---- LLM adapter architecture & injection scope ablations ----
+        parser.add_argument("--llm_adapter_arch", type=str, default="ours",
+                            choices=["ours", "llmemb", "noln", "linear"],
+                            help="ours: L->GELU->L->LN | llmemb: L->L | noln: L->GELU->L | linear: single L")
+        parser.add_argument("--llm_inject_scope", type=str, default="both",
+                            choices=["both", "history_only", "candidate_only"],
+                            help="both: history+candidate | history_only: only history fused | candidate_only: only candidate fused")
         parser.add_argument("--use_llm_align", type=int, default=0,
                             help="1: add InfoNCE alignment loss between adapter(llm) and frozen SRS emb")
         parser.add_argument("--align_weight", type=float, default=0.001,
@@ -144,6 +153,10 @@ class PoMRecLLMEmb(PoMRec):
         self._align_weight = float(getattr(args, "align_weight", 0.001))
         self._align_tau = float(getattr(args, "align_tau", 0.2))
 
+        # ---- Adapter architecture & injection scope ablations ----
+        self._llm_adapter_arch = getattr(args, "llm_adapter_arch", "ours")
+        self._llm_inject_scope = getattr(args, "llm_inject_scope", "both")
+
         # ---- TIC args ----
         self._use_tic = int(getattr(args, "use_tic", 0))
         self._tic_weight = float(getattr(args, "tic_weight", 0.001))
@@ -166,6 +179,7 @@ class PoMRecLLMEmb(PoMRec):
 
         logging.info("[PoMRecLLMEmb] initialized from PoMRec baseline")
         logging.info(f"[PoMRecLLMEmb] llm_fuse_mode={self.llm_fuse_mode} "
+                     f"adapter_arch={self._llm_adapter_arch} inject_scope={self._llm_inject_scope} "
                      f"use_llm_align={self._use_llm_align} "
                      f"use_tic={self._use_tic} tic_score_mode={self._tic_score_mode} "
                      f"use_mvtc={self._use_mvtc} "
@@ -181,8 +195,9 @@ class PoMRecLLMEmb(PoMRec):
                     "llm_fuse_mode={} requires --llm_emb_path".format(self.llm_fuse_mode)
                 )
             self._build_llm_adapter()
-            # Patch the extractor so its internal get_item_emb uses our fusion
-            self.interest_extractor.get_item_emb = self._fused_get_item_emb
+            # Patch extractor based on injection scope
+            if self._llm_inject_scope in ("both", "history_only"):
+                self.interest_extractor.get_item_emb = self._fused_get_item_emb
 
         # ---- Build alignment module ----
         if self._use_llm_align:
@@ -209,13 +224,32 @@ class PoMRecLLMEmb(PoMRec):
         else:
             self.llm_table = nn.Parameter(llm_table)
 
-        # Adapter: d_llm -> emb_size (same architecture as LLMEmb / PoMRec)
-        self.llm_adapter = nn.Sequential(
-            nn.Linear(d_llm, d_llm // 2),
-            nn.GELU(),
-            nn.Linear(d_llm // 2, self.emb_size),
-            nn.LayerNorm(self.emb_size),
-        )
+        # Adapter: d_llm -> emb_size
+        arch = self._llm_adapter_arch
+        if arch == "ours":
+            self.llm_adapter = nn.Sequential(
+                nn.Linear(d_llm, d_llm // 2),
+                nn.GELU(),
+                nn.Linear(d_llm // 2, self.emb_size),
+                nn.LayerNorm(self.emb_size),
+            )
+        elif arch == "llmemb":
+            self.llm_adapter = nn.Sequential(
+                nn.Linear(d_llm, d_llm // 2),
+                nn.Linear(d_llm // 2, self.emb_size),
+            )
+        elif arch == "noln":
+            self.llm_adapter = nn.Sequential(
+                nn.Linear(d_llm, d_llm // 2),
+                nn.GELU(),
+                nn.Linear(d_llm // 2, self.emb_size),
+            )
+        elif arch == "linear":
+            self.llm_adapter = nn.Sequential(
+                nn.Linear(d_llm, self.emb_size),
+            )
+        else:
+            raise ValueError(f"Unknown llm_adapter_arch: {arch}")
 
         # Gamma for residual mode
         if self.llm_fuse_mode == "residual":
@@ -227,7 +261,7 @@ class PoMRecLLMEmb(PoMRec):
                 self.register_buffer("gamma", torch.tensor(float(self._gamma_init)))
 
         logging.info(
-            f"[PoMRecLLMEmb] LLM adapter built: "
+            f"[PoMRecLLMEmb] LLM adapter built: arch={arch} "
             f"d_llm={d_llm} -> emb_size={self.emb_size}, "
             f"freeze_llm_emb={self._freeze_llm_emb}"
         )
@@ -310,7 +344,11 @@ class PoMRecLLMEmb(PoMRec):
         interest_vectors, distri_vectors = self.interest_extractor(history, lengths)
 
         # Candidate scoring — always compute base_score (PoMRec original path)
-        i_vectors = self._fused_get_item_emb(i_ids)              # (B, C, D)
+        # Inject scope: candidate embedding source
+        if self._llm_inject_scope == "history_only":
+            i_vectors = self.interest_extractor.i_embeddings(i_ids)  # pure CF for candidates
+        else:
+            i_vectors = self._fused_get_item_emb(i_ids)              # fused (both / candidate_only)
         pred_intent = self.proj(distri_vectors)                   # (B, K)
         q = pred_intent.softmax(dim=-1)                           # (B, K)
         user_vector = (interest_vectors * q[:, :, None]).sum(-2)   # (B, D)

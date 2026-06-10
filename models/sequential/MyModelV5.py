@@ -4,7 +4,7 @@ MyModelV5: Clean re-submission main model.
 
 PoMRec backbone + 3 modules:
   3.1 LLM Semantic Alignment & Controllable Injection
-  3.2 DSPC: Dynamic Semantic Prototype Calibration
+  3.2 SSID: Semantic-Supervised Interest Disentanglement (training-only auxiliary loss)
   3.3 IPD: Target-Interest Consistency (unchanged from MyModel)
 """
 
@@ -197,14 +197,16 @@ class MultiInterestExtractor(nn.Module):
         attn = (values - values.max()).softmax(dim=-1)
         return attn.masked_fill(torch.isnan(attn), 0)
 
-    def forward(self, history, lengths):
+    def forward(self, history, lengths, return_aux=False):
         """
         Args:
             history: (B, L)
             lengths: (B,)
+            return_aux: if True, return attn_hist and valid_his
         Returns:
             interest_vectors: (B, K, D)
             distri_vectors: (B, D)
+            aux (optional): {"attn_hist": (B,K,L), "valid_his": (B,L)}
         """
         B, seq_len = history.shape
         device = history.device
@@ -225,14 +227,14 @@ class MultiInterestExtractor(nn.Module):
         his_vectors_prompt1 = torch.cat([his_vectors, prompt1], dim=1)
 
         attn_score = self.W2(self.W1(his_vectors_prompt1).tanh())
-        attn_score = self.value2attn(attn_score, valid_his_ext)
+        attn_maps = self.value2attn(attn_score, valid_his_ext)
 
-        interest_vectors = (his_vectors_prompt1[:, None, :, :] * attn_score[:, :, :, None]).sum(-2)
+        interest_vectors = (his_vectors_prompt1[:, None, :, :] * attn_maps[:, :, :, None]).sum(-2)
 
         var = []
         for kk in range(self.K):
             x_mean_2 = (his_vectors_prompt1 - interest_vectors[:, kk:kk + 1, :]) ** 2
-            var_k = torch.matmul(attn_score[:, kk:kk + 1, :], x_mean_2)
+            var_k = torch.matmul(attn_maps[:, kk:kk + 1, :], x_mean_2)
             var.append(torch.sqrt(var_k + 1e-12))
         variance = torch.cat(var, 1)
         interest_vectors = interest_vectors + self.lamb * variance
@@ -245,6 +247,15 @@ class MultiInterestExtractor(nn.Module):
         distri_pred = self.W4(self.W3(his_vectors_prompt2).tanh())
         distri_pred = self.value2attn(distri_pred, valid_his_ext)
         distri_vectors = torch.matmul(distri_pred, his_vectors_prompt2).squeeze(1)
+
+        if return_aux:
+            attn_hist = attn_maps[:, :, :seq_len]  # (B, K, L) — history only, no prompts
+            attn_hist = attn_hist / (attn_hist.sum(dim=-1, keepdim=True) + 1e-8)
+            aux = {
+                "attn_hist": attn_hist,
+                "valid_his": (history > 0).float(),
+            }
+            return interest_vectors, distri_vectors, aux
 
         return interest_vectors, distri_vectors
 
@@ -267,6 +278,13 @@ class MyModelV5(SequentialModel):
         "dspc_norm",
         "dspc_detach_sem",
         "dspc_dropout",
+        "use_ssid",
+        "lambda_ssid",
+        "ssid_temp",
+        "ssid_warmup_steps",
+        "ssid_detach_sem",
+        "ssid_detach_attn",
+        "ssid_use_proto_norm",
     ]
 
     @staticmethod
@@ -303,7 +321,7 @@ class MyModelV5(SequentialModel):
         parser.add_argument("--emile_warmup_steps", type=int, default=5000)
 
         # ---- DSPC: Dynamic Semantic Prototype Calibration ----
-        parser.add_argument("--use_dspc", type=int, default=1,
+        parser.add_argument("--use_dspc", type=int, default=0,
                             help="1: enable dynamic semantic prototype calibration")
         parser.add_argument("--dspc_scale", type=float, default=0.05,
                             help="residual scale for DSPC calibration")
@@ -319,6 +337,22 @@ class MyModelV5(SequentialModel):
                             help="1: detach semantic embeddings in DSPC")
         parser.add_argument("--dspc_dropout", type=float, default=0.0,
                             help="dropout on DSPC delta")
+
+        # ---- SSID: Semantic-Supervised Interest Disentanglement ----
+        parser.add_argument("--use_ssid", type=int, default=0,
+                            help="1: enable semantic-supervised interest disentanglement loss")
+        parser.add_argument("--lambda_ssid", type=float, default=0.001,
+                            help="weight for SSID contrastive loss")
+        parser.add_argument("--ssid_temp", type=float, default=0.2,
+                            help="temperature for SSID contrastive loss")
+        parser.add_argument("--ssid_warmup_steps", type=int, default=5000,
+                            help="warmup steps for SSID loss")
+        parser.add_argument("--ssid_detach_sem", type=int, default=1,
+                            help="1: detach semantic embeddings in SSID")
+        parser.add_argument("--ssid_detach_attn", type=int, default=1,
+                            help="1: detach attention maps in SSID")
+        parser.add_argument("--ssid_use_proto_norm", type=int, default=1,
+                            help="1: use normalized vectors in SSID contrastive loss")
 
         return SequentialModel.parse_model_args(parser)
 
@@ -364,7 +398,7 @@ class MyModelV5(SequentialModel):
             self.register_buffer("emile_T", torch.zeros(self.emb_size))
 
         # dspc
-        self.use_dspc = int(getattr(args, "use_dspc", 1))
+        self.use_dspc = int(getattr(args, "use_dspc", 0))
         self.dspc_scale = float(getattr(args, "dspc_scale", 0.05))
         self.dspc_temp = float(getattr(args, "dspc_temp", 0.5))
         self.dspc_gate = int(getattr(args, "dspc_gate", 1))
@@ -375,6 +409,15 @@ class MyModelV5(SequentialModel):
 
         self.dspc_ln = nn.LayerNorm(self.emb_size)
         self.dspc_dropout = nn.Dropout(self.dspc_dropout_p)
+
+        # ssid
+        self.use_ssid = int(getattr(args, "use_ssid", 0))
+        self.lambda_ssid = float(getattr(args, "lambda_ssid", 0.001))
+        self.ssid_temp = float(getattr(args, "ssid_temp", 0.2))
+        self.ssid_warmup_steps = int(getattr(args, "ssid_warmup_steps", 5000))
+        self.ssid_detach_sem = int(getattr(args, "ssid_detach_sem", 1))
+        self.ssid_detach_attn = int(getattr(args, "ssid_detach_attn", 1))
+        self.ssid_use_proto_norm = int(getattr(args, "ssid_use_proto_norm", 1))
 
         # build modules
         self._define_params()
@@ -449,6 +492,12 @@ class MyModelV5(SequentialModel):
             return 1.0
         t = min(self.global_step, self.emile_warmup_steps)
         return t / float(self.emile_warmup_steps)
+
+    def _ssid_w(self) -> float:
+        if self.ssid_warmup_steps <= 0:
+            return 1.0
+        t = min(self.global_step, self.ssid_warmup_steps)
+        return t / float(self.ssid_warmup_steps)
 
     @staticmethod
     def _cos_sim(a: torch.Tensor, b: torch.Tensor, eps: float = 1e-8) -> torch.Tensor:
@@ -530,6 +579,67 @@ class MyModelV5(SequentialModel):
 
         return calibrated, aux
 
+    # -------------------------
+    # SSID: Semantic-Supervised Interest Disentanglement loss
+    # -------------------------
+    def compute_ssid_loss(self, out_dict):
+        """
+        Contrastive loss aligning each interest vector with its
+        attention-weighted semantic prototype.
+
+        Encourages each interest to attend to semantically consistent
+        history items, without changing forward prediction.
+
+        Args:
+            out_dict: dict with "ssid_history", "ssid_interest_vectors",
+                      "ssid_attn_hist"
+
+        Returns:
+            loss: scalar tensor
+            aux: dict with debug info
+        """
+        history = out_dict["ssid_history"]                     # (B, L)
+        interest_vectors = out_dict["ssid_interest_vectors"]   # (B, K, D)
+        attn_hist = out_dict["ssid_attn_hist"]                 # (B, K, L)
+
+        hist_sem = self.interest_extractor.get_llm_emb(history)  # (B, L, D)
+
+        if self.ssid_detach_sem:
+            hist_sem = hist_sem.detach()
+
+        if self.ssid_detach_attn:
+            attn_hist = attn_hist.detach()
+
+        # Build semantic prototype per interest via attention pooling
+        sem_proto = torch.matmul(attn_hist, hist_sem)  # (B, K, D)
+
+        if self.ssid_use_proto_norm:
+            q = F.normalize(interest_vectors, dim=-1)
+            p = F.normalize(sem_proto, dim=-1)
+        else:
+            q = interest_vectors
+            p = sem_proto
+
+        # Interest-prototype matching: diagonal should be highest
+        logits = torch.matmul(q, p.transpose(1, 2)) / self.ssid_temp  # (B, K, K)
+
+        B = logits.size(0)
+        K = logits.size(1)
+        labels = torch.arange(K, device=logits.device)
+        labels = labels.unsqueeze(0).expand(B, -1).reshape(-1)
+
+        loss = F.cross_entropy(
+            logits.reshape(-1, K),
+            labels,
+        )
+
+        aux = {
+            "ssid_logits_diag": logits.diagonal(dim1=1, dim2=2).detach().mean(),
+            "ssid_proto_norm": sem_proto.detach().norm(dim=-1).mean(),
+        }
+
+        return loss, aux
+
     # =========================
     # forward
     # =========================
@@ -541,11 +651,12 @@ class MyModelV5(SequentialModel):
         lengths = feed_dict["lengths"]        # (B,)
 
         # Standard single-pass extraction (no token injection)
-        interest_vectors, distri_vectors = self.interest_extractor(
+        interest_vectors, distri_vectors, aux = self.interest_extractor(
             history, lengths,
+            return_aux=True,
         )
 
-        # DSPC: post-hoc semantic prototype calibration
+        # DSPC: post-hoc semantic prototype calibration (default off)
         dspc_aux = None
         if self.use_dspc and self.use_llmemb:
             interest_vectors, dspc_aux = self.compute_dspc_interest(
@@ -572,6 +683,12 @@ class MyModelV5(SequentialModel):
             out_dict["emile_w"] = w
             out_dict["emile_pos_ids"] = i_ids[:, 0]
             out_dict["emile_neg_ids"] = i_ids[:, 1] if i_ids.size(1) > 1 else None
+
+        # SSID stash: interest vectors and attention maps for auxiliary contrastive loss
+        if self.use_ssid:
+            out_dict["ssid_interest_vectors"] = interest_vectors
+            out_dict["ssid_attn_hist"] = aux["attn_hist"]
+            out_dict["ssid_history"] = history
 
         # Alignment (pos only)
         if self.use_llmemb:
@@ -658,5 +775,22 @@ class MyModelV5(SequentialModel):
                 w_em = self._emile_w()
                 loss = loss + w_em * (self.lambda_ipd * L_ipd)
                 out_dict["loss_ipd"] = L_ipd.detach()
+
+        # SSID: semantic-supervised interest disentanglement
+        if self.use_ssid and ("ssid_interest_vectors" in out_dict):
+            L_ssid, ssid_aux = self.compute_ssid_loss(out_dict)
+            loss = loss + self._ssid_w() * self.lambda_ssid * L_ssid
+            out_dict["loss_ssid"] = L_ssid.detach()
+
+            if self.training and self.global_step % 1000 == 0:
+                logging.info(
+                    f"[SSID] step={self.global_step} "
+                    f"w={self._ssid_w():.4f} "
+                    f"lambda={self.lambda_ssid:.6f} "
+                    f"loss={L_ssid.item():.6f} "
+                    f"diag_mean={ssid_aux['ssid_logits_diag'].item():.4f} "
+                    f"proto_norm={ssid_aux['ssid_proto_norm'].item():.4f} "
+                    f"temp={self.ssid_temp:.3f}"
+                )
 
         return loss
