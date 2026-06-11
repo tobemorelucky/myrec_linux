@@ -191,6 +191,60 @@ neg_items
 
 `SeqReader` 会合并 train/dev/test 中的交互记录，按照时间顺序构建用户历史序列，并为每条交互补充 `position` 信息。
 
+## 5. 预训练文件路径
+
+实验依赖以下预计算文件，均从 `bash脚本/` 中的多种子脚本提取。
+
+### 5.1 数据文件（每个数据集）
+
+| 文件 | 路径 | 说明 |
+|------|------|------|
+| 训练集 | `./data/<dataset>/train.csv` | 三列：user_id, item_id, time |
+| 验证集 | `./data/<dataset>/dev.csv` | 可含 neg_items |
+| 测试集 | `./data/<dataset>/test.csv` | 可含 neg_items |
+| LLM语义表 (1536d) | `./data/<dataset>/handled/llm_table_pca1536.pkl` | PCA降维后的 LLM item embedding |
+| LLM语义表 (原始) | `./data/<dataset>/handled/llm_table.pkl` | 原始维度 LLM item embedding |
+| SRS协同表 | `./data/<dataset>/handled/itm_emb_pomrec.pkl` | 预训练 PoMRec 协同 item embedding |
+
+三个数据集均包含以上文件，位于各自子目录：`data/beauty/`、`data/ml-1m/`、`data/toys/`。
+
+### 5.2 PoMRec 预训练权重（warm-start 用）
+
+三个扫参数脚本均通过 `--init_ckpt <path> --init_strict 0` 加载 PoMRec 预训练权重做 warm-start：
+
+| 数据集 | init_ckpt 路径 | 说明 |
+|--------|---------------|------|
+| Beauty | `./model/PoMRec/PoMRec__beauty__${seed}__lr=0.002__l2=1e-06.pt` | 按 seed 匹配，磁盘有 0/42/43/44，缺失 fallback seed=42 |
+| ML-1M | `./model/PoMRec/PoMRec__ml-1m__1__lr=0.001__l2=1e-06.pt` | 固定 seed=1 |
+| Toys | `./model/PoMRec/toys__42__lr=0.001__l2=1e-06__lamb=3.8__history_max=20.pt` | 固定 seed=42 |
+
+生成命令：
+```bash
+python main.py --model_name PoMRec --dataset beauty --lr 0.002 --l2 1e-6
+python main.py --model_name PoMRec --dataset ml-1m  --lr 0.001 --l2 1e-6
+python main.py --model_name PoMRec --dataset toys   --lr 0.001 --lamb 3.8 --l2 1e-6
+```
+
+### 5.3 实验脚本速查
+
+论文版主实验脚本位于 `bash脚本/`：
+
+| 数据集 | 脚本 | GPU | Seeds |
+|--------|------|-----|-------|
+| Beauty | `bash脚本/run_beauty_multiseed_final.sh` | 0 | 0,1,2,3,41,42,43 |
+| ML-1M | `bash脚本/run_ml1m_full3_multiseed.sh` | 1 | 0,1,2,3,41,42,43 |
+| Toys | `bash脚本/run_toys_final_multiseed_best.sh` | 1 | 0,1,2,3,41,42,43 |
+
+消融脚本：
+
+| 脚本 | 说明 |
+|------|------|
+| `bash脚本/run_ml1m_ablation_multiseed.sh` | ML-1M LLM-only / LLM+IPD 消融，5 seeds |
+| `bash脚本/run_alloff_s42_3datasets.sh` | 三数据集 all-off 消融，seed=42 |
+| `bash脚本/run_pomrec_baseline.sh` | MyModel 全关模块作为 PoMRec baseline |
+
+新模型实验脚本位于 `new_bash/`，包含 MyModelV2/V4/V5/SIERec 等单种子测试脚本。
+
 ## 6. 运行示例
 
 ### 6.1 训练基础 PoMRec
