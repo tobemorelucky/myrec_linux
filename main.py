@@ -26,6 +26,8 @@ import models.sequential.SIERec as SIERec
 import models.sequential.MyModelV2 as MyModelV2
 import models.sequential.MyModelV4 as MyModelV4
 import models.sequential.MyModelV5 as MyModelV5
+import models.sequential.MyModelLLM as MyModelLLM
+import models.sequential.MyModelLLMIPD as MyModelLLMIPD
 
 def parse_global_args(parser):
     default_gpu = os.environ.get('CUDA_VISIBLE_DEVICES', '0')
