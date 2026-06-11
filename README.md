@@ -14,8 +14,12 @@ python main.py --model_name <MODEL_NAME> --dataset <DATASET_NAME>
 ```
 其中 `<MODEL_NAME>` 可选：
 ```text
-PoMRec
-MyModel
+PoMRec         — baseline with optional LLM semantic enhancement
+MyModel        — paper version: PoMRec + LLM + IPD + LGD
+MyModelV2      — PoMRec + LLM + IU-SCBR + UGC-TIC + old IPD
+MyModelV4      — PoMRec + LLM + DSIP + old IPD
+MyModelV5      — PoMRec + LLM + SSID (auxiliary loss) + old IPD
+SIERec         — PoMRec + LLM + MVTC (clean skeleton)
 ```
 ---
 ## 2. 代码结构
@@ -475,6 +479,44 @@ use_logic_denoise = 0
 ```
 
 因此它更适合作为 all-off 消融或基础对照实验，而不是最终完整模型的多种子主实验。
+
+### 2.1 论文版主实验最佳超参数
+
+以下超参数从 `bash脚本/` 中的多种子脚本提取，对应 **MyModel（论文版）**：PoMRec + LLM语义对齐 + IPD目标兴趣约束 + LGD意图引导式去噪。
+
+三个脚本均使用 seeds: `0 1 2 3 41 42 43`，warm-start 自 PoMRec checkpoint。
+
+| 参数 | Beauty | ML-1M | Toys |
+|------|--------|-------|------|
+| `--lr` | 0.002 | 0.001 | 0.001 |
+| `--l2` | 1e-6 | 1e-6 | 1e-6 |
+| `--lamb` | 3.0 | 3.0 | 3.8 |
+| `--K` / `--prompt_num` | 3 / 4 | 3 / 4 | 3 / 4 |
+| `--emb_size` / `--attn_size` | 64 / 8 | 64 / 8 | 64 / 8 |
+| `--history_max` | 20 | 20 | 20 |
+| **LLM** | | | |
+| `--use_llmemb` / `--llm_fuse` | 1 / 1 | 1 / 1 | 1 / 1 |
+| `--gamma_init` / `--gamma_trainable` | 0.1 / 0 | 0.08 / 0 | 0.05 / 0 |
+| `--alpha` (align weight) | 0.001 | 0.001 | 0.001 |
+| `--tau` (align temp) | 0.2 | 0.3 | 0.5 |
+| `--rat_alpha_warmup_steps` | 5000 | 5000 | 5000 |
+| **IPD** | | | |
+| `--use_emile` | 1 | 1 | 1 |
+| `--lambda_ipd` | 0.05 | 0.02 | 0.05 |
+| `--ipd_margin` | 0.2 | 0.10 | 0.10 |
+| `--emile_warmup_steps` | 5000 | 20000 | 20000 |
+| **LGD** | | | |
+| `--use_logic_denoise` | 1 | 1 | 1 |
+| `--logic_denoise_alpha` | 8.0 | 8.0 | 10 |
+| `--logic_denoise_b` | 0.3 | 0.40 | 0.3 |
+| `--logic_denoise_topk` | 5 | 5 | 10 |
+| `--logic_denoise_r` | 0.15 | 0.08 | 0.10 |
+| `--logic_denoise_warmup_steps` | 20000 | 50000 | 50000 |
+| **其他** | | | |
+| `--use_logic_aggr` | 0 | 0 | 0 |
+| `--lambda_logic_aggr` | 0.0 | 0.0 | 0.0 |
+| LLM emb path | `./data/beauty/handled/llm_table_pca1536.pkl` | `./data/ml-1m/handled/llm_table_pca1536.pkl` | `./data/toys/handled/llm_table_pca1536.pkl` |
+| SRS emb path | `./data/beauty/handled/itm_emb_pomrec.pkl` | `./data/ml-1m/handled/itm_emb_pomrec.pkl` | `./data/toys/handled/itm_emb_pomrec.pkl` |
 
 ### 3. GPU 注意事项
 
