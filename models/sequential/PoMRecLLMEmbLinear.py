@@ -91,6 +91,8 @@ class PoMRecLLMEmbLinear(PoMRec):
     def parse_model_args(parser):
         # Register only PoMRec base args — NO LLM/fusion/ablation args.
         parser = PoMRec.parse_model_args(parser)
+        parser.add_argument('--llm_scale', type=float, default=1.0,
+                            help='Scale factor on adapter output. 1.0 = no scaling.')
         return parser
 
     # ------------------------------------------------------------------
@@ -101,7 +103,9 @@ class PoMRecLLMEmbLinear(PoMRec):
         args.use_llmemb = 0
         args.llm_fuse = 0
 
-        logging.info("[PoMRecLLMEmbLinear] initialized (LLMEmb-style naive migration)")
+        self._llm_scale = float(getattr(args, 'llm_scale', 1.0))
+
+        logging.info(f"[PoMRecLLMEmbLinear] initialized (LLMEmb-style naive migration), llm_scale={self._llm_scale}")
 
         super().__init__(args, corpus)
 
@@ -133,11 +137,31 @@ class PoMRecLLMEmbLinear(PoMRec):
     #  Item embedding: replace with adapted LLM
     # ------------------------------------------------------------------
     def _get_adapted_llm_emb(self, item_ids):
-        return self.llm_adapter(self.llm_table[item_ids])
+        return self.llm_adapter(self.llm_table[item_ids]) * self._llm_scale
 
     def _get_item_emb(self, item_ids):
         """Replace: e_final = adapter(e_llm).  No CF."""
         return self._get_adapted_llm_emb(item_ids)
+
+    # ------------------------------------------------------------------
+    #  Diagnostics
+    # ------------------------------------------------------------------
+    @staticmethod
+    def _diag(name, tensor, step, force=False):
+        """Log tensor stats at step 1, every 1000 steps, or when NaN/Inf detected."""
+        has_nan = torch.isnan(tensor).any().item()
+        has_inf = torch.isinf(tensor).any().item()
+        if not (force or step == 1 or step % 1000 == 0 or has_nan or has_inf):
+            return has_nan, has_inf
+        with torch.no_grad():
+            t = tensor.float()
+            logging.info(
+                f"[DIAG step {step}] {name}: shape={tuple(tensor.shape)} "
+                f"mean={t.mean().item():.6f} std={t.std().item():.6f} "
+                f"max_abs={t.abs().max().item():.6f} "
+                f"nan={has_nan} inf={has_inf}"
+            )
+        return has_nan, has_inf
 
     # ------------------------------------------------------------------
     #  Forward (identical to PoMRec scoring path)
@@ -159,11 +183,48 @@ class PoMRecLLMEmbLinear(PoMRec):
 
         out_dict = {"prediction": prediction}
 
-        # ---- Debug ----
-        if self._step % 200 == 0:
-            logging.info(
-                f"[PoMRecLLMEmbLinear step {self._step}] "
-                f"pred_mean={prediction.mean().item():.4f}"
+        # ---- NaN/Inf diagnostics ----
+        step = self._step
+        force_diag = (step == 1 or step % 1000 == 0)
+
+        # 1. LLM raw table (one-time at step 1)
+        if step == 1:
+            self._diag("llm_table_raw", self.llm_table, step, force=True)
+
+        # 2. Adapter output
+        nan_adapt, inf_adapt = self._diag("i_vectors(adapter_out)", i_vectors, step, force=force_diag)
+
+        # 3. Extractor outputs
+        self._diag("interest_vectors", interest_vectors, step, force=force_diag)
+        self._diag("distri_vectors(raw)", distri_vectors, step, force=force_diag)
+        self._diag("pred_intent(softmax)", q, step, force=force_diag)
+
+        # 4. Candidate scores
+        nan_pred, inf_pred = self._diag("prediction(scores)", prediction, step, force=force_diag)
+
+        # 5. Force print on NaN/Inf
+        if nan_adapt or inf_adapt or nan_pred or inf_pred:
+            logging.warning(
+                f"[DIAG step {step}] NaN/Inf DETECTED! "
+                f"adapter_nan={nan_adapt} adapter_inf={inf_adapt} "
+                f"pred_nan={nan_pred} pred_inf={inf_pred}"
             )
+            # Also print i_ids range
+            with torch.no_grad():
+                logging.warning(
+                    f"[DIAG step {step}] i_ids: min={i_ids.min().item()} max={i_ids.max().item()} "
+                    f"history: min={history[history>0].min().item() if (history>0).any() else -1} "
+                    f"max={history.max().item()}"
+                )
 
         return out_dict
+
+    # ------------------------------------------------------------------
+    #  Loss
+    # ------------------------------------------------------------------
+    def loss(self, out_dict):
+        loss = super().loss(out_dict)
+        self._diag("loss", loss, self._step, force=torch.isnan(loss).any().item() or torch.isinf(loss).any().item())
+        if torch.isnan(loss).any() or torch.isinf(loss).any():
+            logging.warning(f"[DIAG step {self._step}] LOSS is NaN/Inf!")
+        return loss

@@ -36,6 +36,8 @@ class BaseRunner(object):
                             help='Batch size during testing.')
         parser.add_argument('--optimizer', type=str, default='Adam',
                             help='optimizer: SGD, Adam, Adagrad, Adadelta')
+        parser.add_argument('--grad_clip', type=float, default=0.0,
+                            help='Gradient clip norm. 0 = disabled.')
         parser.add_argument('--num_workers', type=int, default=5,
                             help='Number of processors when prepare batches in DataLoader')
         parser.add_argument('--pin_memory', type=int, default=0,
@@ -81,6 +83,7 @@ class BaseRunner(object):
         self.eval_batch_size = args.eval_batch_size
         self.l2 = args.l2
         self.optimizer_name = args.optimizer
+        self.grad_clip = float(getattr(args, 'grad_clip', 0.0))
         self.num_workers = args.num_workers
         self.pin_memory = args.pin_memory
         self.topk = [int(x) for x in args.topk.split(',')]
@@ -103,6 +106,7 @@ class BaseRunner(object):
 
     def _build_optimizer(self, model):
         logging.info('Optimizer: ' + self.optimizer_name)
+        logging.info('Grad Clip: ' + str(self.grad_clip) if self.grad_clip > 0 else 'Grad Clip: disabled')
         optimizer = eval('torch.optim.{}'.format(self.optimizer_name))(
             model.customize_parameters(), lr=self.learning_rate, weight_decay=self.l2)
         return optimizer
@@ -183,6 +187,8 @@ class BaseRunner(object):
             out_dict = model(batch)
             loss = model.loss(out_dict)
             loss.backward()
+            if self.grad_clip > 0:
+                torch.nn.utils.clip_grad_norm_(model.parameters(), self.grad_clip)
             model.optimizer.step()
             loss_lst.append(loss.detach().cpu().data.numpy())
         return np.mean(loss_lst).item()
