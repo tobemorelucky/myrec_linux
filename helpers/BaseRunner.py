@@ -40,7 +40,7 @@ class BaseRunner(object):
                             help='Gradient clip norm. 0 = disabled.')
         parser.add_argument('--num_workers', type=int, default=5,
                             help='Number of processors when prepare batches in DataLoader')
-        parser.add_argument('--pin_memory', type=int, default=0,
+        parser.add_argument('--pin_memory', type=int, default=1,
                             help='pin_memory in DataLoader')
         parser.add_argument('--topk', type=str, default='5,10,20,50',
                             help='The number of items recommended to each user.')
@@ -219,10 +219,11 @@ class BaseRunner(object):
         predictions = list()
         dl = DataLoader(dataset, batch_size=self.eval_batch_size, shuffle=False, num_workers=self.num_workers,
                         collate_fn=dataset.collate_batch, pin_memory=self.pin_memory)
-        for batch in tqdm(dl, leave=False, ncols=100, mininterval=1, desc='Predict'):
-            prediction = dataset.model(utils.batch_to_gpu(batch, dataset.model.device))['prediction']
-            predictions.extend(prediction.cpu().data.numpy())
-        predictions = np.array(predictions)
+        with torch.inference_mode():
+            for batch in tqdm(dl, leave=False, ncols=100, mininterval=1, desc='Predict'):
+                prediction = dataset.model(utils.batch_to_gpu(batch, dataset.model.device))['prediction']
+                predictions.append(prediction.cpu().numpy())
+        predictions = np.concatenate(predictions, axis=0)
 
         if dataset.model.test_all:
             rows, cols = list(), list()

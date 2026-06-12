@@ -30,7 +30,7 @@ def df_to_dict(df: pd.DataFrame) -> dict:
 def batch_to_gpu(batch: dict, device) -> dict:
     for c in batch:
         if type(batch[c]) is torch.Tensor:
-            batch[c] = batch[c].to(device)
+            batch[c] = batch[c].to(device, non_blocking=True)
     return batch
 
 
