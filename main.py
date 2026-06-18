@@ -31,6 +31,10 @@ import models.sequential.MyModelLLMIPD as MyModelLLMIPD
 import models.sequential.MyModelSCIL as MyModelSCIL
 import models.sequential.MyModelHMIF as MyModelHMIF
 import models.sequential.MyModelTIRL as MyModelTIRL
+import models.sequential.MyModelCTIRL as MyModelCTIRL
+import models.sequential.MyModelITIRL as MyModelITIRL
+import models.sequential.MyModelCIRF as MyModelCIRF
+import models.sequential.MyModelSHNC as MyModelSHNC
 
 def parse_global_args(parser):
     default_gpu = os.environ.get('CUDA_VISIBLE_DEVICES', '0')
