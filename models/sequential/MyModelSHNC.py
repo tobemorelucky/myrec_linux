@@ -211,6 +211,7 @@ class MyModelSHNC(SequentialModel):
             hn = torch.from_numpy(np.asarray(pickle.load(open(self.shnc_path, "rb")))).long()
             self.register_buffer("semantic_hardneg_table", hn, persistent=False)
             logging.info(f"[SHNC] Loaded hardneg table: {hn.shape}")
+            logging.info(f"[SHNC_FAST] vectorized_filter=1")
         self._define_params(); self.apply(self.init_weights)
         if self.use_llmemb: self.align_loss_func = InfoNCEAlign(tau=self.tau)
         if self.use_llmemb and self.init_ckpt:
@@ -275,55 +276,66 @@ class MyModelSHNC(SequentialModel):
         history_items = out_dict.get("shnc_history_items", None)  # (B, L)
 
         B = pos_item_id.size(0)
+        device = pos_item_id.device
         full_topk = self.semantic_hardneg_table.size(1)
 
         # Rank window
         rank_start = max(0, min(self.shnc_rank_start, full_topk))
         rank_end = max(rank_start + 1, min(self.shnc_rank_end, full_topk))
         cand_full = self.semantic_hardneg_table[pos_item_id]  # (B, full_topk)
-        cand = cand_full[:, rank_start:rank_end]              # (B, window)
+        cand = cand_full[:, rank_start:rank_end]              # (B, W)
 
-        # History filtering
-        total_valid = 0; total_filtered = 0
-        hard_neg_ids_list = []
-        for b in range(B):
-            c = cand[b]  # (window,)
-            # Build exclusion set
-            excluded = {pos_item_id[b].item(), 0}
-            if self.shnc_filter_history and history_items is not None:
-                for h in history_items[b].tolist():
-                    if h > 0:
-                        excluded.add(h)
-            # Filter
-            valid_c = [v.item() for v in c if v.item() not in excluded]
-            total_valid += len(valid_c)
-            total_filtered += (c.size(0) - len(valid_c))
+        # ---- Vectorized valid mask ----
+        valid_mask = (cand > 0) & (cand != pos_item_id[:, None])  # (B, W)
 
-            K = self.shnc_num
-            if len(valid_c) >= K:
-                sel = np.random.choice(valid_c, size=K, replace=False)
-            else:
-                # Fallback: use unfiltered cand excluding 0 and pos
-                fallback = [v.item() for v in cand_full[b] if v.item() not in {0, pos_item_id[b].item()}]
-                if len(fallback) >= K:
-                    sel = np.random.choice(fallback, size=K, replace=False)
-                elif len(fallback) > 0:
-                    sel = np.random.choice(fallback, size=K, replace=True)
-                else:
-                    sel = np.full(K, max(1, pos_item_id[b].item()), dtype=np.int64)
-            hard_neg_ids_list.append(torch.tensor(sel, device=c.device, dtype=torch.long))
+        if self.shnc_filter_history and history_items is not None:
+            # Broadcast: (B, W, 1) vs (B, 1, L) -> any match along L dim
+            in_hist = (cand[:, :, None] == history_items[:, None, :]).any(dim=-1)  # (B, W)
+            valid_mask = valid_mask & (~in_hist)
 
-        hard_neg_ids = torch.stack(hard_neg_ids_list, dim=0)  # (B, shnc_num)
-        valid_neg_rate = total_valid / max(1, B * self.shnc_num)
-        filtered_rate = total_filtered / max(1, B * (rank_end - rank_start))
+        # ---- Vectorized random sampling via GPU rand ----
+        K = self.shnc_num
+        rand = torch.rand(cand.shape, device=device)
+        rand = rand.masked_fill(~valid_mask, -1.0)
 
-        hard_neg_emb = self.get_item_vectors_for_shnc(hard_neg_ids)  # (B, shnc_num, D)
+        # Primary: sample from window cand
+        if K == 1:
+            idx_primary = rand.argmax(dim=1, keepdim=True)  # (B, 1)
+        else:
+            idx_primary = rand.topk(k=K, dim=1).indices     # (B, K)
+        primary_ids = cand.gather(1, idx_primary)           # (B, K)
+
+        # Fallback: per-sample, sample from full cand (excluding 0 and pos)
+        fallback_mask = (cand_full > 0) & (cand_full != pos_item_id[:, None])
+        fb_rand = torch.rand(cand_full.shape, device=device)
+        fb_rand = fb_rand.masked_fill(~fallback_mask, -1.0)
+        if K == 1:
+            fb_idx = fb_rand.argmax(dim=1, keepdim=True)
+        else:
+            fb_idx = fb_rand.topk(k=K, dim=1).indices
+        fallback_ids = cand_full.gather(1, fb_idx)
+
+        # Choose primary or fallback
+        has_valid = valid_mask.any(dim=1)  # (B,)
+        hard_neg_ids = torch.where(has_valid[:, None], primary_ids, fallback_ids)
+
+        # Safety: replace any 0 with pos_item_id
+        hard_neg_ids = torch.where(hard_neg_ids > 0, hard_neg_ids, pos_item_id[:, None])
+
+        # ---- Vectorized statistics ----
+        before_mask = (cand > 0) & (cand != pos_item_id[:, None])
+        filtered_by_history = before_mask & (~valid_mask)
+        valid_neg_rate = valid_mask.float().mean().item()
+        filtered_rate = (filtered_by_history.float().sum() / (before_mask.float().sum() + 1e-8)).item()
+
+        # ---- Compute hard negative scores ----
+        hard_neg_emb = self.get_item_vectors_for_shnc(hard_neg_ids)  # (B, K, D)
         if self.shnc_score_norm:
             uv = F.normalize(user_vector, dim=-1)
             hne = F.normalize(hard_neg_emb, dim=-1)
         else:
             uv, hne = user_vector, hard_neg_emb
-        hard_neg_scores = (uv[:, None, :] * hne).sum(dim=-1)  # (B, shnc_num)
+        hard_neg_scores = (uv[:, None, :] * hne).sum(dim=-1)  # (B, K)
 
         if self.shnc_neg_reduce == "max":
             hard_score = hard_neg_scores.max(dim=1).values
