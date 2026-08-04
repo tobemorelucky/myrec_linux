@@ -114,4 +114,4 @@ speed_test/myrec_speed/*.npz
 speed_test/myrec_speed/__pycache__/
 speed_test/myrec_speed/**/*.pyc
 speed_test/myrec_speed/**/*.pyo
-speed_test/myrec_speed/**/*.pyd
+speed_test/myrec_speed/**/*.pydanalysis_figures/

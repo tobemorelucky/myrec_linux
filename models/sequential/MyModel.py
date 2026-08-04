@@ -207,7 +207,7 @@ class MultiInterestExtractor(nn.Module):
         attn = (values - values.max()).softmax(dim=-1)
         return attn.masked_fill(torch.isnan(attn), 0)
 
-    def forward(self, history: torch.Tensor, lengths: torch.Tensor, q_vec=None):
+    def forward(self, history: torch.Tensor, lengths: torch.Tensor, q_vec=None, return_gate=False):
         B, seq_len = history.shape
         device = history.device
 
@@ -254,6 +254,7 @@ class MultiInterestExtractor(nn.Module):
                 gate = gate * 0.9 + 0.1 * (gate >= kth[:, None]).float()
 
             r = float(getattr(self, "logic_denoise_r", 0.15))
+            gate_2d = gate.clone()          # (B, L)  before squeeze
             gate = gate[:, :, None]
             his_vectors = his_vectors * (1 - r) + his_vectors * gate * r
 
@@ -286,6 +287,8 @@ class MultiInterestExtractor(nn.Module):
         distri_pred = self.value2attn(distri_pred, valid_his_ext)
         distri_vectors = torch.matmul(distri_pred, his_vectors_prompt2).squeeze(1)
 
+        if return_gate and (q_vec is not None):
+            return interest_vectors, distri_vectors, gate_2d
         return interest_vectors, distri_vectors
 
 
@@ -508,19 +511,22 @@ class MyModel(SequentialModel):
     # =========================
     # forward
     # =========================
-    def forward(self, feed_dict):
+    def forward(self, feed_dict, return_intermediate=False):
         self.global_step += 1
 
         i_ids = feed_dict["item_id"]          # (B, 1+neg)
         history = feed_dict["history_items"]  # (B, H)
         lengths = feed_dict["lengths"]        # (B,)
 
+        gate = None
+        q_vec = None
+
         # =========================================================
         # Self-conditioned LGD (NO label leakage):
         #   Pass-1: run extractor without denoise -> get dv0 as query
         #   Pass-2: run extractor with denoise using q_vec
         # =========================================================
-        if self.use_logic_denoise and self.training:
+        if self.use_logic_denoise and (self.training or return_intermediate):
             self.interest_extractor.use_logic_denoise = 0
             iv0, dv0 = self.interest_extractor(history, lengths, q_vec=None)
 
@@ -536,7 +542,12 @@ class MyModel(SequentialModel):
             # 兼容：仍然把 b 挂到 extractor（如果你未来要用 b-sweep）
             self.interest_extractor.logic_denoise_b = self.logic_denoise_b
 
-            interest_vectors, distri_vectors = self.interest_extractor(history, lengths, q_vec=q_vec)
+            if return_intermediate:
+                interest_vectors, distri_vectors, gate = self.interest_extractor(
+                    history, lengths, q_vec=q_vec, return_gate=True)
+            else:
+                interest_vectors, distri_vectors = self.interest_extractor(
+                    history, lengths, q_vec=q_vec)
         else:
             self.interest_extractor.use_logic_denoise = 0
             interest_vectors, distri_vectors = self.interest_extractor(history, lengths, q_vec=None)
@@ -556,6 +567,19 @@ class MyModel(SequentialModel):
         prediction = pred_base
 
         out_dict = {"prediction": prediction}
+
+        if return_intermediate and gate is not None:
+            out_dict["gate"] = gate          # (B, L)
+            out_dict["q_vec"] = q_vec        # (B, D)
+
+        # General intermediates (for analysis scripts)
+        if return_intermediate:
+            out_dict["interest_vectors"] = interest_vectors      # (B, K, D)
+            out_dict["interest_weights"] = w                     # (B, K)
+            out_dict["user_vector"] = u_base                     # (B, D)
+            out_dict["pos_item_emb"] = i_vectors[:, 0, :]        # (B, D)
+            if i_vectors.size(1) > 1:
+                out_dict["neg_item_emb"] = i_vectors[:, 1, :]    # (B, D)
 
         # EMILE stash
         if self.use_emile:
