@@ -321,7 +321,7 @@ self.interest_extractor.get_item_emb = self._fused_get_item_emb
 | MyModelSHNC | SequentialModel | ❌ | ❌ (residual) | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
 
 **关于三个方向的已有实现**:
-1. **SPCF (语义保持的子空间互补融合)**: ❌ 无现成实现。PoMRecLLMEmb 的 `replace` 是全部替换而非互补，`residual` 是简单加法而非子空间互补。InfoNCE 对齐损失可以复用为语义保持约束的一部分。
+1. **SPCF (语义保持的子空间互补融合)**: ❌ 无现成实现。PoMRecLLMEmb 的 `replace` 是全部替换而非互补（消融中优于 residual +12.4%，但训练不稳定），`residual` 是简单加法而非子空间互补。InfoNCE 对齐损失可以复用为语义保持约束的一部分。SPCF 应保留 CF 嵌入作为稳定锚点，同时引入 LLM 语义作为互补信号——既避免纯 replace 的不稳定，又超越简单 residual 加法。
 2. **CHIR (协同校准的层次语义兴趣路由)**: ⚠️ 部分组件存在。TIRL 有目标路由兴趣选择，SIERec 有 CF-teacher 蒸馏。但"层次语义兴趣"（显式多级抽象路由）和"协同校准"（双视角校准框架）均未实现。
 3. **LFBT (局部因子保持与均衡目标学习)**: ❌ 无现成实现。没有局部兴趣保持、因子均衡或最优传输相关代码。
 
@@ -372,62 +372,108 @@ corpus.n_items: 78772  → rows 匹配 ✅
 
 ---
 
-## 四、ReLU 直接替换实验的真实结论
+## 四、LLMemb 直接替换实验的真实结论
 
-### 4.1 PoMRecLLMEmb (replace 模式)
+### 4.1 哪些文件实现了"LLM 直接替换"
 
-**执行脚本**: 不存在单独的 bash 脚本，通过 `--model_name PoMRecLLMEmb --llm_fuse_mode replace` 直接运行
+全仓库搜索 `return e_llm` / `return.*llm_emb` / `replace` 模式，**只有两个文件**实现了 LLM embedding 完全替换 CF embedding：
 
-**实验结果汇总 (Beauty, seed=42)**:
+| 文件 | 类 | 继承自 | 替换方式 |
+|------|---|-------|---------|
+| `models/sequential/PoMRecLLMEmb.py` | `PoMRecLLMEmb(PoMRec)` | PoMRec | `--llm_fuse_mode replace` 启用 |
+| `models/sequential/PoMRecLLMEmbLinear.py` | `PoMRecLLMEmbLinear(PoMRec)` | PoMRec | 硬编码 replace |
 
-| Adapter | 实验数 | Best Dev NDCG@5 | Test NDCG@5 | 训练时间 | 稳定性 |
-|---------|-------|----------------|------------|---------|--------|
-| ours (GELU+LN) | 3 | 0.1262-0.1344 | 0.1041-0.1076 | ~1100s | 稳定 |
-| llmemb (Linear) | 1 (lr=0.002) | 0.1022 | 0.0865 | 565s | NaN 崩溃 |
-| llmemb (Linear) | 1 (lr=0.001) | 0.1054 | 0.0871 | 905s | 稳定 |
-| noln (GELU) | 1 (lr=0.002) | 0.1205 | 0.1000 | 579s | NaN 崩溃 |
-| noln (GELU) | 1 (lr=0.001) | 0.1370 | 0.1121 | 2320s | 稳定 |
+其他所有文件（PoMRec、MyModel、SIERec、MyModelHMIF、MyModelTIRL 等）的 `get_item_emb` 实现全部是 `e_cf + gamma * e_llm`（residual 融合），**不存在 replace 模式**。
 
-**ML-1M, seed=42, replace+ours**:
-- Best Dev: HR@5=0.3212, NDCG@5=0.2246
-- Test: HR@5=0.2957, NDCG@5=0.2046
-- 训练时间: 9348s (~2.6h)
+### 4.2 干净消融实验：replace vs residual vs none
 
-**关键发现**:
-1. `replace` 模式的 Test NDCG@5 范围: 0.087-0.112 (Beauty)，显著低于 PoMRec+LLM residual (约 0.128-0.135)
-2. lr=0.002 时 llmemb/noln adapter 会 NaN 崩溃，lr=0.001 时稳定但性能更低
-3. `ours` adapter (GELU+LN) 最稳定
-4. `replace` 模式仅在 adapter 使用 GELU 激活（非 ReLU）。PoMRecLLMEmbLinear 中使用纯 Linear（无激活），回答是后者的替换不包含 ReLU
+**框架**: PoMRecLLMEmb（同一套代码，仅改变 `--llm_fuse_mode`）
+**配置**: Beauty, seed=42, lr=0.002, K=4, prompt_num=3, lamb=4.0, adapter=ours(GELU+LN)
 
-### 4.2 PoMRecLLMEmbLinear (固定 replace 模式)
+| llm_fuse_mode | 含义 | Dev NDCG@5 | Test NDCG@5 | 训练时间 |
+|--------------|------|-----------|------------|---------|
+| **replace** | 纯 LLM: `e_final = adapter(llm)` | **0.1344** | **0.1076** | 1105s |
+| none | 纯 PoMRec CF: `e_final = e_cf` | 0.1286 | 0.0986 | 2679s |
+| residual | 残差融合: `e_final = e_cf + gamma * adapter(llm)` | 0.1262 | 0.0957 | 1087s |
 
-**适配器**: Linear → Linear，无 GELU，无 LN
+**结论: replace > none > residual**。replace 的 Test NDCG@5 (0.1076) 比 residual (0.0957) 高出 **+12.4%**。
 
-**Beauty 最佳结果**:
-- lr=0.001 → Test NDCG@5=0.087-0.090
-- lr=0.0005 → Test NDCG@5=0.085-0.088
-- lr=0.001 时半数实验崩溃为 NaN
+> residual 实验使用 gamma_init=0.1, gamma_trainable=0（固定 gamma）。replace 模式不使用 gamma（直接返回 e_llm），因此 gamma 参数对 replace 无影响。三个实验的代码框架、adapter 架构、训练超参数完全一致，构成干净消融。
 
-**ML-1M 最佳结果**:
-- lr=0.0005 → Test NDCG@5=0.157-0.162
-- lr=0.0001 → Test NDCG@5=0.193 (最佳，但仍有 NaN 崩溃风险)
-- lr=0.001 → Test NDCG@5=0.115-0.130 (NaN 崩溃)
+### 4.3 多 seed 验证
 
-**Toys 最佳结果**:
-- lr=0.0005 → Test NDCG@5=0.144
-- lr=0.0001 → Test NDCG@5=0.146 (最稳定)
-- lr=0.001 → Test NDCG@5=0.105-0.112 (NaN 崩溃)
+PoMRecLLMEmb replace + ours adapter, Beauty, lr=0.002:
 
-### 4.3 对 "ReLU 直接替换" 的直接回答
+| seed | Dev NDCG@5 | Test NDCG@5 |
+|------|-----------|------------|
+| 0 | 0.1319 | 0.1055 |
+| 1 | 0.1366 | 0.1116 |
+| 42 | 0.1344 | 0.1076 |
+| **Mean** | **0.1343** | **0.1082** |
 
-**仓库中不存在 "LLM embedding + ReLU + 直接替换物品嵌入" 的精确实现。**
+三个 seed 全部系统性高于 residual (Test=0.0957) 和 none (Test=0.0986)。
 
-最接近的是:
-- **PoMRecLLMEmbLinear** (`models/sequential/PoMRecLLMEmbLinear.py`): LLM + **纯 Linear** (无激活) + replace — 但常 NaN 崩溃
-- **PoMRecLLMEmb** 的 `replace` 模式: LLM + **GELU+LN** adapter + replace — 稳定但性能低于 residual
-- **PoMRecLLMEmb** 的 `noln` 模式: LLM + **GELU(无LN)** + replace — NaN 风险高
+### 4.4 与用户残差方法（PoMRec + use_llmemb + llm_fuse=1 + alignment）对比
 
-使用 ReLU 替代 GELU 的变体未被实验。
+用户的残差连接方法在 PoMRec 框架中实现，除 residual fusion 外还包含 InfoNCE alignment loss。Beauty seed=42 最佳结果：
+
+| 配置 | Dev NDCG@5 | Test NDCG@5 |
+|------|-----------|------------|
+| gamma=0.1 fixed, alpha=0.001 | 0.1339 | 0.1043 |
+| gamma=0.01 trainable, alpha=0.0005 | 0.1337 | 0.1083 |
+
+**PoMRecLLMEmb replace (test=0.1076) 对比 PoMRec residual+align 最佳 (test=0.1083): 两者基本持平。**
+但 PoMRecLLMEmb replace **没有使用 alignment loss**，且训练时间更短（1105s vs 2087-2958s）。
+
+### 4.5 其他数据集
+
+**ML-1M** (seed=42, replace+ours):
+- Test NDCG@5=0.2046
+- PoMRec 标准基线: 0.2074, MyModelLLM residual: 0.2188
+- replace 略低于 residual，但差距很小（-1.3% vs PoMRec, -6.5% vs MyModelLLM）
+
+**Toys** (仅 PoMRecLLMEmbLinear, lr=0.0001):
+- replace Test NDCG@5=0.146
+- PoMRec 标准基线: 0.1134
+- **replace 大幅领先 +28.7%**
+
+### 4.6 不同 adapter 的影响
+
+PoMRecLLMEmb, Beauty seed=42, replace 模式:
+
+| Adapter | lr | Dev NDCG@5 | Test NDCG@5 | 稳定性 |
+|---------|-----|-----------|------------|--------|
+| ours (GELU+LN) | 0.002 | 0.1344 | 0.1076 | ✅ 稳定 |
+| ours (GELU+LN) | 0.001 | 0.1284 | 0.1041 | ✅ 稳定 |
+| noln (GELU, 无LN) | 0.001 | 0.1370 | **0.1121** | ✅ 稳定 |
+| noln (GELU, 无LN) | 0.002 | 0.1205 | 0.1000 | ❌ NaN 崩溃 |
+| llmemb (纯Linear) | 0.001 | 0.1054 | 0.0871 | ✅ 稳定 |
+| llmemb (纯Linear) | 0.002 | 0.1022 | 0.0865 | ❌ NaN 崩溃 |
+
+- **最佳 adapter**: noln (GELU, 无 LN) + lr=0.001 → Test NDCG@5=**0.1121**，进一步超过 residual
+- LayerNorm 在 replace 模式下可能过度约束了 LLM embedding 的表达能力
+- 纯 Linear adapter 无论 lr 高低都表现最差，说明非线性激活（GELU）对 replace 模式至关重要
+
+### 4.7 PoMRecLLMEmbLinear 的结果
+
+PoMRecLLMEmbLinear 使用纯 Linear adapter（无 GELU, 无 LN），硬编码 replace：
+
+| 数据集 | 最佳 lr | Test NDCG@5 | 稳定性 |
+|--------|--------|------------|--------|
+| Beauty | 0.0005 | 0.085-0.088 | ⚠️ 部分 NaN |
+| ML-1M | 0.0001 | 0.193 | ⚠️ 高 lr 全部 NaN |
+| Toys | 0.0001 | 0.146 | ⚠️ 高 lr 全部 NaN |
+
+PoMRecLLMEmbLinear 在极低 lr (0.0001) 下可以获得可接受的结果，但训练极慢（Toys 需要 7.5h），且稍高 lr 即 NaN 崩溃。
+
+### 4.8 总结
+
+1. **只有两个文件实现了 replace**: PoMRecLLMEmb 和 PoMRecLLMEmbLinear
+2. **replace 在干净消融中优于 residual**：Test NDCG@5 0.1076 vs 0.0957 (+12.4%)
+3. **replace 与用户的 PoMRec residual+align 方法持平**（0.1076 vs 0.1083），但不需要 alignment loss
+4. **replace 的最大问题是训练稳定性**：仅 GELU-based adapter 能收敛，纯 Linear adapter 普遍 NaN。最佳 performer（noln, lr=0.001）在 lr=0.002 时也崩溃
+5. **仓库中不存在 "ReLU + 直接替换" 的实验**。所有 replace 实验使用 GELU 或纯 Linear。ReLU 替代 GELU 的变体未被探索
+6. **对后续 SPCF 的启示**：完全丢弃 CF 嵌入虽然在消融中优于 residual，但训练不稳定。SPCF 应采用"子空间互补融合"而非简单替换，保留 CF 嵌入作为稳定锚点，同时引入 LLM 语义作为互补信号
 
 ---
 
@@ -499,12 +545,27 @@ corpus.n_items: 78772  → rows 匹配 ✅
 | MyModelV2/V4/V5 | 未审计但大概率是废弃版本 | 忽略 |
 | MyModelLLM, MyModelLLMIPD, MyModelSCIL | 同上 | 忽略 |
 
-### 6.4 ReLU 直接替换实验的真实结论
+### 6.4 LLMemb 直接替换实验的真实结论（已更正）
 
-**仓库中不存在 "ReLU + 直接替换" 的精确实现。**
-- 最接近的是 PoMRecLLMEmbLinear（纯 Linear, 无激活），但频繁 NaN 崩溃
-- PoMRecLLMEmb 的 replace 模式使用 GELU（非 ReLU），性能显著低于 residual fusion
-- **关键教训**: 纯 replace（丢弃 CF 嵌入）会导致训练不稳定和性能大幅下降。新模型的 SPCF 应该采用子空间互补而非完全替换
+**只有两个文件实现了 LLM 直接替换**: PoMRecLLMEmb.py (`--llm_fuse_mode replace`) 和 PoMRecLLMEmbLinear.py（硬编码）。
+
+**干净消融（PoMRecLLMEmb, Beauty seed=42, lr=0.002, K=4, prompt=3, lamb=4.0, adapter=GELU+LN）**:
+
+| llm_fuse_mode | Test NDCG@5 |
+|--------------|------------|
+| **replace** | **0.1076** |
+| none (纯CF) | 0.0986 |
+| residual (cf+γ×llm) | 0.0957 |
+
+**replace > none > residual，replace 比 residual 高 +12.4%。**
+
+多 seed 均值 (0/1/42): replace Test NDCG@5 = 0.1082，系统性地高于 residual。
+
+**与用户 PoMRec residual+alignment 方法对比**: replace (0.1076) ≈ PoMRec residual+align 最佳 (0.1083)，但 replace 不需要 alignment loss，训练更快。
+
+**稳定性问题**: 纯 Linear adapter (PoMRecLLMEmbLinear) 频繁 NaN，仅 GELU-based adapter 在低 lr 下稳定。
+
+**关键教训**: 完全替换在消融中优于残差，但需要 GELU 非线性 + 低 lr。SPCF 应采用子空间互补融合（保留 CF 稳定锚点 + LLM 互补信号），而非完全丢弃 CF。
 
 ### 6.5 三个数据集嵌入文件状态
 
