@@ -76,10 +76,14 @@ class LLMMIRec(SequentialModel):
         parser.add_argument("--gamma_trainable", type=int, default=0,
                            choices=[0, 1])
 
-        # ---- regularization ----
-        parser.add_argument("--dropout", type=float, default=0.1)
+        # ---- regularization (dropout is defined in GeneralModel.parse_model_args) ----
 
-        return SequentialModel.parse_model_args(parser)
+        parser = SequentialModel.parse_model_args(parser)
+
+        # Override GeneralModel's default (0) to 0.1 for LLMMIRec
+        parser.set_defaults(dropout=0.1)
+
+        return parser
 
     # =========================
     #  Init
