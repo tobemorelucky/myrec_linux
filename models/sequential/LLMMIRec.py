@@ -2,17 +2,8 @@
 """
 LLMMIRec: Clean LLM-enhanced Multi-Interest sequential Recommendation baseline.
 
-Phase 0 — minimal working baseline:
-  - Inherits SequentialModel directly (no PoMRec dependency)
-  - Shared ItemEncoder (id / llm_replace / residual) for history AND candidates
-  - QueryMultiInterestExtractor (K learnable queries + scaled dot-product attention)
-  - InterestAggregator (history-only: mean + last → MLP → weights)
-  - BPR loss only, no auxiliary losses
-
-Usage:
-  python main.py --model_name LLMMIRec --dataset beauty \
-    --item_encoder llm_replace \
-    --llm_emb_path ./data/beauty/handled/llm_table_pca1536.pkl
+Phase 0 — minimal working baseline (id / llm_replace / residual).
+Phase 1 — ASPCF: Adaptive Semantic-Preserving Subspace Complementary Fusion.
 """
 
 import logging
@@ -41,6 +32,8 @@ class LLMMIRec(SequentialModel):
         "adapter_hidden",
         "adapter_activation",
         "adapter_use_ln",
+        "semantic_rank",
+        "lambda_relation",
     ]
 
     # =========================
@@ -57,12 +50,12 @@ class LLMMIRec(SequentialModel):
         # ---- item encoder ----
         parser.add_argument(
             "--item_encoder", type=str, default="llm_replace",
-            choices=["id", "llm_replace", "residual"],
+            choices=["id", "llm_replace", "residual", "aspcf"],
         )
         parser.add_argument("--llm_emb_path", type=str, default="",
                            help="Path to LLM embedding pkl table")
 
-        # ---- adapter ----
+        # ---- adapter (llm_replace / residual) ----
         parser.add_argument("--adapter_hidden", type=int, default=256)
         parser.add_argument(
             "--adapter_activation", type=str, default="gelu",
@@ -75,6 +68,22 @@ class LLMMIRec(SequentialModel):
         parser.add_argument("--gamma_init", type=float, default=0.1)
         parser.add_argument("--gamma_trainable", type=int, default=0,
                            choices=[0, 1])
+
+        # ---- ASPCF ----
+        parser.add_argument("--semantic_rank", type=int, default=512)
+        parser.add_argument("--semantic_dim", type=int, default=32)
+        parser.add_argument("--semantic_hidden", type=int, default=128)
+        parser.add_argument("--complement_dim", type=int, default=32)
+        parser.add_argument("--tail_hidden", type=int, default=64)
+        parser.add_argument("--complement_hidden", type=int, default=64)
+        parser.add_argument("--gate_hidden", type=int, default=64)
+
+        # ---- relation preservation loss ----
+        parser.add_argument("--lambda_relation", type=float, default=0.0,
+                           help="Weight for semantic relation preservation loss")
+        parser.add_argument("--relation_sample_size", type=int, default=128)
+        parser.add_argument("--relation_teacher_temp", type=float, default=0.1)
+        parser.add_argument("--relation_student_temp", type=float, default=0.1)
 
         # ---- regularization (dropout is defined in GeneralModel.parse_model_args) ----
 
@@ -119,12 +128,27 @@ class LLMMIRec(SequentialModel):
         self.gamma_init = float(getattr(args, "gamma_init", 0.1))
         self.gamma_trainable = bool(int(getattr(args, "gamma_trainable", 0)))
 
+        # ---- ASPCF params ----
+        self.semantic_rank = int(getattr(args, "semantic_rank", 512))
+        self.semantic_dim = int(getattr(args, "semantic_dim", 32))
+        self.semantic_hidden = int(getattr(args, "semantic_hidden", 128))
+        self.complement_dim = int(getattr(args, "complement_dim", 32))
+        self.tail_hidden = int(getattr(args, "tail_hidden", 64))
+        self.complement_hidden = int(getattr(args, "complement_hidden", 64))
+        self.gate_hidden = int(getattr(args, "gate_hidden", 64))
+
+        # ---- relation loss ----
+        self.lambda_relation = float(getattr(args, "lambda_relation", 0.0))
+        self.relation_sample_size = int(getattr(args, "relation_sample_size", 128))
+        self.relation_teacher_temp = float(getattr(args, "relation_teacher_temp", 0.1))
+        self.relation_student_temp = float(getattr(args, "relation_student_temp", 0.1))
+
         # ---- regularization ----
         self.dropout_p = float(getattr(args, "dropout", 0.1))
 
         # ---- load LLM table (if needed) ----
         llm_table = None
-        if self.item_encoder_mode in ("llm_replace", "residual"):
+        if self.item_encoder_mode in ("llm_replace", "residual", "aspcf"):
             llm_table = load_llm_table(self.llm_emb_path, expected_rows=self.item_num)
 
         # ---- build modules ----
@@ -138,16 +162,21 @@ class LLMMIRec(SequentialModel):
         logging.info(f"[LLMMIRec]   item_encoder: {self.item_encoder_mode}")
         logging.info(f"[LLMMIRec]   emb_size={self.emb_size}, attn_size={self.attn_size}, "
                      f"K={self.K}, max_his={self.max_his}")
+        if self.item_encoder_mode == "aspcf":
+            logging.info(f"[LLMMIRec]   aspcf: semantic_rank={self.semantic_rank} "
+                         f"semantic_dim={self.semantic_dim} complement_dim={self.complement_dim}")
         logging.info(f"[LLMMIRec]   adapter: hidden={self.adapter_hidden}, "
                      f"activation={self.adapter_activation}, ln={self.adapter_use_ln}")
         logging.info(f"[LLMMIRec]   gamma_init={self.gamma_init}, "
                      f"gamma_trainable={self.gamma_trainable}")
+        logging.info(f"[LLMMIRec]   relation: lambda={self.lambda_relation} "
+                     f"sample_size={self.relation_sample_size}")
         logging.info(f"[LLMMIRec]   dropout={self.dropout_p}")
         logging.info(f"[LLMMIRec]   #params: {self.count_variables()}")
 
     def _define_params(self, llm_table):
         # Item encoder
-        self.item_encoder = ItemEncoder(
+        ie_kwargs = dict(
             item_num=self.item_num,
             emb_size=self.emb_size,
             mode=self.item_encoder_mode,
@@ -158,6 +187,17 @@ class LLMMIRec(SequentialModel):
             gamma_init=self.gamma_init,
             gamma_trainable=self.gamma_trainable,
         )
+        if self.item_encoder_mode == "aspcf":
+            ie_kwargs.update(
+                semantic_rank=self.semantic_rank,
+                semantic_dim=self.semantic_dim,
+                semantic_hidden=self.semantic_hidden,
+                complement_dim=self.complement_dim,
+                tail_hidden=self.tail_hidden,
+                complement_hidden=self.complement_hidden,
+                gate_hidden=self.gate_hidden,
+            )
+        self.item_encoder = ItemEncoder(**ie_kwargs)
 
         # Position embedding
         self.position_emb = nn.Embedding(self.max_his + 1, self.emb_size)
@@ -191,8 +231,25 @@ class LLMMIRec(SequentialModel):
         device = history.device
 
         # ---- 1. Item embeddings (shared encoder for history AND candidates) ----
-        history_emb_raw = self.item_encoder(history)    # [B, L, D]
-        candidate_emb = self.item_encoder(i_ids)         # [B, C, D]
+        aspcf_comps = None
+        if self.item_encoder_mode == "aspcf" and return_intermediate:
+            hist_out = self.item_encoder(history, return_components=True)
+            cand_out = self.item_encoder(i_ids, return_components=True)
+            history_emb_raw = hist_out["emb"]
+            candidate_emb = cand_out["emb"]
+            aspcf_comps = {
+                "history_semantic": hist_out["semantic"],
+                "history_complement": hist_out["complement"],
+                "history_alpha_sem": hist_out["alpha_sem"],
+                "history_alpha_comp": hist_out["alpha_comp"],
+                "candidate_semantic": cand_out["semantic"],
+                "candidate_complement": cand_out["complement"],
+                "candidate_alpha_sem": cand_out["alpha_sem"],
+                "candidate_alpha_comp": cand_out["alpha_comp"],
+            }
+        else:
+            history_emb_raw = self.item_encoder(history)    # [B, L, D]
+            candidate_emb = self.item_encoder(i_ids)         # [B, C, D]
 
         # ---- 2. Position encoding on history ----
         valid_his = (history > 0).long()  # [B, L]
@@ -207,7 +264,6 @@ class LLMMIRec(SequentialModel):
 
         # ---- 4. Multi-interest extraction ----
         interest_vectors, attention_maps = self.extractor(history_emb_pos, lengths)
-        # interest_vectors: [B, K, D], attention_maps: [B, K, L]
 
         interest_vectors = self.dropout(interest_vectors)
 
@@ -220,7 +276,19 @@ class LLMMIRec(SequentialModel):
         # ---- 7. Prediction ----
         prediction = (user_vector[:, None, :] * candidate_emb).sum(dim=-1)  # [B, C]
 
-        # ---- 8. First-batch NaN/Inf check ----
+        # ---- 8. Stash relation loss inputs ----
+        if self.item_encoder_mode == "aspcf" and self.lambda_relation > 0:
+            all_ids = torch.cat([history.reshape(-1), i_ids.reshape(-1)], dim=0)
+            unique_ids = torch.unique(all_ids)
+            unique_ids = unique_ids[unique_ids != 0]  # exclude padding
+            if unique_ids.numel() > self.relation_sample_size:
+                idx = torch.randperm(unique_ids.numel(), device=device)[:self.relation_sample_size]
+                unique_ids = unique_ids[idx]
+            out_dict = {"prediction": prediction, "_relation_ids": unique_ids}
+        else:
+            out_dict = {"prediction": prediction}
+
+        # ---- 9. First-batch NaN/Inf check ----
         if not self._first_batch_checked:
             self._first_batch_checked = True
             diagnostics = [
@@ -234,9 +302,7 @@ class LLMMIRec(SequentialModel):
                 check_nan_inf(tensor, name)
             logging.info("[LLMMIRec] First-batch NaN/Inf check passed for all tensors.")
 
-        # ---- 9. Output ----
-        out_dict = {"prediction": prediction}
-
+        # ---- 10. Output ----
         if return_intermediate:
             out_dict["interest_vectors"] = interest_vectors
             out_dict["attention_maps"] = attention_maps
@@ -244,6 +310,8 @@ class LLMMIRec(SequentialModel):
             out_dict["user_vector"] = user_vector
             out_dict["history_vectors"] = history_emb_raw
             out_dict["candidate_vectors"] = candidate_emb
+            if aspcf_comps is not None:
+                out_dict.update(aspcf_comps)
 
         return out_dict
 
@@ -251,5 +319,55 @@ class LLMMIRec(SequentialModel):
     #  Loss
     # =========================
 
-    def loss(self, out_dict):
-        return super().loss(out_dict)
+    def loss(self, out_dict: dict):
+        bpr_loss = super().loss(out_dict)
+        total = bpr_loss
+
+        # Relation preservation loss (ASPCF only)
+        if "_relation_ids" in out_dict and self.lambda_relation > 0:
+            rel_loss = self._compute_relation_loss(out_dict["_relation_ids"])
+            total = total + self.lambda_relation * rel_loss
+            out_dict["loss_relation"] = rel_loss.detach()
+
+        return total
+
+    def _compute_relation_loss(self, item_ids: torch.Tensor) -> torch.Tensor:
+        """Semantic relation preservation: KL(teacher || student).
+
+        Teacher: frozen z_high (first semantic_rank PCA dims).
+        Student: semantic branch output s.
+        Both produce item-item cosine similarity matrices; we enforce the
+        student's similarity structure to match the teacher's.
+        """
+        M = item_ids.numel()
+        if M < 2:
+            return torch.zeros([], device=item_ids.device)
+
+        # Teacher: frozen z_high
+        z = self.item_encoder.llm_table[item_ids]           # [M, d_llm]
+        teacher = z[:, :self.semantic_rank]                  # [M, semantic_rank]
+
+        # Student: semantic branch output
+        s = self.item_encoder.semantic_branch(teacher)       # [M, semantic_dim]
+
+        # L2 normalize
+        teacher = F.normalize(teacher, dim=-1, eps=1e-8)
+        student = F.normalize(s, dim=-1, eps=1e-8)
+
+        # Item-item cosine similarity matrices
+        teacher_sim = teacher @ teacher.t() / self.relation_teacher_temp   # [M, M]
+        student_sim = student @ student.t() / self.relation_student_temp   # [M, M]
+
+        # Remove diagonal
+        diag_mask = ~torch.eye(M, dtype=torch.bool, device=item_ids.device)
+        teacher_sim = teacher_sim[diag_mask].view(M, M - 1)    # [M, M-1]
+        student_sim = student_sim[diag_mask].view(M, M - 1)    # [M, M-1]
+
+        # Row-wise softmax
+        teacher_dist = F.softmax(teacher_sim, dim=-1)          # [M, M-1]
+        student_log = F.log_softmax(student_sim, dim=-1)       # [M, M-1]
+
+        # KL(teacher || student)
+        kl = F.kl_div(student_log, teacher_dist.detach(), reduction="batchmean")
+
+        return kl
