@@ -7,6 +7,7 @@ Phase 1 — ASPCF: Adaptive Semantic-Preserving Subspace Complementary Fusion.
 """
 
 import logging
+import pickle
 
 import torch
 import torch.nn as nn
@@ -34,6 +35,8 @@ class LLMMIRec(SequentialModel):
         "adapter_use_ln",
         "semantic_rank",
         "lambda_relation",
+        "aspcf_gate_mode",
+        "interest_query_mode",
     ]
 
     # =========================
@@ -77,6 +80,14 @@ class LLMMIRec(SequentialModel):
         parser.add_argument("--tail_hidden", type=int, default=64)
         parser.add_argument("--complement_hidden", type=int, default=64)
         parser.add_argument("--gate_hidden", type=int, default=64)
+        parser.add_argument("--aspcf_gate_mode", type=str, default="basic",
+                           choices=["basic", "conflict"])
+
+        # ---- prototype query ----
+        parser.add_argument("--interest_query_mode", type=str, default="learnable",
+                           choices=["learnable", "prototype"])
+        parser.add_argument("--prototype_path", type=str, default="",
+                           help="Path to llmmi_proto pkl (required for prototype mode)")
 
         # ---- relation preservation loss ----
         parser.add_argument("--lambda_relation", type=float, default=0.0,
@@ -136,6 +147,11 @@ class LLMMIRec(SequentialModel):
         self.tail_hidden = int(getattr(args, "tail_hidden", 64))
         self.complement_hidden = int(getattr(args, "complement_hidden", 64))
         self.gate_hidden = int(getattr(args, "gate_hidden", 64))
+        self.aspcf_gate_mode = str(getattr(args, "aspcf_gate_mode", "basic"))
+
+        # ---- prototype query ----
+        self.interest_query_mode = str(getattr(args, "interest_query_mode", "learnable"))
+        self.prototype_path = str(getattr(args, "prototype_path", ""))
 
         # ---- relation loss ----
         self.lambda_relation = float(getattr(args, "lambda_relation", 0.0))
@@ -151,6 +167,25 @@ class LLMMIRec(SequentialModel):
         if self.item_encoder_mode in ("llm_replace", "residual", "aspcf"):
             llm_table = load_llm_table(self.llm_emb_path, expected_rows=self.item_num)
 
+        # ---- load prototype data (if needed) ----
+        if self.interest_query_mode == "prototype":
+            if not self.prototype_path:
+                raise ValueError("interest_query_mode=prototype requires --prototype_path")
+            proto_data = pickle.load(open(self.prototype_path, "rb"))
+            self.register_buffer(
+                "proto_centers",
+                torch.tensor(proto_data["centers"], dtype=torch.float32),
+                persistent=False,
+            )
+            self.register_buffer(
+                "proto_assignments",
+                torch.tensor(proto_data["soft_assignments"], dtype=torch.float32),
+                persistent=False,
+            )
+            self.proto_num = int(proto_data["prototype_num"])
+            logging.info(f"[LLMMIRec]   prototype: num={self.proto_num} "
+                         f"centers={self.proto_centers.shape}")
+
         # ---- build modules ----
         self._define_params(llm_table)
         self.apply(self.init_weights)
@@ -164,7 +199,8 @@ class LLMMIRec(SequentialModel):
                      f"K={self.K}, max_his={self.max_his}")
         if self.item_encoder_mode == "aspcf":
             logging.info(f"[LLMMIRec]   aspcf: semantic_rank={self.semantic_rank} "
-                         f"semantic_dim={self.semantic_dim} complement_dim={self.complement_dim}")
+                         f"semantic_dim={self.semantic_dim} complement_dim={self.complement_dim} "
+                         f"gate_mode={self.aspcf_gate_mode}")
         logging.info(f"[LLMMIRec]   adapter: hidden={self.adapter_hidden}, "
                      f"activation={self.adapter_activation}, ln={self.adapter_use_ln}")
         logging.info(f"[LLMMIRec]   gamma_init={self.gamma_init}, "
@@ -196,6 +232,7 @@ class LLMMIRec(SequentialModel):
                 tail_hidden=self.tail_hidden,
                 complement_hidden=self.complement_hidden,
                 gate_hidden=self.gate_hidden,
+                aspcf_gate_mode=self.aspcf_gate_mode,
             )
         self.item_encoder = ItemEncoder(**ie_kwargs)
 
@@ -231,22 +268,26 @@ class LLMMIRec(SequentialModel):
         device = history.device
 
         # ---- 1. Item embeddings (shared encoder for history AND candidates) ----
+        need_components = (return_intermediate or
+                          (self.interest_query_mode == "prototype"
+                           and self.item_encoder_mode == "aspcf"))
         aspcf_comps = None
-        if self.item_encoder_mode == "aspcf" and return_intermediate:
+        if need_components and self.item_encoder_mode == "aspcf":
             hist_out = self.item_encoder(history, return_components=True)
             cand_out = self.item_encoder(i_ids, return_components=True)
             history_emb_raw = hist_out["emb"]
             candidate_emb = cand_out["emb"]
-            aspcf_comps = {
-                "history_semantic": hist_out["semantic"],
-                "history_complement": hist_out["complement"],
-                "history_alpha_sem": hist_out["alpha_sem"],
-                "history_alpha_comp": hist_out["alpha_comp"],
-                "candidate_semantic": cand_out["semantic"],
-                "candidate_complement": cand_out["complement"],
-                "candidate_alpha_sem": cand_out["alpha_sem"],
-                "candidate_alpha_comp": cand_out["alpha_comp"],
-            }
+            if return_intermediate:
+                aspcf_comps = {
+                    "history_semantic": hist_out["semantic"],
+                    "history_complement": hist_out["complement"],
+                    "history_alpha_sem": hist_out["alpha_sem"],
+                    "history_alpha_comp": hist_out["alpha_comp"],
+                    "candidate_semantic": cand_out["semantic"],
+                    "candidate_complement": cand_out["complement"],
+                    "candidate_alpha_sem": cand_out["alpha_sem"],
+                    "candidate_alpha_comp": cand_out["alpha_comp"],
+                }
         else:
             history_emb_raw = self.item_encoder(history)    # [B, L, D]
             candidate_emb = self.item_encoder(i_ids)         # [B, C, D]
@@ -263,7 +304,40 @@ class LLMMIRec(SequentialModel):
         history_emb_pos = self.dropout(history_emb_pos)
 
         # ---- 4. Multi-interest extraction ----
-        interest_vectors, attention_maps = self.extractor(history_emb_pos, lengths)
+        external_query = None
+        proto_mass = None
+        selected_proto_ids = None
+        query_seeds = None
+
+        if self.interest_query_mode == "prototype":
+            # 4a. Look up prototype distributions per history item
+            proto_dist = self.proto_assignments[history]          # [B, L, proto_num]
+            valid_his_f = (history > 0).float().unsqueeze(-1)     # [B, L, 1]
+            user_mass = ((proto_dist * valid_his_f).sum(dim=1) /
+                          valid_his_f.sum(dim=1).clamp(min=1))    # [B, proto_num]
+            proto_mass = user_mass
+
+            # 4b. Top-K prototypes
+            _, topk_idx = torch.topk(user_mass, k=self.K, dim=-1)  # [B, K]
+            selected_proto_ids = topk_idx
+
+            # 4c. Semantic query from prototype centers
+            centers = self.proto_centers[topk_idx]                 # [B, K, 512]
+            sem_query = self.item_encoder.semantic_branch(centers)  # [B, K, 32]
+
+            # 4d. Collaborative context from history complement
+            hist_comp = hist_out["complement"]                     # [B, L, 32]
+            collab_context = ((hist_comp * valid_his_f).sum(dim=1) /
+                               valid_his_f.sum(dim=1).clamp(min=1))  # [B, 32]
+            collab_context = collab_context.unsqueeze(1).expand(-1, self.K, -1)  # [B, K, 32]
+
+            # 4e. Query seeds
+            query_seeds = torch.cat([sem_query, collab_context], dim=-1)  # [B, K, 64]
+            external_query = query_seeds
+
+        interest_vectors, attention_maps = self.extractor(
+            history_emb_pos, lengths, external_query=external_query
+        )
 
         interest_vectors = self.dropout(interest_vectors)
 
@@ -276,8 +350,9 @@ class LLMMIRec(SequentialModel):
         # ---- 7. Prediction ----
         prediction = (user_vector[:, None, :] * candidate_emb).sum(dim=-1)  # [B, C]
 
-        # ---- 8. Stash relation loss inputs ----
-        if self.item_encoder_mode == "aspcf" and self.lambda_relation > 0:
+        # ---- 8. Stash relation loss inputs (training only) ----
+        if (self.training and self.lambda_relation > 0
+                and self.item_encoder_mode in ("aspcf", "llm_replace")):
             all_ids = torch.cat([history.reshape(-1), i_ids.reshape(-1)], dim=0)
             unique_ids = torch.unique(all_ids)
             unique_ids = unique_ids[unique_ids != 0]  # exclude padding
@@ -312,6 +387,10 @@ class LLMMIRec(SequentialModel):
             out_dict["candidate_vectors"] = candidate_emb
             if aspcf_comps is not None:
                 out_dict.update(aspcf_comps)
+            if self.interest_query_mode == "prototype":
+                out_dict["prototype_mass"] = proto_mass
+                out_dict["selected_prototype_ids"] = selected_proto_ids
+                out_dict["query_seeds"] = query_seeds
 
         return out_dict
 
@@ -335,9 +414,10 @@ class LLMMIRec(SequentialModel):
         """Semantic relation preservation: KL(teacher || student).
 
         Teacher: frozen z_high (first semantic_rank PCA dims).
-        Student: semantic branch output s.
-        Both produce item-item cosine similarity matrices; we enforce the
-        student's similarity structure to match the teacher's.
+        Student:
+          - aspcf: semantic_branch(z_high) output
+          - llm_replace: adapter(llm_table[item_ids]) output
+        Both produce item-item cosine similarity matrices.
         """
         M = item_ids.numel()
         if M < 2:
@@ -347,12 +427,15 @@ class LLMMIRec(SequentialModel):
         z = self.item_encoder.llm_table[item_ids]           # [M, d_llm]
         teacher = z[:, :self.semantic_rank]                  # [M, semantic_rank]
 
-        # Student: semantic branch output
-        s = self.item_encoder.semantic_branch(teacher)       # [M, semantic_dim]
+        # Student
+        if self.item_encoder_mode == "aspcf":
+            student = self.item_encoder.semantic_branch(teacher)  # [M, semantic_dim]
+        else:  # llm_replace
+            student = self.item_encoder.adapter(z)                # [M, emb_size]
 
         # L2 normalize
         teacher = F.normalize(teacher, dim=-1, eps=1e-8)
-        student = F.normalize(s, dim=-1, eps=1e-8)
+        student = F.normalize(student, dim=-1, eps=1e-8)
 
         # Item-item cosine similarity matrices
         teacher_sim = teacher @ teacher.t() / self.relation_teacher_temp   # [M, M]

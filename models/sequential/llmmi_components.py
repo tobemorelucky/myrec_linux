@@ -53,6 +53,7 @@ class ItemEncoder(nn.Module):
         tail_hidden: int = 64,
         complement_hidden: int = 64,
         gate_hidden: int = 64,
+        aspcf_gate_mode: str = "basic",
     ):
         super().__init__()
         self.item_num = int(item_num)
@@ -65,8 +66,9 @@ class ItemEncoder(nn.Module):
                 f"Supported: id, llm_replace, residual, aspcf"
             )
 
-        # --- ID embedding (used in 'id', 'residual', and 'aspcf' modes) ---
-        self.id_embedding = nn.Embedding(item_num, emb_size)
+        # --- ID embedding (used in 'id' and 'residual' modes) ---
+        if mode in ("id", "residual"):
+            self.id_embedding = nn.Embedding(item_num, emb_size)
 
         # --- LLM-based modes (llm_replace, residual, aspcf) ---
         if mode in ("llm_replace", "residual", "aspcf"):
@@ -134,9 +136,16 @@ class ItemEncoder(nn.Module):
                 nn.Linear(complement_hidden, complement_dim),
             )
 
-            # Gate: concat(s, c) → [α_s, α_c]
+            # Gate: basic=[s;c], conflict=[s;c;|s-c|;s*c]
+            self.aspcf_gate_mode = aspcf_gate_mode
+            if aspcf_gate_mode == "basic":
+                gate_in_dim = semantic_dim + complement_dim  # 64
+            elif aspcf_gate_mode == "conflict":
+                gate_in_dim = (semantic_dim + complement_dim) * 2  # 128
+            else:
+                raise ValueError(f"Unknown aspcf_gate_mode: {aspcf_gate_mode}")
             self.gate = nn.Sequential(
-                nn.Linear(semantic_dim + complement_dim, gate_hidden),
+                nn.Linear(gate_in_dim, gate_hidden),
                 nn.GELU(),
                 nn.Linear(gate_hidden, 2),
             )
@@ -204,7 +213,10 @@ class ItemEncoder(nn.Module):
         c = self.complement_mlp(comp_input)                 # [* , complement_dim]
 
         # Gate
-        gate_input = torch.cat([s, c], dim=-1)               # [* , semantic_dim+complement_dim]
+        if self.aspcf_gate_mode == "basic":
+            gate_input = torch.cat([s, c], dim=-1)                     # [* , 64]
+        else:  # conflict
+            gate_input = torch.cat([s, c, torch.abs(s - c), s * c], dim=-1)  # [* , 128]
         gate_weights = F.softmax(self.gate(gate_input), dim=-1)  # [* , 2]
         alpha_sem = gate_weights[..., 0]                      # [*]
         alpha_comp = gate_weights[..., 1]                     # [*]
@@ -263,12 +275,15 @@ class QueryMultiInterestExtractor(nn.Module):
         self,
         history_emb: torch.Tensor,
         lengths: torch.Tensor,
+        external_query: torch.Tensor = None,
     ):
         """Extract interest vectors from history embeddings.
 
         Args:
             history_emb: [B, L, D] history item embeddings (with position encoding)
             lengths: [B] valid lengths per sample
+            external_query: [B, K, D] optional external query seeds.
+                If provided, use these instead of learned query parameters.
 
         Returns:
             interest_vectors: [B, K, D]
@@ -280,9 +295,12 @@ class QueryMultiInterestExtractor(nn.Module):
         # Valid mask: [B, L]
         valid_mask = (torch.arange(L, device=device)[None, :] < lengths[:, None]).float()
 
-        # Query: [K, attn_size] -> [B, K, attn_size]
-        Q = self.Wq(self.query)  # [K, attn_size]
-        Q = Q.unsqueeze(0).expand(B, -1, -1)  # [B, K, attn_size]
+        # Query: use external if provided, else learned
+        if external_query is not None:
+            Q = self.Wq(external_query)  # [B, K, attn_size]
+        else:
+            Q = self.Wq(self.query)  # [K, attn_size]
+            Q = Q.unsqueeze(0).expand(B, -1, -1)  # [B, K, attn_size]
 
         # Key, Value: [B, L, attn_size / emb_size]
         K_mat = self.Wk(history_emb)  # [B, L, attn_size]
