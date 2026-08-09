@@ -1,20 +1,37 @@
 # -*- coding: UTF-8 -*-
 """
-Analyze ASPCF-specific representations from a trained LLMMIRec checkpoint.
+Analyze ASPCF / CHIR representations from a trained checkpoint.
 
-Reads a saved LLMMIRec model (aspcf mode), runs inference on the test set,
-and computes diagnostics including alpha distributions and
-semantic-complement disentanglement metrics.
+Supports:
+  - LLMMIRec
+  - LLMMIRecASPCF
+  - LLMMIRecCHIR
+  - single-view / dual-view CHIR
+  - prototype-global / prototype-specific calibration
+  - optional prototype attention prior
 
-Usage:
+Example (Dual View fused_split):
   python tools/analyze_llmmirec_aspcf.py \
-    --checkpoint <path.pt> \
+    --checkpoint new_model/llmmirec_phase2d_dual/beauty/dual_fused_split/LLMMIRecCHIR_dual_fused_split_seed42.pt \
+    --model_name LLMMIRecCHIR \
     --dataset beauty \
-    [--max_batches 50] \
-    [--output_dir ./diagnostics_aspcf]
+    --interest_query_mode prototype \
+    --prototype_path ./data/beauty/handled/llmmi_proto32_sr512.pkl \
+    --collab_calibration prototype \
+    --routing_mode dual \
+    --dual_view_source fused_split \
+    --aspcf_gate_mode basic \
+    --max_batches 50 \
+    --output_dir new_log/llmmirec_phase2d_dual/beauty/diagnostics/fused_split
 """
 
-import argparse, json, logging, math, os, pickle, sys
+import argparse
+import json
+import logging
+import math
+import os
+import pickle
+import sys
 
 _project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if _project_root not in sys.path:
@@ -24,555 +41,2546 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 
-from models.sequential.LLMMIRec import LLMMIRec
 
+# =========================================================
+# Args / helpers
+# =========================================================
 
 def parse_args():
-    p = argparse.ArgumentParser(description="LLMMIRec ASPCF/CHIR diagnostics")
+    p = argparse.ArgumentParser(
+        description="LLMMIRec ASPCF/CHIR diagnostics"
+    )
+
     p.add_argument("--checkpoint", type=str, required=True)
-    p.add_argument("--model_name", type=str, default="LLMMIRec",
-                   choices=["LLMMIRec", "LLMMIRecASPCF", "LLMMIRecCHIR"],
-                   help="Model class to instantiate")
+
+    p.add_argument(
+        "--model_name",
+        type=str,
+        default="LLMMIRec",
+        choices=[
+            "LLMMIRec",
+            "LLMMIRecASPCF",
+            "LLMMIRecCHIR",
+        ],
+        help="Model class to instantiate",
+    )
+
     p.add_argument("--dataset", type=str, default="beauty")
     p.add_argument("--max_batches", type=int, default=50)
-    p.add_argument("--output_dir", type=str, default="./diagnostics_aspcf")
-    p.add_argument("--device", type=str, default="cuda")
-    # Explicit overrides for prototype/CHIR (persistent=False buffers not in state_dict)
-    p.add_argument("--interest_query_mode", type=str, default="",
-                   help="Override: learnable | prototype (for CHIR)")
-    p.add_argument("--prototype_path", type=str, default="",
-                   help="Override: path to llmmi_proto pkl")
-    p.add_argument("--aspcf_gate_mode", type=str, default="",
-                   help="Override: basic | conflict")
-    p.add_argument("--collab_calibration", type=str, default="",
-                   help="Override: global | prototype")
-    p.add_argument("--routing_mode", type=str, default="",
-                   help="Override: single | dual (auto-detected if empty)")
-    p.add_argument("--dual_view_source", type=str, default="",
-                   help="Override: raw | fused_split")
+    p.add_argument(
+        "--output_dir",
+        type=str,
+        default="./diagnostics_aspcf",
+    )
+    p.add_argument(
+        "--device",
+        type=str,
+        default="cuda",
+    )
+
+    # Prototype / CHIR configuration.
+    # Prototype buffers are persistent=False and cannot always be
+    # recovered from the state_dict, so explicit CLI overrides are
+    # supported.
+    p.add_argument(
+        "--interest_query_mode",
+        type=str,
+        default="",
+        choices=["", "learnable", "prototype"],
+    )
+
+    p.add_argument(
+        "--prototype_path",
+        type=str,
+        default="",
+    )
+
+    p.add_argument(
+        "--aspcf_gate_mode",
+        type=str,
+        default="",
+        choices=["", "basic", "conflict"],
+    )
+
+    p.add_argument(
+        "--collab_calibration",
+        type=str,
+        default="",
+        choices=["", "global", "prototype"],
+    )
+
+    p.add_argument(
+        "--routing_mode",
+        type=str,
+        default="",
+        choices=["", "single", "dual"],
+        help="Auto-detected from checkpoint when omitted",
+    )
+
+    p.add_argument(
+        "--dual_view_source",
+        type=str,
+        default="",
+        choices=["", "raw", "fused_split"],
+        help="raw | fused_split",
+    )
+
+    p.add_argument(
+        "--prototype_prior_strength",
+        type=float,
+        default=0.0,
+        help="Only needed when diagnosing Phase2C prior checkpoints",
+    )
+
     return p.parse_args()
 
 
 def normalized_entropy(probs, dim=-1, eps=1e-8):
-    K = probs.shape[dim]
-    if K <= 1:
-        return torch.zeros(probs.shape[:dim] + probs.shape[dim+1:], device=probs.device)
-    H = -(probs * torch.log(probs + eps)).sum(dim=dim)
-    return H / math.log(K)
+    """
+    Normalized entropy in [0,1].
+    """
+    n = probs.shape[dim]
+
+    h = -(
+        probs * torch.log(probs + eps)
+    ).sum(dim=dim)
+
+    if n <= 1:
+        return torch.zeros_like(h)
+
+    return h / math.log(n)
 
 
-def effective_rank(s, eps=1e-8):
+def effective_rank_from_matrix(x, eps=1e-8):
+    """
+    Effective rank of [K,D] matrix.
+    """
+    s = torch.linalg.svdvals(
+        x.float()
+    )
+
     s = s[s > eps]
-    if len(s) == 0:
+
+    if s.numel() == 0:
         return 0.0
+
     p = s / s.sum()
-    entropy = -(p * torch.log(p + eps)).sum()
-    return float(torch.exp(entropy))
+
+    entropy = -(
+        p * torch.log(p + eps)
+    ).sum()
+
+    return float(
+        torch.exp(entropy)
+    )
 
 
-def main():
-    args = parse_args()
-    os.makedirs(args.output_dir, exist_ok=True)
+def percentile(x, p):
+    if isinstance(x, torch.Tensor):
+        x = (
+            x.detach()
+            .cpu()
+            .numpy()
+        )
 
-    # ---- Load checkpoint ----
-    if not os.path.exists(args.checkpoint):
-        raise FileNotFoundError(f"Checkpoint not found: {args.checkpoint}")
+    return float(
+        np.percentile(x, p)
+    )
 
-    corpus = pickle.load(open(f"./data/{args.dataset}/SeqReader.pkl", "rb"))
-    state = torch.load(args.checkpoint, map_location="cpu")
 
-    # Infer config
-    has_adapter = "item_encoder.adapter.0.weight" in state
-    has_log_gamma = "item_encoder.log_gamma" in state
-    has_gamma_buf = "item_encoder.gamma" in state
-    has_semantic = "item_encoder.semantic_branch.0.weight" in state
+# =========================================================
+# K-interest cosine helpers
+# =========================================================
+
+def per_user_k_cos_tensor(
+    x,
+    valid_lengths=None,
+    eps=1e-8,
+):
+    """
+    Compute K-way cosine similarity INSIDE EACH USER.
+
+    Args:
+        x:
+            [B,K,D]
+            or
+            [B,K,L]
+
+        valid_lengths:
+            optional [B].
+            If provided, the last dimension is interpreted as
+            a sequence dimension and positions >= length are masked.
+
+    Returns:
+        [B], each element = mean pairwise cosine among this
+        user's K vectors.
+
+    Important:
+        This does NOT flatten B*K together, so different users
+        are never mixed when computing interest similarity.
+    """
+
+    x = x.float()
+
+    if valid_lengths is not None:
+        L = x.shape[-1]
+
+        lens = (
+            valid_lengths
+            .long()
+            .clamp(
+                min=0,
+                max=L,
+            )
+        )
+
+        seq_mask = (
+            torch.arange(
+                L,
+                device=x.device,
+            )[None, :]
+            <
+            lens[:, None].to(x.device)
+        ).float()
+
+        x = (
+            x
+            *
+            seq_mask[:, None, :]
+        )
+
+    B = x.shape[0]
+    K = x.shape[1]
+
+    if K <= 1:
+        return torch.zeros(
+            B,
+            dtype=torch.float32,
+            device=x.device,
+        )
+
+    x = x.reshape(
+        B,
+        K,
+        -1,
+    )
+
+    x_n = F.normalize(
+        x,
+        dim=-1,
+        eps=eps,
+    )
+
+    sim = torch.bmm(
+        x_n,
+        x_n.transpose(1, 2),
+    )  # [B,K,K]
+
+    upper_mask = torch.triu(
+        torch.ones(
+            K,
+            K,
+            dtype=torch.bool,
+            device=x.device,
+        ),
+        diagonal=1,
+    )
+
+    pairwise = sim[:, upper_mask]
+
+    return pairwise.mean(dim=-1)
+
+
+def mean_per_user_k_cos(
+    tensor_list,
+    lengths_list=None,
+    max_batches=None,
+):
+    """
+    Average per-user K-way cosine across batches.
+    """
+
+    if not tensor_list:
+        return 0.0
+
+    n_batches = len(tensor_list)
+
+    if max_batches is not None:
+        n_batches = min(
+            n_batches,
+            max_batches,
+        )
+
+    values = []
+
+    for batch_idx in range(n_batches):
+
+        tensor = tensor_list[batch_idx]
+
+        lengths = (
+            lengths_list[batch_idx]
+            if lengths_list is not None
+            else None
+        )
+
+        per_user = per_user_k_cos_tensor(
+            tensor,
+            valid_lengths=lengths,
+        )
+
+        values.append(
+            per_user.cpu()
+        )
+
+    if not values:
+        return 0.0
+
+    values = torch.cat(
+        values,
+        dim=0,
+    )
+
+    return float(
+        values.mean()
+    )
+
+
+def project_tensor_list(
+    tensor_list,
+    linear_layer,
+):
+    """
+    Apply a model Linear layer to CPU diagnostic tensors.
+
+    tensor:
+        [B,K,D_in]
+
+    output:
+        [B,K,D_out]
+    """
+
+    if not tensor_list:
+        return []
+
+    weight = (
+        linear_layer.weight
+        .detach()
+        .cpu()
+    )
+
+    bias = (
+        linear_layer.bias
+        .detach()
+        .cpu()
+        if linear_layer.bias is not None
+        else None
+    )
+
+    projected = []
+
+    for tensor in tensor_list:
+
+        projected.append(
+            F.linear(
+                tensor.float(),
+                weight,
+                bias,
+            )
+        )
+
+    return projected
+
+
+def masked_softmax_logits_list(
+    logits_list,
+    lengths_list,
+):
+    """
+    DualViewInterestExtractor returns semantic/collaborative logits
+    BEFORE the padding mask.
+
+    For diagnostic softmax, padding therefore must be masked again.
+
+    Input:
+        logits: [B,K,L]
+        lengths: [B]
+
+    Output:
+        attention: [B,K,L]
+    """
+
+    outputs = []
+
+    for logits, lengths in zip(
+        logits_list,
+        lengths_list,
+    ):
+
+        scores = (
+            logits
+            .float()
+            .clone()
+        )
+
+        L = scores.shape[-1]
+
+        lens = (
+            lengths
+            .long()
+            .clamp(
+                min=0,
+                max=L,
+            )
+        )
+
+        valid = (
+            torch.arange(L)[None, :]
+            <
+            lens[:, None]
+        )
+
+        scores = scores.masked_fill(
+            ~valid[:, None, :],
+            float("-inf"),
+        )
+
+        attn = F.softmax(
+            scores,
+            dim=-1,
+        )
+
+        attn = torch.nan_to_num(
+            attn,
+            nan=0.0,
+            posinf=0.0,
+            neginf=0.0,
+        )
+
+        outputs.append(attn)
+
+    return outputs
+
+
+# =========================================================
+# Model / checkpoint reconstruction
+# =========================================================
+
+def select_model_class(model_name):
+
+    if model_name == "LLMMIRecASPCF":
+        from models.sequential.LLMMIRecASPCF import (
+            LLMMIRecASPCF,
+        )
+
+        return LLMMIRecASPCF
+
+    if model_name == "LLMMIRecCHIR":
+        from models.sequential.LLMMIRecCHIR import (
+            LLMMIRecCHIR,
+        )
+
+        return LLMMIRecCHIR
+
+    from models.sequential.LLMMIRec import (
+        LLMMIRec,
+    )
+
+    return LLMMIRec
+
+
+def infer_item_encoder_mode(state):
+
+    has_adapter = (
+        "item_encoder.adapter.0.weight"
+        in state
+    )
+
+    has_log_gamma = (
+        "item_encoder.log_gamma"
+        in state
+    )
+
+    has_gamma_buffer = (
+        "item_encoder.gamma"
+        in state
+    )
+
+    has_semantic = (
+        "item_encoder.semantic_branch.0.weight"
+        in state
+    )
 
     if has_semantic:
-        mode = "aspcf"
-    elif has_adapter and (has_log_gamma or has_gamma_buf):
-        mode = "residual"
-    elif has_adapter:
-        mode = "llm_replace"
-    else:
-        mode = "id"
+        return "aspcf"
 
-    # Override mode from CLI if specified
-    if args.interest_query_mode:
-        mode_override = "aspcf"  # always aspcf for these models
-    logging.info(f"Model: {args.model_name}, mode: {mode}")
+    if (
+        has_adapter
+        and
+        (
+            has_log_gamma
+            or has_gamma_buffer
+        )
+    ):
+        return "residual"
 
-    # Select model class
-    if args.model_name == "LLMMIRecASPCF":
-        from models.sequential.LLMMIRecASPCF import LLMMIRecASPCF as ModelClass
-    elif args.model_name == "LLMMIRecCHIR":
-        from models.sequential.LLMMIRecCHIR import LLMMIRecCHIR as ModelClass
-    else:
-        from models.sequential.LLMMIRec import LLMMIRec as ModelClass
+    if has_adapter:
+        return "llm_replace"
 
-    # Build args
+    return "id"
+
+
+def infer_k(state):
+    """
+    Use aggregator output dimension.
+    This works for both single and dual routing.
+    """
+
+    key = "aggregator.mlp.2.weight"
+
+    if key in state:
+        return int(
+            state[key].shape[0]
+        )
+
+    # Historical fallback.
+    if "extractor.query" in state:
+        return int(
+            state[
+                "extractor.query"
+            ].shape[0]
+        )
+
+    raise KeyError(
+        "Cannot infer K: neither "
+        "aggregator.mlp.2.weight nor "
+        "extractor.query exists."
+    )
+
+
+def infer_gate_mode(
+    state,
+    semantic_dim,
+    complement_dim,
+):
+    """
+    basic:
+        [s,c]
+        input = semantic_dim + complement_dim
+
+    conflict:
+        [s,c,abs(s-c),s*c]
+        input = 2 * (semantic_dim + complement_dim)
+    """
+
+    gate_key = (
+        "item_encoder.gate.0.weight"
+    )
+
+    if gate_key not in state:
+        return "basic"
+
+    gate_input_dim = int(
+        state[gate_key].shape[1]
+    )
+
+    basic_dim = (
+        semantic_dim
+        +
+        complement_dim
+    )
+
+    conflict_dim = (
+        2
+        *
+        basic_dim
+    )
+
+    if gate_input_dim == basic_dim:
+        return "basic"
+
+    if gate_input_dim == conflict_dim:
+        return "conflict"
+
+    raise ValueError(
+        "Cannot infer ASPCF gate mode: "
+        f"gate input={gate_input_dim}, "
+        f"basic expected={basic_dim}, "
+        f"conflict expected={conflict_dim}"
+    )
+
+
+def build_model_args(
+    args,
+    state,
+    mode,
+):
+
     class DummyArgs:
         pass
 
     ma = DummyArgs()
-    ma.device = torch.device(args.device)
-    ma.model_path = args.checkpoint
+
+    # -------------------------
+    # Base framework arguments
+    # -------------------------
+
+    ma.device = torch.device(
+        args.device
+    )
+
+    ma.model_path = (
+        args.checkpoint
+    )
+
     ma.buffer = 1
     ma.history_max = 20
     ma.num_neg = 1
     ma.test_all = 0
 
-    emb_size = state["position_emb.weight"].shape[1]
-    # K from aggregator MLP output dim (works for all routing modes)
-    K = state["aggregator.mlp.2.weight"].shape[0]
-    has_adapter_bias = "item_encoder.adapter.0.bias" in state
-    if has_adapter_bias:
-        d_llm_in = state["item_encoder.adapter.0.weight"].shape[1]
-        adapter_hidden = state["item_encoder.adapter.0.weight"].shape[0]
-    else:
-        adapter_hidden = 256
-    adapter_use_ln = any("adapter.3" in k for k in state.keys())
+    # -------------------------
+    # Core dimensions
+    # -------------------------
 
-    # Auto-detect routing mode
-    is_dual = "extractor.Wq_sem.weight" in state
-    routing_mode = "dual" if is_dual else "single"
+    ma.emb_size = int(
+        state[
+            "position_emb.weight"
+        ].shape[1]
+    )
 
-    ma.emb_size = emb_size
-    if is_dual:
-        ma.attn_size = state["extractor.Wq_sem.weight"].shape[0]
-        ma.routing_mode = "dual"
-        ma.routing_gate_hidden = state["extractor.routing_gate.0.weight"].shape[0]
+    ma.K = infer_k(state)
+
+    # -------------------------
+    # Detect single / dual
+    # -------------------------
+
+    is_dual_checkpoint = (
+        "extractor.Wq_sem.weight"
+        in state
+    )
+
+    detected_routing = (
+        "dual"
+        if is_dual_checkpoint
+        else "single"
+    )
+
+    if (
+        args.routing_mode
+        and
+        args.routing_mode
+        != detected_routing
+    ):
+        raise ValueError(
+            f"--routing_mode={args.routing_mode} "
+            "conflicts with checkpoint. "
+            f"Detected routing={detected_routing}"
+        )
+
+    ma.routing_mode = (
+        detected_routing
+    )
+
+    if is_dual_checkpoint:
+
+        ma.attn_size = int(
+            state[
+                "extractor.Wq_sem.weight"
+            ].shape[0]
+        )
+
+        ma.routing_gate_hidden = int(
+            state[
+                "extractor.routing_gate.0.weight"
+            ].shape[0]
+        )
+
     else:
-        ma.attn_size = state["extractor.Wq.weight"].shape[0]
-        ma.routing_mode = "single"
+
+        ma.attn_size = int(
+            state[
+                "extractor.Wq.weight"
+            ].shape[0]
+        )
+
         ma.routing_gate_hidden = 32
-    ma.K = K
+
+    # -------------------------
+    # Item encoder
+    # -------------------------
+
     ma.item_encoder = mode
-    ma.llm_emb_path = f"./data/{args.dataset}/handled/llm_table_pca1536.pkl" if mode != "id" else ""
-    ma.adapter_hidden = adapter_hidden
+
+    ma.llm_emb_path = (
+        f"./data/{args.dataset}/handled/"
+        "llm_table_pca1536.pkl"
+        if mode != "id"
+        else ""
+    )
+
+    if (
+        "item_encoder.adapter.0.weight"
+        in state
+    ):
+
+        ma.adapter_hidden = int(
+            state[
+                "item_encoder.adapter.0.weight"
+            ].shape[0]
+        )
+
+    else:
+        ma.adapter_hidden = 256
+
     ma.adapter_activation = "gelu"
-    ma.adapter_use_ln = int(adapter_use_ln)
+
+    ma.adapter_use_ln = int(
+        any(
+            key.startswith(
+                "item_encoder.adapter.3"
+            )
+            for key in state.keys()
+        )
+    )
+
     ma.gamma_init = 0.1
-    ma.gamma_trainable = int(has_log_gamma)
+
+    ma.gamma_trainable = int(
+        "item_encoder.log_gamma"
+        in state
+    )
+
     ma.dropout = 0.1
 
-    # ASPCF params from state
-    ma.semantic_rank = state.get("item_encoder.semantic_branch.0.weight", torch.zeros(1)).shape[1] if has_semantic else 512
-    ma.semantic_dim = state["item_encoder.semantic_branch.2.weight"].shape[0] if has_semantic else 32
-    ma.semantic_hidden = state["item_encoder.semantic_branch.0.weight"].shape[0] if has_semantic else 128
-    ma.complement_dim = state["item_encoder.complement_mlp.2.weight"].shape[0] if has_semantic else 32
-    ma.tail_hidden = state["item_encoder.complement_tail.0.weight"].shape[0] if has_semantic else 64
-    ma.complement_hidden = state["item_encoder.complement_mlp.0.weight"].shape[0] if has_semantic else 64
-    ma.gate_hidden = state["item_encoder.gate.0.weight"].shape[0] if has_semantic else 64
+    # -------------------------
+    # ASPCF dimensions
+    # -------------------------
+
+    has_semantic = (
+        "item_encoder.semantic_branch.0.weight"
+        in state
+    )
+
+    if has_semantic:
+
+        ma.semantic_rank = int(
+            state[
+                "item_encoder.semantic_branch.0.weight"
+            ].shape[1]
+        )
+
+        ma.semantic_hidden = int(
+            state[
+                "item_encoder.semantic_branch.0.weight"
+            ].shape[0]
+        )
+
+        ma.semantic_dim = int(
+            state[
+                "item_encoder.semantic_branch.2.weight"
+            ].shape[0]
+        )
+
+        ma.tail_hidden = int(
+            state[
+                "item_encoder.complement_tail.0.weight"
+            ].shape[0]
+        )
+
+        ma.complement_hidden = int(
+            state[
+                "item_encoder.complement_mlp.0.weight"
+            ].shape[0]
+        )
+
+        ma.complement_dim = int(
+            state[
+                "item_encoder.complement_mlp.2.weight"
+            ].shape[0]
+        )
+
+        ma.gate_hidden = int(
+            state[
+                "item_encoder.gate.0.weight"
+            ].shape[0]
+        )
+
+    else:
+
+        ma.semantic_rank = 512
+        ma.semantic_hidden = 128
+        ma.semantic_dim = 32
+
+        ma.tail_hidden = 64
+        ma.complement_hidden = 64
+        ma.complement_dim = 32
+
+        ma.gate_hidden = 64
+
+    # -------------------------
+    # Gate mode
+    # -------------------------
+
+    if has_semantic:
+
+        inferred_gate = infer_gate_mode(
+            state,
+            ma.semantic_dim,
+            ma.complement_dim,
+        )
+
+    else:
+
+        inferred_gate = "basic"
+
+    if (
+        args.aspcf_gate_mode
+        and
+        args.aspcf_gate_mode
+        != inferred_gate
+    ):
+
+        raise ValueError(
+            f"--aspcf_gate_mode="
+            f"{args.aspcf_gate_mode} "
+            "conflicts with checkpoint. "
+            f"Detected gate={inferred_gate}"
+        )
+
+    ma.aspcf_gate_mode = (
+        args.aspcf_gate_mode
+        or inferred_gate
+    )
+
+    # -------------------------
+    # Relation loss
+    # -------------------------
+
+    # model.eval() does not compute relation loss,
+    # but these attributes are still needed.
     ma.lambda_relation = 0.0
     ma.relation_sample_size = 128
     ma.relation_teacher_temp = 0.1
     ma.relation_student_temp = 0.1
 
-    # Prototype/CHIR overrides (persistent=False buffers not in state_dict)
-    ma.interest_query_mode = args.interest_query_mode or "learnable"
-    ma.prototype_path = args.prototype_path or ""
-    ma.aspcf_gate_mode = args.aspcf_gate_mode or "basic"
-    ma.collab_calibration = args.collab_calibration or "global"
-    ma.routing_mode = args.routing_mode if args.routing_mode else routing_mode
-    ma.routing_gate_hidden = 32
-    ma.dual_view_source = args.dual_view_source or "raw"
-    ma.prototype_prior_strength = 0.0
+    # -------------------------
+    # Prototype / CHIR
+    # -------------------------
 
-    model = ModelClass(ma, corpus).to(args.device)
-    model.load_state_dict(state, strict=False)
+    if args.interest_query_mode:
+
+        ma.interest_query_mode = (
+            args.interest_query_mode
+        )
+
+    elif args.prototype_path:
+
+        ma.interest_query_mode = (
+            "prototype"
+        )
+
+    else:
+
+        ma.interest_query_mode = (
+            "learnable"
+        )
+
+    ma.prototype_path = (
+        args.prototype_path
+        or ""
+    )
+
+    if args.collab_calibration:
+
+        ma.collab_calibration = (
+            args.collab_calibration
+        )
+
+    elif (
+        ma.routing_mode == "dual"
+        and
+        ma.interest_query_mode
+        == "prototype"
+    ):
+
+        # Current Phase2D setup.
+        ma.collab_calibration = (
+            "prototype"
+        )
+
+    else:
+
+        ma.collab_calibration = (
+            "global"
+        )
+
+    ma.prototype_prior_strength = float(
+        args.prototype_prior_strength
+    )
+
+    ma.dual_view_source = (
+        args.dual_view_source
+        or "raw"
+    )
+
+    # -------------------------
+    # Validation
+    # -------------------------
+
+    if (
+        ma.interest_query_mode
+        == "prototype"
+        and
+        not ma.prototype_path
+    ):
+
+        raise ValueError(
+            "Prototype mode requires "
+            "--prototype_path. "
+            "Prototype centers/assignments "
+            "are persistent=False and are not "
+            "stored in the checkpoint."
+        )
+
+    if (
+        ma.routing_mode == "dual"
+        and
+        ma.interest_query_mode
+        != "prototype"
+    ):
+
+        raise ValueError(
+            "Current LLMMIRecCHIR "
+            "dual routing requires "
+            "--interest_query_mode prototype."
+        )
+
+    logging.info(
+        "Reconstructed config: "
+        f"K={ma.K}, "
+        f"emb={ma.emb_size}, "
+        f"attn={ma.attn_size}, "
+        f"routing={ma.routing_mode}, "
+        f"query={ma.interest_query_mode}, "
+        f"calibration={ma.collab_calibration}, "
+        f"gate={ma.aspcf_gate_mode}, "
+        f"dual_view_source={ma.dual_view_source}, "
+        f"prior_strength="
+        f"{ma.prototype_prior_strength}"
+    )
+
+    return ma
+
+
+# =========================================================
+# Main
+# =========================================================
+
+def main():
+
+    args = parse_args()
+
+    os.makedirs(
+        args.output_dir,
+        exist_ok=True,
+    )
+
+    # -----------------------------------------------------
+    # Load corpus / checkpoint
+    # -----------------------------------------------------
+
+    if not os.path.exists(
+        args.checkpoint
+    ):
+        raise FileNotFoundError(
+            f"Checkpoint not found: "
+            f"{args.checkpoint}"
+        )
+
+    corpus_path = (
+        f"./data/{args.dataset}/"
+        "SeqReader.pkl"
+    )
+
+    if not os.path.exists(
+        corpus_path
+    ):
+        raise FileNotFoundError(
+            f"Corpus not found: "
+            f"{corpus_path}"
+        )
+
+    with open(
+        corpus_path,
+        "rb",
+    ) as f:
+
+        corpus = pickle.load(f)
+
+    state = torch.load(
+        args.checkpoint,
+        map_location="cpu",
+    )
+
+    if not isinstance(
+        state,
+        dict,
+    ):
+        raise TypeError(
+            "Expected state_dict-like dict, "
+            f"got {type(state)}"
+        )
+
+    mode = infer_item_encoder_mode(
+        state
+    )
+
+    is_dual = (
+        "extractor.Wq_sem.weight"
+        in state
+    )
+
+    logging.info(
+        f"Model: {args.model_name}, "
+        f"item_encoder={mode}, "
+        f"routing="
+        f"{'dual' if is_dual else 'single'}"
+    )
+
+    # -----------------------------------------------------
+    # Reconstruct model
+    # -----------------------------------------------------
+
+    ModelClass = select_model_class(
+        args.model_name
+    )
+
+    ma = build_model_args(
+        args,
+        state,
+        mode,
+    )
+
+    model = ModelClass(
+        ma,
+        corpus,
+    ).to(
+        args.device
+    )
+
+    # Diagnostics should use an architecture that exactly
+    # matches the checkpoint. Fail loudly otherwise.
+    try:
+
+        model.load_state_dict(
+            state,
+            strict=True,
+        )
+
+    except RuntimeError as e:
+
+        raise RuntimeError(
+            "Checkpoint architecture does not "
+            "match reconstructed model args. "
+            "Check --model_name, "
+            "--interest_query_mode, "
+            "--prototype_path, "
+            "--routing_mode, "
+            "--dual_view_source and "
+            "--aspcf_gate_mode."
+        ) from e
+
     model.eval()
-    logging.info(f"Loaded: #params={model.count_variables()}")
 
-    # Build test dataset
-    dataset = LLMMIRec.Dataset(model, corpus, "test")
+    logging.info(
+        f"Loaded: "
+        f"#params={model.count_variables()}"
+    )
+
+    # -----------------------------------------------------
+    # Test dataset
+    # -----------------------------------------------------
+
+    dataset = ModelClass.Dataset(
+        model,
+        corpus,
+        "test",
+    )
+
     dataset.prepare()
-    from torch.utils.data import DataLoader
-    dl = DataLoader(dataset, batch_size=256, shuffle=False, num_workers=0,
-                    pin_memory=False, collate_fn=dataset.collate_batch)
 
+    from torch.utils.data import (
+        DataLoader,
+    )
+
+    dl = DataLoader(
+        dataset,
+        batch_size=256,
+        shuffle=False,
+        num_workers=0,
+        pin_memory=False,
+        collate_fn=dataset.collate_batch,
+    )
+
+    # -----------------------------------------------------
     # Accumulators
-    all_iv, all_attn, all_w, all_lengths = [], [], [], []
-    all_alpha_sem, all_alpha_comp = [], []
-    all_h_semantic, all_h_complement = [], []
-    all_proto_mass, all_proto_ids = [], []
-    all_proto_hist_w, all_proto_collab_ctx = [], []
-    all_query_seeds, all_logits_before, all_attn_prior = [], [], []
-    all_rho, all_sem_logits, all_comp_logits = [], [], []
+    # -----------------------------------------------------
+
+    all_iv = []
+    all_attn = []
+    all_w = []
+    all_lengths = []
+
+    all_alpha_sem = []
+    all_alpha_comp = []
+
+    all_h_semantic = []
+    all_h_complement = []
+
+    all_proto_mass = []
+    all_proto_ids = []
+
+    all_proto_hist_w = []
+    all_proto_collab_ctx = []
+
+    all_query_seeds = []
+
+    all_logits_before = []
+    all_attn_prior = []
+
+    # Dual-view-specific
+    all_rho = []
+
+    all_sem_logits = []
+    all_comp_logits = []
+
+    all_sem_query = []
+    all_collab_query = []
 
     batch_count = 0
+
+    # -----------------------------------------------------
+    # Inference
+    # -----------------------------------------------------
+
     with torch.inference_mode():
+
         for batch in dl:
-            batch = {k: v.to(args.device) if isinstance(v, torch.Tensor) else v
-                     for k, v in batch.items()}
-            out = model(batch, return_intermediate=True)
 
-            all_iv.append(out["interest_vectors"].cpu())
-            all_attn.append(out["attention_maps"].cpu())
-            all_w.append(out["interest_weights"].cpu())
-            all_lengths.append(batch["lengths"].cpu())
+            batch = {
+                key: (
+                    value.to(args.device)
+                    if isinstance(
+                        value,
+                        torch.Tensor,
+                    )
+                    else value
+                )
+                for key, value
+                in batch.items()
+            }
 
-            if mode == "aspcf" and "history_alpha_sem" in out:
-                all_alpha_sem.append(out["history_alpha_sem"].cpu())
-                all_alpha_comp.append(out["history_alpha_comp"].cpu())
-                all_h_semantic.append(out["history_semantic"].cpu())
-                all_h_complement.append(out["history_complement"].cpu())
+            out = model(
+                batch,
+                return_intermediate=True,
+            )
 
-            if "prototype_mass" in out:
-                all_proto_mass.append(out["prototype_mass"].cpu())
-                all_proto_ids.append(out["selected_prototype_ids"].cpu())
-            if "prototype_history_weights" in out:
-                all_proto_hist_w.append(out["prototype_history_weights"].cpu())
-                all_proto_collab_ctx.append(out["prototype_collab_context"].cpu())
-            if "query_seeds" in out:
-                all_query_seeds.append(out["query_seeds"].cpu())
-            if "attention_logits_before_prior" in out:
-                all_logits_before.append(out["attention_logits_before_prior"].cpu())
-                all_attn_prior.append(out["attention_prior"].cpu())
-            if "routing_rho" in out:
-                all_rho.append(out["routing_rho"].cpu())
-                all_sem_logits.append(out["semantic_attention_logits"].cpu())
-                all_comp_logits.append(out["collaborative_attention_logits"].cpu())
+            all_iv.append(
+                out[
+                    "interest_vectors"
+                ].detach().cpu()
+            )
+
+            all_attn.append(
+                out[
+                    "attention_maps"
+                ].detach().cpu()
+            )
+
+            all_w.append(
+                out[
+                    "interest_weights"
+                ].detach().cpu()
+            )
+
+            all_lengths.append(
+                batch[
+                    "lengths"
+                ].detach().cpu()
+            )
+
+            # -----------------------------
+            # ASPCF
+            # -----------------------------
+
+            if (
+                mode == "aspcf"
+                and
+                "history_alpha_sem"
+                in out
+            ):
+
+                all_alpha_sem.append(
+                    out[
+                        "history_alpha_sem"
+                    ].detach().cpu()
+                )
+
+                all_alpha_comp.append(
+                    out[
+                        "history_alpha_comp"
+                    ].detach().cpu()
+                )
+
+                all_h_semantic.append(
+                    out[
+                        "history_semantic"
+                    ].detach().cpu()
+                )
+
+                all_h_complement.append(
+                    out[
+                        "history_complement"
+                    ].detach().cpu()
+                )
+
+            # -----------------------------
+            # Prototype
+            # -----------------------------
+
+            if (
+                "prototype_mass"
+                in out
+            ):
+
+                all_proto_mass.append(
+                    out[
+                        "prototype_mass"
+                    ].detach().cpu()
+                )
+
+                all_proto_ids.append(
+                    out[
+                        "selected_prototype_ids"
+                    ].detach().cpu()
+                )
+
+            if (
+                "prototype_history_weights"
+                in out
+            ):
+
+                all_proto_hist_w.append(
+                    out[
+                        "prototype_history_weights"
+                    ].detach().cpu()
+                )
+
+                all_proto_collab_ctx.append(
+                    out[
+                        "prototype_collab_context"
+                    ].detach().cpu()
+                )
+
+            if (
+                "query_seeds"
+                in out
+            ):
+
+                all_query_seeds.append(
+                    out[
+                        "query_seeds"
+                    ].detach().cpu()
+                )
+
+            # -----------------------------
+            # Phase2C prior
+            # -----------------------------
+
+            if (
+                "attention_logits_before_prior"
+                in out
+            ):
+
+                all_logits_before.append(
+                    out[
+                        "attention_logits_before_prior"
+                    ].detach().cpu()
+                )
+
+                all_attn_prior.append(
+                    out[
+                        "attention_prior"
+                    ].detach().cpu()
+                )
+
+            # -----------------------------
+            # Dual view
+            # -----------------------------
+
+            if (
+                "routing_rho"
+                in out
+            ):
+
+                all_rho.append(
+                    out[
+                        "routing_rho"
+                    ].detach().cpu()
+                )
+
+                all_sem_logits.append(
+                    out[
+                        "semantic_attention_logits"
+                    ].detach().cpu()
+                )
+
+                all_comp_logits.append(
+                    out[
+                        "collaborative_attention_logits"
+                    ].detach().cpu()
+                )
+
+                # IMPORTANT:
+                #
+                # semantic_query:
+                #   [B,K,32]
+                #
+                # collaborative_query:
+                #   [B,K,32]
+                #
+                # query_seeds:
+                #   concat -> [B,K,64]
+                #
+                # Wq_sem/Wq_comp both expect 32 dimensions.
+                #
+                # Therefore Wq_sem must NEVER be applied
+                # directly to query_seeds.
+                all_sem_query.append(
+                    out[
+                        "semantic_query"
+                    ].detach().cpu()
+                )
+
+                all_collab_query.append(
+                    out[
+                        "collaborative_query"
+                    ].detach().cpu()
+                )
 
             batch_count += 1
-            if args.max_batches > 0 and batch_count >= args.max_batches:
+
+            if (
+                args.max_batches > 0
+                and
+                batch_count
+                >= args.max_batches
+            ):
                 break
 
-    iv = torch.cat(all_iv, dim=0)        # [N, K, D]
-    # Pad attention maps
-    max_L = max(a.shape[-1] for a in all_attn)
-    attn_padded = []
-    for a in all_attn:
-        if a.shape[-1] < max_L:
-            a = F.pad(a, (0, max_L - a.shape[-1]), value=0.0)
-        attn_padded.append(a)
-    attn = torch.cat(attn_padded, dim=0)
-    w = torch.cat(all_w, dim=0)
-    lengths = torch.cat(all_lengths, dim=0)
+    if not all_iv:
+
+        raise RuntimeError(
+            "No test batches were processed."
+        )
+
+    # -----------------------------------------------------
+    # Concatenate basic outputs
+    # -----------------------------------------------------
+
+    iv = torch.cat(
+        all_iv,
+        dim=0,
+    )
+
+    w = torch.cat(
+        all_w,
+        dim=0,
+    )
+
+    lengths = torch.cat(
+        all_lengths,
+        dim=0,
+    )
 
     N, K, D = iv.shape
-    logging.info(f"Samples: {N}, K={K}, D={D}")
 
-    # --- Basic interest stats (same as Phase 0) ---
-    iv_n = F.normalize(iv, dim=-1, eps=1e-8)
-    sim_mat = iv_n @ iv_n.transpose(-1, -2)
-    eye = torch.eye(K).unsqueeze(0)
-    off_diag = sim_mat * (1 - eye)
-    triu = torch.triu(torch.ones(K, K), diagonal=1).unsqueeze(0)
-    mean_pairwise = float((off_diag * triu).sum(dim=(-1, -2)).mean() / triu.sum())
+    logging.info(
+        f"Samples: {N}, "
+        f"K={K}, "
+        f"D={D}"
+    )
 
-    max_inter = float(off_diag.max(dim=-1).values.max(dim=-1).values.mean())
+    # =====================================================
+    # Basic interest diagnostics
+    # =====================================================
 
+    pairwise_values = (
+        per_user_k_cos_tensor(iv)
+    )
+
+    mean_pairwise = float(
+        pairwise_values.mean()
+    )
+
+    # Maximum inter-interest cosine.
+    iv_n = F.normalize(
+        iv.float(),
+        dim=-1,
+        eps=1e-8,
+    )
+
+    sim_mat = torch.bmm(
+        iv_n,
+        iv_n.transpose(1, 2),
+    )
+
+    if K > 1:
+
+        diagonal = torch.eye(
+            K,
+            dtype=torch.bool,
+        ).unsqueeze(0)
+
+        sim_no_diag = (
+            sim_mat.masked_fill(
+                diagonal,
+                float("-inf"),
+            )
+        )
+
+        mean_max_inter = float(
+            sim_no_diag.amax(
+                dim=(-1, -2)
+            ).mean()
+        )
+
+    else:
+
+        mean_max_inter = 0.0
+
+    # Effective rank.
     eff_ranks = []
-    for i in range(min(N, 1000)):
-        _, s, _ = torch.svd(iv[i])
-        eff_ranks.append(effective_rank(s))
-    mean_eff_rank = float(np.mean(eff_ranks))
 
-    ent_attn = []
-    for i in range(N):
-        vl = int(lengths[i].item())
-        if vl <= 0:
-            continue
-        a = attn[i, :, :vl]
-        for k in range(K):
-            ent_attn.append(float(normalized_entropy(a[k])))
-    mean_attn_ent = float(np.mean(ent_attn)) if ent_attn else 0.0
+    for i in range(
+        min(N, 1000)
+    ):
 
-    w_ent = normalized_entropy(w, dim=-1)
-    mean_w_ent = float(w_ent.mean())
+        eff_ranks.append(
+            effective_rank_from_matrix(
+                iv[i]
+            )
+        )
 
-    q_attn_cos = []
-    for i in range(N):
-        vl = int(lengths[i].item())
-        if vl <= 1:
-            continue
-        a = attn[i, :, :vl]
-        an = F.normalize(a, dim=-1, eps=1e-8)
-        cm = an @ an.t()
-        off = (cm * (1 - eye)).sum() / (K * (K - 1))
-        q_attn_cos.append(float(off))
-    mean_q_attn_cos = float(np.mean(q_attn_cos)) if q_attn_cos else 0.0
+    mean_eff_rank = (
+        float(np.mean(eff_ranks))
+        if eff_ranks
+        else 0.0
+    )
+
+    # Attention entropy.
+    attn_entropies = []
+
+    for attn_batch, lens in zip(
+        all_attn,
+        all_lengths,
+    ):
+
+        B = attn_batch.shape[0]
+
+        for i in range(B):
+
+            valid_len = int(
+                lens[i].item()
+            )
+
+            if valid_len <= 0:
+                continue
+
+            probs = (
+                attn_batch[
+                    i,
+                    :,
+                    :valid_len,
+                ].float()
+            )  # [K,L]
+
+            if valid_len <= 1:
+
+                entropy = torch.zeros(
+                    K
+                )
+
+            else:
+
+                entropy = -(
+                    probs
+                    *
+                    torch.log(
+                        probs + 1e-8
+                    )
+                ).sum(
+                    dim=-1
+                )
+
+                entropy = (
+                    entropy
+                    /
+                    math.log(valid_len)
+                )
+
+            attn_entropies.extend(
+                entropy.tolist()
+            )
+
+    mean_attn_entropy = (
+        float(
+            np.mean(
+                attn_entropies
+            )
+        )
+        if attn_entropies
+        else 0.0
+    )
+
+    # Interest aggregation entropy.
+    weight_entropy = (
+        normalized_entropy(
+            w.float(),
+            dim=-1,
+        )
+    )
+
+    mean_weight_entropy = float(
+        weight_entropy.mean()
+    )
+
+    mean_max_interest_weight = float(
+        w.max(
+            dim=-1
+        ).values.mean()
+    )
+
+    # Final attention K similarity.
+    mean_query_attn_cos = (
+        mean_per_user_k_cos(
+            all_attn,
+            lengths_list=all_lengths,
+        )
+    )
 
     stats = {
-        "checkpoint": args.checkpoint,
-        "mode": mode,
-        "num_samples": N, "K": K, "D": D,
-        "mean_pairwise_cos": round(mean_pairwise, 6),
-        "mean_max_inter_sim": round(max_inter, 6),
-        "mean_effective_rank": round(mean_eff_rank, 3),
-        "mean_attn_entropy": round(mean_attn_ent, 6),
-        "mean_weight_entropy": round(mean_w_ent, 6),
-        "mean_query_attn_cos": round(mean_q_attn_cos, 6),
+
+        "checkpoint":
+            args.checkpoint,
+
+        "model_name":
+            args.model_name,
+
+        "mode":
+            mode,
+
+        "routing_mode":
+            ma.routing_mode,
+
+        "dual_view_source":
+            ma.dual_view_source,
+
+        "interest_query_mode":
+            ma.interest_query_mode,
+
+        "collab_calibration":
+            ma.collab_calibration,
+
+        "num_samples":
+            N,
+
+        "K":
+            K,
+
+        "D":
+            D,
+
+        "mean_pairwise_cos":
+            round(
+                mean_pairwise,
+                6,
+            ),
+
+        "mean_max_inter_sim":
+            round(
+                mean_max_inter,
+                6,
+            ),
+
+        "mean_effective_rank":
+            round(
+                mean_eff_rank,
+                3,
+            ),
+
+        "mean_attn_entropy":
+            round(
+                mean_attn_entropy,
+                6,
+            ),
+
+        "mean_weight_entropy":
+            round(
+                mean_weight_entropy,
+                6,
+            ),
+
+        "mean_max_interest_weight":
+            round(
+                mean_max_interest_weight,
+                6,
+            ),
+
+        "mean_query_attn_cos":
+            round(
+                mean_query_attn_cos,
+                6,
+            ),
     }
 
-    # --- ASPCF-specific ---
-    if mode == "aspcf" and len(all_alpha_sem) > 0:
-        # Pad to uniform max_L (batches have different padded lengths)
-        max_L2 = max(a.shape[-1] for a in all_alpha_sem)
+    # =====================================================
+    # ASPCF diagnostics
+    # =====================================================
 
-        def pad2d(tensor_list, max_len):
-            out = []
-            for t in tensor_list:
-                if t.shape[-1] < max_len:
-                    t = F.pad(t, (0, max_len - t.shape[-1]), value=0.0)
-                out.append(t)
-            return torch.cat(out, dim=0)
+    if (
+        mode == "aspcf"
+        and
+        all_alpha_sem
+    ):
 
-        def pad3d(tensor_list, max_len):
-            out = []
-            for t in tensor_list:
-                if t.shape[1] < max_len:
-                    t = F.pad(t, (0, 0, 0, max_len - t.shape[1]), value=0.0)
-                out.append(t)
-            return torch.cat(out, dim=0)
+        semantic_alpha_values = []
+        complement_alpha_values = []
 
-        alpha_sem = pad2d(all_alpha_sem, max_L2)
-        alpha_comp = pad2d(all_alpha_comp, max_L2)
-        h_sem = pad3d(all_h_semantic, max_L2)
-        h_comp = pad3d(all_h_complement, max_L2)
+        semantic_complement_cos = []
 
-        # Flatten to [total_items] (only non-padding)
-        a_sem_flat = alpha_sem.reshape(-1)
-        a_comp_flat = alpha_comp.reshape(-1)
-        non_pad = a_sem_flat > 0
-        a_sem_val = a_sem_flat[non_pad]
-        a_comp_val = a_comp_flat[non_pad]
+        for (
+            alpha_sem,
+            alpha_comp,
+            history_sem,
+            history_comp,
+            lens,
+        ) in zip(
 
-        if a_sem_val.numel() > 0:
-            def pct(x, p):
-                return float(np.percentile(x.numpy(), p))
+            all_alpha_sem,
+            all_alpha_comp,
+            all_h_semantic,
+            all_h_complement,
+            all_lengths,
+        ):
 
-            for name, vals in [("alpha_sem", a_sem_val), ("alpha_comp", a_comp_val)]:
-                stats[f"{name}_mean"] = round(float(vals.mean()), 6)
-                stats[f"{name}_std"] = round(float(vals.std()), 6)
-                stats[f"{name}_min"] = round(float(vals.min()), 6)
-                stats[f"{name}_max"] = round(float(vals.max()), 6)
-                stats[f"{name}_p10"] = round(pct(vals, 10), 6)
-                stats[f"{name}_p50"] = round(pct(vals, 50), 6)
-                stats[f"{name}_p90"] = round(pct(vals, 90), 6)
+            L = alpha_sem.shape[1]
 
-        # Semantic vs complement cosine similarity (non-padding items)
-        s_flat = h_sem.reshape(-1, h_sem.shape[-1])[non_pad]  # [M, 32]
-        c_flat = h_comp.reshape(-1, h_comp.shape[-1])[non_pad]
-        if s_flat.shape[0] > 0:
-            s_n = F.normalize(s_flat, dim=-1, eps=1e-8)
-            c_n = F.normalize(c_flat, dim=-1, eps=1e-8)
-            sc_cos = (s_n * c_n).sum(dim=-1)
-            stats["semantic_complement_cos_mean"] = round(float(sc_cos.mean()), 6)
-            stats["semantic_complement_cos_std"] = round(float(sc_cos.std()), 6)
+            valid_mask = (
+                torch.arange(L)[None, :]
+                <
+                lens
+                .long()
+                .clamp(
+                    min=0,
+                    max=L,
+                )[:, None]
+            )
 
-    # --- Prototype-specific ---
-    if len(all_proto_mass) > 0:
-        proto_mass = torch.cat(all_proto_mass, dim=0)  # [N, proto_num]
-        proto_ids = torch.cat(all_proto_ids, dim=0)     # [N, K]
+            semantic_alpha_values.append(
+                alpha_sem[
+                    valid_mask
+                ].float()
+            )
 
-        proto_num = proto_mass.shape[1]
+            complement_alpha_values.append(
+                alpha_comp[
+                    valid_mask
+                ].float()
+            )
 
-        # Per-prototype usage frequency
-        proto_usage = proto_mass.mean(dim=0)  # [proto_num]
-        for p in range(proto_num):
-            stats[f"proto{p}_usage"] = round(float(proto_usage[p]), 6)
+            # Only compare directly if branch dimensions match.
+            if (
+                history_sem.shape[-1]
+                ==
+                history_comp.shape[-1]
+            ):
 
-        # Selection frequency (how often each prototype is in Top-K)
-        select_flat = proto_ids.reshape(-1)
-        for p in range(proto_num):
-            freq = float((select_flat == p).float().mean())
-            stats[f"proto{p}_select_freq"] = round(freq, 6)
+                s = (
+                    history_sem[
+                        valid_mask
+                    ].float()
+                )
 
-        # Duplicate rate: fraction of users with repeated prototypes
-        B = proto_ids.shape[0]
-        dup_count = 0
-        for i in range(B):
-            unique = len(set(proto_ids[i].tolist()))
-            if unique < K:
-                dup_count += 1
-        stats["proto_dup_rate"] = round(dup_count / max(B, 1), 6)
+                c = (
+                    history_comp[
+                        valid_mask
+                    ].float()
+                )
 
-        # Prototype mass entropy per user
-        pm = proto_mass.clamp(min=1e-8)
-        H_proto = -(pm * torch.log(pm)).sum(dim=-1) / math.log(proto_num)  # [N]
-        stats["proto_mass_entropy_mean"] = round(float(H_proto.mean()), 6)
-        stats["proto_mass_entropy_std"] = round(float(H_proto.std()), 6)
+                if s.numel() > 0:
 
-        # Selected prototype pairwise cosine similarity
-        if proto_ids.shape[0] > 0:
-            sel_centers = torch.zeros(proto_ids.shape[0], K, 512)
-            for i in range(min(proto_ids.shape[0], 500)):
-                sel_centers[i] = model.proto_centers[proto_ids[i]]
-            sel_n = F.normalize(sel_centers[:min(proto_ids.shape[0], 500)], dim=-1, eps=1e-8)
-            sel_sim = sel_n @ sel_n.transpose(-1, -2)  # [N, K, K]
-            eye_k = torch.eye(K).unsqueeze(0)
-            off = sel_sim * (1 - eye_k)
-            triu = torch.triu(torch.ones(K, K), diagonal=1).unsqueeze(0)
-            mean_pair = float((off * triu).sum(dim=(-1, -2)).mean() / triu.sum())
-            stats["proto_selected_pairwise_cos"] = round(mean_pair, 6)
+                    s_n = F.normalize(
+                        s,
+                        dim=-1,
+                        eps=1e-8,
+                    )
 
-    # Prototype history weights diagnostics
-    if len(all_proto_hist_w) > 0:
-        max_HW = max(w.shape[1] for w in all_proto_hist_w)
-        hw_padded = []
-        for w in all_proto_hist_w:
-            if w.shape[1] < max_HW:
-                w = F.pad(w, (0, 0, 0, max_HW - w.shape[1]), value=0.0)
-            hw_padded.append(w)
-        hw = torch.cat(hw_padded, dim=0)  # [N, Lmax, K]
+                    c_n = F.normalize(
+                        c,
+                        dim=-1,
+                        eps=1e-8,
+                    )
 
-        # 3. Average entropy of prototype_history_weights (per interest, per sample)
-        hw_valid = hw.sum(dim=-1) > 0  # [N, Lmax]
-        hw_entropies = []
-        for k in range(K):
-            hw_k = hw[:, :, k]  # [N, Lmax]
-            for i in range(min(hw.shape[0], 500)):
-                valid = hw_k[i] > 0
-                if valid.sum() > 1:
-                    probs = hw_k[i][valid] / hw_k[i][valid].sum().clamp(min=1e-8)
-                    hw_entropies.append(float(normalized_entropy(probs, dim=-1)))
-        stats["proto_hist_weight_entropy_mean"] = round(float(np.mean(hw_entropies)) if hw_entropies else 0.0, 6)
+                    semantic_complement_cos.append(
+                        (
+                            s_n
+                            *
+                            c_n
+                        ).sum(
+                            dim=-1
+                        )
+                    )
 
-        # 4. Average cosine similarity between K prototype history weight vectors
-        hw_cos = []
-        for i in range(min(hw.shape[0], 500)):
-            wk = hw[i].t()  # [K, Lmax]
-            valid_cols = wk.sum(dim=0) > 0
-            if valid_cols.sum() < 2:
-                continue
-            wk_v = wk[:, valid_cols]  # [K, valid_L]
-            wk_n = F.normalize(wk_v, dim=-1, eps=1e-8)
-            cm = wk_n @ wk_n.t()
-            off = (cm * (1 - eye_k)).sum() / (K * (K - 1))
-            hw_cos.append(float(off))
-        stats["proto_hist_weight_cos_mean"] = round(float(np.mean(hw_cos)) if hw_cos else 0.0, 6)
+        if semantic_alpha_values:
 
-    # Stage-wise cosine similarity for routing diagnostics
-    eye_k = torch.eye(K)
+            alpha_sem_values = torch.cat(
+                semantic_alpha_values
+            )
 
-    def per_user_k_cos(tensor_list, pad_dim=None):
-        """Average off-diagonal cosine of K vectors, averaged over users.
-        Each tensor in list is [B, K, *] — computes per-user K×K cosine,
-        takes off-diagonal mean, then averages over users and batches."""
-        all_means = []
-        for t in tensor_list[:50]:  # limit batches
-            Bk = t.shape[0]
-            for i in range(min(Bk, 64)):
-                v = t[i]  # [K, *]
-                if pad_dim is not None and v.shape[-1] < pad_dim:
-                    v = F.pad(v, (0, pad_dim - v.shape[-1]), value=0.0)
-                v_flat = v.reshape(K, -1)  # [K, D']
-                vn = F.normalize(v_flat, dim=-1, eps=1e-8)
-                cm = vn @ vn.t()  # [K, K]
-                off = (cm * (1 - eye_k)).sum() / max(K * (K - 1), 1)
-                all_means.append(float(off))
-        return float(np.mean(all_means)) if all_means else 0.0
+            alpha_comp_values = torch.cat(
+                complement_alpha_values
+            )
 
-    def inter_k_cos(tensor_list, max_dim, pad_val=0.0):
-        """Average off-diagonal cosine similarity among K vectors across batches."""
-        all_cos = []
-        for t in tensor_list[:50]:  # limit samples
-            t_flat = t.reshape(-1, t.shape[-1]) if t.ndim == 3 else t  # [B,K,D]->[B*K,D]
-            if t.ndim == 3:
-                tak = t[:8]  # take up to 8 samples
-            else:
-                tak = t[:8]
-            if tak.shape[0] < 2:
-                continue
-            tn = F.normalize(tak.float(), dim=-1, eps=1e-8)
-            cm = tn @ tn.t()
-            eye_bk = torch.eye(tak.shape[0])
-            off = (cm * (1 - eye_bk)).sum() / max(tak.shape[0] * (tak.shape[0] - 1), 1)
-            all_cos.append(float(off))
-        return float(np.mean(all_cos)) if all_cos else 0.0
+            for (
+                name,
+                values,
+            ) in [
 
-    # 1. query_seed K间 cosine (per-user)
-    if len(all_query_seeds) > 0:
-        stats["query_seed_inter_k_cos"] = round(per_user_k_cos(all_query_seeds), 6)
+                (
+                    "alpha_sem",
+                    alpha_sem_values,
+                ),
 
-        # 2. Wq(query_seed) K间 cosine (per-user)
-        if is_dual:
-            wq_weight = model.extractor.Wq_sem.weight.data
-            wq_bias = model.extractor.Wq_sem.bias
-        else:
-            wq_weight = model.extractor.Wq.weight.data
-            wq_bias = model.extractor.Wq.bias
-        qs_proj_list = []
-        for qs in all_query_seeds[:50]:
-            proj = F.linear(qs, wq_weight, wq_bias)
-            qs_proj_list.append(proj)
-        stats["Wq_query_seed_inter_k_cos"] = round(per_user_k_cos(qs_proj_list), 6)
+                (
+                    "alpha_comp",
+                    alpha_comp_values,
+                ),
+            ]:
 
-    # 3. attention prior K间 cosine (per-user)
-    if len(all_attn_prior) > 0:
-        max_ap = max(a.shape[-1] for a in all_attn_prior)
-        stats["attention_prior_inter_k_cos"] = round(per_user_k_cos(all_attn_prior, max_ap), 6)
+                stats[
+                    f"{name}_mean"
+                ] = round(
+                    float(
+                        values.mean()
+                    ),
+                    6,
+                )
 
-    # 4. logits_before_prior K间 cosine (per-user)
-    if len(all_logits_before) > 0:
-        max_lbp = max(l.shape[-1] for l in all_logits_before)
-        stats["logits_before_prior_inter_k_cos"] = round(per_user_k_cos(all_logits_before, max_lbp), 6)
+                stats[
+                    f"{name}_std"
+                ] = round(
+                    float(
+                        values.std()
+                    ),
+                    6,
+                )
 
+                stats[
+                    f"{name}_min"
+                ] = round(
+                    float(
+                        values.min()
+                    ),
+                    6,
+                )
+
+                stats[
+                    f"{name}_max"
+                ] = round(
+                    float(
+                        values.max()
+                    ),
+                    6,
+                )
+
+                stats[
+                    f"{name}_p10"
+                ] = round(
+                    percentile(
+                        values,
+                        10,
+                    ),
+                    6,
+                )
+
+                stats[
+                    f"{name}_p50"
+                ] = round(
+                    percentile(
+                        values,
+                        50,
+                    ),
+                    6,
+                )
+
+                stats[
+                    f"{name}_p90"
+                ] = round(
+                    percentile(
+                        values,
+                        90,
+                    ),
+                    6,
+                )
+
+        if semantic_complement_cos:
+
+            sc_cos = torch.cat(
+                semantic_complement_cos
+            )
+
+            stats[
+                "semantic_complement_cos_mean"
+            ] = round(
+                float(
+                    sc_cos.mean()
+                ),
+                6,
+            )
+
+            stats[
+                "semantic_complement_cos_std"
+            ] = round(
+                float(
+                    sc_cos.std()
+                ),
+                6,
+            )
+
+    # =====================================================
+    # Prototype diagnostics
+    # =====================================================
+
+    if all_proto_mass:
+
+        proto_mass = torch.cat(
+            all_proto_mass,
+            dim=0,
+        ).float()
+
+        proto_ids = torch.cat(
+            all_proto_ids,
+            dim=0,
+        ).long()
+
+        proto_num = (
+            proto_mass.shape[1]
+        )
+
+        # -----------------------------
+        # Mean assignment mass
+        # -----------------------------
+
+        proto_usage = (
+            proto_mass.mean(
+                dim=0
+            )
+        )
+
+        for p in range(
+            proto_num
+        ):
+
+            stats[
+                f"proto{p}_usage"
+            ] = round(
+                float(
+                    proto_usage[p]
+                ),
+                6,
+            )
+
+        # -----------------------------
+        # Selection frequency
+        # -----------------------------
+
+        selected_flat = (
+            proto_ids.reshape(-1)
+        )
+
+        for p in range(
+            proto_num
+        ):
+
+            freq = (
+                selected_flat == p
+            ).float().mean()
+
+            stats[
+                f"proto{p}_select_freq"
+            ] = round(
+                float(freq),
+                6,
+            )
+
+        # -----------------------------
+        # Duplicate rate
+        # -----------------------------
+
+        duplicate_users = 0
+
+        for row in proto_ids:
+
+            if (
+                torch.unique(
+                    row
+                ).numel()
+                <
+                K
+            ):
+
+                duplicate_users += 1
+
+        stats[
+            "proto_dup_rate"
+        ] = round(
+            duplicate_users
+            /
+            max(
+                proto_ids.shape[0],
+                1,
+            ),
+            6,
+        )
+
+        # -----------------------------
+        # Prototype mass entropy
+        # -----------------------------
+
+        pm = (
+            proto_mass
+            .clamp_min(1e-8)
+        )
+
+        pm = (
+            pm
+            /
+            pm.sum(
+                dim=-1,
+                keepdim=True,
+            ).clamp_min(1e-8)
+        )
+
+        proto_entropy = (
+            normalized_entropy(
+                pm,
+                dim=-1,
+            )
+        )
+
+        stats[
+            "proto_mass_entropy_mean"
+        ] = round(
+            float(
+                proto_entropy.mean()
+            ),
+            6,
+        )
+
+        stats[
+            "proto_mass_entropy_std"
+        ] = round(
+            float(
+                proto_entropy.std()
+            ),
+            6,
+        )
+
+        # -----------------------------
+        # Selected prototype similarity
+        # -----------------------------
+
+        if (
+            hasattr(
+                model,
+                "proto_centers",
+            )
+            and
+            proto_ids.numel() > 0
+        ):
+
+            centers = (
+                model.proto_centers
+                .detach()
+                .cpu()
+                .float()
+            )
+
+            n_eval = min(
+                proto_ids.shape[0],
+                1000,
+            )
+
+            selected_centers = (
+                centers[
+                    proto_ids[:n_eval]
+                ]
+            )  # [N,K,R]
+
+            selected_cos = (
+                per_user_k_cos_tensor(
+                    selected_centers
+                )
+            )
+
+            stats[
+                "proto_selected_pairwise_cos"
+            ] = round(
+                float(
+                    selected_cos.mean()
+                ),
+                6,
+            )
+
+    # =====================================================
+    # Prototype-specific historical routing
+    # =====================================================
+
+    if all_proto_hist_w:
+
+        # -----------------------------
+        # History weight entropy
+        # -----------------------------
+
+        entropy_values = []
+
+        processed_users = 0
+        max_users = 1000
+
+        for (
+            hist_weights,
+            lens,
+        ) in zip(
+            all_proto_hist_w,
+            all_lengths,
+        ):
+
+            B, L, K_hw = (
+                hist_weights.shape
+            )
+
+            for i in range(B):
+
+                if (
+                    processed_users
+                    >= max_users
+                ):
+                    break
+
+                valid_len = int(
+                    lens[i].item()
+                )
+
+                if valid_len <= 0:
+
+                    processed_users += 1
+                    continue
+
+                probs = (
+                    hist_weights[
+                        i,
+                        :valid_len,
+                        :,
+                    ]
+                    .t()
+                    .float()
+                )  # [K,L]
+
+                probs = (
+                    probs
+                    /
+                    probs.sum(
+                        dim=-1,
+                        keepdim=True,
+                    ).clamp_min(1e-8)
+                )
+
+                if valid_len <= 1:
+
+                    entropy = (
+                        torch.zeros(
+                            K_hw
+                        )
+                    )
+
+                else:
+
+                    entropy = -(
+                        probs
+                        *
+                        torch.log(
+                            probs + 1e-8
+                        )
+                    ).sum(
+                        dim=-1
+                    )
+
+                    entropy = (
+                        entropy
+                        /
+                        math.log(valid_len)
+                    )
+
+                entropy_values.extend(
+                    entropy.tolist()
+                )
+
+                processed_users += 1
+
+            if (
+                processed_users
+                >= max_users
+            ):
+                break
+
+        stats[
+            "proto_hist_weight_entropy_mean"
+        ] = round(
+            float(
+                np.mean(
+                    entropy_values
+                )
+            )
+            if entropy_values
+            else 0.0,
+            6,
+        )
+
+        # -----------------------------
+        # K routing cosine
+        # -----------------------------
+
+        # [B,L,K] -> [B,K,L]
+        history_weight_k = [
+
+            tensor
+            .permute(
+                0,
+                2,
+                1,
+            )
+            .contiguous()
+
+            for tensor
+            in all_proto_hist_w
+        ]
+
+        stats[
+            "proto_hist_weight_cos_mean"
+        ] = round(
+            mean_per_user_k_cos(
+                history_weight_k,
+                lengths_list=all_lengths,
+            ),
+            6,
+        )
+
+    # Collaborative context similarity.
+    if all_proto_collab_ctx:
+
+        stats[
+            "proto_collab_context_inter_k_cos"
+        ] = round(
+            mean_per_user_k_cos(
+                all_proto_collab_ctx
+            ),
+            6,
+        )
+
+    # =====================================================
+    # Query diagnostics
+    # =====================================================
+
+    # Combined query seed [semantic_query ; collaborative_query].
+    if all_query_seeds:
+
+        stats[
+            "query_seed_inter_k_cos"
+        ] = round(
+            mean_per_user_k_cos(
+                all_query_seeds
+            ),
+            6,
+        )
+
+    # -----------------------------------------------------
+    # Dual-view:
+    #
+    # semantic_query:      32d -> Wq_sem
+    # collaborative_query: 32d -> Wq_comp
+    #
+    # DO NOT:
+    # 64d query_seed -> Wq_sem
+    # -----------------------------------------------------
+
+    if is_dual:
+
+        if all_sem_query:
+
+            stats[
+                "semantic_query_inter_k_cos"
+            ] = round(
+                mean_per_user_k_cos(
+                    all_sem_query
+                ),
+                6,
+            )
+
+            semantic_projected = (
+                project_tensor_list(
+                    all_sem_query,
+                    model.extractor.Wq_sem,
+                )
+            )
+
+            stats[
+                "Wq_sem_query_inter_k_cos"
+            ] = round(
+                mean_per_user_k_cos(
+                    semantic_projected
+                ),
+                6,
+            )
+
+        if all_collab_query:
+
+            stats[
+                "collaborative_query_inter_k_cos"
+            ] = round(
+                mean_per_user_k_cos(
+                    all_collab_query
+                ),
+                6,
+            )
+
+            collaborative_projected = (
+                project_tensor_list(
+                    all_collab_query,
+                    model.extractor.Wq_comp,
+                )
+            )
+
+            stats[
+                "Wq_comp_query_inter_k_cos"
+            ] = round(
+                mean_per_user_k_cos(
+                    collaborative_projected
+                ),
+                6,
+            )
+
+    # Single-view:
+    # query_seed is 64d and extractor.Wq expects 64d.
+    else:
+
+        if (
+            all_query_seeds
+            and
+            hasattr(
+                model.extractor,
+                "Wq",
+            )
+        ):
+
+            projected_query_seeds = (
+                project_tensor_list(
+                    all_query_seeds,
+                    model.extractor.Wq,
+                )
+            )
+
+            stats[
+                "Wq_query_seed_inter_k_cos"
+            ] = round(
+                mean_per_user_k_cos(
+                    projected_query_seeds
+                ),
+                6,
+            )
+
+    # =====================================================
+    # Phase2C prior diagnostics
+    # =====================================================
+
+    if all_attn_prior:
+
+        stats[
+            "attention_prior_inter_k_cos"
+        ] = round(
+            mean_per_user_k_cos(
+                all_attn_prior,
+                lengths_list=all_lengths,
+            ),
+            6,
+        )
+
+    if all_logits_before:
+
+        stats[
+            "logits_before_prior_inter_k_cos"
+        ] = round(
+            mean_per_user_k_cos(
+                all_logits_before,
+                lengths_list=all_lengths,
+            ),
+            6,
+        )
+
+    # =====================================================
     # Dual-view routing diagnostics
-    if len(all_rho) > 0:
-        rho = torch.cat([r[:50] for r in all_rho[:20]], dim=0)  # [~N, K]
-        stats["routing_rho_mean"] = round(float(rho.mean()), 6)
-        stats["routing_rho_std"] = round(float(rho.std()), 6)
-        stats["routing_rho_p10"] = round(float(np.percentile(rho.numpy(), 10)), 6)
-        stats["routing_rho_p50"] = round(float(np.percentile(rho.numpy(), 50)), 6)
-        stats["routing_rho_p90"] = round(float(np.percentile(rho.numpy(), 90)), 6)
-        # Per-sample variance of rho across K interests
-        rho_var = rho.var(dim=-1)
-        stats["routing_rho_per_sample_var"] = round(float(rho_var.mean()), 6)
+    # =====================================================
 
-        # Semantic attention logits K间 cosine (per-user)
-        max_sl = max(s.shape[-1] for s in all_sem_logits[:20]) if all_sem_logits else 0
-        stats["semantic_attn_logits_k_cos"] = round(per_user_k_cos(all_sem_logits[:20], max_sl), 6)
+    if all_rho:
 
-        # Collaborative attention logits K间 cosine (per-user)
-        max_cl = max(c.shape[-1] for c in all_comp_logits[:20]) if all_comp_logits else 0
-        stats["collab_attn_logits_k_cos"] = round(per_user_k_cos(all_comp_logits[:20], max_cl), 6)
+        # -----------------------------
+        # Routing rho
+        # -----------------------------
 
-        # Semantic attention softmax K间 cosine (per-user)
-        sem_attn_list = []
-        for sl in all_sem_logits[:20]:
-            attn_mask = (sl == float("-inf")) | (sl < -1e30)
-            sl_clean = sl.masked_fill(attn_mask, float("-inf"))
-            sem_attn_list.append(F.softmax(sl_clean, dim=-1))
-        max_sa = max(s.shape[-1] for s in sem_attn_list)
-        stats["semantic_attn_softmax_k_cos"] = round(per_user_k_cos(sem_attn_list, max_sa), 6)
+        rho = torch.cat(
+            all_rho,
+            dim=0,
+        ).float()
 
-        # Collaborative attention softmax K间 cosine (per-user)
-        comp_attn_list = []
-        for cl in all_comp_logits[:20]:
-            attn_mask = (cl == float("-inf")) | (cl < -1e30)
-            cl_clean = cl.masked_fill(attn_mask, float("-inf"))
-            comp_attn_list.append(F.softmax(cl_clean, dim=-1))
-        max_ca = max(c.shape[-1] for c in comp_attn_list)
-        stats["collab_attn_softmax_k_cos"] = round(per_user_k_cos(comp_attn_list, max_ca), 6)
+        stats[
+            "routing_rho_mean"
+        ] = round(
+            float(
+                rho.mean()
+            ),
+            6,
+        )
 
-        # Final fused attention K间 cosine (per-user, pad to max L)
-        max_al = max(a.shape[-1] for a in all_attn)
-        attn_padded = []
-        for a in all_attn[:20]:
-            if a.shape[-1] < max_al:
-                a = F.pad(a, (0, max_al - a.shape[-1]), value=0.0)
-            attn_padded.append(a)
-        stats["final_attn_k_cos"] = round(per_user_k_cos(attn_padded, max_al), 6)
+        stats[
+            "routing_rho_std"
+        ] = round(
+            float(
+                rho.std()
+            ),
+            6,
+        )
 
+        stats[
+            "routing_rho_p10"
+        ] = round(
+            percentile(
+                rho,
+                10,
+            ),
+            6,
+        )
+
+        stats[
+            "routing_rho_p50"
+        ] = round(
+            percentile(
+                rho,
+                50,
+            ),
+            6,
+        )
+
+        stats[
+            "routing_rho_p90"
+        ] = round(
+            percentile(
+                rho,
+                90,
+            ),
+            6,
+        )
+
+        # Variance among K interests for each user.
+        rho_var = rho.var(
+            dim=-1,
+            unbiased=False,
+        )
+
+        stats[
+            "routing_rho_per_sample_var"
+        ] = round(
+            float(
+                rho_var.mean()
+            ),
+            6,
+        )
+
+        rho_range = (
+            rho.max(
+                dim=-1
+            ).values
+            -
+            rho.min(
+                dim=-1
+            ).values
+        )
+
+        stats[
+            "routing_rho_per_sample_range_mean"
+        ] = round(
+            float(
+                rho_range.mean()
+            ),
+            6,
+        )
+
+        # -----------------------------
+        # Branch logits cosine
+        # -----------------------------
+        #
+        # semantic_attention_logits and
+        # collaborative_attention_logits are returned
+        # BEFORE the padding mask.
+        #
+        # Padding is therefore explicitly masked to zero
+        # when computing cosine.
+
+        stats[
+            "semantic_attn_logits_k_cos"
+        ] = round(
+            mean_per_user_k_cos(
+                all_sem_logits,
+                lengths_list=all_lengths,
+            ),
+            6,
+        )
+
+        stats[
+            "collab_attn_logits_k_cos"
+        ] = round(
+            mean_per_user_k_cos(
+                all_comp_logits,
+                lengths_list=all_lengths,
+            ),
+            6,
+        )
+
+        # -----------------------------
+        # Branch attention cosine
+        # -----------------------------
+
+        semantic_attention = (
+            masked_softmax_logits_list(
+                all_sem_logits,
+                all_lengths,
+            )
+        )
+
+        collaborative_attention = (
+            masked_softmax_logits_list(
+                all_comp_logits,
+                all_lengths,
+            )
+        )
+
+        stats[
+            "semantic_attn_softmax_k_cos"
+        ] = round(
+            mean_per_user_k_cos(
+                semantic_attention,
+                lengths_list=all_lengths,
+            ),
+            6,
+        )
+
+        stats[
+            "collab_attn_softmax_k_cos"
+        ] = round(
+            mean_per_user_k_cos(
+                collaborative_attention,
+                lengths_list=all_lengths,
+            ),
+            6,
+        )
+
+        # -----------------------------
+        # Final fused attention cosine
+        # -----------------------------
+
+        stats[
+            "final_attn_k_cos"
+        ] = round(
+            mean_per_user_k_cos(
+                all_attn,
+                lengths_list=all_lengths,
+            ),
+            6,
+        )
+
+    # =====================================================
     # Save
-    json_path = os.path.join(args.output_dir, "stats.json")
-    with open(json_path, "w") as f:
-        json.dump(stats, f, indent=2)
-    logging.info(f"Saved: {json_path}")
+    # =====================================================
 
-    # TSV
-    tsv_path = os.path.join(args.output_dir, "stats.tsv")
-    with open(tsv_path, "w") as f:
-        f.write("key\tvalue\n")
-        for k, v in stats.items():
-            f.write(f"{k}\t{v}\n")
-    logging.info(f"Saved: {tsv_path}")
+    json_path = os.path.join(
+        args.output_dir,
+        "stats.json",
+    )
 
-    print(json.dumps(stats, indent=2))
+    with open(
+        json_path,
+        "w",
+        encoding="utf-8",
+    ) as f:
+
+        json.dump(
+            stats,
+            f,
+            indent=2,
+            ensure_ascii=False,
+        )
+
+    logging.info(
+        f"Saved: {json_path}"
+    )
+
+    tsv_path = os.path.join(
+        args.output_dir,
+        "stats.tsv",
+    )
+
+    with open(
+        tsv_path,
+        "w",
+        encoding="utf-8",
+    ) as f:
+
+        f.write(
+            "key\tvalue\n"
+        )
+
+        for key, value in stats.items():
+
+            f.write(
+                f"{key}\t{value}\n"
+            )
+
+    logging.info(
+        f"Saved: {tsv_path}"
+    )
+
+    print(
+        json.dumps(
+            stats,
+            indent=2,
+            ensure_ascii=False,
+        )
+    )
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format="%(message)s")
+
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(message)s",
+    )
+
     main()
