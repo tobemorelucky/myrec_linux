@@ -276,6 +276,8 @@ class QueryMultiInterestExtractor(nn.Module):
         history_emb: torch.Tensor,
         lengths: torch.Tensor,
         external_query: torch.Tensor = None,
+        attention_prior: torch.Tensor = None,
+        prior_strength: float = 0.0,
     ):
         """Extract interest vectors from history embeddings.
 
@@ -283,11 +285,13 @@ class QueryMultiInterestExtractor(nn.Module):
             history_emb: [B, L, D] history item embeddings (with position encoding)
             lengths: [B] valid lengths per sample
             external_query: [B, K, D] optional external query seeds.
-                If provided, use these instead of learned query parameters.
+            attention_prior: [B, K, L] optional prior for attention logits.
+            prior_strength: weight for attention_prior in log space.
 
         Returns:
             interest_vectors: [B, K, D]
             attention_maps: [B, K, L]
+            (when prior is active, also returns logits_before_prior)
         """
         B, L, D = history_emb.shape
         device = history_emb.device
@@ -309,6 +313,11 @@ class QueryMultiInterestExtractor(nn.Module):
         # Scaled dot-product attention
         scale = math.sqrt(self.attn_size)
         scores = torch.bmm(Q, K_mat.transpose(1, 2)) / scale  # [B, K, L]
+        logits_before_prior = scores.clone()  # stash for diagnostics
+
+        # Optional routing prior
+        if attention_prior is not None and prior_strength > 0:
+            scores = scores + prior_strength * torch.log(attention_prior + 1e-8)
 
         # Mask padding positions
         attn_mask = (valid_mask == 0).unsqueeze(1)  # [B, 1, L]
@@ -321,6 +330,8 @@ class QueryMultiInterestExtractor(nn.Module):
         # Weighted sum: [B, K, D]
         interest_vectors = torch.bmm(attn, V_mat)
 
+        if attention_prior is not None and prior_strength > 0:
+            return interest_vectors, attn, logits_before_prior
         return interest_vectors, attn
 
 

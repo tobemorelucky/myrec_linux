@@ -31,6 +31,7 @@ class LLMMIRecCHIR(SequentialModel):
         "adapter_activation", "adapter_use_ln",
         "semantic_rank", "lambda_relation", "aspcf_gate_mode",
         "interest_query_mode", "collab_calibration",
+        "prototype_prior_strength",
     ]
 
     # ========================= Args =========================
@@ -71,6 +72,8 @@ class LLMMIRecCHIR(SequentialModel):
                            choices=["global", "prototype"],
                            help="global: single collab context; "
                                 "prototype: per-prototype weighted collab context")
+        parser.add_argument("--prototype_prior_strength", type=float, default=0.0,
+                           help="Strength of prototype history weights as attention routing prior")
 
         # Relation loss
         parser.add_argument("--lambda_relation", type=float, default=0.01)
@@ -121,6 +124,7 @@ class LLMMIRecCHIR(SequentialModel):
         self.interest_query_mode = str(getattr(args, "interest_query_mode", "learnable"))
         self.prototype_path = str(getattr(args, "prototype_path", ""))
         self.collab_calibration = str(getattr(args, "collab_calibration", "global"))
+        self.prototype_prior_strength = float(getattr(args, "prototype_prior_strength", 0.0))
 
         self.lambda_relation = float(getattr(args, "lambda_relation", 0.01))
         self.relation_sample_size = int(getattr(args, "relation_sample_size", 128))
@@ -262,8 +266,26 @@ class LLMMIRecCHIR(SequentialModel):
             query_seeds = torch.cat([sem_query, collab_ctx], dim=-1)  # [B, K, 64]
             external_query = query_seeds
 
-        interest_vectors, attention_maps = self.extractor(
-            history_emb_pos, lengths, external_query=external_query)
+        # Build attention prior from prototype history weights
+        attn_prior = None
+        prior_strength = 0.0
+        if (self.interest_query_mode == "prototype"
+                and self.collab_calibration == "prototype"
+                and proto_hist_weights is not None
+                and self.prototype_prior_strength > 0):
+            attn_prior = proto_hist_weights.transpose(1, 2)  # [B, K, L]
+            prior_strength = self.prototype_prior_strength
+
+        extractor_out = self.extractor(
+            history_emb_pos, lengths, external_query=external_query,
+            attention_prior=attn_prior, prior_strength=prior_strength,
+        )
+        logits_before_prior = None
+        if attn_prior is not None and prior_strength > 0:
+            interest_vectors, attention_maps, logits_before_prior = extractor_out
+        else:
+            interest_vectors, attention_maps = extractor_out
+
         interest_vectors = self.dropout(interest_vectors)
 
         # 4-6. Aggregation, user vector, prediction
@@ -309,6 +331,9 @@ class LLMMIRecCHIR(SequentialModel):
                 out_dict["prototype_mass"] = proto_mass
                 out_dict["selected_prototype_ids"] = selected_proto_ids
                 out_dict["query_seeds"] = query_seeds
+                if logits_before_prior is not None:
+                    out_dict["attention_logits_before_prior"] = logits_before_prior
+                    out_dict["attention_prior"] = attn_prior
                 if proto_hist_weights is not None:
                     out_dict["prototype_history_weights"] = proto_hist_weights
                     out_dict["prototype_collab_context"] = proto_collab_context

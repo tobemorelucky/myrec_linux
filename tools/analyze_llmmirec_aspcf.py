@@ -177,6 +177,7 @@ def main():
     all_h_semantic, all_h_complement = [], []
     all_proto_mass, all_proto_ids = [], []
     all_proto_hist_w, all_proto_collab_ctx = [], []
+    all_query_seeds, all_logits_before, all_attn_prior = [], [], []
 
     batch_count = 0
     with torch.inference_mode():
@@ -202,6 +203,11 @@ def main():
             if "prototype_history_weights" in out:
                 all_proto_hist_w.append(out["prototype_history_weights"].cpu())
                 all_proto_collab_ctx.append(out["prototype_collab_context"].cpu())
+            if "query_seeds" in out:
+                all_query_seeds.append(out["query_seeds"].cpu())
+            if "attention_logits_before_prior" in out:
+                all_logits_before.append(out["attention_logits_before_prior"].cpu())
+                all_attn_prior.append(out["attention_prior"].cpu())
 
             batch_count += 1
             if args.max_batches > 0 and batch_count >= args.max_batches:
@@ -412,6 +418,72 @@ def main():
             off = (cm * (1 - eye_k)).sum() / (K * (K - 1))
             hw_cos.append(float(off))
         stats["proto_hist_weight_cos_mean"] = round(float(np.mean(hw_cos)) if hw_cos else 0.0, 6)
+
+    # Stage-wise cosine similarity for routing diagnostics
+    eye_k = torch.eye(K)
+
+    def inter_k_cos(tensor_list, max_dim, pad_val=0.0):
+        """Average off-diagonal cosine similarity among K vectors across batches."""
+        all_cos = []
+        for t in tensor_list[:50]:  # limit samples
+            t_flat = t.reshape(-1, t.shape[-1]) if t.ndim == 3 else t  # [B,K,D]->[B*K,D]
+            if t.ndim == 3:
+                tak = t[:8]  # take up to 8 samples
+            else:
+                tak = t[:8]
+            if tak.shape[0] < 2:
+                continue
+            tn = F.normalize(tak.float(), dim=-1, eps=1e-8)
+            cm = tn @ tn.t()
+            eye_bk = torch.eye(tak.shape[0])
+            off = (cm * (1 - eye_bk)).sum() / max(tak.shape[0] * (tak.shape[0] - 1), 1)
+            all_cos.append(float(off))
+        return float(np.mean(all_cos)) if all_cos else 0.0
+
+    # 1. query_seed K间 cosine
+    if len(all_query_seeds) > 0:
+        qs = torch.cat([q[:8] for q in all_query_seeds[:8]], dim=0)  # [M*K, 64]
+        qs = qs.reshape(-1, all_query_seeds[0].shape[-1])
+        qs_n = F.normalize(qs, dim=-1, eps=1e-8)
+        cm = qs_n @ qs_n.t()
+        off = (cm * (1 - torch.eye(qs.shape[0]))).sum() / max(qs.shape[0] * (qs.shape[0] - 1), 1)
+        stats["query_seed_inter_k_cos"] = round(float(off), 6)
+
+        # 2. Wq(query_seed) K间 cosine  (use Wq to project)
+        wq = model.extractor.Wq.weight.data  # [attn_size, emb_size]
+        qs_proj = F.linear(qs, wq, model.extractor.Wq.bias)  # [M*K, attn_size]
+        qs_pn = F.normalize(qs_proj, dim=-1, eps=1e-8)
+        cm2 = qs_pn @ qs_pn.t()
+        off2 = (cm2 * (1 - torch.eye(qs.shape[0]))).sum() / max(qs.shape[0] * (qs.shape[0] - 1), 1)
+        stats["Wq_query_seed_inter_k_cos"] = round(float(off2), 6)
+
+    # 3. attention prior K间 cosine
+    if len(all_attn_prior) > 0:
+        ap_cos = []
+        for ap in all_attn_prior[:50]:
+            ap_t = ap[:8]  # [B, K, L]
+            if ap_t.shape[0] < 2:
+                continue
+            ap_flat = ap_t.reshape(-1, ap_t.shape[-1])  # [B*K, L]
+            ap_n = F.normalize(ap_flat, dim=-1, eps=1e-8)
+            cm = ap_n @ ap_n.t()
+            off = (cm * (1 - torch.eye(ap_flat.shape[0]))).sum() / max(ap_flat.shape[0] * (ap_flat.shape[0] - 1), 1)
+            ap_cos.append(float(off))
+        stats["attention_prior_inter_k_cos"] = round(float(np.mean(ap_cos)) if ap_cos else 0.0, 6)
+
+    # 4. logits_before_prior K间 cosine
+    if len(all_logits_before) > 0:
+        lb_cos = []
+        for lb in all_logits_before[:50]:
+            lb_t = lb[:8]  # [B, K, L]
+            if lb_t.shape[0] < 2:
+                continue
+            lb_flat = lb_t.reshape(-1, lb_t.shape[-1])
+            lb_n = F.normalize(lb_flat, dim=-1, eps=1e-8)
+            cm = lb_n @ lb_n.t()
+            off = (cm * (1 - torch.eye(lb_flat.shape[0]))).sum() / max(lb_flat.shape[0] * (lb_flat.shape[0] - 1), 1)
+            lb_cos.append(float(off))
+        stats["logits_before_prior_inter_k_cos"] = round(float(np.mean(lb_cos)) if lb_cos else 0.0, 6)
 
     # Save
     json_path = os.path.join(args.output_dir, "stats.json")
