@@ -32,7 +32,7 @@ class LLMMIRecCHIR(SequentialModel):
         "adapter_activation", "adapter_use_ln",
         "semantic_rank", "lambda_relation", "aspcf_gate_mode",
         "interest_query_mode", "collab_calibration",
-        "prototype_prior_strength", "routing_mode",
+        "prototype_prior_strength", "routing_mode", "dual_view_source",
     ]
 
     # ========================= Args =========================
@@ -80,6 +80,10 @@ class LLMMIRecCHIR(SequentialModel):
                            help="single: QueryMultiInterestExtractor; dual: DualViewInterestExtractor")
         parser.add_argument("--routing_gate_hidden", type=int, default=32,
                            help="Hidden dim for dual-view routing gate MLP")
+        parser.add_argument("--dual_view_source", type=str, default="raw",
+                           choices=["raw", "fused_split"],
+                           help="raw: history_semantic/complement from ItemEncoder; "
+                                "fused_split: use history_emb_pos split by semantic/complement_dim")
 
         # Relation loss
         parser.add_argument("--lambda_relation", type=float, default=0.01)
@@ -133,6 +137,7 @@ class LLMMIRecCHIR(SequentialModel):
         self.prototype_prior_strength = float(getattr(args, "prototype_prior_strength", 0.0))
         self.routing_mode = str(getattr(args, "routing_mode", "single"))
         self.routing_gate_hidden = int(getattr(args, "routing_gate_hidden", 32))
+        self.dual_view_source = str(getattr(args, "dual_view_source", "raw"))
 
         self.lambda_relation = float(getattr(args, "lambda_relation", 0.01))
         self.relation_sample_size = int(getattr(args, "relation_sample_size", 128))
@@ -163,8 +168,8 @@ class LLMMIRecCHIR(SequentialModel):
 
         logging.info(f"[CHIR] initialized: enc={self.item_encoder_mode} K={self.K} "
                      f"query={self.interest_query_mode} calibration={self.collab_calibration} "
-                     f"routing={self.routing_mode} gate={self.aspcf_gate_mode} "
-                     f"relation_lambda={self.lambda_relation}")
+                     f"routing={self.routing_mode} dual_src={self.dual_view_source} "
+                     f"gate={self.aspcf_gate_mode} relation_lambda={self.lambda_relation}")
         logging.info(f"[CHIR] #params: {self.count_variables()}")
 
     def _define_params(self, llm_table):
@@ -289,11 +294,17 @@ class LLMMIRecCHIR(SequentialModel):
         dual_extras = {}
         if self.routing_mode == "dual":
             # DualViewInterestExtractor needs semantic_query and collaborative_query
-            # from the prototype path above, plus history components
-            if hist_out is None or "semantic" not in hist_out:
-                hist_out = self.item_encoder(history, return_components=True)
-            history_sem = hist_out["semantic"]      # [B, L, 32]
-            history_comp = hist_out["complement"]    # [B, L, 32]
+            # from the prototype path above, plus history views
+            if self.dual_view_source == "fused_split":
+                # Use already-computed history_emb_pos (ASPCF-gated, pos-encoded, dropout-ed)
+                history_sem = history_emb_pos[..., :self.semantic_dim]       # [B, L, 32]
+                history_comp = history_emb_pos[..., self.semantic_dim:
+                                                self.semantic_dim + self.complement_dim]  # [B, L, 32]
+            else:
+                if hist_out is None or "semantic" not in hist_out:
+                    hist_out = self.item_encoder(history, return_components=True)
+                history_sem = hist_out["semantic"]      # [B, L, 32]
+                history_comp = hist_out["complement"]    # [B, L, 32]
             extractor_out = self.extractor(
                 history_emb_pos, lengths,
                 history_semantic=history_sem,

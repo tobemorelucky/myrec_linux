@@ -17,6 +17,7 @@ DATASET="beauty"
 SEMANTIC_RANK=512
 LAMBDA_RELATION=0.01
 PROTOTYPE_NUM=32
+DUAL_VIEW_SOURCE=${DUAL_VIEW_SOURCE:-raw}
 
 ROOT_LOG_DIR="new_log/llmmirec_phase2d_dual/${DATASET}"
 ROOT_MODEL_DIR="new_model/llmmirec_phase2d_dual/${DATASET}"
@@ -28,7 +29,7 @@ else
   EPOCH=200; EARLY_STOP=10; NUM_WORKERS=5; SMOKE_TAG=""
 fi
 
-LABEL="dual_routing"
+LABEL="dual_${DUAL_VIEW_SOURCE}"
 SUMMARY_FILE="${ROOT_LOG_DIR}/summary_seed${SEED}.tsv"
 
 if [ ! -f "${SUMMARY_FILE}" ]; then
@@ -36,7 +37,7 @@ if [ ! -f "${SUMMARY_FILE}" ]; then
 fi
 
 echo "========================================================="
-echo "LLMMIRec Phase 2D — dual-view routing ${SMOKE_TAG}"
+echo "LLMMIRec Phase 2D — dual-view routing (${DUAL_VIEW_SOURCE}) ${SMOKE_TAG}"
 echo "GPU=${GPU}"
 echo "========================================================="
 
@@ -84,6 +85,7 @@ python main.py \
   --prototype_prior_strength 0 \
   --routing_mode dual \
   --routing_gate_hidden 32 \
+  --dual_view_source "${DUAL_VIEW_SOURCE}" \
   --lambda_relation "${LAMBDA_RELATION}" \
   --relation_sample_size 128 \
   --relation_teacher_temp 0.1 \

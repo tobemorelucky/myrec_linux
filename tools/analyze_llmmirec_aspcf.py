@@ -46,6 +46,10 @@ def parse_args():
                    help="Override: basic | conflict")
     p.add_argument("--collab_calibration", type=str, default="",
                    help="Override: global | prototype")
+    p.add_argument("--routing_mode", type=str, default="",
+                   help="Override: single | dual (auto-detected if empty)")
+    p.add_argument("--dual_view_source", type=str, default="",
+                   help="Override: raw | fused_split")
     return p.parse_args()
 
 
@@ -118,18 +122,29 @@ def main():
     ma.test_all = 0
 
     emb_size = state["position_emb.weight"].shape[1]
-    K = state["extractor.query"].shape[0]
+    # K from aggregator MLP output dim (works for all routing modes)
+    K = state["aggregator.mlp.2.weight"].shape[0]
     has_adapter_bias = "item_encoder.adapter.0.bias" in state
     if has_adapter_bias:
         d_llm_in = state["item_encoder.adapter.0.weight"].shape[1]
         adapter_hidden = state["item_encoder.adapter.0.weight"].shape[0]
     else:
         adapter_hidden = 256
-
     adapter_use_ln = any("adapter.3" in k for k in state.keys())
 
+    # Auto-detect routing mode
+    is_dual = "extractor.Wq_sem.weight" in state
+    routing_mode = "dual" if is_dual else "single"
+
     ma.emb_size = emb_size
-    ma.attn_size = state["extractor.Wq.weight"].shape[0]
+    if is_dual:
+        ma.attn_size = state["extractor.Wq_sem.weight"].shape[0]
+        ma.routing_mode = "dual"
+        ma.routing_gate_hidden = state["extractor.routing_gate.0.weight"].shape[0]
+    else:
+        ma.attn_size = state["extractor.Wq.weight"].shape[0]
+        ma.routing_mode = "single"
+        ma.routing_gate_hidden = 32
     ma.K = K
     ma.item_encoder = mode
     ma.llm_emb_path = f"./data/{args.dataset}/handled/llm_table_pca1536.pkl" if mode != "id" else ""
@@ -158,6 +173,10 @@ def main():
     ma.prototype_path = args.prototype_path or ""
     ma.aspcf_gate_mode = args.aspcf_gate_mode or "basic"
     ma.collab_calibration = args.collab_calibration or "global"
+    ma.routing_mode = args.routing_mode if args.routing_mode else routing_mode
+    ma.routing_gate_hidden = 32
+    ma.dual_view_source = args.dual_view_source or "raw"
+    ma.prototype_prior_strength = 0.0
 
     model = ModelClass(ma, corpus).to(args.device)
     model.load_state_dict(state, strict=False)
@@ -427,6 +446,24 @@ def main():
     # Stage-wise cosine similarity for routing diagnostics
     eye_k = torch.eye(K)
 
+    def per_user_k_cos(tensor_list, pad_dim=None):
+        """Average off-diagonal cosine of K vectors, averaged over users.
+        Each tensor in list is [B, K, *] — computes per-user K×K cosine,
+        takes off-diagonal mean, then averages over users and batches."""
+        all_means = []
+        for t in tensor_list[:50]:  # limit batches
+            Bk = t.shape[0]
+            for i in range(min(Bk, 64)):
+                v = t[i]  # [K, *]
+                if pad_dim is not None and v.shape[-1] < pad_dim:
+                    v = F.pad(v, (0, pad_dim - v.shape[-1]), value=0.0)
+                v_flat = v.reshape(K, -1)  # [K, D']
+                vn = F.normalize(v_flat, dim=-1, eps=1e-8)
+                cm = vn @ vn.t()  # [K, K]
+                off = (cm * (1 - eye_k)).sum() / max(K * (K - 1), 1)
+                all_means.append(float(off))
+        return float(np.mean(all_means)) if all_means else 0.0
+
     def inter_k_cos(tensor_list, max_dim, pad_val=0.0):
         """Average off-diagonal cosine similarity among K vectors across batches."""
         all_cos = []
@@ -445,50 +482,32 @@ def main():
             all_cos.append(float(off))
         return float(np.mean(all_cos)) if all_cos else 0.0
 
-    # 1. query_seed K间 cosine
+    # 1. query_seed K间 cosine (per-user)
     if len(all_query_seeds) > 0:
-        qs = torch.cat([q[:8] for q in all_query_seeds[:8]], dim=0)  # [M*K, 64]
-        qs = qs.reshape(-1, all_query_seeds[0].shape[-1])
-        qs_n = F.normalize(qs, dim=-1, eps=1e-8)
-        cm = qs_n @ qs_n.t()
-        off = (cm * (1 - torch.eye(qs.shape[0]))).sum() / max(qs.shape[0] * (qs.shape[0] - 1), 1)
-        stats["query_seed_inter_k_cos"] = round(float(off), 6)
+        stats["query_seed_inter_k_cos"] = round(per_user_k_cos(all_query_seeds), 6)
 
-        # 2. Wq(query_seed) K间 cosine  (use Wq to project)
-        wq = model.extractor.Wq.weight.data  # [attn_size, emb_size]
-        qs_proj = F.linear(qs, wq, model.extractor.Wq.bias)  # [M*K, attn_size]
-        qs_pn = F.normalize(qs_proj, dim=-1, eps=1e-8)
-        cm2 = qs_pn @ qs_pn.t()
-        off2 = (cm2 * (1 - torch.eye(qs.shape[0]))).sum() / max(qs.shape[0] * (qs.shape[0] - 1), 1)
-        stats["Wq_query_seed_inter_k_cos"] = round(float(off2), 6)
+        # 2. Wq(query_seed) K间 cosine (per-user)
+        if is_dual:
+            wq_weight = model.extractor.Wq_sem.weight.data
+            wq_bias = model.extractor.Wq_sem.bias
+        else:
+            wq_weight = model.extractor.Wq.weight.data
+            wq_bias = model.extractor.Wq.bias
+        qs_proj_list = []
+        for qs in all_query_seeds[:50]:
+            proj = F.linear(qs, wq_weight, wq_bias)
+            qs_proj_list.append(proj)
+        stats["Wq_query_seed_inter_k_cos"] = round(per_user_k_cos(qs_proj_list), 6)
 
-    # 3. attention prior K间 cosine
+    # 3. attention prior K间 cosine (per-user)
     if len(all_attn_prior) > 0:
-        ap_cos = []
-        for ap in all_attn_prior[:50]:
-            ap_t = ap[:8]  # [B, K, L]
-            if ap_t.shape[0] < 2:
-                continue
-            ap_flat = ap_t.reshape(-1, ap_t.shape[-1])  # [B*K, L]
-            ap_n = F.normalize(ap_flat, dim=-1, eps=1e-8)
-            cm = ap_n @ ap_n.t()
-            off = (cm * (1 - torch.eye(ap_flat.shape[0]))).sum() / max(ap_flat.shape[0] * (ap_flat.shape[0] - 1), 1)
-            ap_cos.append(float(off))
-        stats["attention_prior_inter_k_cos"] = round(float(np.mean(ap_cos)) if ap_cos else 0.0, 6)
+        max_ap = max(a.shape[-1] for a in all_attn_prior)
+        stats["attention_prior_inter_k_cos"] = round(per_user_k_cos(all_attn_prior, max_ap), 6)
 
-    # 4. logits_before_prior K间 cosine
+    # 4. logits_before_prior K间 cosine (per-user)
     if len(all_logits_before) > 0:
-        lb_cos = []
-        for lb in all_logits_before[:50]:
-            lb_t = lb[:8]  # [B, K, L]
-            if lb_t.shape[0] < 2:
-                continue
-            lb_flat = lb_t.reshape(-1, lb_t.shape[-1])
-            lb_n = F.normalize(lb_flat, dim=-1, eps=1e-8)
-            cm = lb_n @ lb_n.t()
-            off = (cm * (1 - torch.eye(lb_flat.shape[0]))).sum() / max(lb_flat.shape[0] * (lb_flat.shape[0] - 1), 1)
-            lb_cos.append(float(off))
-        stats["logits_before_prior_inter_k_cos"] = round(float(np.mean(lb_cos)) if lb_cos else 0.0, 6)
+        max_lbp = max(l.shape[-1] for l in all_logits_before)
+        stats["logits_before_prior_inter_k_cos"] = round(per_user_k_cos(all_logits_before, max_lbp), 6)
 
     # Dual-view routing diagnostics
     if len(all_rho) > 0:
@@ -502,27 +521,40 @@ def main():
         rho_var = rho.var(dim=-1)
         stats["routing_rho_per_sample_var"] = round(float(rho_var.mean()), 6)
 
-        # Semantic attention K间 cosine
-        sl_cos_list = []
-        for sl in all_sem_logits[:20]:
-            sl_t = sl[:8].reshape(-1, sl.shape[-1])
-            if sl_t.shape[0] < 2: continue
-            sl_n = F.normalize(sl_t, dim=-1, eps=1e-8)
-            cm = sl_n @ sl_n.t()
-            off = (cm * (1 - torch.eye(sl_t.shape[0]))).sum() / max(sl_t.shape[0]*(sl_t.shape[0]-1), 1)
-            sl_cos_list.append(float(off))
-        stats["semantic_attn_k_cos"] = round(float(np.mean(sl_cos_list)) if sl_cos_list else 0.0, 6)
+        # Semantic attention logits K间 cosine (per-user)
+        max_sl = max(s.shape[-1] for s in all_sem_logits[:20]) if all_sem_logits else 0
+        stats["semantic_attn_logits_k_cos"] = round(per_user_k_cos(all_sem_logits[:20], max_sl), 6)
 
-        # Collaborative attention K间 cosine
-        cl_cos_list = []
+        # Collaborative attention logits K间 cosine (per-user)
+        max_cl = max(c.shape[-1] for c in all_comp_logits[:20]) if all_comp_logits else 0
+        stats["collab_attn_logits_k_cos"] = round(per_user_k_cos(all_comp_logits[:20], max_cl), 6)
+
+        # Semantic attention softmax K间 cosine (per-user)
+        sem_attn_list = []
+        for sl in all_sem_logits[:20]:
+            attn_mask = (sl == float("-inf")) | (sl < -1e30)
+            sl_clean = sl.masked_fill(attn_mask, float("-inf"))
+            sem_attn_list.append(F.softmax(sl_clean, dim=-1))
+        max_sa = max(s.shape[-1] for s in sem_attn_list)
+        stats["semantic_attn_softmax_k_cos"] = round(per_user_k_cos(sem_attn_list, max_sa), 6)
+
+        # Collaborative attention softmax K间 cosine (per-user)
+        comp_attn_list = []
         for cl in all_comp_logits[:20]:
-            cl_t = cl[:8].reshape(-1, cl.shape[-1])
-            if cl_t.shape[0] < 2: continue
-            cl_n = F.normalize(cl_t, dim=-1, eps=1e-8)
-            cm = cl_n @ cl_n.t()
-            off = (cm * (1 - torch.eye(cl_t.shape[0]))).sum() / max(cl_t.shape[0]*(cl_t.shape[0]-1), 1)
-            cl_cos_list.append(float(off))
-        stats["collab_attn_k_cos"] = round(float(np.mean(cl_cos_list)) if cl_cos_list else 0.0, 6)
+            attn_mask = (cl == float("-inf")) | (cl < -1e30)
+            cl_clean = cl.masked_fill(attn_mask, float("-inf"))
+            comp_attn_list.append(F.softmax(cl_clean, dim=-1))
+        max_ca = max(c.shape[-1] for c in comp_attn_list)
+        stats["collab_attn_softmax_k_cos"] = round(per_user_k_cos(comp_attn_list, max_ca), 6)
+
+        # Final fused attention K间 cosine (per-user, pad to max L)
+        max_al = max(a.shape[-1] for a in all_attn)
+        attn_padded = []
+        for a in all_attn[:20]:
+            if a.shape[-1] < max_al:
+                a = F.pad(a, (0, max_al - a.shape[-1]), value=0.0)
+            attn_padded.append(a)
+        stats["final_attn_k_cos"] = round(per_user_k_cos(attn_padded, max_al), 6)
 
     # Save
     json_path = os.path.join(args.output_dir, "stats.json")
