@@ -28,12 +28,24 @@ from models.sequential.LLMMIRec import LLMMIRec
 
 
 def parse_args():
-    p = argparse.ArgumentParser(description="LLMMIRec ASPCF diagnostics")
+    p = argparse.ArgumentParser(description="LLMMIRec ASPCF/CHIR diagnostics")
     p.add_argument("--checkpoint", type=str, required=True)
+    p.add_argument("--model_name", type=str, default="LLMMIRec",
+                   choices=["LLMMIRec", "LLMMIRecASPCF", "LLMMIRecCHIR"],
+                   help="Model class to instantiate")
     p.add_argument("--dataset", type=str, default="beauty")
     p.add_argument("--max_batches", type=int, default=50)
     p.add_argument("--output_dir", type=str, default="./diagnostics_aspcf")
     p.add_argument("--device", type=str, default="cuda")
+    # Explicit overrides for prototype/CHIR (persistent=False buffers not in state_dict)
+    p.add_argument("--interest_query_mode", type=str, default="",
+                   help="Override: learnable | prototype (for CHIR)")
+    p.add_argument("--prototype_path", type=str, default="",
+                   help="Override: path to llmmi_proto pkl")
+    p.add_argument("--aspcf_gate_mode", type=str, default="",
+                   help="Override: basic | conflict")
+    p.add_argument("--collab_calibration", type=str, default="",
+                   help="Override: global | prototype")
     return p.parse_args()
 
 
@@ -80,7 +92,18 @@ def main():
     else:
         mode = "id"
 
-    logging.info(f"Inferred mode: {mode}")
+    # Override mode from CLI if specified
+    if args.interest_query_mode:
+        mode_override = "aspcf"  # always aspcf for these models
+    logging.info(f"Model: {args.model_name}, mode: {mode}")
+
+    # Select model class
+    if args.model_name == "LLMMIRecASPCF":
+        from models.sequential.LLMMIRecASPCF import LLMMIRecASPCF as ModelClass
+    elif args.model_name == "LLMMIRecCHIR":
+        from models.sequential.LLMMIRecCHIR import LLMMIRecCHIR as ModelClass
+    else:
+        from models.sequential.LLMMIRec import LLMMIRec as ModelClass
 
     # Build args
     class DummyArgs:
@@ -130,7 +153,13 @@ def main():
     ma.relation_teacher_temp = 0.1
     ma.relation_student_temp = 0.1
 
-    model = LLMMIRec(ma, corpus).to(args.device)
+    # Prototype/CHIR overrides (persistent=False buffers not in state_dict)
+    ma.interest_query_mode = args.interest_query_mode or "learnable"
+    ma.prototype_path = args.prototype_path or ""
+    ma.aspcf_gate_mode = args.aspcf_gate_mode or "basic"
+    ma.collab_calibration = args.collab_calibration or "global"
+
+    model = ModelClass(ma, corpus).to(args.device)
     model.load_state_dict(state, strict=False)
     model.eval()
     logging.info(f"Loaded: #params={model.count_variables()}")
@@ -147,6 +176,7 @@ def main():
     all_alpha_sem, all_alpha_comp = [], []
     all_h_semantic, all_h_complement = [], []
     all_proto_mass, all_proto_ids = [], []
+    all_proto_hist_w, all_proto_collab_ctx = [], []
 
     batch_count = 0
     with torch.inference_mode():
@@ -169,6 +199,9 @@ def main():
             if "prototype_mass" in out:
                 all_proto_mass.append(out["prototype_mass"].cpu())
                 all_proto_ids.append(out["selected_prototype_ids"].cpu())
+            if "prototype_history_weights" in out:
+                all_proto_hist_w.append(out["prototype_history_weights"].cpu())
+                all_proto_collab_ctx.append(out["prototype_collab_context"].cpu())
 
             batch_count += 1
             if args.max_batches > 0 and batch_count >= args.max_batches:
@@ -330,6 +363,55 @@ def main():
         H_proto = -(pm * torch.log(pm)).sum(dim=-1) / math.log(proto_num)  # [N]
         stats["proto_mass_entropy_mean"] = round(float(H_proto.mean()), 6)
         stats["proto_mass_entropy_std"] = round(float(H_proto.std()), 6)
+
+        # Selected prototype pairwise cosine similarity
+        if proto_ids.shape[0] > 0:
+            sel_centers = torch.zeros(proto_ids.shape[0], K, 512)
+            for i in range(min(proto_ids.shape[0], 500)):
+                sel_centers[i] = model.proto_centers[proto_ids[i]]
+            sel_n = F.normalize(sel_centers[:min(proto_ids.shape[0], 500)], dim=-1, eps=1e-8)
+            sel_sim = sel_n @ sel_n.transpose(-1, -2)  # [N, K, K]
+            eye_k = torch.eye(K).unsqueeze(0)
+            off = sel_sim * (1 - eye_k)
+            triu = torch.triu(torch.ones(K, K), diagonal=1).unsqueeze(0)
+            mean_pair = float((off * triu).sum(dim=(-1, -2)).mean() / triu.sum())
+            stats["proto_selected_pairwise_cos"] = round(mean_pair, 6)
+
+    # Prototype history weights diagnostics
+    if len(all_proto_hist_w) > 0:
+        max_HW = max(w.shape[1] for w in all_proto_hist_w)
+        hw_padded = []
+        for w in all_proto_hist_w:
+            if w.shape[1] < max_HW:
+                w = F.pad(w, (0, 0, 0, max_HW - w.shape[1]), value=0.0)
+            hw_padded.append(w)
+        hw = torch.cat(hw_padded, dim=0)  # [N, Lmax, K]
+
+        # 3. Average entropy of prototype_history_weights (per interest, per sample)
+        hw_valid = hw.sum(dim=-1) > 0  # [N, Lmax]
+        hw_entropies = []
+        for k in range(K):
+            hw_k = hw[:, :, k]  # [N, Lmax]
+            for i in range(min(hw.shape[0], 500)):
+                valid = hw_k[i] > 0
+                if valid.sum() > 1:
+                    probs = hw_k[i][valid] / hw_k[i][valid].sum().clamp(min=1e-8)
+                    hw_entropies.append(float(normalized_entropy(probs, dim=-1)))
+        stats["proto_hist_weight_entropy_mean"] = round(float(np.mean(hw_entropies)) if hw_entropies else 0.0, 6)
+
+        # 4. Average cosine similarity between K prototype history weight vectors
+        hw_cos = []
+        for i in range(min(hw.shape[0], 500)):
+            wk = hw[i].t()  # [K, Lmax]
+            valid_cols = wk.sum(dim=0) > 0
+            if valid_cols.sum() < 2:
+                continue
+            wk_v = wk[:, valid_cols]  # [K, valid_L]
+            wk_n = F.normalize(wk_v, dim=-1, eps=1e-8)
+            cm = wk_n @ wk_n.t()
+            off = (cm * (1 - eye_k)).sum() / (K * (K - 1))
+            hw_cos.append(float(off))
+        stats["proto_hist_weight_cos_mean"] = round(float(np.mean(hw_cos)) if hw_cos else 0.0, 6)
 
     # Save
     json_path = os.path.join(args.output_dir, "stats.json")
