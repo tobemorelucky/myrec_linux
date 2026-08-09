@@ -252,7 +252,9 @@ class LLMMIRecCHIR(SequentialModel):
                 proto_w = proto_dist.gather(
                     2, topk_idx.unsqueeze(1).expand(-1, L, -1))     # [B, L, K]
                 proto_w = proto_w * (history > 0).float().unsqueeze(-1)
-                proto_w = proto_w / proto_w.sum(dim=1, keepdim=True).clamp(min=1)  # [B, L, K]
+                proto_w = proto_w / proto_w.sum(
+                    dim=1, keepdim=True
+                ).clamp_min(1e-8)
                 proto_hist_weights = proto_w                         # stash
                 collab_ctx = torch.einsum("bld,blk->bkd", hist_comp, proto_w)  # [B, K, 32]
                 proto_collab_context = collab_ctx                    # stash
