@@ -397,3 +397,99 @@ class InterestAggregator(nn.Module):
         weights = F.softmax(logits, dim=-1)     # [B, K]
 
         return weights
+
+
+# =========================
+#  DualViewInterestExtractor
+# =========================
+
+class DualViewInterestExtractor(nn.Module):
+    """Dual-view interest extraction: semantic + collaborative attention
+    fused via per-interest adaptive routing gate.
+
+    Args:
+        K: number of interest vectors
+        semantic_dim: semantic query/history dim
+        complement_dim: collaborative query/history dim
+        attn_dim: attention projection dim
+        gate_hidden: routing gate hidden dim
+        emb_size: full item embedding dim (for value projection)
+    """
+
+    def __init__(self, K: int, semantic_dim: int = 32, complement_dim: int = 32,
+                 attn_dim: int = 32, gate_hidden: int = 32, emb_size: int = 64):
+        super().__init__()
+        self.K = int(K)
+        self.attn_dim = int(attn_dim)
+        self.emb_size = int(emb_size)
+
+        # Semantic attention
+        self.Wq_sem = nn.Linear(semantic_dim, attn_dim)
+        self.Wk_sem = nn.Linear(semantic_dim, attn_dim)
+
+        # Collaborative attention
+        self.Wq_comp = nn.Linear(complement_dim, attn_dim)
+        self.Wk_comp = nn.Linear(complement_dim, attn_dim)
+
+        # Value projection (from full fused history embedding)
+        self.Wv = nn.Linear(emb_size, emb_size)
+
+        # Per-interest routing gate
+        self.routing_gate = nn.Sequential(
+            nn.Linear(semantic_dim + complement_dim, gate_hidden),
+            nn.GELU(),
+            nn.Linear(gate_hidden, 1),
+            nn.Sigmoid(),
+        )
+
+    def forward(
+        self,
+        history_emb: torch.Tensor,          # [B, L, D] full fused embedding (+pos)
+        lengths: torch.Tensor,              # [B]
+        history_semantic: torch.Tensor,     # [B, L, 32]
+        history_complement: torch.Tensor,   # [B, L, 32]
+        semantic_query: torch.Tensor,       # [B, K, 32]
+        collaborative_query: torch.Tensor,  # [B, K, 32]
+    ):
+        B, L, D = history_emb.shape
+        device = history_emb.device
+
+        valid_mask = (torch.arange(L, device=device)[None, :] < lengths[:, None]).float()
+        attn_mask = (valid_mask == 0).unsqueeze(1)  # [B, 1, L]
+        scale = math.sqrt(self.attn_dim)
+
+        # Semantic attention logits
+        Q_sem = self.Wq_sem(semantic_query)         # [B, K, attn_dim]
+        K_sem = self.Wk_sem(history_semantic)        # [B, L, attn_dim]
+        sem_logits = torch.bmm(Q_sem, K_sem.transpose(1, 2)) / scale  # [B, K, L]
+
+        # Collaborative attention logits
+        Q_comp = self.Wq_comp(collaborative_query)
+        K_comp = self.Wk_comp(history_complement)
+        comp_logits = torch.bmm(Q_comp, K_comp.transpose(1, 2)) / scale  # [B, K, L]
+
+        # Per-interest routing gate: rho ∈ [0,1]
+        gate_input = torch.cat([semantic_query, collaborative_query], dim=-1)  # [B, K, 64]
+        rho = self.routing_gate(gate_input)  # [B, K, 1]
+
+        # Fused logits
+        logits = rho * sem_logits + (1.0 - rho) * comp_logits  # [B, K, L]
+
+        # Mask + softmax
+        logits = logits.masked_fill(attn_mask, float("-inf"))
+        attn = F.softmax(logits, dim=-1)
+        attn = attn.masked_fill(torch.isnan(attn), 0.0)
+
+        # Value from full history embedding
+        V = self.Wv(history_emb)  # [B, L, D]
+        interest_vectors = torch.bmm(attn, V)  # [B, K, D]
+
+        return {
+            "interest_vectors": interest_vectors,
+            "attention_maps": attn,
+            "semantic_attention_logits": sem_logits,
+            "collaborative_attention_logits": comp_logits,
+            "routing_rho": rho.squeeze(-1),  # [B, K]
+            "semantic_query": semantic_query,
+            "collaborative_query": collaborative_query,
+        }

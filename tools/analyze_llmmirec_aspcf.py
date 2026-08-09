@@ -178,6 +178,7 @@ def main():
     all_proto_mass, all_proto_ids = [], []
     all_proto_hist_w, all_proto_collab_ctx = [], []
     all_query_seeds, all_logits_before, all_attn_prior = [], [], []
+    all_rho, all_sem_logits, all_comp_logits = [], [], []
 
     batch_count = 0
     with torch.inference_mode():
@@ -208,6 +209,10 @@ def main():
             if "attention_logits_before_prior" in out:
                 all_logits_before.append(out["attention_logits_before_prior"].cpu())
                 all_attn_prior.append(out["attention_prior"].cpu())
+            if "routing_rho" in out:
+                all_rho.append(out["routing_rho"].cpu())
+                all_sem_logits.append(out["semantic_attention_logits"].cpu())
+                all_comp_logits.append(out["collaborative_attention_logits"].cpu())
 
             batch_count += 1
             if args.max_batches > 0 and batch_count >= args.max_batches:
@@ -484,6 +489,40 @@ def main():
             off = (cm * (1 - torch.eye(lb_flat.shape[0]))).sum() / max(lb_flat.shape[0] * (lb_flat.shape[0] - 1), 1)
             lb_cos.append(float(off))
         stats["logits_before_prior_inter_k_cos"] = round(float(np.mean(lb_cos)) if lb_cos else 0.0, 6)
+
+    # Dual-view routing diagnostics
+    if len(all_rho) > 0:
+        rho = torch.cat([r[:50] for r in all_rho[:20]], dim=0)  # [~N, K]
+        stats["routing_rho_mean"] = round(float(rho.mean()), 6)
+        stats["routing_rho_std"] = round(float(rho.std()), 6)
+        stats["routing_rho_p10"] = round(float(np.percentile(rho.numpy(), 10)), 6)
+        stats["routing_rho_p50"] = round(float(np.percentile(rho.numpy(), 50)), 6)
+        stats["routing_rho_p90"] = round(float(np.percentile(rho.numpy(), 90)), 6)
+        # Per-sample variance of rho across K interests
+        rho_var = rho.var(dim=-1)
+        stats["routing_rho_per_sample_var"] = round(float(rho_var.mean()), 6)
+
+        # Semantic attention K间 cosine
+        sl_cos_list = []
+        for sl in all_sem_logits[:20]:
+            sl_t = sl[:8].reshape(-1, sl.shape[-1])
+            if sl_t.shape[0] < 2: continue
+            sl_n = F.normalize(sl_t, dim=-1, eps=1e-8)
+            cm = sl_n @ sl_n.t()
+            off = (cm * (1 - torch.eye(sl_t.shape[0]))).sum() / max(sl_t.shape[0]*(sl_t.shape[0]-1), 1)
+            sl_cos_list.append(float(off))
+        stats["semantic_attn_k_cos"] = round(float(np.mean(sl_cos_list)) if sl_cos_list else 0.0, 6)
+
+        # Collaborative attention K间 cosine
+        cl_cos_list = []
+        for cl in all_comp_logits[:20]:
+            cl_t = cl[:8].reshape(-1, cl.shape[-1])
+            if cl_t.shape[0] < 2: continue
+            cl_n = F.normalize(cl_t, dim=-1, eps=1e-8)
+            cm = cl_n @ cl_n.t()
+            off = (cm * (1 - torch.eye(cl_t.shape[0]))).sum() / max(cl_t.shape[0]*(cl_t.shape[0]-1), 1)
+            cl_cos_list.append(float(off))
+        stats["collab_attn_k_cos"] = round(float(np.mean(cl_cos_list)) if cl_cos_list else 0.0, 6)
 
     # Save
     json_path = os.path.join(args.output_dir, "stats.json")

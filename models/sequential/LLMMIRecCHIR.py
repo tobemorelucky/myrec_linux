@@ -18,6 +18,7 @@ from models.sequential.llmmi_utils import load_llm_table, check_nan_inf
 from models.sequential.llmmi_components import (
     ItemEncoder,
     QueryMultiInterestExtractor,
+    DualViewInterestExtractor,
     InterestAggregator,
 )
 
@@ -31,7 +32,7 @@ class LLMMIRecCHIR(SequentialModel):
         "adapter_activation", "adapter_use_ln",
         "semantic_rank", "lambda_relation", "aspcf_gate_mode",
         "interest_query_mode", "collab_calibration",
-        "prototype_prior_strength",
+        "prototype_prior_strength", "routing_mode",
     ]
 
     # ========================= Args =========================
@@ -74,6 +75,11 @@ class LLMMIRecCHIR(SequentialModel):
                                 "prototype: per-prototype weighted collab context")
         parser.add_argument("--prototype_prior_strength", type=float, default=0.0,
                            help="Strength of prototype history weights as attention routing prior")
+        parser.add_argument("--routing_mode", type=str, default="single",
+                           choices=["single", "dual"],
+                           help="single: QueryMultiInterestExtractor; dual: DualViewInterestExtractor")
+        parser.add_argument("--routing_gate_hidden", type=int, default=32,
+                           help="Hidden dim for dual-view routing gate MLP")
 
         # Relation loss
         parser.add_argument("--lambda_relation", type=float, default=0.01)
@@ -125,6 +131,8 @@ class LLMMIRecCHIR(SequentialModel):
         self.prototype_path = str(getattr(args, "prototype_path", ""))
         self.collab_calibration = str(getattr(args, "collab_calibration", "global"))
         self.prototype_prior_strength = float(getattr(args, "prototype_prior_strength", 0.0))
+        self.routing_mode = str(getattr(args, "routing_mode", "single"))
+        self.routing_gate_hidden = int(getattr(args, "routing_gate_hidden", 32))
 
         self.lambda_relation = float(getattr(args, "lambda_relation", 0.01))
         self.relation_sample_size = int(getattr(args, "relation_sample_size", 128))
@@ -155,7 +163,8 @@ class LLMMIRecCHIR(SequentialModel):
 
         logging.info(f"[CHIR] initialized: enc={self.item_encoder_mode} K={self.K} "
                      f"query={self.interest_query_mode} calibration={self.collab_calibration} "
-                     f"gate={self.aspcf_gate_mode} relation_lambda={self.lambda_relation}")
+                     f"routing={self.routing_mode} gate={self.aspcf_gate_mode} "
+                     f"relation_lambda={self.lambda_relation}")
         logging.info(f"[CHIR] #params: {self.count_variables()}")
 
     def _define_params(self, llm_table):
@@ -177,8 +186,15 @@ class LLMMIRecCHIR(SequentialModel):
         self.item_encoder = ItemEncoder(**ie_kwargs)
 
         self.position_emb = nn.Embedding(self.max_his + 1, self.emb_size)
-        self.extractor = QueryMultiInterestExtractor(
-            K=self.K, emb_size=self.emb_size, attn_size=self.attn_size)
+        if self.routing_mode == "dual":
+            self.extractor = DualViewInterestExtractor(
+                K=self.K, semantic_dim=self.semantic_dim,
+                complement_dim=self.complement_dim,
+                attn_dim=self.attn_size, gate_hidden=self.routing_gate_hidden,
+                emb_size=self.emb_size)
+        else:
+            self.extractor = QueryMultiInterestExtractor(
+                K=self.K, emb_size=self.emb_size, attn_size=self.attn_size)
         self.aggregator = InterestAggregator(emb_size=self.emb_size, K=self.K)
         self.dropout = nn.Dropout(p=self.dropout_p)
 
@@ -196,6 +212,7 @@ class LLMMIRecCHIR(SequentialModel):
                     (self.interest_query_mode == "prototype"
                      and self.item_encoder_mode == "aspcf"))
         aspcf_comps = None
+        hist_out = None
         if need_comp and self.item_encoder_mode == "aspcf":
             hist_out = self.item_encoder(history, return_components=True)
             cand_out = self.item_encoder(i_ids, return_components=True)
@@ -230,6 +247,8 @@ class LLMMIRecCHIR(SequentialModel):
         query_seeds = None
         proto_hist_weights = None
         proto_collab_context = None
+        sem_query = None
+        collab_ctx = None
 
         if self.interest_query_mode == "prototype":
             proto_dist = self.proto_assignments[history]           # [B, L, P]
@@ -266,25 +285,54 @@ class LLMMIRecCHIR(SequentialModel):
             query_seeds = torch.cat([sem_query, collab_ctx], dim=-1)  # [B, K, 64]
             external_query = query_seeds
 
-        # Build attention prior from prototype history weights
-        attn_prior = None
-        prior_strength = 0.0
-        if (self.interest_query_mode == "prototype"
-                and self.collab_calibration == "prototype"
-                and proto_hist_weights is not None
-                and self.prototype_prior_strength > 0):
-            attn_prior = proto_hist_weights.transpose(1, 2)  # [B, K, L]
-            prior_strength = self.prototype_prior_strength
-
-        extractor_out = self.extractor(
-            history_emb_pos, lengths, external_query=external_query,
-            attention_prior=attn_prior, prior_strength=prior_strength,
-        )
-        logits_before_prior = None
-        if attn_prior is not None and prior_strength > 0:
-            interest_vectors, attention_maps, logits_before_prior = extractor_out
+        # Dual-view routing extras
+        dual_extras = {}
+        if self.routing_mode == "dual":
+            # DualViewInterestExtractor needs semantic_query and collaborative_query
+            # from the prototype path above, plus history components
+            if hist_out is None or "semantic" not in hist_out:
+                hist_out = self.item_encoder(history, return_components=True)
+            history_sem = hist_out["semantic"]      # [B, L, 32]
+            history_comp = hist_out["complement"]    # [B, L, 32]
+            extractor_out = self.extractor(
+                history_emb_pos, lengths,
+                history_semantic=history_sem,
+                history_complement=history_comp,
+                semantic_query=sem_query,
+                collaborative_query=collab_ctx,
+            )
+            interest_vectors = extractor_out["interest_vectors"]
+            attention_maps = extractor_out["attention_maps"]
+            dual_extras = {
+                "semantic_attention_logits": extractor_out["semantic_attention_logits"],
+                "collaborative_attention_logits": extractor_out["collaborative_attention_logits"],
+                "routing_rho": extractor_out["routing_rho"],
+                "semantic_query": extractor_out["semantic_query"],
+                "collaborative_query": extractor_out["collaborative_query"],
+            }
         else:
-            interest_vectors, attention_maps = extractor_out
+            # Single-view: existing QueryMultiInterestExtractor
+            attn_prior = None
+            prior_strength = 0.0
+            if (self.interest_query_mode == "prototype"
+                    and self.collab_calibration == "prototype"
+                    and proto_hist_weights is not None
+                    and self.prototype_prior_strength > 0):
+                attn_prior = proto_hist_weights.transpose(1, 2)
+                prior_strength = self.prototype_prior_strength
+
+            extractor_out = self.extractor(
+                history_emb_pos, lengths, external_query=external_query,
+                attention_prior=attn_prior, prior_strength=prior_strength,
+            )
+            logits_before_prior = None
+            if attn_prior is not None and prior_strength > 0:
+                interest_vectors, attention_maps, logits_before_prior = extractor_out
+            else:
+                interest_vectors, attention_maps = extractor_out
+            if logits_before_prior is not None:
+                dual_extras["attention_logits_before_prior"] = logits_before_prior
+                dual_extras["attention_prior"] = attn_prior
 
         interest_vectors = self.dropout(interest_vectors)
 
@@ -331,12 +379,11 @@ class LLMMIRecCHIR(SequentialModel):
                 out_dict["prototype_mass"] = proto_mass
                 out_dict["selected_prototype_ids"] = selected_proto_ids
                 out_dict["query_seeds"] = query_seeds
-                if logits_before_prior is not None:
-                    out_dict["attention_logits_before_prior"] = logits_before_prior
-                    out_dict["attention_prior"] = attn_prior
                 if proto_hist_weights is not None:
                     out_dict["prototype_history_weights"] = proto_hist_weights
                     out_dict["prototype_collab_context"] = proto_collab_context
+            if dual_extras:
+                out_dict.update(dual_extras)
 
         return out_dict
 
