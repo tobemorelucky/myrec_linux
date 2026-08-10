@@ -278,6 +278,7 @@ class QueryMultiInterestExtractor(nn.Module):
         external_query: torch.Tensor = None,
         attention_prior: torch.Tensor = None,
         prior_strength: float = 0.0,
+        return_route_scores: bool = False,
     ):
         """Extract interest vectors from history embeddings.
 
@@ -287,11 +288,13 @@ class QueryMultiInterestExtractor(nn.Module):
             external_query: [B, K, D] optional external query seeds.
             attention_prior: [B, K, L] optional prior for attention logits.
             prior_strength: weight for attention_prior in log space.
+            return_route_scores: if True, also return raw scores [B,K,L]
+                (before softmax, after mask+prior). Used for HSDIR routing.
 
         Returns:
-            interest_vectors: [B, K, D]
-            attention_maps: [B, K, L]
-            (when prior is active, also returns logits_before_prior)
+            Default: (interest_vectors, attention_maps)
+            With prior: (interest_vectors, attention_maps, logits_before_prior)
+            With return_route_scores: (interest_vectors, attention_maps, raw_scores)
         """
         B, L, D = history_emb.shape
         device = history_emb.device
@@ -330,6 +333,9 @@ class QueryMultiInterestExtractor(nn.Module):
         # Weighted sum: [B, K, D]
         interest_vectors = torch.bmm(attn, V_mat)
 
+        if return_route_scores:
+            # Return raw scores for HSDIR routing (after mask, before softmax)
+            return interest_vectors, attn, scores.clone()
         if attention_prior is not None and prior_strength > 0:
             return interest_vectors, attn, logits_before_prior
         return interest_vectors, attn
