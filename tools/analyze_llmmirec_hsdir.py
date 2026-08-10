@@ -35,6 +35,9 @@ def parse_args():
     p.add_argument("--dataset", type=str, default="beauty")
     p.add_argument("--teacher_path", type=str, required=True,
                    help="Path to llmmi_hier_proto32_8_sr512.pkl (required for both baseline and HSDIR)")
+    p.add_argument("--aggregation_mode", type=str, default="base",
+                   choices=["base", "support_confidence"])
+    p.add_argument("--support_beta", type=float, default=1.0)
     p.add_argument("--max_batches", type=int, default=50)
     p.add_argument("--output_dir", type=str, default="./diagnostics_hsdir")
     p.add_argument("--device", type=str, default="cuda")
@@ -146,6 +149,8 @@ def main():
     ma.hsr_teacher_mode = "hierarchical"
     ma.hsr_student_temp = 1.0
     ma.teacher_path = args.teacher_path
+    ma.aggregation_mode = args.aggregation_mode
+    ma.support_beta = args.support_beta
     ma.dropout = 0.1
 
     model = LLMMIRecHSDIR(ma, corpus).to(args.device)
