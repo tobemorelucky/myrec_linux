@@ -198,3 +198,8 @@ bash <script>.sh 1   # GPU 1
 ```
 
 SMOKE=1 支持 2-epoch 冒烟测试。
+
+
+
+
+当前进度可以概括为：第三章 ASPCF 已经稳定，第四章 HSDIR 的核心“历史侧语义结构监督”也已经被验证有效。 在 Beauty、相同训练配置下，ASPCF baseline 的 NDCG@5/10 为 0.1053/0.1269；加入 HSDIR 后，hierarchical 为 0.1091/0.1317，fine-only 为 0.1090/0.1311，coarse-only 只有 0.1065/0.1284。同时 hierarchical 的诊断显示，兴趣余弦从 0.9457→0.8691、有效秩从 1.714→2.280、路由 membership entropy 从 0.913→0.543、effective active K 从 3.833→2.632，并且 route 与 fine/coarse 语义结构的相关性从接近 0 提升到约 0.36/0.38。因此，“用 LLM 语义作为训练期结构教师，而不是直接控制推荐 attention”这个方向已经成立。但目前还有一个重要事实：hierarchical 和 fine-only 排序几乎一样，说明“层次结构”本身的额外价值还没有被证明，主要收益很可能来自 fine-level semantic relation distillation。
