@@ -174,12 +174,15 @@ def main():
     batches_iv = []
     batches_attn = []
     batches_w = []
+    batches_base_w = []
     batches_lengths = []
     batches_history = []
     batches_R = []
     batches_G_route = []
     batches_fine_rel = []
     batches_coarse_rel = []
+    batches_support = []
+    batches_confidence = []
 
     with torch.inference_mode():
         for batch in dl:
@@ -189,6 +192,11 @@ def main():
 
             batches_iv.append(out["interest_vectors"].cpu())
             batches_w.append(out["interest_weights"].cpu())
+            if "base_interest_weights" in out:
+                batches_base_w.append(out["base_interest_weights"].cpu())
+            if "support_distribution" in out:
+                batches_support.append(out["support_distribution"].cpu())
+                batches_confidence.append(out["routing_confidence"].cpu())
             batches_lengths.append(batch["lengths"].cpu())
             batches_history.append(batch["history_items"].cpu())
             batches_attn.append(out["attention_maps"].cpu())
@@ -253,6 +261,28 @@ def main():
     w_ent = normalized_entropy(w, dim=-1)
     stats["interest_weight_entropy"] = round(float(w_ent.mean()), 6)
     stats["mean_max_interest_weight"] = round(float(w.max(dim=-1).values.mean()), 6)
+
+    # Calibration metrics
+    if batches_base_w:
+        base_w = torch.cat(batches_base_w, dim=0)
+        base_w_ent = normalized_entropy(base_w, dim=-1)
+        stats["base_weight_entropy"] = round(float(base_w_ent.mean()), 6)
+        stats["final_weight_entropy"] = stats["interest_weight_entropy"]
+
+    if batches_support:
+        sup_cat = torch.cat(batches_support, dim=0)       # [N, K]
+        conf_cat = torch.cat(batches_confidence, dim=0)    # [N]
+        stats["mean_routing_confidence"] = round(float(conf_cat.mean()), 6)
+        # Correlation between support and final weight
+        sup_np = sup_cat[:500].numpy()
+        w_np = w[:500].numpy()
+        corr_list = []
+        for i in range(min(sup_np.shape[0], w_np.shape[0])):
+            if sup_np[i].std() > 1e-8 and w_np[i].std() > 1e-8:
+                c = np.corrcoef(sup_np[i], w_np[i])[0, 1]
+                if not np.isnan(c):
+                    corr_list.append(c)
+        stats["support_final_weight_corr"] = round(float(np.mean(corr_list)) if corr_list else 0.0, 6)
 
     # ---- B. Student routing ----
     if has_routing:

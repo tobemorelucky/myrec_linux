@@ -10,6 +10,7 @@ The LLM semantic structure acts only as a teacher during training.
 """
 
 import logging
+import math
 import pickle
 
 import torch
@@ -33,7 +34,7 @@ class LLMMIRecHSDIR(SequentialModel):
         "emb_size", "K", "item_encoder", "adapter_hidden",
         "adapter_activation", "adapter_use_ln",
         "semantic_rank", "lambda_relation", "aspcf_gate_mode",
-        "lambda_hsr", "hsr_teacher_mode",
+        "lambda_hsr", "hsr_teacher_mode", "aggregation_mode",
     ]
 
     # ========================= Args =========================
@@ -78,6 +79,11 @@ class LLMMIRecHSDIR(SequentialModel):
                            choices=["fine", "coarse", "hierarchical"])
         parser.add_argument("--hsr_student_temp", type=float, default=1.0)
         parser.add_argument("--teacher_path", type=str, default="")
+
+        # Aggregation calibration
+        parser.add_argument("--aggregation_mode", type=str, default="base",
+                           choices=["base", "support_confidence"])
+        parser.add_argument("--support_beta", type=float, default=1.0)
 
         parser = SequentialModel.parse_model_args(parser)
         parser.set_defaults(dropout=0.1)
@@ -128,6 +134,8 @@ class LLMMIRecHSDIR(SequentialModel):
         self.hsr_teacher_mode = str(getattr(args, "hsr_teacher_mode", "hierarchical"))
         self.hsr_student_temp = float(getattr(args, "hsr_student_temp", 1.0))
         self.teacher_path = str(getattr(args, "teacher_path", ""))
+        self.aggregation_mode = str(getattr(args, "aggregation_mode", "base"))
+        self.support_beta = float(getattr(args, "support_beta", 1.0))
 
         self.dropout_p = float(getattr(args, "dropout", 0.1))
 
@@ -155,7 +163,8 @@ class LLMMIRecHSDIR(SequentialModel):
 
         logging.info(f"[HSDIR] initialized: enc={self.item_encoder_mode} K={self.K} "
                      f"lambda_relation={self.lambda_relation} lambda_hsr={self.lambda_hsr} "
-                     f"teacher_mode={self.hsr_teacher_mode}")
+                     f"teacher_mode={self.hsr_teacher_mode} "
+                     f"agg={self.aggregation_mode}")
         logging.info(f"[HSDIR] #params: {self.count_variables()}")
 
     def _define_params(self, llm_table):
@@ -222,7 +231,8 @@ class LLMMIRecHSDIR(SequentialModel):
 
         # 3. Multi-interest extraction (learnable queries)
         route_scores = None  # raw scores for HSDIR
-        need_route = ((self.training and self.lambda_hsr > 0) or return_intermediate)
+        need_route = ((self.training and self.lambda_hsr > 0) or return_intermediate
+                      or self.aggregation_mode == "support_confidence")
         extractor_out = self.extractor(
             history_emb_pos, lengths, return_route_scores=need_route)
         if need_route:
@@ -232,7 +242,37 @@ class LLMMIRecHSDIR(SequentialModel):
         interest_vectors = self.dropout(interest_vectors)
 
         # 4-6. Aggregation, user vector, prediction
-        interest_weights = self.aggregator(history_emb_raw, lengths)
+        base_weights = self.aggregator(history_emb_raw, lengths)  # [B, K]
+        support_dist = None
+        routing_conf = None
+
+        if self.aggregation_mode == "support_confidence" and route_scores is not None:
+            # R: route membership [B, L, K]
+            valid_h = (history > 0).float().unsqueeze(-1)
+            R = F.softmax(route_scores.transpose(1, 2) / self.hsr_student_temp, dim=-1)
+            R = R * valid_h
+
+            # Support distribution over K interests
+            support = R.sum(dim=1)                                        # [B, K]
+            support = support / support.sum(dim=-1, keepdim=True).clamp_min(1e-8)
+            support_dist = support
+
+            # Routing confidence: 1 - mean normalized entropy over valid items
+            eps = 1e-8
+            ent = -(R * torch.log(R + eps)).sum(dim=-1)                   # [B, L]
+            logK = math.log(self.K)
+            norm_ent = (ent / logK) * valid_h.squeeze(-1)                 # [B, L]
+            count = valid_h.squeeze(-1).sum(dim=-1).clamp(min=1)          # [B]
+            mean_ent = norm_ent.sum(dim=-1) / count                       # [B]
+            routing_conf = (1.0 - mean_ent).unsqueeze(-1)                 # [B, 1]
+
+            # Calibrate: boost interests with higher support, gated by confidence
+            calibrated = base_weights * (support + eps).pow(
+                self.support_beta * routing_conf)
+            interest_weights = calibrated / calibrated.sum(dim=-1, keepdim=True).clamp_min(eps)
+        else:
+            interest_weights = base_weights
+
         user_vector = (interest_vectors * interest_weights[:, :, None]).sum(dim=1)
         prediction = (user_vector[:, None, :] * candidate_emb).sum(dim=-1)
 
@@ -270,6 +310,10 @@ class LLMMIRecHSDIR(SequentialModel):
             out_dict["interest_vectors"] = interest_vectors
             out_dict["attention_maps"] = attention_maps
             out_dict["interest_weights"] = interest_weights
+            out_dict["base_interest_weights"] = base_weights
+            if support_dist is not None:
+                out_dict["support_distribution"] = support_dist
+                out_dict["routing_confidence"] = routing_conf.squeeze(-1)
             out_dict["user_vector"] = user_vector
             out_dict["history_vectors"] = history_emb_raw
             out_dict["candidate_vectors"] = candidate_emb

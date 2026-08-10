@@ -175,6 +175,54 @@ def test_padding_nan_safety():
     print("  backward finite: OK")
 
 
+def test_support_confidence_calibration():
+    """Support-confidence calibration: numerical safety and invariants."""
+    B, L, K = 2, 5, 4
+    base_w = F.softmax(torch.randn(B, K), dim=-1)
+    R = F.softmax(torch.randn(B, L, K), dim=-1)
+    # Simulate padding
+    valid = torch.tensor([[1,1,1,0,0],[1,1,1,1,0]], dtype=torch.float32).unsqueeze(-1)
+    R = R * valid
+    history_ids = torch.tensor([[1,2,3,0,0],[1,2,3,4,0]], dtype=torch.long)
+
+    # Support
+    support = R.sum(dim=1)
+    support = support / support.sum(dim=-1, keepdim=True).clamp_min(1e-8)
+    assert torch.allclose(support.sum(dim=-1), torch.ones(B), atol=1e-4)
+
+    # Confidence
+    eps = 1e-8
+    ent = -(R * torch.log(R + eps)).sum(dim=-1)
+    norm_ent = (ent / torch.log(torch.tensor(K, dtype=torch.float32))) * valid.squeeze(-1)
+    count = valid.squeeze(-1).sum(dim=-1).clamp(min=1)
+    mean_ent = norm_ent.sum(dim=-1) / count
+    conf = 1.0 - mean_ent
+    assert (conf >= 0).all() and (conf <= 1.01).all(), f"confidence out of range: {conf}"
+
+    # Calibrate
+    beta = 1.0
+    calibrated = base_w * (support + eps).pow(beta * conf.unsqueeze(-1))
+    final_w = calibrated / calibrated.sum(dim=-1, keepdim=True).clamp_min(eps)
+    assert torch.allclose(final_w.sum(dim=-1), torch.ones(B), atol=1e-4), f"final weights don't sum to 1: {final_w.sum(dim=-1)}"
+    assert torch.isfinite(final_w).all(), f"final weights not finite"
+    print(f"  base_w={base_w[0].tolist()}")
+    print(f"  support={support[0].tolist()}")
+    print(f"  conf={conf.tolist()}")
+    print(f"  final_w={final_w[0].tolist()}")
+    print("  support_confidence: OK")
+
+    # Edge case: length 1
+    R1 = F.softmax(torch.randn(1, 1, K), dim=-1)
+    valid1 = torch.ones(1, 1, 1)
+    R1 = R1 * valid1
+    sup1 = R1.sum(dim=1); sup1 = sup1 / sup1.sum(dim=-1, keepdim=True).clamp_min(1e-8)
+    ent1 = -(R1 * torch.log(R1 + eps)).sum(dim=-1)
+    nent1 = (ent1 / torch.log(torch.tensor(K, dtype=torch.float32))) * valid1.squeeze(-1)
+    c1 = 1.0 - nent1.sum(dim=-1) / valid1.squeeze(-1).sum(dim=-1).clamp(min=1)
+    assert torch.isfinite(c1).all(), f"L=1 confidence should be finite: {c1}"
+    print("  length=1 safe: OK")
+
+
 def test_zero_confidence():
     """When valid pairs have zero confidence, loss should be zero (not NaN)."""
     B, L, K = 1, 4, 2
@@ -210,5 +258,6 @@ if __name__ == "__main__":
     test_loss_finite()
     test_teacher_no_grad()
     test_padding_nan_safety()
+    test_support_confidence_calibration()
     test_zero_confidence()
     print("ALL TESTS PASSED")
