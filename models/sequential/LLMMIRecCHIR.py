@@ -33,6 +33,7 @@ class LLMMIRecCHIR(SequentialModel):
         "semantic_rank", "lambda_relation", "aspcf_gate_mode",
         "interest_query_mode", "collab_calibration",
         "prototype_prior_strength", "routing_mode", "dual_view_source",
+        "routing_rho_mode",
     ]
 
     # ========================= Args =========================
@@ -84,6 +85,9 @@ class LLMMIRecCHIR(SequentialModel):
                            choices=["raw", "fused_split"],
                            help="raw: history_semantic/complement from ItemEncoder; "
                                 "fused_split: use history_emb_pos split by semantic/complement_dim")
+        parser.add_argument("--routing_rho_mode", type=str, default="learned",
+                           choices=["learned", "fixed"])
+        parser.add_argument("--routing_rho_value", type=float, default=0.5)
 
         # Relation loss
         parser.add_argument("--lambda_relation", type=float, default=0.01)
@@ -138,6 +142,8 @@ class LLMMIRecCHIR(SequentialModel):
         self.routing_mode = str(getattr(args, "routing_mode", "single"))
         self.routing_gate_hidden = int(getattr(args, "routing_gate_hidden", 32))
         self.dual_view_source = str(getattr(args, "dual_view_source", "raw"))
+        self.routing_rho_mode = str(getattr(args, "routing_rho_mode", "learned"))
+        self.routing_rho_value = float(getattr(args, "routing_rho_value", 0.5))
 
         self.lambda_relation = float(getattr(args, "lambda_relation", 0.01))
         self.relation_sample_size = int(getattr(args, "relation_sample_size", 128))
@@ -196,7 +202,8 @@ class LLMMIRecCHIR(SequentialModel):
                 K=self.K, semantic_dim=self.semantic_dim,
                 complement_dim=self.complement_dim,
                 attn_dim=self.attn_size, gate_hidden=self.routing_gate_hidden,
-                emb_size=self.emb_size)
+                emb_size=self.emb_size,
+                rho_mode=self.routing_rho_mode, rho_value=self.routing_rho_value)
         else:
             self.extractor = QueryMultiInterestExtractor(
                 K=self.K, emb_size=self.emb_size, attn_size=self.attn_size)

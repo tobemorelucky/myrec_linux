@@ -414,14 +414,19 @@ class DualViewInterestExtractor(nn.Module):
         attn_dim: attention projection dim
         gate_hidden: routing gate hidden dim
         emb_size: full item embedding dim (for value projection)
+        rho_mode: "learned" (MLP gate) or "fixed" (constant rho)
+        rho_value: fixed rho value when rho_mode="fixed"
     """
 
     def __init__(self, K: int, semantic_dim: int = 32, complement_dim: int = 32,
-                 attn_dim: int = 32, gate_hidden: int = 32, emb_size: int = 64):
+                 attn_dim: int = 32, gate_hidden: int = 32, emb_size: int = 64,
+                 rho_mode: str = "learned", rho_value: float = 0.5):
         super().__init__()
         self.K = int(K)
         self.attn_dim = int(attn_dim)
         self.emb_size = int(emb_size)
+        self.rho_mode = rho_mode
+        self.rho_value = float(rho_value)
 
         # Semantic attention
         self.Wq_sem = nn.Linear(semantic_dim, attn_dim)
@@ -434,13 +439,16 @@ class DualViewInterestExtractor(nn.Module):
         # Value projection (from full fused history embedding)
         self.Wv = nn.Linear(emb_size, emb_size)
 
-        # Per-interest routing gate
-        self.routing_gate = nn.Sequential(
-            nn.Linear(semantic_dim + complement_dim, gate_hidden),
-            nn.GELU(),
-            nn.Linear(gate_hidden, 1),
-            nn.Sigmoid(),
-        )
+        # Per-interest routing gate (only for learned mode)
+        if rho_mode == "learned":
+            self.routing_gate = nn.Sequential(
+                nn.Linear(semantic_dim + complement_dim, gate_hidden),
+                nn.GELU(),
+                nn.Linear(gate_hidden, 1),
+                nn.Sigmoid(),
+            )
+        else:
+            self.routing_gate = None
 
     def forward(
         self,
@@ -469,8 +477,11 @@ class DualViewInterestExtractor(nn.Module):
         comp_logits = torch.bmm(Q_comp, K_comp.transpose(1, 2)) / scale  # [B, K, L]
 
         # Per-interest routing gate: rho ∈ [0,1]
-        gate_input = torch.cat([semantic_query, collaborative_query], dim=-1)  # [B, K, 64]
-        rho = self.routing_gate(gate_input)  # [B, K, 1]
+        if self.rho_mode == "learned":
+            gate_input = torch.cat([semantic_query, collaborative_query], dim=-1)  # [B, K, 64]
+            rho = self.routing_gate(gate_input)  # [B, K, 1]
+        else:
+            rho = torch.full((B, self.K, 1), self.rho_value, device=device)
 
         # Fused logits
         logits = rho * sem_logits + (1.0 - rho) * comp_logits  # [B, K, L]
