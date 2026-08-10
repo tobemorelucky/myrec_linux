@@ -316,6 +316,10 @@ class QueryMultiInterestExtractor(nn.Module):
         # Scaled dot-product attention
         scale = math.sqrt(self.attn_size)
         scores = torch.bmm(Q, K_mat.transpose(1, 2)) / scale  # [B, K, L]
+
+        # Save raw scores BEFORE mask (for HSDIR routing)
+        raw_route_scores = scores.clone() if return_route_scores else None
+
         logits_before_prior = scores.clone()  # stash for diagnostics
 
         # Optional routing prior
@@ -334,8 +338,8 @@ class QueryMultiInterestExtractor(nn.Module):
         interest_vectors = torch.bmm(attn, V_mat)
 
         if return_route_scores:
-            # Return raw scores for HSDIR routing (after mask, before softmax)
-            return interest_vectors, attn, scores.clone()
+            # Return raw scores BEFORE padding mask (no -inf, safe for softmax over K)
+            return interest_vectors, attn, raw_route_scores
         if attention_prior is not None and prior_strength > 0:
             return interest_vectors, attn, logits_before_prior
         return interest_vectors, attn

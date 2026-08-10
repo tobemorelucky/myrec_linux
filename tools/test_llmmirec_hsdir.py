@@ -115,6 +115,66 @@ def test_teacher_no_grad():
     print("  teacher no grad: OK")
 
 
+def test_padding_nan_safety():
+    """Padding positions must not produce NaN in HSDIR loss path."""
+    B, K, L = 2, 4, 5
+    # Simulate pre-mask raw scores (no -inf)
+    scores = torch.randn(B, K, L)
+    temp = 1.0
+    # Simulate padded history
+    history_ids = torch.tensor([[1, 2, 3, 0, 0], [4, 5, 0, 0, 0]], dtype=torch.long)
+
+    # Step 1: route membership
+    R = F.softmax(scores.transpose(1, 2) / temp, dim=-1)   # [B, L, K]
+    valid = (history_ids > 0).float().unsqueeze(-1)
+    R = R * valid  # zero out padding
+
+    # Check padding positions are zero
+    assert (R[0, 3:, :].abs().max().item() == 0), "Padding row 0 pos 3+ should be 0"
+    assert (R[1, 2:, :].abs().max().item() == 0), "Padding row 1 pos 2+ should be 0"
+    # Check non-padding positions sum to ~1
+    row_sum = R[0, :3, :].sum(dim=-1)
+    assert torch.allclose(row_sum, torch.ones(3), atol=1e-4), f"Valid row sums: {row_sum}"
+    assert torch.isfinite(R).all(), "R should be finite"
+    print("  padding R=0 + finite: OK")
+
+    # Step 2: G_route
+    G = (R @ R.transpose(-1, -2)).clamp(1e-6, 1 - 1e-6)
+    assert torch.isfinite(G).all(), "G_route should be finite"
+    print("  G_route finite: OK")
+
+    # Step 3: Teacher confidences (fake)
+    fine = F.softmax(torch.randn(B, L, 32), dim=-1) * valid
+    coarse = F.softmax(torch.randn(B, L, 8), dim=-1) * valid
+    G_fine = fine @ fine.transpose(-1, -2)
+    G_coarse = coarse @ coarse.transpose(-1, -2)
+    W_pos, W_neg = G_fine, 1.0 - G_coarse
+
+    valid_pair = valid.squeeze(-1).unsqueeze(-1) * valid.squeeze(-1).unsqueeze(-2)
+    diag = torch.eye(L, dtype=torch.bool).unsqueeze(0)
+    valid_pair = valid_pair * (~diag).float()
+
+    pos_sum = (valid_pair * W_pos).sum().clamp(min=1e-8)
+    L_coh = -(valid_pair * W_pos * torch.log(G)).sum() / pos_sum
+
+    neg_sum = (valid_pair * W_neg).sum().clamp(min=1e-8)
+    L_sep = -(valid_pair * W_neg * torch.log(1.0 - G)).sum() / neg_sum
+
+    assert torch.isfinite(L_coh), f"L_coh should be finite: {L_coh}"
+    assert torch.isfinite(L_sep), f"L_sep should be finite: {L_sep}"
+    print(f"  L_coh={L_coh:.4f}, L_sep={L_sep:.4f}: OK")
+
+    # Step 4: backward with a learnable surrogate
+    W = torch.nn.Parameter(torch.randn(B, K, L))
+    scores2 = W  # use learnable param
+    R2 = F.softmax(scores2.transpose(1, 2) / temp, dim=-1) * valid
+    G2 = (R2 @ R2.transpose(-1, -2)).clamp(1e-6, 1 - 1e-6)
+    L_test = -(valid_pair * W_pos * torch.log(G2)).sum() / pos_sum.clamp(min=1e-8)
+    L_test.backward()
+    assert W.grad is not None and torch.isfinite(W.grad).all(), "Gradient should be finite"
+    print("  backward finite: OK")
+
+
 def test_zero_confidence():
     """When valid pairs have zero confidence, loss should be zero (not NaN)."""
     B, L, K = 1, 4, 2
@@ -149,5 +209,6 @@ if __name__ == "__main__":
     test_padding_exclusion()
     test_loss_finite()
     test_teacher_no_grad()
+    test_padding_nan_safety()
     test_zero_confidence()
     print("ALL TESTS PASSED")

@@ -222,7 +222,7 @@ class LLMMIRecHSDIR(SequentialModel):
 
         # 3. Multi-interest extraction (learnable queries)
         route_scores = None  # raw scores for HSDIR
-        need_route = (self.training and self.lambda_hsr > 0)
+        need_route = ((self.training and self.lambda_hsr > 0) or return_intermediate)
         extractor_out = self.extractor(
             history_emb_pos, lengths, return_route_scores=need_route)
         if need_route:
@@ -277,17 +277,20 @@ class LLMMIRecHSDIR(SequentialModel):
                 out_dict.update(aspcf_comps)
             if route_scores is not None:
                 # Student route membership
+                valid_h = (history > 0).float().unsqueeze(-1)
                 R = F.softmax(
-                    route_scores.transpose(1, 2) / self.hsr_student_temp, dim=-1)  # [B,L,K]
+                    route_scores.transpose(1, 2) / self.hsr_student_temp, dim=-1)
+                R = R * valid_h  # zero padding
                 G_route = R @ R.transpose(-1, -2)  # [B,L,L]  permutation-invariant
                 out_dict["route_scores"] = route_scores
                 out_dict["route_membership"] = R
                 out_dict["route_comembership"] = G_route
-                # Teacher relations (frozen lookup)
-                fine = self.t_fine_assign[history]      # [B, L, 32]
-                coarse = self.t_coarse_assign[history]   # [B, L, 8]
-                out_dict["teacher_fine_relation"] = fine @ fine.transpose(-1, -2)
-                out_dict["teacher_coarse_relation"] = coarse @ coarse.transpose(-1, -2)
+                # Teacher relations (if teacher is loaded)
+                if hasattr(self, "t_fine_assign"):
+                    fine = self.t_fine_assign[history]
+                    coarse = self.t_coarse_assign[history]
+                    out_dict["teacher_fine_relation"] = fine @ fine.transpose(-1, -2)
+                    out_dict["teacher_coarse_relation"] = coarse @ coarse.transpose(-1, -2)
 
         return out_dict
 
@@ -307,6 +310,9 @@ class LLMMIRecHSDIR(SequentialModel):
             L_coh, L_sep = self._compute_hsdr_loss(
                 out_dict["_hsdr_route_scores"],
                 out_dict["_hsdr_history_ids"])
+            if not (torch.isfinite(L_coh) and torch.isfinite(L_sep)):
+                raise RuntimeError(
+                    f"[HSDIR] Non-finite HSR loss! L_coh={L_coh:.4f} L_sep={L_sep:.4f}")
             hsr = L_coh + L_sep
             total = total + self.lambda_hsr * hsr
             out_dict["loss_hsr"] = hsr.detach()
@@ -355,9 +361,21 @@ class LLMMIRecHSDIR(SequentialModel):
         # Student: route membership [B, L, K]
         R = F.softmax(route_scores.transpose(1, 2) / self.hsr_student_temp, dim=-1)
 
+        # Zero out padding positions (scores are pre-mask, so pad items still get non-zero softmax)
+        valid_mask = (history_ids > 0).float().unsqueeze(-1)  # [B, L, 1]
+        R = R * valid_mask
+
         # Student co-membership: G_route = R @ R^T [B, L, L]
         # Permutation-invariant: independent of interest slot numbering.
-        G_route = (R @ R.transpose(-1, -2)).clamp(1e-6, 1 - 1e-6)
+        G_route = R @ R.transpose(-1, -2)
+        G_route = G_route.clamp(1e-6, 1 - 1e-6)
+
+        # Safety: assert finite before computing loss
+        if not torch.isfinite(G_route).all():
+            raise RuntimeError(
+                f"[HSDIR] G_route contains NaN/Inf! "
+                f"R: nan={torch.isnan(R).any().item()} inf={torch.isinf(R).any().item()}"
+            )
 
         # Teacher: frozen semantic relation graphs
         fine = self.t_fine_assign[history_ids]     # [B, L, 32]
