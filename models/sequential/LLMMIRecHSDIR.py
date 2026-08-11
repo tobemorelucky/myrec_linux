@@ -34,7 +34,8 @@ class LLMMIRecHSDIR(SequentialModel):
         "emb_size", "K", "item_encoder", "adapter_hidden",
         "adapter_activation", "adapter_use_ln",
         "semantic_rank", "lambda_relation", "aspcf_gate_mode",
-        "lambda_hsr", "hsr_teacher_mode", "hsr_loss_mode", "aggregation_mode",
+        "lambda_hsr", "hsr_teacher_mode", "hsr_loss_mode",
+        "hsr_confidence_mode", "aggregation_mode",
     ]
 
     # ========================= Args =========================
@@ -81,6 +82,8 @@ class LLMMIRecHSDIR(SequentialModel):
         parser.add_argument("--hsr_loss_mode", type=str, default="absolute",
                            choices=["absolute", "relative"])
         parser.add_argument("--hsr_margin", type=float, default=0.1)
+        parser.add_argument("--hsr_confidence_mode", type=str, default="semantic",
+                           choices=["semantic", "agreement"])
         parser.add_argument("--teacher_path", type=str, default="")
 
         # Aggregation calibration
@@ -138,6 +141,7 @@ class LLMMIRecHSDIR(SequentialModel):
         self.hsr_student_temp = float(getattr(args, "hsr_student_temp", 1.0))
         self.hsr_loss_mode = str(getattr(args, "hsr_loss_mode", "absolute"))
         self.hsr_margin = float(getattr(args, "hsr_margin", 0.1))
+        self.hsr_confidence_mode = str(getattr(args, "hsr_confidence_mode", "semantic"))
         self.teacher_path = str(getattr(args, "teacher_path", ""))
         self.aggregation_mode = str(getattr(args, "aggregation_mode", "base"))
         self.support_beta = float(getattr(args, "support_beta", 1.0))
@@ -169,6 +173,8 @@ class LLMMIRecHSDIR(SequentialModel):
         logging.info(f"[HSDIR] initialized: enc={self.item_encoder_mode} K={self.K} "
                      f"lambda_relation={self.lambda_relation} lambda_hsr={self.lambda_hsr} "
                      f"teacher_mode={self.hsr_teacher_mode} "
+                     f"confidence={self.hsr_confidence_mode} "
+                     f"loss={self.hsr_loss_mode} "
                      f"agg={self.aggregation_mode}")
         logging.info(f"[HSDIR] #params: {self.count_variables()}")
 
@@ -298,6 +304,8 @@ class LLMMIRecHSDIR(SequentialModel):
         if need_route:
             out_dict["_hsdr_route_scores"] = route_scores       # [B, K, L]
             out_dict["_hsdr_history_ids"] = history              # [B, L]
+            if self.hsr_confidence_mode == "agreement":
+                out_dict["_hsdr_history_emb"] = history_emb_raw  # [B, L, D] (no pos)
 
         # 9. NaN/Inf check
         if not self._first_batch_checked:
@@ -358,7 +366,8 @@ class LLMMIRecHSDIR(SequentialModel):
         if "_hsdr_route_scores" in out_dict and self.lambda_hsr > 0:
             L_coh, L_sep, hsr_gap = self._compute_hsdr_loss(
                 out_dict["_hsdr_route_scores"],
-                out_dict["_hsdr_history_ids"])
+                out_dict["_hsdr_history_ids"],
+                out_dict.get("_hsdr_history_emb", None))
             if self.hsr_loss_mode == "relative":
                 if not torch.isfinite(L_coh):
                     raise RuntimeError(f"[HSDIR] Non-finite relative HSR loss: {L_coh}")
@@ -403,11 +412,12 @@ class LLMMIRecHSDIR(SequentialModel):
 
     # ---------- HSDIR loss ----------
 
-    def _compute_hsdr_loss(self, route_scores, history_ids):
+    def _compute_hsdr_loss(self, route_scores, history_ids, history_emb=None):
         """Hierarchical Semantic Distillation routing loss.
 
         Student: route_membership R from raw attention scores.
         Teacher: frozen fine/coarse semantic assignments → G_fine, G_coarse.
+        Optional agreement mode: collaborative cosine C modulates confidence.
 
         ASPCF relation: item-level representation preservation.
         HSDIR:           history-level interest co-membership supervision.
@@ -447,16 +457,29 @@ class LLMMIRecHSDIR(SequentialModel):
         diag = torch.eye(L, dtype=torch.bool, device=device).unsqueeze(0)
         valid_pair = valid_pair * (~diag).float()
 
-        # Confidence weights
+        # Confidence weights (from hierarchical teacher)
         if self.hsr_teacher_mode == "hierarchical":
-            W_pos = G_fine          # fine-level semantic agreement
-            W_neg = 1.0 - G_coarse  # coarse-level semantic disagreement
+            W_pos_sem = G_fine
+            W_neg_sem = 1.0 - G_coarse
         elif self.hsr_teacher_mode == "fine":
-            W_pos = G_fine
-            W_neg = 1.0 - G_fine
+            W_pos_sem = G_fine
+            W_neg_sem = 1.0 - G_fine
         else:  # coarse
-            W_pos = G_coarse
-            W_neg = 1.0 - G_coarse
+            W_pos_sem = G_coarse
+            W_neg_sem = 1.0 - G_coarse
+
+        # Collaborative agreement modulation
+        if self.hsr_confidence_mode == "agreement" and history_emb is not None:
+            # Collaborative cosine similarity C ∈ [0,1] (detached — no grad to ASPCF)
+            he_detach = history_emb.detach()
+            he_norm = F.normalize(he_detach, dim=-1, eps=1e-8)
+            C = (he_norm @ he_norm.transpose(-1, -2))     # [B, L, L], in [-1, 1]
+            C = (C + 1.0) / 2.0                            # [0, 1]
+            W_pos = W_pos_sem * C
+            W_neg = W_neg_sem * (1.0 - C)
+        else:
+            W_pos = W_pos_sem
+            W_neg = W_neg_sem
 
         if self.hsr_loss_mode == "relative":
             # Per-user g_pos and g_neg
