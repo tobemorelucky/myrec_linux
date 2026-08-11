@@ -61,7 +61,8 @@ def per_user_k_cos(x):
         v = x[b].reshape(kk, -1)
         vn = F.normalize(v, dim=-1, eps=1e-8)
         cm = vn @ vn.t()
-        off = (cm * (1 - torch.eye(kk))).sum() / max(kk * (kk - 1), 1)
+        eye = torch.eye(kk, device=cm.device, dtype=cm.dtype)
+        off = (cm * (1 - eye)).sum() / max(kk * (kk - 1), 1)
         vals.append(float(off))
     return torch.tensor(vals)
 

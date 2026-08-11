@@ -80,8 +80,10 @@ class LLMMIRecHSDIR(SequentialModel):
                            choices=["fine", "coarse", "hierarchical"])
         parser.add_argument("--hsr_student_temp", type=float, default=1.0)
         parser.add_argument("--hsr_loss_mode", type=str, default="absolute",
-                           choices=["absolute", "relative"])
+                           choices=["absolute", "relative", "pair_selective"])
         parser.add_argument("--hsr_margin", type=float, default=0.1)
+        parser.add_argument("--hsr_pair_margin", type=float, default=0.1,
+                           help="Margin for pair_selective HSR loss")
         parser.add_argument("--hsr_confidence_mode", type=str, default="semantic",
                            choices=["semantic", "agreement"])
         parser.add_argument("--teacher_path", type=str, default="")
@@ -141,6 +143,7 @@ class LLMMIRecHSDIR(SequentialModel):
         self.hsr_student_temp = float(getattr(args, "hsr_student_temp", 1.0))
         self.hsr_loss_mode = str(getattr(args, "hsr_loss_mode", "absolute"))
         self.hsr_margin = float(getattr(args, "hsr_margin", 0.1))
+        self.hsr_pair_margin = float(getattr(args, "hsr_pair_margin", 0.1))
         self.hsr_confidence_mode = str(getattr(args, "hsr_confidence_mode", "semantic"))
         self.teacher_path = str(getattr(args, "teacher_path", ""))
         self.aggregation_mode = str(getattr(args, "aggregation_mode", "base"))
@@ -371,7 +374,15 @@ class LLMMIRecHSDIR(SequentialModel):
             if self.hsr_loss_mode == "relative":
                 if not torch.isfinite(L_coh):
                     raise RuntimeError(f"[HSDIR] Non-finite relative HSR loss: {L_coh}")
-                hsr = L_coh  # L_coh holds the relative loss
+                hsr = L_coh
+                total = total + self.lambda_hsr * hsr
+                out_dict["loss_hsr"] = hsr.detach()
+                if hsr_gap is not None:
+                    out_dict["loss_hsr_gap"] = hsr_gap.detach()
+            elif self.hsr_loss_mode == "pair_selective":
+                if not torch.isfinite(L_coh):
+                    raise RuntimeError(f"[HSDIR] Non-finite pair_selective HSR loss: {L_coh}")
+                hsr = L_coh
                 total = total + self.lambda_hsr * hsr
                 out_dict["loss_hsr"] = hsr.detach()
                 if hsr_gap is not None:
@@ -480,6 +491,43 @@ class LLMMIRecHSDIR(SequentialModel):
         else:
             W_pos = W_pos_sem
             W_neg = W_neg_sem
+
+        if self.hsr_loss_mode == "pair_selective":
+            # Anchor-level selective positive/negative pair ranking.
+            M = self.hsr_pair_margin
+            valid_anchor_mask = valid_pair.sum(dim=-1) > 0  # [B, L]
+
+            pos_scores = G_fine.clone()
+            pos_scores[valid_pair == 0] = float("-inf")
+            p_idx = pos_scores.argmax(dim=-1)  # [B, L]
+
+            batch_idx = torch.arange(B, device=device)[:, None].expand(-1, L)
+            L_arange = torch.arange(L, device=device).unsqueeze(0)
+            neg_scores = G_coarse.clone()
+            neg_scores[valid_pair == 0] = float("inf")
+            neg_scores[batch_idx, L_arange, p_idx] = float("inf")
+            n_idx = neg_scores.argmin(dim=-1)  # [B, L]
+
+            pos_valid = valid_pair[batch_idx, L_arange, p_idx]
+            neg_valid = valid_pair[batch_idx, L_arange, n_idx]
+            anchor_ok = valid_anchor_mask & pos_valid & neg_valid & (p_idx != n_idx)
+
+            if anchor_ok.sum() < 1:
+                return torch.zeros([], device=device), torch.zeros([], device=device), None
+
+            c_i = G_fine[batch_idx, L_arange, p_idx] * \
+                  (1.0 - G_coarse[batch_idx, L_arange, n_idx])
+            c_i = c_i.detach()
+
+            r_pos = G_route[batch_idx, L_arange, p_idx]
+            r_neg = G_route[batch_idx, L_arange, n_idx]
+
+            loss_per_anchor = c_i * F.relu(M - r_pos + r_neg)
+            total_c = (c_i * anchor_ok.float()).sum().clamp(min=1e-8)
+            L_hsr = (loss_per_anchor * anchor_ok.float()).sum() / total_c
+
+            gap_val = (r_pos - r_neg)[anchor_ok].detach().mean()
+            return L_hsr, torch.zeros([], device=device), gap_val
 
         if self.hsr_loss_mode == "relative":
             # Per-user g_pos and g_neg

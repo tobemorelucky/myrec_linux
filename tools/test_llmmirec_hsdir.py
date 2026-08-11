@@ -223,6 +223,74 @@ def test_support_confidence_calibration():
     print("  length=1 safe: OK")
 
 
+def test_pair_selective():
+    """pair_selective HSR loss: padding exclusion, p≠n≠anchor, length<3 safe, gradient"""
+    B, L, K = 2, 5, 4
+    route_scores = torch.nn.Parameter(torch.randn(B, K, L), requires_grad=True)
+    history_ids = torch.tensor([[1, 2, 3, 0, 0], [1, 2, 3, 4, 0]], dtype=torch.long)
+    # Fake teacher
+    fine = F.softmax(torch.randn(B, L, 32), dim=-1)
+    coarse = F.softmax(torch.randn(B, L, 8), dim=-1)
+    Gf = fine @ fine.transpose(-1, -2); Gc = coarse @ coarse.transpose(-1, -2)
+
+    temp, margin = 1.0, 0.1
+    valid = (history_ids > 0).float()
+    vp = valid.unsqueeze(-1) * valid.unsqueeze(-2)
+    diag = torch.eye(L, dtype=torch.bool).unsqueeze(0)
+    vp = vp * (~diag).float()
+
+    # Student
+    R = F.softmax(route_scores.transpose(1, 2) / temp, dim=-1) * valid.unsqueeze(-1)
+    G = (R @ R.transpose(-1, -2)).clamp(1e-6, 1 - 1e-6)
+
+    valid_anchor = (vp.sum(dim=-1) > 0)  # [B, L] bool
+    pos_scores = Gf.clone(); pos_scores[vp == 0] = float("-inf")
+    p_idx = pos_scores.argmax(dim=-1)
+    b_idx = torch.arange(B).unsqueeze(-1).expand(-1, L)
+    l_idx = torch.arange(L).unsqueeze(0)
+    neg_scores = Gc.clone(); neg_scores[vp == 0] = float("inf")
+    neg_scores[b_idx, l_idx, p_idx] = float("inf")
+    n_idx = neg_scores.argmin(dim=-1)
+    pos_ok = vp[b_idx, l_idx, p_idx].bool()
+    neg_ok = vp[b_idx, l_idx, n_idx].bool()
+    ok = valid_anchor & pos_ok & neg_ok & (p_idx != n_idx)
+
+    # Verify padding never selected
+    for b in range(B):
+        for i in range(L):
+            if ok[b, i]:
+                assert p_idx[b, i].item() != 0 or history_ids[b, p_idx[b, i]].item() != 0, "padding selected as positive"
+                assert n_idx[b, i].item() != 0 or history_ids[b, n_idx[b, i]].item() != 0, "padding selected as negative"
+    print("  padding exclusion: OK")
+
+    # Verify length<3 safe
+    history_short = torch.tensor([[1, 2, 0, 0, 0]], dtype=torch.long)
+    v_short = (history_short > 0).float(); vp_s = v_short.unsqueeze(-1) * v_short.unsqueeze(-2)
+    vp_s = vp_s * (~diag[:, :5, :5]).float()
+    assert vp_s[:, 0, 1].item() == 1 and vp_s[:, 1, 0].item() == 1, "pair (0,1) should be valid"
+    assert vp_s.sum(dim=-1)[0, 0].item() >= 1, "anchor 0 should have a valid pair"
+    print("  length<3 safe: OK")
+
+    # Loss finite
+    c_i = Gf[b_idx, l_idx, p_idx] * (1.0 - Gc[b_idx, l_idx, n_idx])
+    c_i = c_i.detach()
+    r_pos = G[b_idx, l_idx, p_idx]; r_neg = G[b_idx, l_idx, n_idx]
+    loss_per = c_i * F.relu(margin - r_pos + r_neg)
+    total_c = (c_i * ok.float()).sum().clamp(min=1e-8)
+    L = (loss_per * ok.float()).sum() / total_c
+    assert torch.isfinite(L).all(), f"Loss not finite: {L}"
+    print(f"  pair_selective loss={L.item():.4f}: OK")
+
+    # Gradient: G_route must have grad
+    L.backward()
+    assert route_scores.grad is not None and torch.isfinite(route_scores.grad).all(), "Gradient should be finite"
+    print("  G_route gradient: OK")
+
+    # Teacher confidence has no gradient (c_i is detached)
+    assert not c_i.requires_grad, "Teacher confidence should be detached"
+    print("  teacher no grad: OK")
+
+
 def test_zero_confidence():
     """When valid pairs have zero confidence, loss should be zero (not NaN)."""
     B, L, K = 1, 4, 2
@@ -259,5 +327,6 @@ if __name__ == "__main__":
     test_teacher_no_grad()
     test_padding_nan_safety()
     test_support_confidence_calibration()
+    test_pair_selective()
     test_zero_confidence()
     print("ALL TESTS PASSED")

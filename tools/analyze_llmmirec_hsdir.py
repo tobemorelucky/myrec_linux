@@ -38,6 +38,8 @@ def parse_args():
     p.add_argument("--aggregation_mode", type=str, default="base",
                    choices=["base", "support_confidence"])
     p.add_argument("--support_beta", type=float, default=1.0)
+    p.add_argument("--hsr_loss_mode", type=str, default="absolute",
+                   choices=["absolute", "relative", "pair_selective"])
     p.add_argument("--max_batches", type=int, default=50)
     p.add_argument("--output_dir", type=str, default="./diagnostics_hsdir")
     p.add_argument("--device", type=str, default="cuda")
@@ -151,6 +153,7 @@ def main():
     ma.teacher_path = args.teacher_path
     ma.aggregation_mode = args.aggregation_mode
     ma.support_beta = args.support_beta
+    ma.hsr_loss_mode = args.hsr_loss_mode
     ma.dropout = 0.1
 
     model = LLMMIRecHSDIR(ma, corpus).to(args.device)
@@ -366,6 +369,43 @@ def main():
             stats["diff_coarse_route_score"] = round(float(np.mean(diff_coarse_list)), 6)
             stats["corr_route_fine"] = round(float(np.mean(corr_rf_list)) if corr_rf_list else 0.0, 6)
             stats["corr_route_coarse"] = round(float(np.mean(corr_rc_list)) if corr_rc_list else 0.0, 6)
+
+    # ---- D. Pair metrics (pair_selective diagnostics) ----
+    if has_routing:
+        pstat_anchor_ratio, pstat_conf, pstat_rpos, pstat_rneg, pstat_gap = [], [], [], [], []
+        for bi in range(len(batches_G_route)):
+            G = batches_G_route[bi]; Gf = batches_fine_rel[bi]; Gc = batches_coarse_rel[bi]
+            h = batches_history[bi]
+            if G is None: continue
+            B_bi, L_bi = h.shape
+            valid = (h > 0).float()
+            vp = valid.unsqueeze(-1) * valid.unsqueeze(-2)
+            diag = torch.eye(L_bi, dtype=torch.bool).unsqueeze(0)
+            vp = vp * (~diag).float()
+            valid_anchor = vp.sum(dim=-1) > 0  # [B_bi, L_bi]
+            pos_scores = Gf.clone(); pos_scores[vp == 0] = float("-inf")
+            p_idx = pos_scores.argmax(dim=-1)  # [B_bi, L_bi]
+            neg_scores = Gc.clone(); neg_scores[vp == 0] = float("inf")
+            bi_range = torch.arange(B_bi).unsqueeze(-1).expand(-1, L_bi)
+            l_range = torch.arange(L_bi).unsqueeze(0)
+            neg_scores[bi_range, l_range, p_idx] = float("inf")
+            n_idx = neg_scores.argmin(dim=-1)
+            pos_ok = vp[bi_range, l_range, p_idx]; neg_ok = vp[bi_range, l_range, n_idx]
+            ok = valid_anchor & pos_ok & neg_ok & (p_idx != n_idx)
+            if ok.sum() < 1: continue
+            c_i = Gf[bi_range, l_range, p_idx] * (1.0 - Gc[bi_range, l_range, n_idx])
+            rp = G[bi_range, l_range, p_idx]; rn = G[bi_range, l_range, n_idx]
+            pstat_anchor_ratio.append(float(ok.float().mean()))
+            pstat_conf.append(float(c_i[ok].mean()))
+            pstat_rpos.append(float(rp[ok].mean()))
+            pstat_rneg.append(float(rn[ok].mean()))
+            pstat_gap.append(float((rp - rn)[ok].mean()))
+        if pstat_gap:
+            stats["pair_valid_anchor_ratio"] = round(float(np.mean(pstat_anchor_ratio)), 4)
+            stats["pair_teacher_confidence"] = round(float(np.mean(pstat_conf)), 4)
+            stats["pair_positive_route"] = round(float(np.mean(pstat_rpos)), 4)
+            stats["pair_negative_route"] = round(float(np.mean(pstat_rneg)), 4)
+            stats["pair_route_gap"] = round(float(np.mean(pstat_gap)), 4)
 
     # Save
     json_path = os.path.join(args.output_dir, "stats.json")
