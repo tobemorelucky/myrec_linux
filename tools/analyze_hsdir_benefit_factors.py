@@ -178,7 +178,7 @@ def main():
             else:
                 route_ent = torch.zeros(B)
 
-            # Semantic diversity: fine assignment entropy per history item
+            # Semantic diversity: normalized entropy of valid fine distribution mean
             fine = fine_assign[history]  # [B, L, 32]
             sem_div = []
             for b in range(B):
@@ -186,8 +186,9 @@ def main():
                 if vl <= 0:
                     sem_div.append(0.0)
                     continue
-                ent_list = [float(normalized_entropy(fine[b, j])) for j in range(vl)]
-                sem_div.append(float(np.mean(ent_list)) if ent_list else 0.0)
+                valid_fine = fine[b, :vl]  # [vl, 32]
+                q_bar = valid_fine.mean(dim=0)  # [32]
+                sem_div.append(float(normalized_entropy(q_bar)))
             sem_div = torch.tensor(sem_div, dtype=torch.float32)
 
             # Semantic-collaborative agreement
