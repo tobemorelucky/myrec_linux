@@ -21,6 +21,7 @@ HSR_LOSS_MODE=${HSR_LOSS_MODE:-absolute}
 HSR_MARGIN=${HSR_MARGIN:-0.1}
 HSR_CONFIDENCE_MODE=${HSR_CONFIDENCE_MODE:-semantic}
 HSR_PAIR_MARGIN=${HSR_PAIR_MARGIN:-0.1}
+HSR_ROUTE_SOURCE=${HSR_ROUTE_SOURCE:-raw}
 SEMANTIC_RANK=512
 LAMBDA_RELATION=0.01
 
@@ -34,7 +35,7 @@ else
   EPOCH=200; EARLY_STOP=10; NUM_WORKERS=5; SMOKE_TAG=""
 fi
 
-LABEL="hsdir_${HSR_TEACHER_MODE}_lh${LAMBDA_HSR}_${HSR_CONFIDENCE_MODE}_${HSR_LOSS_MODE}_pm${HSR_PAIR_MARGIN}"
+LABEL="hsdir_${HSR_TEACHER_MODE}_lh${LAMBDA_HSR}_${HSR_CONFIDENCE_MODE}_${HSR_LOSS_MODE}_${HSR_ROUTE_SOURCE}_pm${HSR_PAIR_MARGIN}"
 SUMMARY_FILE="${ROOT_LOG_DIR}/summary_seed${SEED}.tsv"
 
 if [ ! -f "${SUMMARY_FILE}" ]; then
@@ -96,6 +97,7 @@ python main.py \
   --hsr_margin "${HSR_MARGIN}" \
   --hsr_pair_margin "${HSR_PAIR_MARGIN}" \
   --hsr_confidence_mode "${HSR_CONFIDENCE_MODE}" \
+  --hsr_route_source "${HSR_ROUTE_SOURCE}" \
   --teacher_path "${TEACHER_PATH}" \
   --dropout 0.1 \
   --lr 0.008 \

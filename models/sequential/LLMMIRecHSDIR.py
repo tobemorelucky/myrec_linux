@@ -35,7 +35,7 @@ class LLMMIRecHSDIR(SequentialModel):
         "adapter_activation", "adapter_use_ln",
         "semantic_rank", "lambda_relation", "aspcf_gate_mode",
         "lambda_hsr", "hsr_teacher_mode", "hsr_loss_mode",
-        "hsr_confidence_mode", "aggregation_mode",
+        "hsr_confidence_mode", "hsr_route_source", "aggregation_mode",
     ]
 
     # ========================= Args =========================
@@ -86,6 +86,8 @@ class LLMMIRecHSDIR(SequentialModel):
                            help="Margin for pair_selective HSR loss")
         parser.add_argument("--hsr_confidence_mode", type=str, default="semantic",
                            choices=["semantic", "agreement"])
+        parser.add_argument("--hsr_route_source", type=str, default="raw",
+                           choices=["raw", "attention_contribution"])
         parser.add_argument("--teacher_path", type=str, default="")
 
         # Aggregation calibration
@@ -146,6 +148,7 @@ class LLMMIRecHSDIR(SequentialModel):
         self.hsr_pair_margin = float(getattr(args, "hsr_pair_margin", 0.1))
         self.hsr_confidence_mode = str(getattr(args, "hsr_confidence_mode", "semantic"))
         self.teacher_path = str(getattr(args, "teacher_path", ""))
+        self.hsr_route_source = str(getattr(args, "hsr_route_source", "raw"))
         self.aggregation_mode = str(getattr(args, "aggregation_mode", "base"))
         self.support_beta = float(getattr(args, "support_beta", 1.0))
 
@@ -305,10 +308,13 @@ class LLMMIRecHSDIR(SequentialModel):
 
         # 8. HSDIR stashing (training-only)
         if need_route:
-            out_dict["_hsdr_route_scores"] = route_scores       # [B, K, L]
-            out_dict["_hsdr_history_ids"] = history              # [B, L]
+            if self.hsr_route_source == "attention_contribution":
+                out_dict["_hsdr_attention_maps"] = attention_maps  # [B, K, L]
+            else:
+                out_dict["_hsdr_route_scores"] = route_scores     # [B, K, L]
+            out_dict["_hsdr_history_ids"] = history                # [B, L]
             if self.hsr_confidence_mode == "agreement":
-                out_dict["_hsdr_history_emb"] = history_emb_raw  # [B, L, D] (no pos)
+                out_dict["_hsdr_history_emb"] = history_emb_raw    # [B, L, D] (no pos)
 
         # 9. NaN/Inf check
         if not self._first_batch_checked:
@@ -335,16 +341,25 @@ class LLMMIRecHSDIR(SequentialModel):
             out_dict["candidate_vectors"] = candidate_emb
             if aspcf_comps is not None:
                 out_dict.update(aspcf_comps)
-            if route_scores is not None:
-                # Student route membership
+            if route_scores is not None or (
+                    self.hsr_route_source == "attention_contribution" and need_route):
+                # Student membership for HSDIR
                 valid_h = (history > 0).float().unsqueeze(-1)
-                R = F.softmax(
-                    route_scores.transpose(1, 2) / self.hsr_student_temp, dim=-1)
-                R = R * valid_h  # zero padding
-                G_route = R @ R.transpose(-1, -2)  # [B,L,L]  permutation-invariant
+                if self.hsr_route_source == "attention_contribution":
+                    C = attention_maps.transpose(1, 2)  # [B, L, K]
+                    C = C * valid_h
+                    C = C / C.sum(dim=-1, keepdim=True).clamp_min(1e-8)
+                    hsr_membership = C
+                else:
+                    R = F.softmax(
+                        route_scores.transpose(1, 2) / self.hsr_student_temp, dim=-1)
+                    hsr_membership = R * valid_h
+                hsr_comembership = hsr_membership @ hsr_membership.transpose(-1, -2)
                 out_dict["route_scores"] = route_scores
-                out_dict["route_membership"] = R
-                out_dict["route_comembership"] = G_route
+                out_dict["route_membership"] = hsr_membership
+                out_dict["route_comembership"] = hsr_comembership
+                out_dict["hsr_student_membership"] = hsr_membership
+                out_dict["hsr_student_comembership"] = hsr_comembership
                 # Teacher relations (if teacher is loaded)
                 if hasattr(self, "t_fine_assign"):
                     fine = self.t_fine_assign[history]
@@ -366,11 +381,14 @@ class LLMMIRecHSDIR(SequentialModel):
             out_dict["loss_relation"] = rel.detach()
 
         # HSDIR loss (training-only)
-        if "_hsdr_route_scores" in out_dict and self.lambda_hsr > 0:
+        has_hsr = (("_hsdr_route_scores" in out_dict or "_hsdr_attention_maps" in out_dict)
+                    and self.lambda_hsr > 0)
+        if has_hsr:
             L_coh, L_sep, hsr_gap = self._compute_hsdr_loss(
-                out_dict["_hsdr_route_scores"],
+                out_dict.get("_hsdr_route_scores", None),
                 out_dict["_hsdr_history_ids"],
-                out_dict.get("_hsdr_history_emb", None))
+                out_dict.get("_hsdr_history_emb", None),
+                out_dict.get("_hsdr_attention_maps", None))
             if self.hsr_loss_mode == "relative":
                 if not torch.isfinite(L_coh):
                     raise RuntimeError(f"[HSDIR] Non-finite relative HSR loss: {L_coh}")
@@ -423,37 +441,48 @@ class LLMMIRecHSDIR(SequentialModel):
 
     # ---------- HSDIR loss ----------
 
-    def _compute_hsdr_loss(self, route_scores, history_ids, history_emb=None):
+    def _compute_hsdr_loss(self, route_scores, history_ids, history_emb=None,
+                           attention_maps=None):
         """Hierarchical Semantic Distillation routing loss.
 
-        Student: route_membership R from raw attention scores.
+        Student:
+          raw: route_membership R from raw attention scores.
+          attention_contribution: C from attention_maps (true routing weights).
         Teacher: frozen fine/coarse semantic assignments → G_fine, G_coarse.
-        Optional agreement mode: collaborative cosine C modulates confidence.
 
         ASPCF relation: item-level representation preservation.
         HSDIR:           history-level interest co-membership supervision.
         HSDIR uses ONLY history_items (no candidate/target leakage).
         """
-        B, K, L = route_scores.shape
-        device = route_scores.device
+        if route_scores is not None:
+            B, K, L = route_scores.shape
+            device = route_scores.device
+        else:
+            B, K, L = attention_maps.shape
+            device = attention_maps.device
 
-        # Student: route membership [B, L, K]
-        R = F.softmax(route_scores.transpose(1, 2) / self.hsr_student_temp, dim=-1)
-
-        # Zero out padding positions (scores are pre-mask, so pad items still get non-zero softmax)
         valid_mask = (history_ids > 0).float().unsqueeze(-1)  # [B, L, 1]
-        R = R * valid_mask
 
-        # Student co-membership: G_route = R @ R^T [B, L, L]
-        # Permutation-invariant: independent of interest slot numbering.
-        G_route = R @ R.transpose(-1, -2)
+        # Student membership
+        if self.hsr_route_source == "attention_contribution":
+            C = attention_maps.transpose(1, 2)               # [B, L, K]
+            C = C * valid_mask
+            C = C / C.sum(dim=-1, keepdim=True).clamp_min(1e-8)
+            student_membership = C
+        else:
+            R = F.softmax(route_scores.transpose(1, 2) / self.hsr_student_temp, dim=-1)
+            student_membership = R * valid_mask
+
+        # Student co-membership
+        G_route = student_membership @ student_membership.transpose(-1, -2)
         G_route = G_route.clamp(1e-6, 1 - 1e-6)
 
-        # Safety: assert finite before computing loss
+        # Safety
         if not torch.isfinite(G_route).all():
             raise RuntimeError(
                 f"[HSDIR] G_route contains NaN/Inf! "
-                f"R: nan={torch.isnan(R).any().item()} inf={torch.isinf(R).any().item()}"
+                f"student: nan={torch.isnan(student_membership).any().item()} "
+                f"inf={torch.isinf(student_membership).any().item()}"
             )
 
         # Teacher: frozen semantic relation graphs
@@ -508,8 +537,8 @@ class LLMMIRecHSDIR(SequentialModel):
             neg_scores[batch_idx, L_arange, p_idx] = float("inf")
             n_idx = neg_scores.argmin(dim=-1)  # [B, L]
 
-            pos_valid = valid_pair[batch_idx, L_arange, p_idx]
-            neg_valid = valid_pair[batch_idx, L_arange, n_idx]
+            pos_valid = valid_pair[batch_idx, L_arange, p_idx].bool()
+            neg_valid = valid_pair[batch_idx, L_arange, n_idx].bool()
             anchor_ok = valid_anchor_mask & pos_valid & neg_valid & (p_idx != n_idx)
 
             if anchor_ok.sum() < 1:

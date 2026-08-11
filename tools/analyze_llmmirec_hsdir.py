@@ -390,7 +390,8 @@ def main():
             l_range = torch.arange(L_bi).unsqueeze(0)
             neg_scores[bi_range, l_range, p_idx] = float("inf")
             n_idx = neg_scores.argmin(dim=-1)
-            pos_ok = vp[bi_range, l_range, p_idx]; neg_ok = vp[bi_range, l_range, n_idx]
+            pos_ok = vp[bi_range, l_range, p_idx].bool()
+            neg_ok = vp[bi_range, l_range, n_idx].bool()
             ok = valid_anchor & pos_ok & neg_ok & (p_idx != n_idx)
             if ok.sum() < 1: continue
             c_i = Gf[bi_range, l_range, p_idx] * (1.0 - Gc[bi_range, l_range, n_idx])

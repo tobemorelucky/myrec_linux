@@ -291,6 +291,52 @@ def test_pair_selective():
     print("  teacher no grad: OK")
 
 
+def test_attention_contribution():
+    """attention_contribution: C from A, valid sums to 1, padding=0, gradient from HSR back to extractor."""
+    B, K, L = 2, 4, 5
+    # Simulate attention_maps from extractor (with gradients)
+    A = torch.nn.Parameter(torch.randn(B, K, L), requires_grad=True)
+    # Apply softmax (as extractor does)
+    am = F.softmax(A, dim=-1)  # [B, K, L]
+    history_ids = torch.tensor([[1, 2, 3, 0, 0], [1, 2, 0, 0, 0]], dtype=torch.long)
+    valid = (history_ids > 0).float().unsqueeze(-1)  # [B, L, 1]
+
+    # C construction
+    C = am.transpose(1, 2)  # [B, L, K]
+    C = C * valid
+    C = C / C.sum(dim=-1, keepdim=True).clamp_min(1e-8)
+
+    assert C.shape == (B, L, K), f"Shape: {C.shape}"
+    # Valid items sum to 1
+    rsum = C[0, :3, :].sum(dim=-1)
+    assert torch.allclose(rsum, torch.ones(3), atol=1e-4), f"Valid row sum: {rsum}"
+    # Padding is 0
+    assert (C[0, 3:, :].abs().max().item() == 0), "Padding C should be 0"
+    print("  C shape + valid sum + padding=0: OK")
+
+    # G_student finite
+    G = (C @ C.transpose(-1, -2)).clamp(1e-6, 1 - 1e-6)
+    assert torch.isfinite(G).all(), "G_student not finite"
+    print("  G_student finite: OK")
+
+    # Gradient from HSR loss back to A
+    Gf = F.softmax(torch.randn(B, L, 32), dim=-1) @ F.softmax(torch.randn(B, L, 32), dim=-1).transpose(-1, -2)
+    Gc = F.softmax(torch.randn(B, L, 8), dim=-1) @ F.softmax(torch.randn(B, L, 8), dim=-1).transpose(-1, -2)
+    vp = valid.squeeze(-1).unsqueeze(-1) * valid.squeeze(-1).unsqueeze(-2)
+    diag = torch.eye(L, dtype=torch.bool).unsqueeze(0)
+    vp = vp * (~diag).float()
+    W_pos, W_neg = Gf, 1.0 - Gc
+    pos_sum = (vp * W_pos).sum().clamp(min=1e-8)
+    L_coh = -(vp * W_pos * torch.log(G)).sum() / pos_sum
+    neg_sum = (vp * W_neg).sum().clamp(min=1e-8)
+    L_sep = -(vp * W_neg * torch.log(1.0 - G)).sum() / neg_sum
+    L = L_coh + L_sep
+    assert torch.isfinite(L), f"Loss not finite: {L}"
+    L.backward()
+    assert A.grad is not None and torch.isfinite(A.grad).all(), "Gradient should flow back to A"
+    print(f"  loss={L.item():.4f}, grad finite: OK")
+
+
 def test_zero_confidence():
     """When valid pairs have zero confidence, loss should be zero (not NaN)."""
     B, L, K = 1, 4, 2
@@ -328,5 +374,6 @@ if __name__ == "__main__":
     test_padding_nan_safety()
     test_support_confidence_calibration()
     test_pair_selective()
+    test_attention_contribution()
     test_zero_confidence()
     print("ALL TESTS PASSED")
