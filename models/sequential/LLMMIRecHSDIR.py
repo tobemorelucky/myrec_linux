@@ -34,7 +34,7 @@ class LLMMIRecHSDIR(SequentialModel):
         "emb_size", "K", "item_encoder", "adapter_hidden",
         "adapter_activation", "adapter_use_ln",
         "semantic_rank", "lambda_relation", "aspcf_gate_mode",
-        "lambda_hsr", "hsr_teacher_mode", "aggregation_mode",
+        "lambda_hsr", "hsr_teacher_mode", "hsr_loss_mode", "aggregation_mode",
     ]
 
     # ========================= Args =========================
@@ -78,6 +78,9 @@ class LLMMIRecHSDIR(SequentialModel):
         parser.add_argument("--hsr_teacher_mode", type=str, default="hierarchical",
                            choices=["fine", "coarse", "hierarchical"])
         parser.add_argument("--hsr_student_temp", type=float, default=1.0)
+        parser.add_argument("--hsr_loss_mode", type=str, default="absolute",
+                           choices=["absolute", "relative"])
+        parser.add_argument("--hsr_margin", type=float, default=0.1)
         parser.add_argument("--teacher_path", type=str, default="")
 
         # Aggregation calibration
@@ -133,6 +136,8 @@ class LLMMIRecHSDIR(SequentialModel):
         self.lambda_hsr = float(getattr(args, "lambda_hsr", 0.0))
         self.hsr_teacher_mode = str(getattr(args, "hsr_teacher_mode", "hierarchical"))
         self.hsr_student_temp = float(getattr(args, "hsr_student_temp", 1.0))
+        self.hsr_loss_mode = str(getattr(args, "hsr_loss_mode", "absolute"))
+        self.hsr_margin = float(getattr(args, "hsr_margin", 0.1))
         self.teacher_path = str(getattr(args, "teacher_path", ""))
         self.aggregation_mode = str(getattr(args, "aggregation_mode", "base"))
         self.support_beta = float(getattr(args, "support_beta", 1.0))
@@ -351,17 +356,26 @@ class LLMMIRecHSDIR(SequentialModel):
 
         # HSDIR loss (training-only)
         if "_hsdr_route_scores" in out_dict and self.lambda_hsr > 0:
-            L_coh, L_sep = self._compute_hsdr_loss(
+            L_coh, L_sep, hsr_gap = self._compute_hsdr_loss(
                 out_dict["_hsdr_route_scores"],
                 out_dict["_hsdr_history_ids"])
-            if not (torch.isfinite(L_coh) and torch.isfinite(L_sep)):
-                raise RuntimeError(
-                    f"[HSDIR] Non-finite HSR loss! L_coh={L_coh:.4f} L_sep={L_sep:.4f}")
-            hsr = L_coh + L_sep
-            total = total + self.lambda_hsr * hsr
-            out_dict["loss_hsr"] = hsr.detach()
-            out_dict["loss_hsr_coh"] = L_coh.detach()
-            out_dict["loss_hsr_sep"] = L_sep.detach()
+            if self.hsr_loss_mode == "relative":
+                if not torch.isfinite(L_coh):
+                    raise RuntimeError(f"[HSDIR] Non-finite relative HSR loss: {L_coh}")
+                hsr = L_coh  # L_coh holds the relative loss
+                total = total + self.lambda_hsr * hsr
+                out_dict["loss_hsr"] = hsr.detach()
+                if hsr_gap is not None:
+                    out_dict["loss_hsr_gap"] = hsr_gap.detach()
+            else:
+                if not (torch.isfinite(L_coh) and torch.isfinite(L_sep)):
+                    raise RuntimeError(
+                        f"[HSDIR] Non-finite HSR loss! L_coh={L_coh:.4f} L_sep={L_sep:.4f}")
+                hsr = L_coh + L_sep
+                total = total + self.lambda_hsr * hsr
+                out_dict["loss_hsr"] = hsr.detach()
+                out_dict["loss_hsr_coh"] = L_coh.detach()
+                out_dict["loss_hsr_sep"] = L_sep.detach()
 
         return total
 
@@ -444,18 +458,36 @@ class LLMMIRecHSDIR(SequentialModel):
             W_pos = G_coarse
             W_neg = 1.0 - G_coarse
 
-        # Cohesion: same-interest pairs should have high G_route
+        if self.hsr_loss_mode == "relative":
+            # Per-user g_pos and g_neg
+            pos_num = (valid_pair * W_pos * G_route).sum(dim=[1, 2])    # [B]
+            pos_den = (valid_pair * W_pos).sum(dim=[1, 2]).clamp(min=1e-8)
+            g_pos = pos_num / pos_den
+
+            neg_num = (valid_pair * W_neg * G_route).sum(dim=[1, 2])
+            neg_den = (valid_pair * W_neg).sum(dim=[1, 2]).clamp(min=1e-8)
+            g_neg = neg_num / neg_den
+
+            valid_user = (pos_den > 1e-8) & (neg_den > 1e-8)
+            if valid_user.sum() < 1:
+                return torch.zeros([], device=device), torch.zeros([], device=device), None
+
+            gap = (g_pos - g_neg)[valid_user]  # [B']
+            relu_gap = F.relu(self.hsr_margin - gap)
+            L_hsr = (relu_gap / self.hsr_margin).mean()
+            return L_hsr, torch.zeros([], device=device), gap.detach().mean()
+
+        # --- absolute mode (original) ---
         pos_sum = (valid_pair * W_pos).sum()
         if pos_sum > 1e-8:
             L_coh = -(valid_pair * W_pos * torch.log(G_route)).sum() / pos_sum
         else:
             L_coh = torch.zeros([], device=device)
 
-        # Separation: different-interest pairs should have low G_route
         neg_sum = (valid_pair * W_neg).sum()
         if neg_sum > 1e-8:
             L_sep = -(valid_pair * W_neg * torch.log(1.0 - G_route)).sum() / neg_sum
         else:
             L_sep = torch.zeros([], device=device)
 
-        return L_coh, L_sep
+        return L_coh, L_sep, None

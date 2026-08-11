@@ -2,7 +2,7 @@
 set -e
 
 # =========================================================
-# LLMMIRec HSDIR Phase 1 — Beauty seed=42
+# LLMMIRec HSDIR Phase 1 — ML-1M seed=42
 #
 # Usage:
 #   LAMBDA_HSR=0 bash .../run_...sh [GPU_ID]          # baseline (ASPCF)
@@ -14,11 +14,13 @@ set -e
 
 GPU=${1:-0}
 SEED=42
-DATASET="beauty"
-LAMBDA_HSR=${LAMBDA_HSR:-0.0}
+DATASET="ml-1m"
+LAMBDA_HSR=${LAMBDA_HSR:-0.01}
 HSR_TEACHER_MODE=${HSR_TEACHER_MODE:-hierarchical}
 HSR_LOSS_MODE=${HSR_LOSS_MODE:-absolute}
 HSR_MARGIN=${HSR_MARGIN:-0.1}
+BATCH_SIZE=${BATCH_SIZE:-2048}
+LR=${LR:-0.002}
 SEMANTIC_RANK=512
 LAMBDA_RELATION=0.01
 
@@ -32,7 +34,7 @@ else
   EPOCH=200; EARLY_STOP=10; NUM_WORKERS=5; SMOKE_TAG=""
 fi
 
-LABEL="hsdir_${HSR_TEACHER_MODE}_lh${LAMBDA_HSR}_${HSR_LOSS_MODE}_m${HSR_MARGIN}"
+LABEL="hsdir_${HSR_TEACHER_MODE}_lh${LAMBDA_HSR}_${HSR_LOSS_MODE}_m${HSR_MARGIN}_bs${BATCH_SIZE}"
 SUMMARY_FILE="${ROOT_LOG_DIR}/summary_seed${SEED}.tsv"
 
 if [ ! -f "${SUMMARY_FILE}" ]; then
@@ -40,7 +42,7 @@ if [ ! -f "${SUMMARY_FILE}" ]; then
 fi
 
 echo "========================================================="
-echo "LLMMIRec HSDIR Phase 1 — ${HSR_TEACHER_MODE} lambda=${LAMBDA_HSR} ${SMOKE_TAG}"
+echo "LLMMIRec HSDIR Phase 1 — ${HSR_TEACHER_MODE} lambda=${LAMBDA_HSR} loss=${HSR_LOSS_MODE} m=${HSR_MARGIN} bs=${BATCH_SIZE} lr=${LR} ${SMOKE_TAG}"
 echo "GPU=${GPU}"
 echo "========================================================="
 
@@ -93,10 +95,11 @@ python main.py \
   --hsr_loss_mode "${HSR_LOSS_MODE}" \
   --hsr_margin "${HSR_MARGIN}" \
   --teacher_path "${TEACHER_PATH}" \
+  --aggregation_mode base \
   --dropout 0.1 \
-  --lr 0.008 \
+  --lr "${LR}" \
   --l2 1e-6 \
-  --batch_size 2048 \
+  --batch_size "${BATCH_SIZE}" \
   --eval_batch_size 256 \
   --num_neg 1 \
   --epoch "${EPOCH}" \
@@ -116,7 +119,6 @@ BEST_DEV=$(grep "Best Iter(dev)" "${LOG_FILE}" | tail -n 1 | tr '\t' ' ' | sed '
 TEST_AFTER=$(grep "Test After Training" "${LOG_FILE}" | tail -n 1 | tr '\t' ' ' | sed 's/[[:space:]]\+/ /g')
 BEST_EPOCH=$(echo "${BEST_DEV}" | grep -oP 'Best Iter\(dev\)=\s*\K[0-9]+' || echo "NA")
 PARAM_COUNT=$(grep "#params:" "${LOG_FILE}" | tail -n 1 | grep -oP '[0-9]+' || echo "NA")
-STATUS="OK"
 
 echo "========================================================="
 echo "[DONE] ${START_TIME} -> ${END_TIME} (${TOTAL_SECONDS}s)"
@@ -124,4 +126,4 @@ echo "${BEST_DEV}"
 echo "${TEST_AFTER}"
 echo "========================================================="
 
-echo -e "${DATASET}\tLLMMIRecHSDIR\t${HSR_TEACHER_MODE}\t${LAMBDA_HSR}\t${SEMANTIC_RANK}\t${LAMBDA_RELATION}\t${SEED}\t4\t0.008\t${START_TIME}\t${END_TIME}\t${TOTAL_SECONDS}\t${PARAM_COUNT}\t${BEST_EPOCH}\t${BEST_DEV}\t${TEST_AFTER}\t${STATUS}" >> "${SUMMARY_FILE}"
+echo -e "${DATASET}\tLLMMIRecHSDIR\t${HSR_TEACHER_MODE}\t${LAMBDA_HSR}\t${SEMANTIC_RANK}\t${LAMBDA_RELATION}\t${SEED}\t4\t0.002\t${START_TIME}\t${END_TIME}\t${TOTAL_SECONDS}\t${PARAM_COUNT}\t${BEST_EPOCH}\t${BEST_DEV}\t${TEST_AFTER}\tOK" >> "${SUMMARY_FILE}"
