@@ -12,6 +12,11 @@ Output:
     analysis_figures/figures/target_interest_margin_single_cn.pdf
     analysis_figures/figures/target_interest_margin_single_cn.png
     analysis_figures/figures/target_interest_margin_single_cn.svg
+    analysis_figures/figures/target_interest_margin_single_cn.tif
+    analysis_figures/figures/target_interest_margin_single_cn.jpg
+
+Recommended submission format:
+    TIFF: 1200 dpi + LZW lossless compression
 """
 
 import os
@@ -32,11 +37,7 @@ from matplotlib.font_manager import FontProperties
 # Project path
 # =========================================================
 PROJECT_ROOT = os.path.dirname(
-    os.path.dirname(
-        os.path.dirname(
-            os.path.abspath(__file__)
-        )
-    )
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 )
 
 
@@ -45,11 +46,7 @@ PROJECT_ROOT = os.path.dirname(
 # =========================================================
 FONT_SIZE = 6
 
-DATASETS = [
-    "beauty",
-    "ml-1m",
-    "toys",
-]
+DATASETS = ["beauty", "ml-1m", "toys"]
 
 DS_LABELS = {
     "beauty": "Beauty",
@@ -62,49 +59,26 @@ DS_LABELS = {
 # Fonts
 # =========================================================
 FONT_DIR = os.path.join(PROJECT_ROOT, "Fonts")
-
-SIMSUN_PATH = os.path.join(
-    FONT_DIR,
-    "simsun.ttc",
-)
-
-TIMES_PATH = os.path.join(
-    FONT_DIR,
-    "times.ttf",
-)
+SIMSUN_PATH = os.path.join(FONT_DIR, "simsun.ttc")
+TIMES_PATH = os.path.join(FONT_DIR, "times.ttf")
 
 if not os.path.exists(SIMSUN_PATH):
-    raise FileNotFoundError(
-        f"未找到宋体字体文件：{SIMSUN_PATH}"
-    )
+    raise FileNotFoundError(f"未找到宋体字体文件：{SIMSUN_PATH}")
 
 if not os.path.exists(TIMES_PATH):
-    raise FileNotFoundError(
-        f"未找到 Times New Roman 字体文件：{TIMES_PATH}"
-    )
+    raise FileNotFoundError(f"未找到 Times New Roman 字体文件：{TIMES_PATH}")
 
 # 中文：宋体六号
-FONT_CN = FontProperties(
-    fname=SIMSUN_PATH,
-    size=FONT_SIZE,
-)
+FONT_CN = FontProperties(fname=SIMSUN_PATH, size=FONT_SIZE)
 
 # 英文、数字、数据集名称：Times New Roman 六号
-FONT_EN = FontProperties(
-    fname=TIMES_PATH,
-    size=FONT_SIZE,
-)
+FONT_EN = FontProperties(fname=TIMES_PATH, size=FONT_SIZE)
 
 
 # =========================================================
 # Bootstrap confidence interval
 # =========================================================
-def bootstrap_ci(
-    values,
-    n_boot=2000,
-    ci=95.0,
-    rng=None,
-):
+def bootstrap_ci(values, n_boot=2000, ci=95.0, rng=None):
     """
     使用 Bootstrap 计算均值及其置信区间。
 
@@ -117,70 +91,30 @@ def bootstrap_ci(
     n = len(values)
 
     if n < 2:
-        mean_value = (
-            float(np.mean(values))
-            if n == 1
-            else 0.0
-        )
+        mean_value = float(np.mean(values)) if n == 1 else 0.0
         return mean_value, mean_value, mean_value
 
-    means = np.empty(
-        n_boot,
-        dtype=np.float64,
-    )
+    means = np.empty(n_boot, dtype=np.float64)
 
     for i in range(n_boot):
-        sample = rng.choice(
-            values,
-            size=n,
-            replace=True,
-        )
+        sample = rng.choice(values, size=n, replace=True)
         means[i] = np.mean(sample)
 
-    lower_percentile = (
-        100.0 - ci
-    ) / 2.0
+    lower_percentile = (100.0 - ci) / 2.0
+    upper_percentile = 100.0 - lower_percentile
 
-    upper_percentile = (
-        100.0 - lower_percentile
-    )
+    lower_bound = float(np.percentile(means, lower_percentile))
+    upper_bound = float(np.percentile(means, upper_percentile))
+    mean_value = float(np.mean(values))
 
-    lower_bound = float(
-        np.percentile(
-            means,
-            lower_percentile,
-        )
-    )
-
-    upper_bound = float(
-        np.percentile(
-            means,
-            upper_percentile,
-        )
-    )
-
-    mean_value = float(
-        np.mean(values)
-    )
-
-    return (
-        mean_value,
-        lower_bound,
-        upper_bound,
-    )
+    return mean_value, lower_bound, upper_bound
 
 
 # =========================================================
 # Font helpers
 # =========================================================
-def set_tick_font(
-    ax,
-    x_axis=True,
-    y_axis=True,
-):
-    """
-    将坐标刻度统一设置为 Times New Roman。
-    """
+def set_tick_font(ax, x_axis=True, y_axis=True):
+    """将坐标刻度统一设置为 Times New Roman。"""
     if x_axis:
         for label in ax.get_xticklabels():
             label.set_fontproperties(FONT_EN)
@@ -195,43 +129,26 @@ def set_tick_font(
 # =========================================================
 def main():
     parser = argparse.ArgumentParser(
-        description=(
-            "Target-interest margin analysis "
-            "with Chinese labels"
-        )
+        description="Target-interest margin analysis with Chinese labels"
     )
 
     parser.add_argument(
         "--dumps_dir",
         type=str,
-        default=os.path.join(
-            PROJECT_ROOT,
-            "analysis_figures",
-            "dumps",
-        ),
+        default=os.path.join(PROJECT_ROOT, "analysis_figures", "dumps"),
     )
-
-    parser.add_argument(
-        "--random_seed",
-        type=int,
-        default=42,
-    )
+    parser.add_argument("--random_seed", type=int, default=42)
 
     args = parser.parse_args()
 
-    rng = np.random.RandomState(
-        args.random_seed
-    )
+    rng = np.random.RandomState(args.random_seed)
 
     # -----------------------------------------------------
     # Matplotlib global settings
     # -----------------------------------------------------
     plt.rcParams.update({
         "font.family": "serif",
-        "font.serif": [
-            "Times New Roman",
-            "DejaVu Serif",
-        ],
+        "font.serif": ["Times New Roman", "DejaVu Serif"],
         "mathtext.fontset": "stix",
         "axes.unicode_minus": False,
     })
@@ -259,44 +176,23 @@ def main():
         )
 
         if not os.path.exists(dump_path):
-            print(
-                f"[ERROR] {dump_path} not found"
-            )
+            print(f"[ERROR] {dump_path} not found")
             sys.exit(1)
 
-        data = np.load(
-            dump_path,
-            allow_pickle=True,
-        )
+        data = np.load(dump_path, allow_pickle=True)
 
-        target_gap = data[
-            "target_gap"
-        ].astype(np.float64)
-
-        negative_gap = data[
-            "neg_gap"
-        ].astype(np.float64)
-
+        target_gap = data["target_gap"].astype(np.float64)
+        negative_gap = data["neg_gap"].astype(np.float64)
         k_star = data["k_star"]
 
-        interest_num = data[
-            "target_affinity"
-        ].shape[1]
+        interest_num = data["target_affinity"].shape[1]
 
-        (
-            target_mean,
-            target_lower,
-            target_upper,
-        ) = bootstrap_ci(
+        target_mean, target_lower, target_upper = bootstrap_ci(
             target_gap,
             rng=rng,
         )
 
-        (
-            negative_mean,
-            negative_lower,
-            negative_upper,
-        ) = bootstrap_ci(
+        negative_mean, negative_lower, negative_upper = bootstrap_ci(
             negative_gap,
             rng=rng,
         )
@@ -308,16 +204,13 @@ def main():
         )
 
         k_distribution = {
-            k: int(
-                (k_star == k).sum()
-            )
+            k: int((k_star == k).sum())
             for k in range(interest_num)
         }
 
         k_fraction = {
             k: value / len(k_star)
-            for k, value
-            in k_distribution.items()
+            for k, value in k_distribution.items()
         }
 
         stats[dataset] = {
@@ -339,15 +232,13 @@ def main():
         print(
             "  target_gap: "
             f"mean={target_mean:.4f}  "
-            f"95% CI=[{target_lower:.4f}, "
-            f"{target_upper:.4f}]"
+            f"95% CI=[{target_lower:.4f}, {target_upper:.4f}]"
         )
 
         print(
             "  neg_gap:    "
             f"mean={negative_mean:.4f}  "
-            f"95% CI=[{negative_lower:.4f}, "
-            f"{negative_upper:.4f}]"
+            f"95% CI=[{negative_lower:.4f}, {negative_upper:.4f}]"
         )
 
         print(
@@ -370,9 +261,7 @@ def main():
     FIG_W = 9.8 / 2.54
     FIG_H = 5.8 / 2.54
 
-    fig, ax = plt.subplots(
-        figsize=(FIG_W, FIG_H)
-    )
+    fig, ax = plt.subplots(figsize=(FIG_W, FIG_H))
 
     fig.subplots_adjust(
         left=0.25,
@@ -382,10 +271,7 @@ def main():
     )
 
     dataset_num = len(DATASETS)
-
-    y_positions = np.arange(
-        dataset_num
-    )[::-1]
+    y_positions = np.arange(dataset_num)[::-1]
 
     for index, dataset in enumerate(DATASETS):
         result = stats[dataset]
@@ -395,14 +281,8 @@ def main():
         # 两个指标之间的水平连接线
         # -------------------------------------------------
         ax.plot(
-            [
-                result["t_mean"],
-                result["n_mean"],
-            ],
-            [
-                y_position,
-                y_position,
-            ],
+            [result["t_mean"], result["n_mean"]],
+            [y_position, y_position],
             color="black",
             linewidth=0.8,
             zorder=2,
@@ -415,14 +295,8 @@ def main():
             result["t_mean"],
             y_position,
             xerr=[
-                [
-                    result["t_mean"]
-                    - result["t_lo"]
-                ],
-                [
-                    result["t_hi"]
-                    - result["t_mean"]
-                ],
+                [result["t_mean"] - result["t_lo"]],
+                [result["t_hi"] - result["t_mean"]],
             ],
             fmt="o",
             markersize=5.5,
@@ -432,11 +306,7 @@ def main():
             color="black",
             linewidth=0.5,
             capsize=2.5,
-            label=(
-                "正样本兴趣间隔"
-                if index == 0
-                else ""
-            ),
+            label="正样本兴趣间隔" if index == 0 else "",
             zorder=3,
         )
 
@@ -447,14 +317,8 @@ def main():
             result["n_mean"],
             y_position,
             xerr=[
-                [
-                    result["n_mean"]
-                    - result["n_lo"]
-                ],
-                [
-                    result["n_hi"]
-                    - result["n_mean"]
-                ],
+                [result["n_mean"] - result["n_lo"]],
+                [result["n_hi"] - result["n_mean"]],
             ],
             fmt="s",
             markersize=5.5,
@@ -464,11 +328,7 @@ def main():
             color="black",
             linewidth=0.5,
             capsize=2.5,
-            label=(
-                "负样本分离间隔"
-                if index == 0
-                else ""
-            ),
+            label="负样本分离间隔" if index == 0 else "",
             zorder=3,
         )
 
@@ -478,10 +338,7 @@ def main():
         # -------------------------------------------------
         ax.annotate(
             f"×{result['ratio']:.1f}",
-            xy=(
-                result["n_hi"],
-                y_position,
-            ),
+            xy=(result["n_hi"], y_position),
             xytext=(3, 0),
             textcoords="offset points",
             ha="left",
@@ -493,15 +350,10 @@ def main():
     # =====================================================
     # Axis labels
     # =====================================================
-    ax.set_yticks(
-        y_positions
-    )
+    ax.set_yticks(y_positions)
 
     ax.set_yticklabels(
-        [
-            DS_LABELS[dataset]
-            for dataset in DATASETS
-        ],
+        [DS_LABELS[dataset] for dataset in DATASETS],
         fontsize=FONT_SIZE,
     )
 
@@ -509,10 +361,7 @@ def main():
     for label in ax.get_yticklabels():
         label.set_fontproperties(FONT_EN)
 
-    ax.set_ylim(
-        -0.55,
-        2.35,
-    )
+    ax.set_ylim(-0.55, 2.35)
 
     # 横轴中文：宋体六号
     ax.set_xlabel(
@@ -524,21 +373,10 @@ def main():
     # =====================================================
     # Journal style
     # =====================================================
-    ax.spines["top"].set_visible(
-        False
-    )
-
-    ax.spines["right"].set_visible(
-        False
-    )
-
-    ax.spines["left"].set_linewidth(
-        0.5
-    )
-
-    ax.spines["bottom"].set_linewidth(
-        0.5
-    )
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.spines["left"].set_linewidth(0.5)
+    ax.spines["bottom"].set_linewidth(0.5)
 
     ax.tick_params(
         direction="in",
@@ -547,9 +385,7 @@ def main():
         pad=3,
     )
 
-    ax.set_facecolor(
-        "white"
-    )
+    ax.set_facecolor("white")
 
     # 横轴数值和纵轴数据集名称使用 Times New Roman
     set_tick_font(
@@ -597,8 +433,6 @@ def main():
         columnspacing=1.0,
         labelspacing=0.1,
         borderpad=0.1,
-
-        # 中文图例使用宋体六号
         prop=FONT_CN,
     )
 
@@ -612,45 +446,80 @@ def main():
         "target_interest_margin_single_cn",
     )
 
-    os.makedirs(
-        os.path.dirname(output_base),
-        exist_ok=True,
-    )
+    os.makedirs(os.path.dirname(output_base), exist_ok=True)
 
-    output_settings = [
-        (".pdf", None),
-        (".png", 600),
-        (".svg", None),
-    ]
-
-    for extension, dpi in output_settings:
-        output_path = (
-            output_base + extension
+    # PDF：矢量图
+    try:
+        output_path = output_base + ".pdf"
+        fig.savefig(
+            output_path,
+            bbox_inches="tight",
+            pad_inches=0.04,
+            facecolor="white",
         )
+        print(f"Saved PDF: {output_path}")
+    except Exception as error:
+        print(f"[INFO] PDF skipped: {error}")
 
-        try:
-            save_options = {
-                "bbox_inches": "tight",
-                "pad_inches": 0.04,
-            }
+    # SVG：矢量图
+    try:
+        output_path = output_base + ".svg"
+        fig.savefig(
+            output_path,
+            bbox_inches="tight",
+            pad_inches=0.04,
+            facecolor="white",
+        )
+        print(f"Saved SVG: {output_path}")
+    except Exception as error:
+        print(f"[INFO] SVG skipped: {error}")
 
-            if dpi is not None:
-                save_options["dpi"] = dpi
+    # PNG：1200 dpi，无损
+    try:
+        output_path = output_base + ".png"
+        fig.savefig(
+            output_path,
+            dpi=1200,
+            bbox_inches="tight",
+            pad_inches=0.04,
+            facecolor="white",
+        )
+        print(f"Saved PNG (1200 dpi): {output_path}")
+    except Exception as error:
+        print(f"[INFO] PNG skipped: {error}")
 
-            fig.savefig(
-                output_path,
-                **save_options,
-            )
+    # TIFF：1200 dpi + LZW 无损压缩，优先投稿使用
+    try:
+        output_path = output_base + ".tif"
+        fig.savefig(
+            output_path,
+            dpi=1200,
+            bbox_inches="tight",
+            pad_inches=0.04,
+            facecolor="white",
+            pil_kwargs={"compression": "tiff_lzw"},
+        )
+        print(f"Saved TIFF (1200 dpi, LZW): {output_path}")
+    except Exception as error:
+        print(f"[INFO] TIFF skipped: {error}")
 
-            print(
-                f"Saved {output_path}"
-            )
-
-        except Exception as error:
-            print(
-                f"[INFO] {extension} skipped: "
-                f"{error}"
-            )
+    # JPG：1200 dpi + 最高质量，作为兼容备用格式
+    try:
+        output_path = output_base + ".jpg"
+        fig.savefig(
+            output_path,
+            dpi=1200,
+            bbox_inches="tight",
+            pad_inches=0.04,
+            facecolor="white",
+            pil_kwargs={
+                "quality": 100,
+                "subsampling": 0,
+            },
+        )
+        print(f"Saved JPG (1200 dpi, quality=100): {output_path}")
+    except Exception as error:
+        print(f"[INFO] JPG skipped: {error}")
 
     plt.close(fig)
 
