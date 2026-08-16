@@ -1,38 +1,13 @@
 # -*- coding: UTF-8 -*-
 """
-plot_semantic_alignment_preservation_cn.py
-==========================================
-Semantic Alignment Preservation Analysis (Chinese labels version).
+plot_semantic_alignment_preservation.py
 
-Based on already-exported embedding_alignment_dump.npz files.
-
-Metrics
--------
-1. Same-item alignment gap:
-     pos  = cos(sem_i,   cf_i)       # same item
-     neg  = cos(sem_i,   cf_j)       # different item (shuffled, j≠i)
-     gap  = pos - neg
-   Computed for s_raw (PCA→64d first) and s_aligned.
-
-2. Collaborative preservation score:
-     preserve_i = cos(e_sem_i,  e_cf_i)
-
-3. Semantic injection score:
-     inject_i   = cos(e_sem_i,  s_aligned_i) - cos(e_cf_i, s_aligned_i)
-
-Figure (1×2, black & white):
-  (a) 对齐差异
-  (b) 协同保持与语义注入
-
-Output:
-    analysis_figures/figures/semantic_alignment_preservation_1x2_cn.pdf
-    analysis_figures/figures/semantic_alignment_preservation_1x2_cn.png
-    analysis_figures/figures/semantic_alignment_preservation_1x2_cn.svg
-    analysis_figures/figures/semantic_alignment_preservation_1x2_cn.tif
-    analysis_figures/figures/semantic_alignment_preservation_1x2_cn.jpg
-
-Recommended submission format:
-    TIFF: 1200 dpi + LZW lossless compression
+不修改原有指标计算方式，仅调整图4的绘制方式：
+1. 图(a)明确为“同物品对齐间隔”；
+2. 图例改为“原始语义间隔 / 对齐语义间隔”；
+3. 图(b)保留“协同保持得分 / 语义注入得分”；
+4. 去掉物品级标准差误差棒，改为柱顶标注均值；
+5. 仍在终端输出 mean/std，便于核对数据。
 """
 
 import os
@@ -42,410 +17,151 @@ from sklearn.decomposition import PCA
 
 import matplotlib
 matplotlib.use("Agg")
-
 import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
 
 
 PROJECT_ROOT = os.path.dirname(
     os.path.dirname(
-        os.path.dirname(
-            os.path.abspath(__file__)
-        )
+        os.path.dirname(os.path.abspath(__file__))
     )
 )
 
-
-# ---------------------------------------------------------------------------
-# Configuration
-# ---------------------------------------------------------------------------
-
-DATASETS = [
-    "beauty",
-    "ml-1m",
-    "toys"
-]
+DATASETS = ["beauty", "ml-1m", "toys"]
 
 GAMMAS = {
-    "beauty": 0.1,
+    "beauty": 0.10,
     "ml-1m": 0.08,
-    "toys": 0.05
+    "toys": 0.05,
 }
 
 DS_LABELS = {
     "beauty": "Beauty",
     "ml-1m": "ML-1M",
-    "toys": "Toys&Games"
+    "toys": "Toys&Games",
 }
 
-FONT_SIZE = 6  # pt
+FONT_SIZE = 6
 
-
-# ---------------------------------------------------------------------------
-# Fonts
-# ---------------------------------------------------------------------------
-
-FONT_DIR = os.path.join(
-    PROJECT_ROOT,
-    "Fonts"
-)
-
-SIMSUN_PATH = os.path.join(
-    FONT_DIR,
-    "simsun.ttc"
-)
-
-TIMES_PATH = os.path.join(
-    FONT_DIR,
-    "times.ttf"
-)
-
+FONT_DIR = os.path.join(PROJECT_ROOT, "Fonts")
+SIMSUN_PATH = os.path.join(FONT_DIR, "simsun.ttc")
+TIMES_PATH = os.path.join(FONT_DIR, "times.ttf")
 
 if not os.path.exists(SIMSUN_PATH):
-    raise FileNotFoundError(
-        f"Chinese font not found: {SIMSUN_PATH}"
-    )
+    raise FileNotFoundError(f"Chinese font not found: {SIMSUN_PATH}")
 
 if not os.path.exists(TIMES_PATH):
-    raise FileNotFoundError(
-        f"English font not found: {TIMES_PATH}"
-    )
+    raise FileNotFoundError(f"English font not found: {TIMES_PATH}")
+
+FONT_CN = FontProperties(fname=SIMSUN_PATH, size=FONT_SIZE)
+FONT_EN = FontProperties(fname=TIMES_PATH, size=FONT_SIZE)
+FONT_VALUE = FontProperties(fname=TIMES_PATH, size=5.5)
 
 
-FONT_CN = FontProperties(
-    fname=SIMSUN_PATH,
-    size=FONT_SIZE
-)
-
-FONT_EN = FontProperties(
-    fname=TIMES_PATH,
-    size=FONT_SIZE
-)
-
-
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
-
-def shuffled_neg_indices(
-    n: int,
-    rng: np.random.RandomState
-) -> np.ndarray:
-    """
-    Return a permutation of [0..n-1]
-    with no element staying in place.
-    """
-
+def shuffled_neg_indices(n, rng):
+    """生成不与自身匹配的随机负样本索引。"""
     perm = rng.permutation(n)
-
-    self_mask = (
-        perm == np.arange(n)
-    )
+    self_mask = perm == np.arange(n)
 
     if self_mask.any():
-
-        idx = np.where(
-            self_mask
-        )[0]
-
-        shifted = np.roll(
-            perm[idx],
-            1
-        )
-
-        perm[idx] = shifted
+        idx = np.where(self_mask)[0]
+        perm[idx] = np.roll(perm[idx], 1)
 
         if n == 1:
             return perm
 
-        still = (
-            perm == np.arange(n)
-        )
+        still = perm == np.arange(n)
 
         if still.any():
-
             for i in np.where(still)[0]:
+                j = (i + 1) % n
+                perm[i], perm[j] = perm[j], perm[i]
 
-                j = (
-                    i + 1
-                ) % n
-
-                perm[i], perm[j] = (
-                    perm[j],
-                    perm[i]
-                )
-
-        assert not (
-            perm == np.arange(n)
-        ).any(), "Failed to generate derangement"
+        assert not (perm == np.arange(n)).any(), \
+            "Failed to generate derangement"
 
     return perm
 
 
-def cos_sim(
-    a: np.ndarray,
-    b: np.ndarray
-) -> np.ndarray:
-    """
-    Row-wise cosine similarity.
-
-    a, b:
-        shape = (N, D)
-
-    Returns:
-        shape = (N,)
-    """
-
-    a_n = (
-        a
-        /
-        (
-            np.linalg.norm(
-                a,
-                axis=1,
-                keepdims=True
-            )
-            +
-            1e-12
-        )
+def cos_sim(a, b):
+    """逐行余弦相似度。"""
+    a_n = a / (
+        np.linalg.norm(a, axis=1, keepdims=True) + 1e-12
     )
-
-    b_n = (
-        b
-        /
-        (
-            np.linalg.norm(
-                b,
-                axis=1,
-                keepdims=True
-            )
-            +
-            1e-12
-        )
+    b_n = b / (
+        np.linalg.norm(b, axis=1, keepdims=True) + 1e-12
     )
-
-    return (
-        a_n * b_n
-    ).sum(
-        axis=1
-    )
+    return (a_n * b_n).sum(axis=1)
 
 
-def compute_all(
-    data: dict,
-    gamma: float,
-    rng: np.random.RandomState
-):
-    """
-    Compute all semantic alignment and preservation metrics.
+def compute_all(data, gamma, rng):
+    """保持原脚本指标计算逻辑不变。"""
 
-    Returns:
-        dict keyed by metric name
-    """
+    e_cf = data["e_cf"].astype(np.float64)
+    s_raw = data["s_raw"].astype(np.float64)
+    s_aligned = data["s_aligned"].astype(np.float64)
 
-    e_cf = data[
-        "e_cf"
-    ].astype(
-        np.float64
-    )
+    n, d_cf = e_cf.shape
+    d_llm = s_raw.shape[1]
 
-    s_raw = data[
-        "s_raw"
-    ].astype(
-        np.float64
-    )
+    # 残差融合
+    e_sem = e_cf + gamma * s_aligned
 
-    s_aligned = data[
-        "s_aligned"
-    ].astype(
-        np.float64
-    )
+    # 随机异物品索引
+    neg_idx = shuffled_neg_indices(n, rng)
 
+    # 1. 对齐语义的同物品对齐间隔
+    pos_aligned = cos_sim(s_aligned, e_cf)
+    neg_aligned = cos_sim(s_aligned, e_cf[neg_idx])
+    gap_aligned = pos_aligned - neg_aligned
 
-    N, d_cf = e_cf.shape
-
-    d_llm = s_raw.shape[
-        1
-    ]
-
-
-    # -----------------------------------------------------------------------
-    # Fused embedding
-    # -----------------------------------------------------------------------
-
-    e_sem = (
-        e_cf
-        +
-        gamma * s_aligned
-    )
-
-
-    # -----------------------------------------------------------------------
-    # Shuffled indices (derangement)
-    # -----------------------------------------------------------------------
-
-    neg_idx = shuffled_neg_indices(
-        N,
-        rng
-    )
-
-
-    # -----------------------------------------------------------------------
-    # 1. Same-item alignment gap for s_aligned
-    # -----------------------------------------------------------------------
-
-    pos_aligned = cos_sim(
-        s_aligned,
-        e_cf
-    )
-
-    neg_aligned = cos_sim(
-        s_aligned,
-        e_cf[neg_idx]
-    )
-
-    gap_aligned = (
-        pos_aligned
-        -
-        neg_aligned
-    )
-
-
-    # -----------------------------------------------------------------------
-    # 2. Same-item alignment gap for s_raw
-    #
-    # First reduce dimensions using PCA when necessary.
-    # -----------------------------------------------------------------------
-
-    raw_dim_matched = (
-        d_llm == d_cf
-    )
-
-    if raw_dim_matched:
-
+    # 2. 原始语义的同物品对齐间隔
+    if d_llm == d_cf:
         s_raw_proj = s_raw
-
-        pca_note = (
-            "s_raw dim == e_cf dim, no PCA needed"
-        )
-
+        pca_note = "s_raw dim == e_cf dim, no PCA needed"
     else:
-
         pca = PCA(
             n_components=d_cf,
-            random_state=rng.randint(
-                0,
-                2**31
-            )
+            random_state=rng.randint(0, 2**31)
         )
+        s_raw_proj = pca.fit_transform(s_raw)
 
-        s_raw_proj = pca.fit_transform(
-            s_raw
+        explained_var = float(
+            pca.explained_variance_ratio_.sum()
         )
 
         pca_note = (
             f"s_raw PCA {d_llm}→{d_cf}, "
-            f"explained_var="
-            f"{float(pca.explained_variance_ratio_.sum()):.4f}"
+            f"explained_var={explained_var:.4f}"
         )
 
+    pos_raw = cos_sim(s_raw_proj, e_cf)
+    neg_raw = cos_sim(s_raw_proj, e_cf[neg_idx])
+    gap_raw = pos_raw - neg_raw
 
-    pos_raw = cos_sim(
-        s_raw_proj,
-        e_cf
-    )
+    # 3. 协同保持得分
+    preserve = cos_sim(e_sem, e_cf)
 
-    neg_raw = cos_sim(
-        s_raw_proj,
-        e_cf[neg_idx]
-    )
-
-    gap_raw = (
-        pos_raw
-        -
-        neg_raw
-    )
-
-
-    # -----------------------------------------------------------------------
-    # 3. Collaborative preservation
-    # -----------------------------------------------------------------------
-
-    preserve = cos_sim(
-        e_sem,
-        e_cf
-    )
-
-
-    # -----------------------------------------------------------------------
-    # 4. Semantic injection
-    # -----------------------------------------------------------------------
-
-    cos_e_sem_s = cos_sim(
-        e_sem,
-        s_aligned
-    )
-
-    cos_e_cf_s = cos_sim(
-        e_cf,
-        s_aligned
-    )
-
+    # 4. 语义注入得分
     inject = (
-        cos_e_sem_s
-        -
-        cos_e_cf_s
+        cos_sim(e_sem, s_aligned)
+        - cos_sim(e_cf, s_aligned)
     )
-
 
     return {
-
-        "gap_raw":
-            gap_raw,
-
-        "gap_aligned":
-            gap_aligned,
-
-        "preserve":
-            preserve,
-
-        "inject":
-            inject,
-
-        "pca_note":
-            pca_note,
-
+        "gap_raw": gap_raw,
+        "gap_aligned": gap_aligned,
+        "preserve": preserve,
+        "inject": inject,
+        "pca_note": pca_note,
     }
 
 
 def set_journal_style(ax):
-    """
-    Journal-style axis formatting.
-    """
-
-    ax.spines[
-        "top"
-    ].set_visible(
-        False
-    )
-
-    ax.spines[
-        "right"
-    ].set_visible(
-        False
-    )
-
-    ax.spines[
-        "left"
-    ].set_linewidth(
-        0.5
-    )
-
-    ax.spines[
-        "bottom"
-    ].set_linewidth(
-        0.5
-    )
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.spines["left"].set_linewidth(0.5)
+    ax.spines["bottom"].set_linewidth(0.5)
 
     ax.tick_params(
         direction="in",
@@ -454,48 +170,45 @@ def set_journal_style(ax):
         pad=1.5
     )
 
-    ax.set_facecolor(
-        "white"
-    )
+    ax.set_facecolor("white")
 
 
-def set_tick_font(
-    ax,
-    x_axis=True,
-    y_axis=True
-):
-    """
-    Set tick labels to Times New Roman.
-    """
+def set_tick_font(ax):
+    for label in ax.get_xticklabels():
+        label.set_fontproperties(FONT_EN)
 
-    if x_axis:
-
-        for label in ax.get_xticklabels():
-
-            label.set_fontproperties(
-                FONT_EN
-            )
-
-    if y_axis:
-
-        for label in ax.get_yticklabels():
-
-            label.set_fontproperties(
-                FONT_EN
-            )
+    for label in ax.get_yticklabels():
+        label.set_fontproperties(FONT_EN)
 
 
-# ---------------------------------------------------------------------------
-# Main
-# ---------------------------------------------------------------------------
+def add_value_labels(ax, bars, values):
+    """柱顶标注均值。"""
+    y_min, y_max = ax.get_ylim()
+    offset = max((y_max - y_min) * 0.025, 0.002)
+
+    for bar, value in zip(bars, values):
+        if value >= 0:
+            y = value + offset
+            va = "bottom"
+        else:
+            y = value - offset
+            va = "top"
+
+        ax.text(
+            bar.get_x() + bar.get_width() / 2,
+            y,
+            f"{value:.3f}",
+            ha="center",
+            va=va,
+            fontproperties=FONT_VALUE,
+            fontsize=5.5,
+            clip_on=False
+        )
+
 
 def main():
-
     parser = argparse.ArgumentParser(
-        description=(
-            "Semantic Alignment Preservation Analysis "
-            "(Chinese labels)"
-        )
+        description="Semantic Alignment Preservation Analysis"
     )
 
     parser.add_argument(
@@ -522,89 +235,44 @@ def main():
 
     args = parser.parse_args()
 
-
-    # -----------------------------------------------------------------------
-    # Font rc
-    # -----------------------------------------------------------------------
-
     plt.rcParams.update({
-
-        "font.family":
-            "serif",
-
-        "font.serif":
-            [
-                "Times New Roman",
-                "DejaVu Serif"
-            ],
-
-        "mathtext.fontset":
-            "stix",
-
-        "axes.unicode_minus":
-            False,
-
+        "font.family": "serif",
+        "font.serif": [
+            "Times New Roman",
+            "DejaVu Serif"
+        ],
+        "mathtext.fontset": "stix",
+        "axes.unicode_minus": False,
     })
 
+    plt.rcParams["pdf.fonttype"] = 42
+    plt.rcParams["ps.fonttype"] = 42
+    plt.rcParams["svg.fonttype"] = "path"
 
-    plt.rcParams[
-        "pdf.fonttype"
-    ] = 42
+    rng = np.random.RandomState(args.random_seed)
 
-    plt.rcParams[
-        "ps.fonttype"
-    ] = 42
-
-    # Avoid SVG text overlap / displacement
-    plt.rcParams[
-        "svg.fonttype"
-    ] = "path"
-
-
-    rng = np.random.RandomState(
-        args.random_seed
-    )
-
-
-    print(
-        f"[Font] Chinese: {SIMSUN_PATH}"
-    )
-
-    print(
-        f"[Font] English: {TIMES_PATH}"
-    )
-
-
-    # -----------------------------------------------------------------------
-    # Compute metrics
-    # -----------------------------------------------------------------------
+    print(f"[Font] Chinese: {SIMSUN_PATH}")
+    print(f"[Font] English: {TIMES_PATH}")
 
     all_res = {}
 
-
     for ds in DATASETS:
-
         npz_path = os.path.join(
             args.dumps_dir,
             f"{ds}_embedding_alignment_dump.npz"
         )
 
-        if not os.path.exists(
-            npz_path
-        ):
-
+        if not os.path.exists(npz_path):
             print(
-                f"[WARN] {npz_path} not found, skipping {ds}"
+                f"[WARN] {npz_path} not found, "
+                f"skipping {ds}"
             )
-
             continue
-
 
         data = np.load(
             npz_path,
             allow_pickle=True
         )
-
 
         res = compute_all(
             data,
@@ -612,773 +280,363 @@ def main():
             rng
         )
 
-
-        all_res[
-            ds
-        ] = res
-
+        all_res[ds] = res
 
         print(
-            f"=== {ds} "
+            f"\n=== {ds} "
             f"(gamma={GAMMAS[ds]}) ==="
         )
 
         print(
-            f"  PCA note: "
-            f"{res['pca_note']}"
+            f"  PCA note: {res['pca_note']}"
         )
 
-        print(
-            f"  gap_raw     "
-            f"mean={float(np.mean(res['gap_raw'])):.4f}, "
-            f"std={float(np.std(res['gap_raw'])):.4f}"
-        )
+        for key in [
+            "gap_raw",
+            "gap_aligned",
+            "preserve",
+            "inject"
+        ]:
+            mean = float(
+                np.mean(res[key])
+            )
 
-        print(
-            f"  gap_aligned "
-            f"mean={float(np.mean(res['gap_aligned'])):.4f}, "
-            f"std={float(np.std(res['gap_aligned'])):.4f}"
-        )
+            std = float(
+                np.std(res[key])
+            )
 
-        print(
-            f"  preserve    "
-            f"mean={float(np.mean(res['preserve'])):.4f}, "
-            f"std={float(np.std(res['preserve'])):.4f}"
-        )
-
-        print(
-            f"  inject      "
-            f"mean={float(np.mean(res['inject'])):.4f}, "
-            f"std={float(np.std(res['inject'])):.4f}"
-        )
-
-        print()
-
-
-    # -----------------------------------------------------------------------
-    # Check all datasets
-    # -----------------------------------------------------------------------
+            print(
+                f"  {key:<11} "
+                f"mean={mean:.4f}, "
+                f"std={std:.4f}"
+            )
 
     for ds in DATASETS:
-
         if ds not in all_res:
-
             raise FileNotFoundError(
                 f"Missing result for dataset: {ds}"
             )
 
-
-    # =======================================================================
-    # Figure: 1 × 2 horizontal
-    # =======================================================================
-
-    FIG_W = (
-        13.0 / 2.54
-    )
-
-    FIG_H = (
-        5.7 / 2.54
-    )
-
-
-    fig, (
-        ax_a,
-        ax_b
-    ) = plt.subplots(
-
+    # 13 cm × 5.7 cm
+    fig, (ax_a, ax_b) = plt.subplots(
         1,
-
         2,
-
         figsize=(
-            FIG_W,
-            FIG_H
+            13.0 / 2.54,
+            5.7 / 2.54
         )
-
     )
-
 
     fig.subplots_adjust(
-
         wspace=0.42,
-
         left=0.10,
-
         right=0.96,
-
         top=0.70,
-
         bottom=0.18
-
     )
 
-
-    n_ds = len(
-        DATASETS
+    x = np.arange(
+        len(DATASETS)
     )
-
-
-    # -----------------------------------------------------------------------
-    # Common bar parameters
-    # -----------------------------------------------------------------------
 
     bar_w = 0.32
 
+    bar_kw = {
+        "color": "white",
+        "edgecolor": "black",
+        "linewidth": 0.5,
+        "zorder": 3,
+    }
 
-    err_kw = dict(
+    leg_kw = {
+        "fontsize": FONT_SIZE,
+        "loc": "upper center",
+        "bbox_to_anchor": (0.5, 1.13),
+        "ncol": 2,
+        "borderaxespad": 0,
+        "frameon": False,
+        "handlelength": 1.35,
+        "handletextpad": 0.35,
+        "columnspacing": 0.8,
+        "prop": FONT_CN,
+    }
+    # ============================================================
+    # (a) 同物品对齐间隔
+    # ============================================================
 
-        linewidth=0.5,
+    means_raw = [
+        float(np.mean(all_res[ds]["gap_raw"]))
+        for ds in DATASETS
+    ]
 
-        capsize=2.0
+    means_aligned = [
+        float(np.mean(all_res[ds]["gap_aligned"]))
+        for ds in DATASETS
+    ]
 
-    )
-
-
-    bar_kw = dict(
-
-        color="white",
-
+    # 左：原始语义间隔
+    # 使用纯黑色，提高非常小的柱体的可见性
+    bars_raw = ax_a.bar(
+        x - bar_w / 2,
+        means_raw,
+        bar_w,
+        color="black",
         edgecolor="black",
-
-        linewidth=0.5,
-
+        linewidth=0.6,
+        label="原始语义间隔",
         zorder=3
-
     )
 
-
-    leg_kw = dict(
-
-        fontsize=FONT_SIZE,
-
-        loc="upper center",
-
-        bbox_to_anchor=(
-            0.5,
-            1.13
-        ),
-
-        ncol=2,
-
-        borderaxespad=0,
-
-        frameon=False,
-
-        labelspacing=0.15,
-
-        handlelength=1.35,
-
-        handletextpad=0.35,
-
-        columnspacing=0.8,
-
-        prop=FONT_CN
-
+    # 右：对齐语义间隔
+    # 使用纯白色 + 黑色边框
+    bars_aligned = ax_a.bar(
+        x + bar_w / 2,
+        means_aligned,
+        bar_w,
+        color="white",
+        edgecolor="black",
+        linewidth=0.8,
+        label="对齐语义间隔",
+        zorder=3
     )
 
-
-    # =======================================================================
-    # (a) 对齐差异
-    # =======================================================================
-
-    x = np.arange(
-        n_ds
-    )
-
-
-    hatch_pairs = {
-
-        "gap_raw":
-            "..",
-
-        "gap_aligned":
-            "//"
-
-    }
-
-
-    label_pairs = {
-
-        "gap_raw":
-            "原始语义",
-
-        "gap_aligned":
-            "对齐语义"
-
-    }
-
-
-    for idx, key in enumerate(
-        [
-            "gap_raw",
-            "gap_aligned"
-        ]
-    ):
-
-        means = [
-
-            float(
-                np.mean(
-                    all_res[ds][key]
-                )
-            )
-
-            for ds in DATASETS
-
-        ]
-
-
-        stds = [
-
-            float(
-                np.std(
-                    all_res[ds][key]
-                )
-            )
-
-            for ds in DATASETS
-
-        ]
-
-
-        offset = (
-            idx - 0.5
-        ) * bar_w
-
-
-        ax_a.bar(
-
-            x + offset,
-
-            means,
-
-            bar_w,
-
-            yerr=stds,
-
-            error_kw=err_kw,
-
-            hatch=hatch_pairs[
-                key
-            ],
-
-            label=label_pairs[
-                key
-            ],
-
-            **bar_kw,
-
-        )
-
-
-    ax_a.set_xticks(
-        x
-    )
-
-
+    ax_a.set_xticks(x)
     ax_a.set_xticklabels(
-
-        [
-            DS_LABELS[
-                ds
-            ]
-            for ds in DATASETS
-        ],
-
+        [DS_LABELS[ds] for ds in DATASETS],
         fontsize=FONT_SIZE
-
     )
-
 
     ax_a.set_ylabel(
-
-        "对齐差异",
-
+        "对齐间隔",
         fontsize=FONT_SIZE,
-
         labelpad=2
-
     )
-
 
     ax_a.set_title(
-
-        "（a）对齐差异",
-
+        "（a）同物品对齐间隔",
         fontsize=FONT_SIZE,
-
-        y=1.26,
-
+        y=1.28,
         pad=0,
-
         fontweight="normal"
-
     )
 
+    ax_a.yaxis.label.set_fontproperties(FONT_CN)
+    ax_a.title.set_fontproperties(FONT_CN)
 
-    ax_a.yaxis.label.set_fontproperties(
-        FONT_CN
+    set_journal_style(ax_a)
+    set_tick_font(ax_a)
+
+    # 从0开始，更符合“间隔”柱状图的直观含义
+    all_a_values = means_raw + means_aligned
+    max_a = max(all_a_values)
+
+    if min(all_a_values) >= 0:
+        ax_a.set_ylim(0, max_a * 1.15)
+
+    # y=0基准线
+    ax_a.axhline(
+        y=0,
+        color="black",
+        linewidth=0.4,
+        zorder=1
     )
 
-
-    ax_a.title.set_fontproperties(
-        FONT_CN
-    )
-
-
-    set_journal_style(
-        ax_a
-    )
-
-
-    set_tick_font(
-
-        ax_a,
-
-        x_axis=True,
-
-        y_axis=True
-
-    )
-
+    # 图(a)不再添加柱顶数值。
+    # 原始语义间隔较小，添加数字容易遮挡柱体和坐标轴。
 
     legend_a = ax_a.legend(
-        **leg_kw
+        loc="upper center",
+        bbox_to_anchor=(0.5, 1.15),
+        ncol=2,
+        frameon=False,
+        borderaxespad=0,
+        handlelength=1.25,
+        handleheight=0.8,
+        handletextpad=0.35,
+        columnspacing=0.8,
+        prop=FONT_CN
     )
-
 
     for text in legend_a.get_texts():
+        text.set_fontproperties(FONT_CN)
 
-        text.set_fontproperties(
-            FONT_CN
-        )
-
-
-    ax_a.tick_params(
-        pad=1.2
-    )
-
-
-    # -----------------------------------------------------------------------
-    # Reference line at y = 0
-    # -----------------------------------------------------------------------
-
-    yl_a, yh_a = ax_a.get_ylim()
-
-
-    if yl_a < 0 < yh_a:
-
-        ax_a.axhline(
-
-            y=0,
-
-            color="black",
-
-            linewidth=0.3,
-
-            linestyle=":",
-
-            zorder=0
-
-        )
-
-
-    # =======================================================================
+    # ============================================================
     # (b) 协同保持与语义注入
-    # =======================================================================
+    # ============================================================
 
-    pairs_b = {
+    keys_b = [
+        "preserve",
+        "inject"
+    ]
 
-        "preserve":
-            "协同保持",
-
-        "inject":
-            "语义注入"
-
+    labels_b = {
+        "preserve": "协同保持得分",
+        "inject": "语义注入得分",
     }
-
 
     hatches_b = {
-
-        "preserve":
-            "",
-
-        "inject":
-            "//"
-
+        "preserve": "",
+        "inject": "//",
     }
 
+    bars_b = []
+    values_b = []
 
-    for idx, key in enumerate(
-        [
-            "preserve",
-            "inject"
-        ]
-    ):
-
+    for idx, key in enumerate(keys_b):
         means = [
-
             float(
                 np.mean(
                     all_res[ds][key]
                 )
             )
-
             for ds in DATASETS
-
         ]
-
-
-        stds = [
-
-            float(
-                np.std(
-                    all_res[ds][key]
-                )
-            )
-
-            for ds in DATASETS
-
-        ]
-
 
         offset = (
             idx - 0.5
         ) * bar_w
 
-
-        ax_b.bar(
-
+        bars = ax_b.bar(
             x + offset,
-
             means,
-
             bar_w,
-
-            yerr=stds,
-
-            error_kw=err_kw,
-
-            hatch=hatches_b[
-                key
-            ],
-
-            label=pairs_b[
-                key
-            ],
-
-            **bar_kw,
-
+            hatch=hatches_b[key],
+            label=labels_b[key],
+            **bar_kw
         )
 
+        bars_b.append(bars)
+        values_b.append(means)
 
-    ax_b.set_xticks(
-        x
-    )
-
+    ax_b.set_xticks(x)
 
     ax_b.set_xticklabels(
-
         [
-            DS_LABELS[
-                ds
-            ]
+            DS_LABELS[ds]
             for ds in DATASETS
         ],
-
         fontsize=FONT_SIZE
-
     )
-
 
     ax_b.set_ylabel(
-
-        "余弦相似度得分",
-
+        "指标得分",
         fontsize=FONT_SIZE,
-
         labelpad=2
-
     )
-
 
     ax_b.set_title(
-
         "（b）协同保持与语义注入",
-
         fontsize=FONT_SIZE,
-
         y=1.26,
-
         pad=0,
-
         fontweight="normal"
-
     )
-
 
     ax_b.yaxis.label.set_fontproperties(
         FONT_CN
     )
 
-
     ax_b.title.set_fontproperties(
         FONT_CN
     )
 
+    set_journal_style(ax_b)
+    set_tick_font(ax_b)
 
-    set_journal_style(
-        ax_b
+    y_min, y_max = ax_b.get_ylim()
+    span = y_max - y_min
+
+    ax_b.set_ylim(
+        y_min,
+        y_max + span * 0.15
     )
 
-
-    set_tick_font(
-
-        ax_b,
-
-        x_axis=True,
-
-        y_axis=True
-
-    )
-
+    for bars, values in zip(
+        bars_b,
+        values_b
+    ):
+        add_value_labels(
+            ax_b,
+            bars,
+            values
+        )
 
     legend_b = ax_b.legend(
         **leg_kw
     )
 
-
     for text in legend_b.get_texts():
-
         text.set_fontproperties(
             FONT_CN
         )
 
-
-    ax_b.tick_params(
-        pad=1.2
-    )
-
-
-    # =======================================================================
-    # Save
-    # =======================================================================
+    # ============================================================
+    # 保存
+    # ============================================================
 
     if args.output:
-
         base = args.output
-
     else:
-
         base = os.path.join(
-
             PROJECT_ROOT,
-
             "analysis_figures",
-
             "figures",
-
             "semantic_alignment_preservation_1x2_cn"
-
         )
-
 
     os.makedirs(
-
         os.path.dirname(base),
-
         exist_ok=True
-
     )
 
-
-    # -----------------------------------------------------------------------
-    # PDF
-    # Vector format
-    # -----------------------------------------------------------------------
-
-    try:
-
-        fig.savefig(
-
-            base + ".pdf",
-
-            bbox_inches="tight",
-
-            pad_inches=0.04,
-
-            facecolor="white"
-
-        )
-
-        print(
-            f"Saved PDF: {base}.pdf"
-        )
-
-    except Exception as e:
-
-        print(
-            f"[INFO] PDF output skipped ({e})"
-        )
-
-
-    # -----------------------------------------------------------------------
-    # SVG
-    # Vector format
-    # -----------------------------------------------------------------------
-
-    try:
-
-        fig.savefig(
-
-            base + ".svg",
-
-            bbox_inches="tight",
-
-            pad_inches=0.04,
-
-            facecolor="white"
-
-        )
-
-        print(
-            f"Saved SVG: {base}.svg"
-        )
-
-    except Exception as e:
-
-        print(
-            f"[INFO] SVG output skipped ({e})"
-        )
-
-
-    # -----------------------------------------------------------------------
-    # PNG
-    # 1200 dpi lossless raster image
-    # -----------------------------------------------------------------------
-
-    try:
-
-        fig.savefig(
-
-            base + ".png",
-
-            dpi=1200,
-
-            bbox_inches="tight",
-
-            pad_inches=0.04,
-
-            facecolor="white"
-
-        )
-
-        print(
-            f"Saved PNG (1200 dpi): {base}.png"
-        )
-
-    except Exception as e:
-
-        print(
-            f"[INFO] PNG output skipped ({e})"
-        )
-
-
-    # -----------------------------------------------------------------------
-    # TIFF
-    #
-    # Main recommended submission format:
-    #   1200 dpi
-    #   LZW lossless compression
-    # -----------------------------------------------------------------------
-
-    try:
-
-        fig.savefig(
-
-            base + ".tif",
-
-            dpi=1200,
-
-            bbox_inches="tight",
-
-            pad_inches=0.04,
-
-            facecolor="white",
-
-            pil_kwargs={
-
-                "compression":
-                    "tiff_lzw"
-
-            }
-
-        )
-
-        print(
-            f"Saved TIFF (1200 dpi, LZW): {base}.tif"
-        )
-
-    except Exception as e:
-
-        print(
-            f"[INFO] TIFF output skipped ({e})"
-        )
-
-
-    # -----------------------------------------------------------------------
-    # JPG
-    #
-    # Additional compatibility format.
-    # TIFF is preferred for journal submission.
-    # -----------------------------------------------------------------------
-
-    try:
-
-        fig.savefig(
-
-            base + ".jpg",
-
-            dpi=1200,
-
-            bbox_inches="tight",
-
-            pad_inches=0.04,
-
-            facecolor="white",
-
-            pil_kwargs={
-
-                "quality":
-                    100,
-
-                "subsampling":
-                    0
-
-            }
-
-        )
-
-        print(
-            f"Saved JPG (1200 dpi, quality=100): {base}.jpg"
-        )
-
-    except Exception as e:
-
-        print(
-            f"[INFO] JPG output skipped ({e})"
-        )
-
-
-    plt.close(
-        fig
+    save_common = {
+        "bbox_inches": "tight",
+        "pad_inches": 0.04,
+        "facecolor": "white",
+    }
+
+    fig.savefig(
+        base + ".pdf",
+        **save_common
     )
 
+    fig.savefig(
+        base + ".svg",
+        **save_common
+    )
 
-# ---------------------------------------------------------------------------
-# Entry
-# ---------------------------------------------------------------------------
+    fig.savefig(
+        base + ".png",
+        dpi=1200,
+        **save_common
+    )
+
+    fig.savefig(
+        base + ".tif",
+        dpi=1200,
+        pil_kwargs={
+            "compression": "tiff_lzw"
+        },
+        **save_common
+    )
+
+    fig.savefig(
+        base + ".jpg",
+        dpi=1200,
+        pil_kwargs={
+            "quality": 100,
+            "subsampling": 0
+        },
+        **save_common
+    )
+
+    print(
+        f"\nSaved figures to: "
+        f"{base}.*"
+    )
+
+    plt.close(fig)
+
 
 if __name__ == "__main__":
-
     main()

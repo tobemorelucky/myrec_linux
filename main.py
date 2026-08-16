@@ -40,6 +40,7 @@ import models.sequential.LLMMIRecASPCF as LLMMIRecASPCF
 import models.sequential.LLMMIRecCHIR as LLMMIRecCHIR
 import models.sequential.LLMMIRecHSDIR as LLMMIRecHSDIR
 import models.sequential.LLMMIRecCASIR as LLMMIRecCASIR
+import models.sequential.LLMMIRecCAISD as LLMMIRecCAISD
 
 def parse_global_args(parser):
     default_gpu = os.environ.get('CUDA_VISIBLE_DEVICES', '0')
