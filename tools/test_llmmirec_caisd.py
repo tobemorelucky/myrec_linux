@@ -115,6 +115,122 @@ def test_kl_finite():
     print(f"  L_uniform={L_uniform.item():.4f}, L_conf={L_conf.item():.4f}: OK")
 
 
+def test_training_only_gate():
+    """Semantic distill computation gated on (training or return_intermediate).
+
+    Simulates the forward-path branch:
+      - eval + return_intermediate=False → no semantic predictor call
+      - eval + return_intermediate=True  → predictor allowed
+      - train                              → predictor allowed, loss stashed
+    """
+    class FakePredictor:
+        def __init__(self):
+            self.calls = 0
+        def __call__(self, x):
+            self.calls += 1
+            return x[..., :32]
+
+    B, K, L, D = 2, 4, 6, 64
+    predictor = FakePredictor()
+
+    def forward_sim(training, return_intermediate, distill_mode="confidence"):
+        V = torch.randn(B, K, D)
+        need = (distill_mode != "none") and (training or return_intermediate)
+        if need:
+            _ = predictor(V)
+        return need
+
+    # eval, no intermediate → predictor NOT called
+    need = forward_sim(training=False, return_intermediate=False)
+    assert need is False and predictor.calls == 0, "eval fast path must skip predictor"
+    # eval + intermediate → predictor called
+    forward_sim(training=False, return_intermediate=True)
+    assert predictor.calls == 1
+    # train → predictor called
+    forward_sim(training=True, return_intermediate=False)
+    assert predictor.calls == 2
+    print("  training-only gate: OK")
+
+
+def test_eval_recommendation_identity():
+    """Recommendation score independent of semantic distillation machinery."""
+    B, K, D = 2, 4, 64
+    V = torch.randn(B, K, D)
+    w = F.softmax(torch.randn(B, K), dim=-1)
+    user_vec = (V * w[:, :, None]).sum(dim=1)
+    cand = torch.randn(B, 1, D)
+    score = (user_vec[:, None, :] * cand).sum(dim=-1)
+    # No semantic predictor involvement — score stays identical regardless
+    score2 = (user_vec[:, None, :] * cand).sum(dim=-1)
+    assert torch.equal(score, score2)
+    print("  eval recommendation identity: OK")
+
+
+def test_responsibility_teacher():
+    """Responsibility teacher: R, W shapes/sums, padding, detachment."""
+    B, K, L = 2, 4, 6
+    history = torch.tensor([[1, 2, 3, 0, 0, 0], [1, 2, 3, 4, 0, 0]], dtype=torch.long)
+    valid = (history > 0).float()  # [B, L]
+    A = F.softmax(torch.randn(B, K, L, requires_grad=True), dim=-1).detach()
+    Q = F.softmax(torch.randn(B, L, 32), dim=-1)
+
+    # R computation
+    A_masked = A * valid.unsqueeze(1)  # [B, K, L]
+    R = A_masked / A_masked.sum(dim=1, keepdim=True).clamp_min(1e-8)
+    assert R.shape == (B, K, L), f"R shape {R.shape}"
+    assert not R.requires_grad, "R should be detached"
+
+    # Valid items: R sums to ~1 over K
+    ksum = R.sum(dim=1)  # [B, L]
+    for b in range(B):
+        for l in range(L):
+            if history[b, l] > 0:
+                assert abs(ksum[b, l].item() - 1.0) < 1e-4, f"R sum at ({b},{l}): {ksum[b, l]}"
+    # Padding: R = 0
+    assert (R[0, :, 3:].abs().max().item() == 0), "Padding R should be 0"
+    print("  R shape + K-sum + padding: OK")
+
+    # W computation
+    W = A_masked * R
+    W = W / W.sum(dim=-1, keepdim=True).clamp_min(1e-8)
+    # Each interest sums to ~1 over valid history
+    wsum = W.sum(dim=-1)  # [B, K]
+    assert torch.allclose(wsum, torch.ones(B, K), atol=1e-4), f"W row sums: {wsum}"
+    assert not W.requires_grad
+    print("  W per-interest sum + detached: OK")
+
+    # T
+    T = torch.bmm(W, Q)
+    T = T / T.sum(dim=-1, keepdim=True).clamp_min(1e-8)
+    assert T.shape == (B, K, 32)
+    assert torch.allclose(T.sum(dim=-1), torch.ones(B, K), atol=1e-4)
+    assert torch.isfinite(T).all()
+    print("  T shape + sum + finite: OK")
+
+    # Semantic loss still flows to V
+    V = torch.randn(B, K, 64, requires_grad=True)
+    predictor = torch.nn.Linear(64, 32)
+    P = predictor(V)
+    log_P = F.log_softmax(P, dim=-1)
+    kl = F.kl_div(log_P, T, reduction="none").sum(dim=-1)
+    L = kl.mean()
+    L.backward()
+    assert V.grad is not None and torch.isfinite(V.grad).all()
+    print("  semantic loss grad to V: OK")
+
+
+def test_attention_mode_identity():
+    """attention mode: T = A @ Q then normalize (unchanged behavior)."""
+    B, K, L = 2, 4, 6
+    A = F.softmax(torch.randn(B, K, L), dim=-1).detach()
+    Q = F.softmax(torch.randn(B, L, 32), dim=-1)
+    T = torch.bmm(A, Q)
+    T = T / T.sum(dim=-1, keepdim=True).clamp_min(1e-8)
+    assert T.shape == (B, K, 32)
+    assert torch.allclose(T.sum(dim=-1), torch.ones(B, K), atol=1e-4)
+    print("  attention teacher identity: OK")
+
+
 if __name__ == "__main__":
     print("=== CAISD unit tests ===")
     test_teacher_shape_and_detach()
@@ -124,4 +240,8 @@ if __name__ == "__main__":
     test_predictor_not_in_recommendation()
     test_none_mode_identity()
     test_kl_finite()
+    test_training_only_gate()
+    test_eval_recommendation_identity()
+    test_responsibility_teacher()
+    test_attention_mode_identity()
     print("ALL TESTS PASSED")

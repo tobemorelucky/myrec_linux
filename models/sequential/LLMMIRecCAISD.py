@@ -37,6 +37,7 @@ class LLMMIRecCAISD(SequentialModel):
         "adapter_activation", "adapter_use_ln",
         "semantic_rank", "lambda_relation", "aspcf_gate_mode",
         "semantic_distill_mode", "lambda_interest_semantic",
+        "semantic_teacher_mode",
     ]
 
     # ========================= Args =========================
@@ -80,6 +81,8 @@ class LLMMIRecCAISD(SequentialModel):
                            help="Path to llmmi_proto32_sr512.pkl")
         parser.add_argument("--semantic_distill_mode", type=str, default="none",
                            choices=["none", "uniform", "confidence"])
+        parser.add_argument("--semantic_teacher_mode", type=str, default="attention",
+                           choices=["attention", "responsibility"])
         parser.add_argument("--lambda_interest_semantic", type=float, default=0.01)
 
         parser = SequentialModel.parse_model_args(parser)
@@ -129,6 +132,7 @@ class LLMMIRecCAISD(SequentialModel):
 
         self.semantic_teacher_path = str(getattr(args, "semantic_teacher_path", ""))
         self.semantic_distill_mode = str(getattr(args, "semantic_distill_mode", "none"))
+        self.semantic_teacher_mode = str(getattr(args, "semantic_teacher_mode", "attention"))
         self.lambda_interest_semantic = float(getattr(args, "lambda_interest_semantic", 0.01))
 
         self.dropout_p = float(getattr(args, "dropout", 0.1))
@@ -152,7 +156,7 @@ class LLMMIRecCAISD(SequentialModel):
         self._first_batch_checked = False
 
         logging.info(f"[CAISD] initialized: enc={self.item_encoder_mode} K={self.K} "
-                     f"distill={self.semantic_distill_mode} "
+                     f"distill={self.semantic_distill_mode} teacher={self.semantic_teacher_mode} "
                      f"lambda_sem={self.lambda_interest_semantic}")
         logging.info(f"[CAISD] #params: {self.count_variables()}")
 
@@ -210,11 +214,29 @@ class LLMMIRecCAISD(SequentialModel):
         V = interest_vectors  # [B, K, D]
 
         # 4. Dynamic semantic profile (teacher, fully detached)
+        # Only computed during training or explicit diagnostic pass.
+        need_semantic_distill = (
+            self.semantic_distill_mode != "none"
+            and (self.training or return_intermediate)
+        )
         distill_info = {}
-        if self.semantic_distill_mode != "none":
+        if need_semantic_distill:
             Q = self.t_semantic_assign[history]              # [B, L, 32]
             A_teacher = attention_maps.detach()              # [B, K, L]
-            T = torch.bmm(A_teacher, Q)                      # [B, K, 32]
+            valid_h = (history > 0).float()                  # [B, L]
+
+            responsibility_w = None
+            if self.semantic_teacher_mode == "responsibility":
+                # Cross-interest responsibility: R = A / Σ_k A
+                A_masked = A_teacher * valid_h.unsqueeze(1)  # [B, K, L]
+                R = A_masked / A_masked.sum(dim=1, keepdim=True).clamp_min(1e-8)  # [B, K, L]
+                # Responsibility-aware attention, then normalize over history
+                W = A_masked * R
+                W = W / W.sum(dim=-1, keepdim=True).clamp_min(1e-8)
+                responsibility_w = W
+                T = torch.bmm(W, Q)                          # [B, K, 32]
+            else:
+                T = torch.bmm(A_teacher, Q)                  # [B, K, 32]
             T = T / T.sum(dim=-1, keepdim=True).clamp(min=1e-8)
             T = T.detach()
 
@@ -239,6 +261,8 @@ class LLMMIRecCAISD(SequentialModel):
                 "interest_semantic_kl": kl,
                 "_sem_loss": L_sem,
             }
+            if responsibility_w is not None:
+                distill_info["interest_semantic_responsibility"] = responsibility_w
 
         # 5-7. Aggregation, user vector, prediction (UNCHANGED — no semantic injection)
         interest_weights = self.aggregator(history_emb_raw, lengths)

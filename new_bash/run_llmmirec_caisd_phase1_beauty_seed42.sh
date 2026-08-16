@@ -16,6 +16,7 @@ GPU=${1:-0}
 SEED=42
 DATASET="beauty"
 SEM_DISTILL_MODE=${SEM_DISTILL_MODE:-none}
+SEM_TEACHER_MODE=${SEM_TEACHER_MODE:-attention}
 LAMBDA_INTEREST_SEMANTIC=${LAMBDA_INTEREST_SEMANTIC:-0.01}
 SEMANTIC_RANK=512
 LAMBDA_RELATION=0.01
@@ -30,7 +31,7 @@ else
   EPOCH=200; EARLY_STOP=10; NUM_WORKERS=5; SMOKE_TAG=""
 fi
 
-LABEL="caisd_${SEM_DISTILL_MODE}_ls${LAMBDA_INTEREST_SEMANTIC}"
+LABEL="caisd_${SEM_DISTILL_MODE}_${SEM_TEACHER_MODE}_ls${LAMBDA_INTEREST_SEMANTIC}"
 SUMMARY_FILE="${ROOT_LOG_DIR}/summary_seed${SEED}.tsv"
 
 if [ ! -f "${SUMMARY_FILE}" ]; then
@@ -87,6 +88,7 @@ python main.py \
   --relation_student_temp 0.1 \
   --semantic_teacher_path "${TEACHER_PATH}" \
   --semantic_distill_mode "${SEM_DISTILL_MODE}" \
+  --semantic_teacher_mode "${SEM_TEACHER_MODE}" \
   --lambda_interest_semantic "${LAMBDA_INTEREST_SEMANTIC}" \
   --dropout 0.1 \
   --lr 0.008 \
