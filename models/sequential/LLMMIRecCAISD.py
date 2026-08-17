@@ -37,7 +37,7 @@ class LLMMIRecCAISD(SequentialModel):
         "adapter_activation", "adapter_use_ln",
         "semantic_rank", "lambda_relation", "aspcf_gate_mode",
         "semantic_distill_mode", "lambda_interest_semantic",
-        "semantic_teacher_mode",
+        "semantic_teacher_mode", "semantic_relation_mode",
     ]
 
     # ========================= Args =========================
@@ -85,6 +85,11 @@ class LLMMIRecCAISD(SequentialModel):
                            choices=["attention", "responsibility", "responsibility_power"])
         parser.add_argument("--semantic_responsibility_alpha", type=float, default=0.5)
         parser.add_argument("--lambda_interest_semantic", type=float, default=0.01)
+
+        # Interest relational semantic distillation
+        parser.add_argument("--semantic_relation_mode", type=str, default="none",
+                           choices=["none", "js"])
+        parser.add_argument("--semantic_relation_weight", type=float, default=1.0)
 
         parser = SequentialModel.parse_model_args(parser)
         parser.set_defaults(dropout=0.1)
@@ -136,6 +141,8 @@ class LLMMIRecCAISD(SequentialModel):
         self.semantic_teacher_mode = str(getattr(args, "semantic_teacher_mode", "attention"))
         self.semantic_responsibility_alpha = float(getattr(args, "semantic_responsibility_alpha", 0.5))
         self.lambda_interest_semantic = float(getattr(args, "lambda_interest_semantic", 0.01))
+        self.semantic_relation_mode = str(getattr(args, "semantic_relation_mode", "none"))
+        self.semantic_relation_weight = float(getattr(args, "semantic_relation_weight", 1.0))
 
         self.dropout_p = float(getattr(args, "dropout", 0.1))
 
@@ -159,6 +166,7 @@ class LLMMIRecCAISD(SequentialModel):
 
         logging.info(f"[CAISD] initialized: enc={self.item_encoder_mode} K={self.K} "
                      f"distill={self.semantic_distill_mode} teacher={self.semantic_teacher_mode} "
+                     f"relation={self.semantic_relation_mode} "
                      f"lambda_sem={self.lambda_interest_semantic}")
         logging.info(f"[CAISD] #params: {self.count_variables()}")
 
@@ -271,10 +279,52 @@ class LLMMIRecCAISD(SequentialModel):
                 "interest_semantic_confidence": confidence,
                 "interest_semantic_kl": kl,
                 "_sem_loss": L_sem,
+                "_sem_profile_loss": L_sem,
             }
             if responsibility_w is not None:
                 distill_info["interest_semantic_responsibility"] = R
                 distill_info["interest_semantic_teacher_weight"] = responsibility_w
+
+            # Interest relational semantic distillation (pairwise JS, upper-triangle k<l)
+            # Not a diversity loss: it does NOT push interests uniformly apart.
+            # Instead the student preserves the RELATIVE semantic relations given by the
+            # LLM teacher: interests the teacher considers close stay close, and
+            # interests the teacher distinguishes keep their separation.
+            if self.semantic_relation_mode == "js":
+                eps = 1e-8
+                T_cl = T.clamp(min=eps)                      # [B, K, 32]
+                P_cl = torch.softmax(P_logits, dim=-1).clamp(min=eps)
+
+                # Pairwise JS over strict upper triangle k<l
+                k_idx, l_idx = torch.triu_indices(self.K, self.K, offset=1)
+                n_pairs = k_idx.numel()  # K*(K-1)/2
+
+                M_T = 0.5 * (T_cl[:, k_idx] + T_cl[:, l_idx])          # [B, P, 32]
+                JS_T = 0.5 * ((T_cl[:, k_idx] * torch.log(T_cl[:, k_idx] / M_T)).sum(-1)
+                              + (T_cl[:, l_idx] * torch.log(T_cl[:, l_idx] / M_T)).sum(-1))
+                JS_T = JS_T / math.log(2)                               # [B, P]
+                JS_T = JS_T.detach()
+
+                M_P = 0.5 * (P_cl[:, k_idx] + P_cl[:, l_idx])
+                JS_P = 0.5 * ((P_cl[:, k_idx] * torch.log(P_cl[:, k_idx] / M_P)).sum(-1)
+                              + (P_cl[:, l_idx] * torch.log(P_cl[:, l_idx] / M_P)).sum(-1))
+                JS_P = JS_P / math.log(2)                               # [B, P]
+
+                L_relation_semantic = F.smooth_l1_loss(JS_P, JS_T).mean()
+
+                # Full matrices for diagnostics
+                JS_T_mat = torch.zeros(B, self.K, self.K, device=device)
+                JS_T_mat[:, k_idx, l_idx] = JS_T
+                JS_T_mat[:, l_idx, k_idx] = JS_T
+                JS_P_mat = torch.zeros(B, self.K, self.K, device=device)
+                JS_P_mat[:, k_idx, l_idx] = JS_P
+                JS_P_mat[:, l_idx, k_idx] = JS_P
+
+                distill_info["_sem_relation_loss"] = L_relation_semantic
+                distill_info["_sem_relation_js_T"] = JS_T.detach()
+                distill_info["_sem_relation_js_P"] = JS_P.detach()
+                distill_info["teacher_pairwise_js"] = JS_T_mat
+                distill_info["student_pairwise_js"] = JS_P_mat
 
         # 5-7. Aggregation, user vector, prediction (UNCHANGED — no semantic injection)
         interest_weights = self.aggregator(history_emb_raw, lengths)
@@ -296,6 +346,9 @@ class LLMMIRecCAISD(SequentialModel):
 
         if distill_info and self.training:
             out_dict["_sem_loss"] = distill_info["_sem_loss"]
+            out_dict["_sem_profile_loss"] = distill_info["_sem_profile_loss"]
+            if "_sem_relation_loss" in distill_info:
+                out_dict["_sem_relation_loss"] = distill_info["_sem_relation_loss"]
 
         # 9. NaN/Inf check
         if not self._first_batch_checked:
@@ -335,7 +388,15 @@ class LLMMIRecCAISD(SequentialModel):
 
         # CAISD semantic distillation (training-only)
         if "_sem_loss" in out_dict and self.lambda_interest_semantic > 0:
-            L_sem = out_dict["_sem_loss"]
+            L_profile = out_dict["_sem_profile_loss"]
+            L_sem = L_profile
+            out_dict["loss_interest_semantic_profile"] = L_profile.detach()
+
+            if "_sem_relation_loss" in out_dict:
+                L_rel_sem = out_dict["_sem_relation_loss"]
+                L_sem = L_sem + self.semantic_relation_weight * L_rel_sem
+                out_dict["loss_interest_semantic_relation"] = L_rel_sem.detach()
+
             total = total + self.lambda_interest_semantic * L_sem
             out_dict["loss_interest_semantic"] = L_sem.detach()
 

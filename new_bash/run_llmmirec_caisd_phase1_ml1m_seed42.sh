@@ -19,6 +19,8 @@ SEM_DISTILL_MODE=${SEM_DISTILL_MODE:-none}
 SEM_TEACHER_MODE=${SEM_TEACHER_MODE:-attention}
 SEM_RESP_ALPHA=${SEM_RESP_ALPHA:-0.5}
 LAMBDA_INTEREST_SEMANTIC=${LAMBDA_INTEREST_SEMANTIC:-0.01}
+SEM_RELATION_MODE=${SEM_RELATION_MODE:-none}
+SEM_RELATION_WEIGHT=${SEM_RELATION_WEIGHT:-1.0}
 SEMANTIC_RANK=512
 LAMBDA_RELATION=0.01
 
@@ -32,10 +34,12 @@ else
   EPOCH=200; EARLY_STOP=10; NUM_WORKERS=5; SMOKE_TAG=""
 fi
 
+LABEL="caisd_${SEM_DISTILL_MODE}_${SEM_TEACHER_MODE}_ls${LAMBDA_INTEREST_SEMANTIC}"
 if [ "${SEM_TEACHER_MODE}" = "responsibility_power" ]; then
   LABEL="caisd_${SEM_DISTILL_MODE}_${SEM_TEACHER_MODE}_ra${SEM_RESP_ALPHA}_ls${LAMBDA_INTEREST_SEMANTIC}"
-else
-  LABEL="caisd_${SEM_DISTILL_MODE}_${SEM_TEACHER_MODE}_ls${LAMBDA_INTEREST_SEMANTIC}"
+fi
+if [ "${SEM_RELATION_MODE}" != "none" ]; then
+  LABEL="${LABEL}_reljs_rw${SEM_RELATION_WEIGHT}"
 fi
 SUMMARY_FILE="${ROOT_LOG_DIR}/summary_seed${SEED}.tsv"
 
@@ -95,6 +99,8 @@ python main.py \
   --semantic_distill_mode "${SEM_DISTILL_MODE}" \
   --semantic_teacher_mode "${SEM_TEACHER_MODE}" \
   --semantic_responsibility_alpha "${SEM_RESP_ALPHA}" \
+  --semantic_relation_mode "${SEM_RELATION_MODE}" \
+  --semantic_relation_weight "${SEM_RELATION_WEIGHT}" \
   --lambda_interest_semantic "${LAMBDA_INTEREST_SEMANTIC}" \
   --dropout 0.1 \
   --lr 0.002 \
