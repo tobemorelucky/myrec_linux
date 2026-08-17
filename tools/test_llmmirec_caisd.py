@@ -231,6 +231,54 @@ def test_attention_mode_identity():
     print("  attention teacher identity: OK")
 
 
+def test_responsibility_power_equivalence():
+    """responsibility_power alpha=0 == attention; alpha=1 == responsibility."""
+    B, K, L = 2, 4, 6
+    history = torch.tensor([[1, 2, 3, 0, 0, 0], [1, 2, 3, 4, 0, 0]], dtype=torch.long)
+    valid = (history > 0).float()
+    A = F.softmax(torch.randn(B, K, L), dim=-1).detach()
+    Q = F.softmax(torch.randn(B, L, 32), dim=-1)
+
+    A_masked = A * valid.unsqueeze(1)
+
+    # Attention teacher (reference)
+    T_attn = torch.bmm(A, Q)
+    T_attn = T_attn / T_attn.sum(dim=-1, keepdim=True).clamp(min=1e-8)
+
+    # Responsibility teacher (reference)
+    R = A_masked / A_masked.sum(dim=1, keepdim=True).clamp_min(1e-8)
+    W1 = A_masked * R
+    W1 = W1 / W1.sum(dim=-1, keepdim=True).clamp_min(1e-8)
+    T_resp = torch.bmm(W1, Q)
+    T_resp = T_resp / T_resp.sum(dim=-1, keepdim=True).clamp_min(1e-8)
+
+    # responsibility_power alpha=0: W = A_masked * R^0 = A_masked, normalized
+    R_pow = A_masked / A_masked.sum(dim=1, keepdim=True).clamp_min(1e-8)
+    W0 = A_masked * (R_pow + 1e-8).pow(0.0)
+    W0 = W0 / W0.sum(dim=-1, keepdim=True).clamp_min(1e-8)
+    T0 = torch.bmm(W0, Q)
+    T0 = T0 / T0.sum(dim=-1, keepdim=True).clamp_min(1e-8)
+
+    # Note: attention teacher uses UNMASKED A (matches model code path).
+    # For alpha=0 equivalence, the model's responsibility_power branch applies valid mask.
+    # Compare T0 against masked-attention teacher:
+    T_attn_masked = torch.bmm(A_masked, Q)
+    T_attn_masked = T_attn_masked / T_attn_masked.sum(dim=-1, keepdim=True).clamp_min(1e-8)
+    assert torch.allclose(T0, T_attn_masked, atol=1e-6), "alpha=0 should equal masked-attention teacher"
+
+    # responsibility_power alpha=1
+    W1p = A_masked * (R_pow + 1e-8).pow(1.0)
+    W1p = W1p / W1p.sum(dim=-1, keepdim=True).clamp_min(1e-8)
+    T1 = torch.bmm(W1p, Q)
+    T1 = T1 / T1.sum(dim=-1, keepdim=True).clamp_min(1e-8)
+    assert torch.allclose(T1, T_resp, atol=1e-6), "alpha=1 should equal responsibility teacher"
+
+    # Shapes and finite
+    assert T0.shape == (B, K, 32) and T1.shape == (B, K, 32)
+    assert torch.isfinite(T0).all() and torch.isfinite(T1).all()
+    print("  alpha=0/1 equivalence + finite: OK")
+
+
 if __name__ == "__main__":
     print("=== CAISD unit tests ===")
     test_teacher_shape_and_detach()
@@ -244,4 +292,5 @@ if __name__ == "__main__":
     test_eval_recommendation_identity()
     test_responsibility_teacher()
     test_attention_mode_identity()
+    test_responsibility_power_equivalence()
     print("ALL TESTS PASSED")

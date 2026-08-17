@@ -82,7 +82,8 @@ class LLMMIRecCAISD(SequentialModel):
         parser.add_argument("--semantic_distill_mode", type=str, default="none",
                            choices=["none", "uniform", "confidence"])
         parser.add_argument("--semantic_teacher_mode", type=str, default="attention",
-                           choices=["attention", "responsibility"])
+                           choices=["attention", "responsibility", "responsibility_power"])
+        parser.add_argument("--semantic_responsibility_alpha", type=float, default=0.5)
         parser.add_argument("--lambda_interest_semantic", type=float, default=0.01)
 
         parser = SequentialModel.parse_model_args(parser)
@@ -133,6 +134,7 @@ class LLMMIRecCAISD(SequentialModel):
         self.semantic_teacher_path = str(getattr(args, "semantic_teacher_path", ""))
         self.semantic_distill_mode = str(getattr(args, "semantic_distill_mode", "none"))
         self.semantic_teacher_mode = str(getattr(args, "semantic_teacher_mode", "attention"))
+        self.semantic_responsibility_alpha = float(getattr(args, "semantic_responsibility_alpha", 0.5))
         self.lambda_interest_semantic = float(getattr(args, "lambda_interest_semantic", 0.01))
 
         self.dropout_p = float(getattr(args, "dropout", 0.1))
@@ -235,6 +237,15 @@ class LLMMIRecCAISD(SequentialModel):
                 W = W / W.sum(dim=-1, keepdim=True).clamp_min(1e-8)
                 responsibility_w = W
                 T = torch.bmm(W, Q)                          # [B, K, 32]
+            elif self.semantic_teacher_mode == "responsibility_power":
+                # Power-weighted responsibility: W = A_masked * R^alpha, normalized
+                A_masked = A_teacher * valid_h.unsqueeze(1)  # [B, K, L]
+                R = A_masked / A_masked.sum(dim=1, keepdim=True).clamp_min(1e-8)
+                alpha = self.semantic_responsibility_alpha
+                W = A_masked * (R + 1e-8).pow(alpha)
+                W = W / W.sum(dim=-1, keepdim=True).clamp_min(1e-8)
+                responsibility_w = W
+                T = torch.bmm(W, Q)
             else:
                 T = torch.bmm(A_teacher, Q)                  # [B, K, 32]
             T = T / T.sum(dim=-1, keepdim=True).clamp(min=1e-8)
@@ -262,7 +273,8 @@ class LLMMIRecCAISD(SequentialModel):
                 "_sem_loss": L_sem,
             }
             if responsibility_w is not None:
-                distill_info["interest_semantic_responsibility"] = responsibility_w
+                distill_info["interest_semantic_responsibility"] = R
+                distill_info["interest_semantic_teacher_weight"] = responsibility_w
 
         # 5-7. Aggregation, user vector, prediction (UNCHANGED — no semantic injection)
         interest_weights = self.aggregator(history_emb_raw, lengths)
