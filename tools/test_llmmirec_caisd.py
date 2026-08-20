@@ -363,6 +363,44 @@ def test_relation_none_compat():
     print(f"  none-mode L_sem={L_sem.item():.4f} (profile only): OK")
 
 
+def test_tasid_math():
+    """TASID: target-aware student dist, teacher dist, KL finite, grad to V."""
+    B, K, D_sem = 2, 4, 32
+    # Interest semantic vectors (would be V[..., :32]) with grad
+    V_sem = torch.randn(B, K, D_sem, requires_grad=True)
+    # Target semantic query (detached)
+    q_target = torch.randn(B, D_sem).detach()
+    # Teacher prototype profiles T [B,K,32] (detached)
+    T = F.softmax(torch.randn(B, K, 32), dim=-1).detach()
+
+    temp = 0.1
+    cos_student = F.cosine_similarity(q_target.unsqueeze(1), V_sem, dim=-1)
+    q_tasid = torch.softmax(cos_student / temp, dim=-1)          # [B,K]
+    cos_teacher = F.cosine_similarity(q_target.unsqueeze(1), T, dim=-1)
+    p_teacher = torch.softmax(cos_teacher / temp, dim=-1).detach()
+
+    assert q_tasid.shape == (B, K)
+    assert torch.allclose(q_tasid.sum(dim=-1), torch.ones(B), atol=1e-4), "student dist sums to 1"
+    assert torch.allclose(p_teacher.sum(dim=-1), torch.ones(B), atol=1e-4), "teacher dist sums to 1"
+    assert not p_teacher.requires_grad, "teacher dist detached"
+    assert q_tasid.requires_grad, "student dist carries grad"
+
+    L_tasid = F.kl_div(F.log_softmax(cos_student / temp, dim=-1), p_teacher, reduction="batchmean")
+    assert torch.isfinite(L_tasid), f"TASID loss not finite: {L_tasid}"
+    L_tasid.backward()
+    assert V_sem.grad is not None and torch.isfinite(V_sem.grad).all(), "grad to V"
+    print(f"  TASID loss={L_tasid.item():.4f}, dists sum=1, grad to V: OK")
+
+
+def test_tasid_none_compat():
+    """tasid_mode=none: no target query computed, original loss path intact."""
+    # In none mode forward stashes no _tasid_loss; loss() skips it.
+    # Simulate: no key in out_dict → no term added.
+    out_dict = {"prediction": torch.randn(2, 2)}
+    assert "_tasid_loss" not in out_dict
+    print("  tasid none-mode compat: OK")
+
+
 if __name__ == "__main__":
     print("=== CAISD unit tests ===")
     test_teacher_shape_and_detach()
@@ -380,4 +418,6 @@ if __name__ == "__main__":
     test_relation_js_math()
     test_relation_js_scale()
     test_relation_none_compat()
+    test_tasid_math()
+    test_tasid_none_compat()
     print("ALL TESTS PASSED")

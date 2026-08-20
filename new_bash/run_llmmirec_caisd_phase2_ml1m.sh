@@ -22,6 +22,10 @@ BATCH_SIZE=1024
 EVAL_BATCH_SIZE=256
 LAMBDA_INTEREST_SEMANTIC=0.005
 
+TASID_MODE=${TASID_MODE:-none}
+LAMBDA_TASID=${LAMBDA_TASID:-0.01}
+TASID_TEMP=${TASID_TEMP:-0.1}
+
 ROOT_LOG_DIR="new_log/llmmirec_caisd_phase2/${DATASET}/seed${SEED}"
 ROOT_MODEL_DIR="new_model/llmmirec_caisd_phase2/${DATASET}/seed${SEED}"
 SUMMARY_FILE="new_log/llmmirec_caisd_phase2/${DATASET}/summary.tsv"
@@ -72,6 +76,9 @@ python main.py \
   --semantic_responsibility_alpha 0.5 \
   --semantic_relation_mode none \
   --lambda_interest_semantic "${LAMBDA_INTEREST_SEMANTIC}" \
+  --tasid_mode "${TASID_MODE}" \
+  --lambda_tasid "${LAMBDA_TASID}" \
+  --tasid_temp "${TASID_TEMP}" \
   --dropout 0.1 \
   --lr "${LR}" \
   --l2 1e-6 \
