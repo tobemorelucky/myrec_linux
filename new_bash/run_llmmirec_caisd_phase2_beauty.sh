@@ -23,6 +23,7 @@ EVAL_BATCH_SIZE=256
 LAMBDA_INTEREST_SEMANTIC=0.01
 
 TASID_MODE=${TASID_MODE:-none}
+TASID_STUDENT_MODE=${TASID_STUDENT_MODE:-llm_only}
 LAMBDA_TASID=${LAMBDA_TASID:-0.01}
 TASID_TEMP=${TASID_TEMP:-0.1}
 
@@ -77,6 +78,7 @@ python main.py \
   --semantic_relation_mode none \
   --lambda_interest_semantic "${LAMBDA_INTEREST_SEMANTIC}" \
   --tasid_mode "${TASID_MODE}" \
+  --tasid_student_mode "${TASID_STUDENT_MODE}" \
   --lambda_tasid "${LAMBDA_TASID}" \
   --tasid_temp "${TASID_TEMP}" \
   --dropout 0.1 \

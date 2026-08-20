@@ -392,6 +392,33 @@ def test_tasid_math():
     print(f"  TASID loss={L_tasid.item():.4f}, dists sum=1, grad to V: OK")
 
 
+def test_tasid_asymmetric():
+    """Asymmetric student: concat(CF, semantic) query vs concat(CF, semantic) interest."""
+    B, K, D_sem, D_full = 2, 4, 32, 64
+    V = torch.randn(B, K, D_full, requires_grad=True)   # full interest vectors
+    q_sem = torch.randn(B, D_sem).detach()              # target semantic (detached)
+    c_target = torch.randn(B, D_sem).detach()           # target CF (detached)
+    student_query = torch.cat([q_sem, c_target], dim=-1)  # [B, 64]
+    student_interest = torch.cat(
+        [V[..., D_sem:], V[..., :D_sem]], dim=-1)         # [B, K, 64]
+    cos_student = F.cosine_similarity(student_query.unsqueeze(1), student_interest, dim=-1)
+    q_tasid = torch.softmax(cos_student / 0.1, dim=-1)
+
+    assert q_tasid.shape == (B, K)
+    assert torch.allclose(q_tasid.sum(dim=-1), torch.ones(B), atol=1e-4)
+    assert not student_query.requires_grad, "student query (target side) detached"
+    assert q_tasid.requires_grad, "student distribution carries grad via V"
+    # Gradient reaches V
+    T = F.softmax(torch.randn(B, K, 32), dim=-1).detach()
+    q_t_llm = q_sem
+    cos_teacher = F.cosine_similarity(q_t_llm.unsqueeze(1), T, dim=-1)
+    p_teacher = torch.softmax(cos_teacher / 0.1, dim=-1).detach()
+    L = F.kl_div(F.log_softmax(cos_student / 0.1, dim=-1), p_teacher, reduction="batchmean")
+    L.backward()
+    assert V.grad is not None and torch.isfinite(V.grad).all(), "grad to V (interest)"
+    print(f"  asymmetric TASID loss={L.item():.4f}, grad to V: OK")
+
+
 def test_tasid_none_compat():
     """tasid_mode=none: no target query computed, original loss path intact."""
     # In none mode forward stashes no _tasid_loss; loss() skips it.
@@ -419,5 +446,6 @@ if __name__ == "__main__":
     test_relation_js_scale()
     test_relation_none_compat()
     test_tasid_math()
+    test_tasid_asymmetric()
     test_tasid_none_compat()
     print("ALL TESTS PASSED")

@@ -38,7 +38,7 @@ class LLMMIRecCAISD(SequentialModel):
         "semantic_rank", "lambda_relation", "aspcf_gate_mode",
         "semantic_distill_mode", "lambda_interest_semantic",
         "semantic_teacher_mode", "semantic_relation_mode",
-        "tasid_mode", "lambda_tasid", "tasid_temp",
+        "tasid_mode", "lambda_tasid", "tasid_temp", "tasid_student_mode",
     ]
 
     # ========================= Args =========================
@@ -95,6 +95,8 @@ class LLMMIRecCAISD(SequentialModel):
         # Target-aware Semantic Interest Distillation (TASID)
         parser.add_argument("--tasid_mode", type=str, default="none",
                            choices=["none", "target"])
+        parser.add_argument("--tasid_student_mode", type=str, default="llm_only",
+                           choices=["llm_only", "asymmetric"])
         parser.add_argument("--lambda_tasid", type=float, default=0.01)
         parser.add_argument("--tasid_temp", type=float, default=0.1)
 
@@ -151,6 +153,7 @@ class LLMMIRecCAISD(SequentialModel):
         self.semantic_relation_mode = str(getattr(args, "semantic_relation_mode", "none"))
         self.semantic_relation_weight = float(getattr(args, "semantic_relation_weight", 1.0))
         self.tasid_mode = str(getattr(args, "tasid_mode", "none"))
+        self.tasid_student_mode = str(getattr(args, "tasid_student_mode", "llm_only"))
         self.lambda_tasid = float(getattr(args, "lambda_tasid", 0.01))
         self.tasid_temp = float(getattr(args, "tasid_temp", 0.1))
 
@@ -177,7 +180,7 @@ class LLMMIRecCAISD(SequentialModel):
         logging.info(f"[CAISD] initialized: enc={self.item_encoder_mode} K={self.K} "
                      f"distill={self.semantic_distill_mode} teacher={self.semantic_teacher_mode} "
                      f"relation={self.semantic_relation_mode} "
-                     f"tasid={self.tasid_mode} "
+                     f"tasid={self.tasid_mode}/{self.tasid_student_mode} "
                      f"lambda_sem={self.lambda_interest_semantic}")
         logging.info(f"[CAISD] #params: {self.count_variables()}")
 
@@ -297,29 +300,57 @@ class LLMMIRecCAISD(SequentialModel):
                 distill_info["interest_semantic_teacher_weight"] = responsibility_w
 
             # ---- Target-aware Semantic Interest Distillation (TASID) ----
-            # Query: target item's LLM semantic embedding (ASPCF semantic branch,
-            # detached — it is a fixed semantic query).
-            # Student: target-aware interest distribution q[k] = softmax_k(cos(q,V_k)/τ)
-            #   over the K interests (using the semantic half of the fused V).
-            # Teacher: original teacher prototype profiles T_k evaluated against the
-            #   same query, p[k] = softmax_k(cos(q,T_k)/τ), detached.
-            # This makes the target-aware routing of the student's interests match the
-            # routing implied by the frozen LLM semantic teacher.
+            # Teacher (unchanged): target LLM semantic query against the LLM
+            # prototype teacher profiles T_k:
+            #   p[k] = softmax_k(cos(q_llm, T_k) / τ), detached.
+            # Student (two modes):
+            #   llm_only:   q = target LLM semantic embedding (semantic branch)
+            #               vs the semantic half of the fused interest V.
+            #   asymmetric: q = concat(target CF embedding, target semantic embedding)
+            #               vs concat(CF interest, semantic interest) — the
+            #               recommendation-model-side target representation matched
+            #               against the model's own interest representation.
+            # Asymmetric design: teacher side uses LLM semantics, student side uses
+            # the model's own target representation; only the student side carries
+            # gradients (target query is detached).
             if self.tasid_mode == "target" and self.training:
                 target_ids = i_ids[:, 0]                                   # [B]
-                z_target = self.item_encoder.llm_table[target_ids][:, :self.semantic_rank]
-                q_target = self.item_encoder.semantic_branch(z_target)    # [B, 32]
+                z_target = self.item_encoder.llm_table[target_ids]         # [B, 1536]
+
+                # --- Target LLM semantic query (shared by teacher; detached) ---
+                q_target = self.item_encoder.semantic_branch(
+                    z_target[:, :self.semantic_rank])                      # [B, 32]
                 q_target = q_target.detach()
 
-                V_sem = V[..., :self.semantic_dim]                         # [B, K, 32]
-                cos_student = F.cosine_similarity(
-                    q_target.unsqueeze(1), V_sem, dim=-1)                  # [B, K]
-                q_tasid = torch.softmax(cos_student / self.tasid_temp, dim=-1)  # [B, K]
-
+                # --- Teacher distribution (unchanged) ---
                 cos_teacher = F.cosine_similarity(
                     q_target.unsqueeze(1), T, dim=-1)                      # [B, K]
                 p_tasid_teacher = torch.softmax(
                     cos_teacher / self.tasid_temp, dim=-1).detach()        # [B, K]
+
+                # --- Student distribution ---
+                if self.tasid_student_mode == "asymmetric":
+                    # Target CF embedding (complement branch of ASPCF, detached)
+                    c_target = self.item_encoder.complement_mlp(torch.cat([
+                        self.item_encoder.complement_id_emb(target_ids),
+                        self.item_encoder.complement_tail(
+                            z_target[:, self.semantic_rank:]),
+                    ], dim=-1))                                             # [B, 32]
+                    c_target = c_target.detach()
+                    student_query = torch.cat([q_target, c_target], dim=-1)  # [B, 64]
+
+                    # Interest: CF half then semantic half (same order as query)
+                    student_interest = torch.cat(
+                        [V[..., self.semantic_dim:], V[..., :self.semantic_dim]],
+                        dim=-1)                                            # [B, K, 64]
+                    cos_student = F.cosine_similarity(
+                        student_query.unsqueeze(1), student_interest, dim=-1)  # [B, K]
+                else:  # llm_only (current behavior)
+                    V_sem = V[..., :self.semantic_dim]                      # [B, K, 32]
+                    cos_student = F.cosine_similarity(
+                        q_target.unsqueeze(1), V_sem, dim=-1)               # [B, K]
+
+                q_tasid = torch.softmax(cos_student / self.tasid_temp, dim=-1)  # [B, K]
 
                 L_tasid = F.kl_div(
                     F.log_softmax(cos_student / self.tasid_temp, dim=-1),
@@ -329,6 +360,8 @@ class LLMMIRecCAISD(SequentialModel):
                 distill_info["_tasid_teacher_dist"] = p_tasid_teacher
                 distill_info["target_interest_distribution"] = q_tasid
                 distill_info["target_interest_teacher_distribution"] = p_tasid_teacher
+                if self.tasid_student_mode == "asymmetric":
+                    distill_info["target_interest_student_query"] = student_query
 
             # Interest relational semantic distillation (pairwise JS, upper-triangle k<l)
             # Not a diversity loss: it does NOT push interests uniformly apart.
