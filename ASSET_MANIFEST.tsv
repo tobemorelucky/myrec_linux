@@ -1,0 +1,156 @@
+category	dataset	path	size_bytes	mtime	sha1	shape
+handled	beauty	data/beauty/handled/llm_table.pkl	198279332	2026-02-05 00:31:14	95db36ca04982244fe37e0ac61766d74ee1a2621	(12102, 4096)
+handled	beauty	data/beauty/handled/llm_table_pca1536.pkl	74354852	2026-02-05 00:30:53	fd8f74a607ec1c66f069c2d48c9ede66e849c07c	(12102, 1536)
+handled	beauty	data/beauty/handled/itm_emb_pomrec.pkl	3098019	2026-02-14 01:35:55	053774a2408c5f86b89bed5c952da11c4c0d7613	(12101, 64)
+handled	beauty	data/beauty/handled/llmmi_proto32_sr512.pkl	1614893	2026-08-09 12:20:30	945e2f00bcfd17807cdfee5223ed682bd0ca6f55	centers(32, 512);prototype_num=32;semantic_rank=512;soft_assignments(12102, 32);temperature=0.1
+handled	beauty	data/beauty/handled/llmmi_hier_proto32_8_sr512.pkl	2018870	2026-08-10 19:13:47	b9fa2a3071f92a96ea0df43078fa45bc912e6357	coarse_assignments(12102, 8);coarse_centers(8, 512);coarse_num=8;fine_assignments(12102, 32);fine_centers(32, 512);fine_num=32;fine_to_coarse(32,);seed=42;semantic_rank=512
+handled	beauty	data/beauty/handled/semantic_hardneg_top100.pkl	9681763	2026-06-15 22:34:32	6ce4b8af7c17a1cb4cec22ee703fa94226bd3bd3	(12102, 100)
+data	beauty	data/beauty/train.csv	3476010	2026-01-07 19:04:06	27cdd13aa7e025670d07fcfec11994d0d3abf21a	
+data	beauty	data/beauty/dev.csv	136540853	2026-01-07 19:04:09	d6b989710aea2fdbdf041eb15b15afae6d8c4157	
+data	beauty	data/beauty/test.csv	136547340	2026-01-07 19:04:12	d355841ca6c86930cc22af5aa178af96212793b2	
+data	beauty	data/beauty/SeqReader.pkl	149180188	2026-02-05 01:23:58	bd8778ac98785506c978671e32706f68640f847d	
+data	beauty	data/beauty/item2id.json	279321	2026-01-07 19:03:57	e3c237bd32d1324e5925e95a284fb44717f22b42	
+handled	ml-1m	data/ml-1m/handled/llm_table.pkl	60735652	2026-02-07 20:30:23	3767d42b3b0e2ff2cecd6edcb1fd42f6f331433e	(3707, 4096)
+handled	ml-1m	data/ml-1m/handled/llm_table_pca1536.pkl	22775972	2026-02-07 20:30:04	64f141e4ae09cc784b4bed262f634a95c5b4cff7	(3707, 1536)
+handled	ml-1m	data/ml-1m/handled/itm_emb_pomrec.pkl	948899	2026-02-08 00:06:01	03d87fc2e525b0a3a83fab12226b416410e52e3c	(3706, 64)
+handled	ml-1m	data/ml-1m/handled/llmmi_proto32_sr512.pkl	540333	2026-08-10 23:45:04	17c5dbe10160f919ab311af6f51fd35cd0e690ee	centers(32, 512);prototype_num=32;semantic_rank=512;soft_assignments(3707, 32);temperature=0.1
+handled	ml-1m	data/ml-1m/handled/llmmi_hier_proto32_8_sr512.pkl	675670	2026-08-10 23:51:21	08aa7cecd8183bf4e73d7a10176f0dcaa0e28ea5	coarse_assignments(3707, 8);coarse_centers(8, 512);coarse_num=8;fine_assignments(3707, 32);fine_centers(32, 512);fine_num=32;fine_to_coarse(32,);seed=42;semantic_rank=512
+handled	ml-1m	data/ml-1m/handled/semantic_hardneg_top100.pkl	2965763	2026-06-15 22:37:36	891a1c7b761204e7013c7d22dc4ad208b1118a35	(3707, 100)
+data	ml-1m	data/ml-1m/train.csv	20224439	2026-02-06 23:46:07	f29e13b5ba401f2ff962680a8e0f4924c5845991	
+data	ml-1m	data/ml-1m/dev.csv	34586154	2026-02-06 23:46:08	bc52c67996608b298a534826dc92876be77f604b	
+data	ml-1m	data/ml-1m/test.csv	34587189	2026-02-06 23:46:09	7ff691dde9ec602b5cc24395f8b35faab5b7525f	
+data	ml-1m	data/ml-1m/SeqReader.pkl	112402814	2026-02-07 20:57:12	41492af754130213f30cbc32ccc0e44c5643c9ac	
+data	ml-1m	data/ml-1m/item2id.json	60856	2026-02-06 23:46:00	e4528ea60ea326c5d00ff3a1a0f2f0e0a2156126	
+handled	toys	data/toys/handled/llm_table.pkl	1290600614	2026-02-14 01:18:26	ce61ff3d4d96c880bebcab4a78b38f596536fbd8	(78772, 4096)
+handled	toys	data/toys/handled/llm_table_pca1536.pkl	483975334	2026-02-14 01:13:06	456ba9236ea358f795f5bd21cafd0cb0bd550601	(78772, 1536)
+handled	toys	data/toys/handled/itm_emb_pomrec.pkl	20165541	2026-02-14 01:36:24	44a75bf64365f820954eae845a7d9d726aabdcd5	(78771, 64)
+handled	toys	data/toys/handled/llmmi_proto32_sr512.pkl	10148655	2026-08-10 23:46:30	fa5e6930093fdb8eca57be73f48f561dd637c94a	centers(32, 512);prototype_num=32;semantic_rank=512;soft_assignments(78772, 32);temperature=0.1
+handled	toys	data/toys/handled/llmmi_hier_proto32_8_sr512.pkl	12686074	2026-08-10 23:46:34	d0a0e6dade3ab50227711e2724222411accfe6bd	coarse_assignments(78772, 8);coarse_centers(8, 512);coarse_num=8;fine_assignments(78772, 32);fine_centers(32, 512);fine_num=32;fine_to_coarse(32,);seed=42;semantic_rank=512
+handled	toys	data/toys/handled/semantic_hardneg_top100.pkl	63017765	2026-06-15 22:40:50	8761dad375d9e9652cb0f22ca90a09edd7a15d7e	(78772, 100)
+data	toys	data/toys/train.csv	32607020	2026-02-07 15:45:32	4cee0b4bbe5cce3c6168f59e61da64a0865686bc	
+data	toys	data/toys/dev.csv	1431858987	2026-02-07 15:45:58	d30b122623c5b088836912983f4a80844669ad1b	
+data	toys	data/toys/test.csv	1431862882	2026-02-07 15:46:26	c5a52b73e242dcdd3fad1642455cada8b1944388	
+data	toys	data/toys/SeqReader.pkl	1529895667	2026-02-07 16:22:03	3cf7badc94d9d1721509199ddfab5a8e87387940	
+data	toys	data/toys/item2id.json	1879401	2026-02-07 15:44:08	7eed4dd3a491aa072b983b49f530f1cf7f860056	
+provenance	beauty	model/PoMRec/PoMRec__beauty__42__lr=0.002__l2=1e-06.pt	3134457	2026-02-05 18:38:56	5ae8c6b182ffe76a74148924e3801efa3695e4b9	
+provenance	ml-1m	model/PoMRec/PoMRec__ml-1m__1__lr=0.001__l2=1e-06.pt	968151	2026-02-07 20:36:18	ce2acc76a13db0d34b6f04d26539361aa34ae8fa	
+provenance	toys	model/PoMRec/toys__1__lr=0.001__l2=1e-06__lamb=3.8__history_max=20.pt	20202770	2026-02-14 01:33:38	66533f660a5aebedd8df0c6737063451d4281cc7	
+summary	beauty	new_log/llmmirec_aspcf_phase2/beauty/summary.tsv	2587	2026-08-19 21:24:11	0259c291b8cccd2020f26f61191de4d4148b4e78	
+summary	ml-1m	new_log/llmmirec_aspcf_phase2/ml-1m/summary.tsv	2582	2026-08-20 07:29:58	e921a1428563d3cca802941cefc86692c3f4dc97	
+summary	beauty	new_log/llmmirec_caisd_phase2/beauty/summary.tsv	4315	2026-08-20 22:39:52	903085b4cae9e616559c0fa8ae1032e511a41d0d	
+summary	ml-1m	new_log/llmmirec_caisd_phase2/ml-1m/summary.tsv	4335	2026-08-20 23:54:50	4f7f15cb579b9430a3a91aa577189ed83db97723	
+ckpt	beauty	new_model/llmmirec_aspcf_phase2/beauty/seed0/LLMMIRecASPCF_seed0.pt	3784112	2026-08-19 19:20:45	a48bee78d9557fca0272e513190ddd0b3e81744a	
+ckpt	beauty	new_model/llmmirec_aspcf_phase2/beauty/seed1/LLMMIRecASPCF_seed1.pt	3784112	2026-08-19 19:55:38	406a5cc2b50cd422123706aabf9e41b7aa2bc19c	
+ckpt	beauty	new_model/llmmirec_aspcf_phase2/beauty/seed2/LLMMIRecASPCF_seed2.pt	3784112	2026-08-19 20:31:38	8b9fe01aeb095cc05b7559b0e72c8852d1291385	
+ckpt	beauty	new_model/llmmirec_aspcf_phase2/beauty/seed41/LLMMIRecASPCF_seed41.pt	3784147	2026-08-19 20:53:26	1a40ea06a77210c235712deca66a9b1453b044d6	
+ckpt	beauty	new_model/llmmirec_aspcf_phase2/beauty/seed42/LLMMIRecASPCF_seed42.pt	3784147	2026-08-19 21:20:28	a0b1d3dbafca9d15dde0a6a7ab4f420792609b55	
+ckpt	ml-1m	new_model/llmmirec_aspcf_phase2/ml-1m/seed0/LLMMIRecASPCF_seed0.pt	1634992	2026-08-19 20:12:16	0e6aa88e4f2165223f9401a577db9f28c68831d4	
+ckpt	ml-1m	new_model/llmmirec_aspcf_phase2/ml-1m/seed1/LLMMIRecASPCF_seed1.pt	1634992	2026-08-19 22:57:58	c41b42981a72b913fc6becaf6f6dcde252d4ab39	
+ckpt	ml-1m	new_model/llmmirec_aspcf_phase2/ml-1m/seed2/LLMMIRecASPCF_seed2.pt	1634992	2026-08-20 01:28:25	2167b23a3dcaa9936f6e8faf1387d4b809f93a6f	
+ckpt	ml-1m	new_model/llmmirec_aspcf_phase2/ml-1m/seed41/LLMMIRecASPCF_seed41.pt	1635027	2026-08-20 04:50:44	4ccd462d758badc46b85001cb00822f73b93629e	
+ckpt	ml-1m	new_model/llmmirec_aspcf_phase2/ml-1m/seed42/LLMMIRecASPCF_seed42.pt	1635027	2026-08-20 07:17:10	c7295271aa4ef1a1bc03cf8a9eeacce05e87a5e3	
+ckpt	beauty	new_model/llmmirec_bs_sweep/beauty/id_seed42_bs1024/LLMMIRec_id_bs1024_seed42.pt	3179056	2026-08-08 18:03:25	54ea615461df806021404aa137ea047d51e503a6	
+ckpt	beauty	new_model/llmmirec_bs_sweep/beauty/id_seed42_bs1024_lr0p002/LLMMIRec_id_seed42_bs1024_lr0p002.pt	3179224	2026-08-08 20:48:03	b54a600dc99dee70785f922012f509f69e2ef06d	
+ckpt	beauty	new_model/llmmirec_bs_sweep/beauty/id_seed42_bs1024_lr0p004/LLMMIRec_id_seed42_bs1024_lr0p004.pt	3179224	2026-08-08 21:15:15	2cddb29cc4277b519719c2c1a4e610e0afdf9dd2	
+ckpt	beauty	new_model/llmmirec_bs_sweep/beauty/id_seed42_bs2048_lr0p004/LLMMIRec_id_seed42_bs2048_lr0p004.pt	3179224	2026-08-08 21:29:21	37a6a7b25203bbd47d3c769a798157e979d9da20	
+ckpt	beauty	new_model/llmmirec_bs_sweep/beauty/id_seed42_bs2048_lr0p008/LLMMIRec_id_seed42_bs2048_lr0p008.pt	3179224	2026-08-08 21:42:05	e6422664acf531c9944f5c0bfa58dffa3cd1c745	
+ckpt	beauty	new_model/llmmirec_bs_sweep/beauty/id_seed42_bs256/LLMMIRec_id_bs256_seed42.pt	3179035	2026-08-08 16:58:10	e2be570a1b7d88ddf29d66dc241957ee14e7146e	
+ckpt	beauty	new_model/llmmirec_bs_sweep/beauty/id_seed42_bs512_lr0p001/LLMMIRec_id_seed42_bs512_lr0p001.pt	3179203	2026-08-08 19:51:56	5fce49052e1cc8fc8ab9110fd9a42dd08b5a38cf	
+ckpt	beauty	new_model/llmmirec_bs_sweep/beauty/id_seed42_bs512_lr0p002/LLMMIRec_id_seed42_bs512_lr0p002.pt	3179203	2026-08-08 20:32:25	49655ca1183880218ad59a8e184c6a2d6bc168de	
+ckpt	ml-1m	new_model/llmmirec_bs_sweep/ml-1m/id_seed42_bs1024/LLMMIRec_id_bs1024_seed42.pt	1029936	2026-08-08 00:07:42	562ee87706986d8b229c14aa4e85273dcb29ad95	
+ckpt	ml-1m	new_model/llmmirec_bs_sweep/ml-1m/id_seed42_bs1024_lr0p002/LLMMIRec_id_seed42_bs1024_lr0p002.pt	1030104	2026-08-08 22:11:52	54341e5b04266b81946644030557158de05cbe82	
+ckpt	ml-1m	new_model/llmmirec_bs_sweep/ml-1m/id_seed42_bs2048/LLMMIRec_id_bs2048_seed42.pt	1029936	2026-08-08 17:49:58	13bde6b91820188aa26e956dee8384aba32f800d	
+ckpt	ml-1m	new_model/llmmirec_bs_sweep/ml-1m/id_seed42_bs2048_lr0p0015/LLMMIRec_id_seed42_bs2048_lr0p0015.pt	1030125	2026-08-08 18:45:41	3b04a74726a5e2dfc2c411b505b704776a972a60	
+ckpt	ml-1m	new_model/llmmirec_bs_sweep/ml-1m/id_seed42_bs2048_lr0p002/LLMMIRec_id_seed42_bs2048_lr0p002.pt	1030104	2026-08-08 19:17:23	22a10588cfb03f4d988c88875067a50095c02d0b	
+ckpt	ml-1m	new_model/llmmirec_bs_sweep/ml-1m/id_seed42_bs2048_lr0p004/LLMMIRec_id_seed42_bs2048_lr0p004.pt	1030104	2026-08-08 22:52:15	1902016072874b85b4759f3c4e3864964efa9f0a	
+ckpt	ml-1m	new_model/llmmirec_bs_sweep/ml-1m/id_seed42_bs256/LLMMIRec_id_bs256_seed42.pt	1029915	2026-08-07 23:01:31	f09a0c742d4e90fc38f245cca01daa13206627dc	
+ckpt	toys	new_model/llmmirec_bs_sweep/toys/id_seed42_bs1024_lr0p0015/LLMMIRec_id_seed42_bs1024_lr0p0015.pt	20246765	2026-08-10 03:45:53	89b2bcfde10fa461ba5222abf83a2aeb25d502d6	
+ckpt	toys	new_model/llmmirec_bs_sweep/toys/id_seed42_bs1024_lr0p002/LLMMIRec_id_seed42_bs1024_lr0p002.pt	20246744	2026-08-09 19:36:21	d586351f3451785f2dd40dca1fd3e76dc7aee0ce	
+ckpt	toys	new_model/llmmirec_bs_sweep/toys/id_seed42_bs1024_lr0p0025/LLMMIRec_id_seed42_bs1024_lr0p0025.pt	20246765	2026-08-09 23:58:59	28191715240175b1ceb2d06d99753af3582a287b	
+ckpt	toys	new_model/llmmirec_bs_sweep/toys/id_seed42_bs1024_lr0p004/LLMMIRec_id_seed42_bs1024_lr0p004.pt	20246744	2026-08-09 02:07:56	3b3086d526be452d6296f8df7949c4ef620e23ff	
+ckpt	toys	new_model/llmmirec_bs_sweep/toys/id_seed42_bs2048_lr0p003/LLMMIRec_id_seed42_bs2048_lr0p003.pt	20246744	2026-08-09 15:22:04	e985a5fe77c1bede9e36b7f3dc187d0e0d2b1ab7	
+ckpt	toys	new_model/llmmirec_bs_sweep/toys/id_seed42_bs2048_lr0p004/LLMMIRec_id_seed42_bs2048_lr0p004.pt	20246744	2026-08-09 18:57:10	067febf650c2af8f8e856ee3208c3583c9ed5f03	
+ckpt	toys	new_model/llmmirec_bs_sweep/toys/id_seed42_bs2048_lr0p008/LLMMIRec_id_seed42_bs2048_lr0p008.pt	20246744	2026-08-09 01:22:29	4acebf8fc06d41cc5fd55410ff2e56216ff6a3e3	
+ckpt	toys	new_model/llmmirec_bs_sweep/toys/id_seed42_bs256/LLMMIRec_id_bs256_seed42.pt	20246555	2026-08-08 22:18:15	d3bb370cb961263f3786bba67e5f9cca27afb2ed	
+ckpt	toys	new_model/llmmirec_bs_sweep/toys/id_seed42_bs512_lr0p002/LLMMIRec_id_seed42_bs512_lr0p002.pt	20246723	2026-08-09 15:41:21	d50a40d97e53a9d028784d156942f2bd4a58c197	
+ckpt	beauty	new_model/llmmirec_caisd_phase1/beauty/caisd_confidence_ls0.01/LLMMIRecCAISD_caisd_confidence_ls0.01_seed42.pt	3794143	2026-08-16 18:32:00	deebed8a27df1b84757553de587def3be6a19bd7	
+ckpt	beauty	new_model/llmmirec_caisd_phase1/beauty/caisd_uniform_attention_ls0.01_reljs_rw1.0/LLMMIRecCAISD_caisd_uniform_attention_ls0.01_reljs_rw1.0_seed42.pt	3795102	2026-08-17 23:55:05	78db0bbe962ee70df662f4b8325513f7b0e96b15	
+ckpt	beauty	new_model/llmmirec_caisd_phase1/beauty/caisd_uniform_ls0.01/LLMMIRecCAISD_caisd_uniform_ls0.01_seed42.pt	3794032	2026-08-16 18:35:53	620ef9f3502bc494ca3e86d875df7cc451fae494	
+ckpt	beauty	new_model/llmmirec_caisd_phase1/beauty/caisd_uniform_responsibility_ls0.005/LLMMIRecCAISD_caisd_uniform_responsibility_ls0.005_seed42.pt	3794752	2026-08-18 19:58:39	fde02c943a3c573302fbe55cba1a4a0bda18e57f	
+ckpt	beauty	new_model/llmmirec_caisd_phase1/beauty/caisd_uniform_responsibility_ls0.01/LLMMIRecCAISD_caisd_uniform_responsibility_ls0.01_seed42.pt	3794715	2026-08-17 00:12:14	85c01ddc776a89dcb30744a8db18e9b138e4db17	
+ckpt	beauty	new_model/llmmirec_caisd_phase1/beauty/caisd_uniform_responsibility_ls0.02/LLMMIRecCAISD_caisd_uniform_responsibility_ls0.02_seed42.pt	3794715	2026-08-18 20:07:18	d27664d80394192743b7909c90451c25994e6dd5	
+ckpt	beauty	new_model/llmmirec_caisd_phase1/beauty/caisd_uniform_responsibility_power_ra0.5_ls0.01/LLMMIRecCAISD_caisd_uniform_responsibility_power_ra0.5_ls0.01_seed42.pt	3795415	2026-08-17 19:22:54	18a784a00a81efe4e711f56d395436e4de64502c	
+ckpt	ml-1m	new_model/llmmirec_caisd_phase1/ml-1m/caisd_confidence_ls0.01/LLMMIRecCAISD_caisd_confidence_ls0.01_seed42.pt	1645023	2026-08-16 19:17:30	b0295e4447f0a412ecf4bb929d5f71d2d2217e18	
+ckpt	ml-1m	new_model/llmmirec_caisd_phase1/ml-1m/caisd_uniform_attention_ls0.0025/LLMMIRecCAISD_caisd_uniform_attention_ls0.0025_seed42.pt	1645356	2026-08-18 22:23:48	ad2826c2c9fc7547d7026218d399e129746fb0f7	
+ckpt	ml-1m	new_model/llmmirec_caisd_phase1/ml-1m/caisd_uniform_attention_ls0.005/LLMMIRecCAISD_caisd_uniform_attention_ls0.005_seed42.pt	1645319	2026-08-18 20:52:00	462f5e6bf1bd3bee6527e341360fb5df80bb497f	
+ckpt	ml-1m	new_model/llmmirec_caisd_phase1/ml-1m/caisd_uniform_attention_ls0.01_reljs_rw1.0/LLMMIRecCAISD_caisd_uniform_attention_ls0.01_reljs_rw1.0_seed42.pt	1645982	2026-08-18 00:27:57	eb3423c295d78b37daf1c1693047f07c1a09d7e6	
+ckpt	ml-1m	new_model/llmmirec_caisd_phase1/ml-1m/caisd_uniform_attention_ls0.02/LLMMIRecCAISD_caisd_uniform_attention_ls0.02_seed42.pt	1645282	2026-08-18 20:34:12	b55ae3f5ace92d15d47c58cc97a46bb1f292a5ba	
+ckpt	ml-1m	new_model/llmmirec_caisd_phase1/ml-1m/caisd_uniform_ls0.01/LLMMIRecCAISD_caisd_uniform_ls0.01_seed42.pt	1644912	2026-08-16 19:26:23	bbf2aedf46c00432d7c327044786928ff6ac9da9	
+ckpt	ml-1m	new_model/llmmirec_caisd_phase1/ml-1m/caisd_uniform_responsibility_ls0.0025/LLMMIRecCAISD_caisd_uniform_responsibility_ls0.0025_seed42.pt	1645669	2026-08-19 00:06:26	c906906e5e419a1c48d1ac95021750b321f4d729	
+ckpt	ml-1m	new_model/llmmirec_caisd_phase1/ml-1m/caisd_uniform_responsibility_ls0.005/LLMMIRecCAISD_caisd_uniform_responsibility_ls0.005_seed42.pt	1645632	2026-08-19 00:24:18	55984d0ef2331f3d833b6567e62e732c6d9272d7	
+ckpt	ml-1m	new_model/llmmirec_caisd_phase1/ml-1m/caisd_uniform_responsibility_ls0.01/LLMMIRecCAISD_caisd_uniform_responsibility_ls0.01_seed42.pt	1645595	2026-08-17 00:28:18	12b33e7c6a0780a13fb70db6d2f736b75827239e	
+ckpt	ml-1m	new_model/llmmirec_caisd_phase1/ml-1m/caisd_uniform_responsibility_power_ra0.5_ls0.01/LLMMIRecCAISD_caisd_uniform_responsibility_power_ra0.5_ls0.01_seed42.pt	1646295	2026-08-17 19:58:03	9a25867420396774373ec1265476c12192d53993	
+ckpt	beauty	new_model/llmmirec_caisd_phase2/beauty/seed0/LLMMIRecCAISD_seed0.pt	3793090	2026-08-19 19:37:40	7e9b6a3b38f6f84026d905e9a8d1266bb3b1a960	
+ckpt	beauty	new_model/llmmirec_caisd_phase2/beauty/seed1/LLMMIRecCAISD_seed1.pt	3793090	2026-08-19 20:09:41	4638a103da7d0b8388bb953b589035f8f0eeb485	
+ckpt	beauty	new_model/llmmirec_caisd_phase2/beauty/seed2/LLMMIRecCAISD_seed2.pt	3793090	2026-08-19 20:41:01	2fa6ba30979a30820b90ac7be298686cd7ce3354	
+ckpt	beauty	new_model/llmmirec_caisd_phase2/beauty/seed41/LLMMIRecCAISD_seed41.pt	3793127	2026-08-19 21:05:34	fc6e52af6dbb70773a76410e8b0ca642646172c3	
+ckpt	beauty	new_model/llmmirec_caisd_phase2/beauty/seed42/LLMMIRecCAISD_seed42.pt	3793127	2026-08-20 22:35:47	f936311c60f88b9c417061ba84e20b2412091250	
+ckpt	ml-1m	new_model/llmmirec_caisd_phase2/ml-1m/seed0/LLMMIRecCAISD_seed0.pt	1643970	2026-08-19 21:26:09	e52e034f6c4a48e67149d048f81cf0b69d6b7d27	
+ckpt	ml-1m	new_model/llmmirec_caisd_phase2/ml-1m/seed1/LLMMIRecCAISD_seed1.pt	1643970	2026-08-20 00:03:26	3ffa734787de1c285868a6ddd1ec548236c0412b	
+ckpt	ml-1m	new_model/llmmirec_caisd_phase2/ml-1m/seed2/LLMMIRecCAISD_seed2.pt	1643970	2026-08-20 03:21:17	26c49a909d36183ff67ab3d980bc4a0300731e54	
+ckpt	ml-1m	new_model/llmmirec_caisd_phase2/ml-1m/seed41/LLMMIRecCAISD_seed41.pt	1644007	2026-08-20 06:05:09	43f588414c5ee9dca5e1d4c85d2f4644f78262e2	
+ckpt	ml-1m	new_model/llmmirec_caisd_phase2/ml-1m/seed42/LLMMIRecCAISD_seed42.pt	1644007	2026-08-20 23:40:25	bedb43e25f6302b6e2452b21b01360eaed506d47	
+ckpt	beauty	new_model/llmmirec_casir_phase1/beauty/casir_complement_coherence/LLMMIRecCASIR_casir_complement_coherence_seed42.pt	3794739	2026-08-12 23:29:03	f07915f6dec1d3df989e3af84dbdbb9203c44f93	
+ckpt	beauty	new_model/llmmirec_casir_phase1/beauty/casir_semantic_add/LLMMIRecCASIR_casir_semantic_add_seed42.pt	3794435	2026-08-12 23:30:55	74b25ceafabd71ab4b4da57bc075b5b3e0d444f8	
+ckpt	ml-1m	new_model/llmmirec_casir_phase1/ml-1m/casir_complement_coherence/LLMMIRecCASIR_casir_complement_coherence_seed42.pt	1645619	2026-08-13 00:21:46	1171bee255e22f69d367f1d0eec5664ab95f176d	
+ckpt	ml-1m	new_model/llmmirec_casir_phase1/ml-1m/casir_semantic_add/LLMMIRecCASIR_casir_semantic_add_seed42.pt	1645315	2026-08-13 00:08:23	2816d56bc367a93dfd4f13b0f75afed30da34347	
+ckpt	beauty	new_model/llmmirec_hsdir_phase1/beauty/hsdir_coarse_lh0.01/LLMMIRecHSDIR_hsdir_coarse_lh0.01_seed42.pt	3784911	2026-08-10 22:03:07	ceafe4eeafea3ed8077a2894083478cb05252974	
+ckpt	beauty	new_model/llmmirec_hsdir_phase1/beauty/hsdir_fine_lh0.01/LLMMIRecHSDIR_hsdir_fine_lh0.01_seed42.pt	3784841	2026-08-10 22:13:10	0ee24e40de17524c35b99627ea289962379a9e15	
+ckpt	beauty	new_model/llmmirec_hsdir_phase1/beauty/hsdir_hierarchical_lh0.01/LLMMIRecHSDIR_hsdir_hierarchical_lh0.01_seed42.pt	3785121	2026-08-10 21:21:54	6e6d2a035939ab760c5ef570263df769cab47937	
+ckpt	beauty	new_model/llmmirec_hsdir_phase1/beauty/hsdir_hierarchical_lh0.01_agreement_absolute_m0.1/LLMMIRecHSDIR_hsdir_hierarchical_lh0.01_agreement_absolute_m0.1_seed42.pt	3786409	2026-08-11 20:08:48	a528c7b2528bcbb63d0bb5ff4a486e695e31a6b3	
+ckpt	beauty	new_model/llmmirec_hsdir_phase1/beauty/hsdir_hierarchical_lh0.01_relative_m0.1/LLMMIRecHSDIR_hsdir_hierarchical_lh0.01_relative_m0.1_seed42.pt	3785867	2026-08-11 18:32:53	795db68320f2fc3c3d6ca06d8392eab12db4345e	
+ckpt	beauty	new_model/llmmirec_hsdir_phase1/beauty/hsdir_hierarchical_lh0.01_semantic_absolute_attention_contribution_pm0.1/LLMMIRecHSDIR_hsdir_hierarchical_lh0.01_semantic_absolute_attention_contribution_pm0.1_seed42.pt	3789006	2026-08-11 23:45:41	0ee6a33affdbfdd5a1e1852fda3852ddc62c7bf6	
+ckpt	beauty	new_model/llmmirec_hsdir_phase1/beauty/hsdir_hierarchical_lh0.01_semantic_pair_selective_pm0.1/LLMMIRecHSDIR_hsdir_hierarchical_lh0.01_semantic_pair_selective_pm0.1_seed42.pt	3788347	2026-08-11 22:26:43	16687ff401891176c0997345ba42e5364c744843	
+ckpt	beauty	new_model/llmmirec_hsdir_phase1/beauty/hsdir_hierarchical_lh0/LLMMIRecHSDIR_hsdir_hierarchical_lh0_seed42.pt	3785016	2026-08-10 19:12:06	a1044ece8cd1df0f0ef55a5072af8599e1527024	
+ckpt	ml-1m	new_model/llmmirec_hsdir_phase1/ml-1m/hsdir_fine_lh0.01_semantic_absolute_raw_pm0.1_bs2048/LLMMIRecHSDIR_hsdir_fine_lh0.01_semantic_absolute_raw_pm0.1_bs2048_seed42.pt	1639122	2026-08-12 21:42:05	2f1d7af83257a92a422ce5696e48d8b285edb448	
+ckpt	ml-1m	new_model/llmmirec_hsdir_phase1/ml-1m/hsdir_hierarchical_lh0.005/LLMMIRecHSDIR_hsdir_hierarchical_lh0.005_seed42.pt	1636036	2026-08-11 01:06:56	42b40001853b9fae994d43a8f00e4ea7c562e5ec	
+ckpt	ml-1m	new_model/llmmirec_hsdir_phase1/ml-1m/hsdir_hierarchical_lh0.01/LLMMIRecHSDIR_hsdir_hierarchical_lh0.01_seed42.pt	1636001	2026-08-11 01:51:11	dc52e317d82b67f6d637c2ef791e955e89efa28d	
+ckpt	ml-1m	new_model/llmmirec_hsdir_phase1/ml-1m/hsdir_hierarchical_lh0.02/LLMMIRecHSDIR_hsdir_hierarchical_lh0.02_seed42.pt	1636001	2026-08-11 02:59:18	e8769a424f0ec2b10d577e999e2d672a57d96783	
+ckpt	ml-1m	new_model/llmmirec_hsdir_phase1/ml-1m/hsdir_hierarchical_lh0.02_agreement_absolute_m0.1_bs2048/LLMMIRecHSDIR_hsdir_hierarchical_lh0.02_agreement_absolute_m0.1_bs2048_seed42.pt	1639262	2026-08-11 20:53:35	13f6f9932cb8f54e72fdbc1deb3e64d7bb973357	
+ckpt	ml-1m	new_model/llmmirec_hsdir_phase1/ml-1m/hsdir_hierarchical_lh0.02_bs1024/LLMMIRecHSDIR_hsdir_hierarchical_lh0.02_bs1024_seed42.pt	1636246	2026-08-11 18:15:24	189f7c41f4d6baf8f41a693a1bdbcb076ffcf849	
+ckpt	ml-1m	new_model/llmmirec_hsdir_phase1/ml-1m/hsdir_hierarchical_lh0.02_relative_m0.1_bs2048/LLMMIRecHSDIR_hsdir_hierarchical_lh0.02_relative_m0.1_bs2048_seed42.pt	1637184	2026-08-11 19:22:37	09d2860c144e2f2496137efb8d4d47445e14a578	
+ckpt	ml-1m	new_model/llmmirec_hsdir_phase1/ml-1m/hsdir_hierarchical_lh0.02_semantic_absolute_attention_contribution_pm0.1_bs2048/LLMMIRecHSDIR_hsdir_hierarchical_lh0.02_semantic_absolute_attention_contribution_pm0.1_bs2048_seed42.pt	1640131	2026-08-12 00:25:03	e28f20565162f5ca8ac15596754d321234f43713	
+ckpt	ml-1m	new_model/llmmirec_hsdir_phase1/ml-1m/hsdir_hierarchical_lh0.02_semantic_pair_selective_pm0.1_bs2048/LLMMIRecHSDIR_hsdir_hierarchical_lh0.02_semantic_pair_selective_pm0.1_bs2048_seed42.pt	1639472	2026-08-11 22:42:39	36e463be9f180674f81a91d5a6aaa0a8025e445f	
+ckpt	ml-1m	new_model/llmmirec_hsdir_phase1/ml-1m/hsdir_hierarchical_lh0/LLMMIRecHSDIR_hsdir_hierarchical_lh0_seed42.pt	1635896	2026-08-11 00:23:06	c6baf9f0a68e54bd4b870e19d2d7475f66099672	
+ckpt	ml-1m	new_model/llmmirec_hsdir_phase1/ml-1m/hsdir_hierarchical_lh0_bs1024/LLMMIRecHSDIR_hsdir_hierarchical_lh0_bs1024_seed42.pt	1636141	2026-08-11 18:00:17	edbe259d15ccccaaa9f15e3d7f65a12d00197724	
+ckpt	ml-1m	new_model/llmmirec_hsdir_phase1/ml-1m/hsdir_hierarchical_lh0_relative_m0.1_bs2048/LLMMIRecHSDIR_hsdir_hierarchical_lh0_relative_m0.1_bs2048_seed42.pt	1636951	2026-08-11 19:01:50	4dad5f231679e9eed3ddaa6c33efa2890654e323	
+ckpt	beauty	new_model/llmmirec_hsdir_phase2_activation/beauty/hsdir_hierarchical_lh0.01_support_confidence_b1.0/LLMMIRecHSDIR_hsdir_hierarchical_lh0.01_support_confidence_b1.0_seed42.pt	3786409	2026-08-10 23:22:46	ddd26fcc8c44766afad813bba523a3ee0577e2ad	
+ckpt	beauty	new_model/llmmirec_phase0/beauty/id/LLMMIRec_id_seed42.pt	3178845	2026-08-06 00:20:25	15a19dc5fe9b2571de36aab0903b5035b367f821	
+ckpt	beauty	new_model/llmmirec_phase0/beauty/llm_replace/LLMMIRec_llm_replace_seed42.pt	4820126	2026-08-06 00:37:50	4db6e117d7ef3720782336b70025b1929472d5a5	
+ckpt	beauty	new_model/llmmirec_phase0/beauty/residual/LLMMIRec_residual_seed42.pt	4820321	2026-08-06 01:20:47	c0cf5fe471e6e62a64558ce39e97177eced6296a	
+ckpt	ml-1m	new_model/llmmirec_phase0/ml-1m/id/LLMMIRec_id_seed42.pt	1029725	2026-08-06 18:53:47	6430e5b7bb6963cbdaf7d5b5c2f6073f538ffc4e	
+ckpt	ml-1m	new_model/llmmirec_phase0/ml-1m/llm_replace/LLMMIRec_llm_replace_seed42.pt	2671006	2026-08-06 20:08:43	1b304e444ad14503c4caf1810a23353939a12dd8	
+ckpt	ml-1m	new_model/llmmirec_phase0/ml-1m/residual/LLMMIRec_residual_seed42.pt	2671201	2026-08-06 22:03:44	90ba3520742011a4f1a69008ae3f8d27705d858a	
+ckpt	toys	new_model/llmmirec_phase0/toys/id/LLMMIRec_id_seed42.pt	20246365	2026-08-07 05:15:47	00ccfe02c04cef18468c052fd93feacdebb38416	
+ckpt	toys	new_model/llmmirec_phase0/toys/llm_replace/LLMMIRec_llm_replace_seed42.pt	21887646	2026-08-07 06:50:40	2f845613057e99eb70ff33d76ce50bcd33800e53	
+ckpt	toys	new_model/llmmirec_phase0/toys/residual/LLMMIRec_residual_seed42.pt	21887905	2026-08-07 11:36:09	0429e83ce8b6fd16d6fe330107fb6a84a0d0ca6f	
+ckpt	beauty	new_model/llmmirec_phase1_aspcf/beauty/aspcf_sr512_lr0.0/LLMMIRec_aspcf_sr512_lr0.0_seed42.pt	6883185	2026-08-07 19:02:50	cbc43973923259dda8c3ea4456b55d29b6b295b6	
+ckpt	beauty	new_model/llmmirec_phase1_aspcf/beauty/aspcf_sr512_lr0.01/LLMMIRec_aspcf_sr512_lr0.01_seed42.pt	6883221	2026-08-07 19:00:01	bc17bcf571c1bf019748d674e1aec08275ef25a0	
+ckpt	ml-1m	new_model/llmmirec_phase1_aspcf/ml-1m/aspcf_sr512_lr0.01/LLMMIRec_aspcf_sr512_lr0.01_seed42.pt	1635581	2026-08-08 03:47:45	0f8d33b228b24e766b9628fa05b82d6e76664844	
+ckpt	ml-1m	new_model/llmmirec_phase1_aspcf/ml-1m/aspcf_sr512_lr0/LLMMIRec_aspcf_sr512_lr0_seed42.pt	1635476	2026-08-07 23:47:40	d414c3a05970bd2742818f76a09a259c84e7e37b	
+ckpt	beauty	new_model/llmmirec_phase1_gate/beauty/aspcf_basic_sr512_lr0.01/LLMMIRec_aspcf_basic_sr512_lr0.01_seed42.pt	3784911	2026-08-08 22:56:39	18063840f9b4d2347a2c7f28555c62da03a8050d	
+ckpt	beauty	new_model/llmmirec_phase1_gate/beauty/aspcf_conflict_sr512_lr0.01/LLMMIRec_aspcf_conflict_sr512_lr0.01_seed42.pt	3801400	2026-08-08 23:01:35	1c99120eadbcb72de749d7477348284628d24f07	
+ckpt	ml-1m	new_model/llmmirec_phase1_gate/ml-1m/aspcf_basic_sr512_lr0.01/LLMMIRec_aspcf_basic_sr512_lr0.01_seed42.pt	1635791	2026-08-08 23:32:24	a5e2834932cbddd169dd8d94f652212eb99a14cf	
+ckpt	ml-1m	new_model/llmmirec_phase1_gate/ml-1m/aspcf_conflict_sr512_lr0.01/LLMMIRec_aspcf_conflict_sr512_lr0.01_seed42.pt	1652280	2026-08-08 23:30:44	d8275fca2223f94f2ac4bc9ec8e7a8a7be7a65bc	
+ckpt	beauty	new_model/llmmirec_phase1_relation_control/beauty/llm_replace_sr512_lr0.01/LLMMIRec_llm_replace_sr512_lr0.01_seed42.pt	1721989	2026-08-07 21:35:53	51a01ef6606546a2f429f44773514bb6cd64714f	
+ckpt	ml-1m	new_model/llmmirec_phase1_relation_control/ml-1m/llm_replace_sr512_lr0.01/LLMMIRec_llm_replace_sr512_lr0.01_seed42.pt	1721989	2026-08-08 01:04:31	e49870ac48580db9ac40263062b741c2da7b47f9	
+ckpt	beauty	new_model/llmmirec_phase2a_proto/beauty/aspcf_proto32_learnable/LLMMIRec_aspcf_proto32_learnable_seed42.pt	3784876	2026-08-09 12:24:33	5169a4bd4ebd321604814b70ea47005b3cbb8f6c	
+ckpt	beauty	new_model/llmmirec_phase2a_proto/beauty/aspcf_proto32_prototype/LLMMIRec_aspcf_proto32_prototype_seed42.pt	3784876	2026-08-09 12:27:36	c225015fdf17866f605b5212e0f5f2192a2702e2	
+ckpt	beauty	new_model/llmmirec_phase2b_calibration/beauty/proto_global_calib/LLMMIRecCHIR_proto_global_calib_seed42.pt	3784841	2026-08-09 15:57:06	4c60c49f611f39d264305d24b4bcf60808df5844	
+ckpt	beauty	new_model/llmmirec_phase2b_calibration/beauty/proto_prototype_calib/LLMMIRecCHIR_proto_prototype_calib_seed42.pt	3784946	2026-08-09 16:11:54	b70d7f52fab781c658cbb6782075dbf676ca9967	
+ckpt	beauty	new_model/llmmirec_phase2c_prior/beauty/proto_prior0.5/LLMMIRecCHIR_proto_prior0.5_seed42.pt	3784701	2026-08-09 18:05:41	e6a60f794922c7362e2aa23cba5e631b91d8d895	
+ckpt	beauty	new_model/llmmirec_phase2c_prior/beauty/proto_prior1.0/LLMMIRecCHIR_proto_prior1.0_seed42.pt	3784701	2026-08-09 18:12:50	c78cc0f644a91f08e54dccbfd46e961c3bff3b67	
+ckpt	beauty	new_model/llmmirec_phase2d_dual/beauty/dual_fused_split/LLMMIRecCHIR_dual_fused_split_seed42.pt	3795449	2026-08-09 23:30:44	54068e36d7a5aad0f7fabc908201b42041a912f5	
+ckpt	beauty	new_model/llmmirec_phase2d_dual/beauty/dual_routing/LLMMIRecCHIR_dual_routing_seed42.pt	3795281	2026-08-09 22:26:07	3aa97db3f6388515772ba355f4b6d886e22edd17	
+ckpt	beauty	new_model/llmmirec_phase2e_rho/beauty/rho_fixed_0.5/LLMMIRecCHIR_rho_fixed_0.5_seed42.pt	3785311	2026-08-10 00:40:09	5fdd3058722244b69550d92b1a54e10cf9526d8d	
+ckpt	beauty	new_model/llmmirec_phase2e_rho/beauty/rho_fixed_1.0/LLMMIRecCHIR_rho_fixed_1.0_seed42.pt	3785311	2026-08-10 00:39:15	ea3aa89a18cfdca2677cf120bf8d0aaf6ee19b2a	
