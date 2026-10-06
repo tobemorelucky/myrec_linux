@@ -23,7 +23,7 @@ from models.sequential.llmmi_utils import get_activation
 class ItemEncoder(nn.Module):
     """Shared item embedding module.
 
-    Five modes:
+    Six modes:
       - id:           e = id_embedding(item_id)
       - llm_replace:  e = adapter(llm_table[item_id])
       - residual:     e = id_embedding(item_id) + gamma * adapter(llm_table[item_id])
@@ -37,6 +37,17 @@ class ItemEncoder(nn.Module):
                         c    = complement_mlp([tail(z_pv); cf_table[item]])
                       U_r comes from cross-view association between the LLM and
                       collaborative item views (tools/build_cgscd_basis.py).
+      - rasrf:        reliability-aware semantic residual fusion (Ch3 Round 2):
+                        e_cf  = id_embedding(item_id)            CF main path
+                        e_sem = adapter(llm_table[item_id])      semantic correction
+                        gate  = sigmoid(MLP(consistency signals))  item-specific
+                        e     = e_cf + gate * e_sem
+                      Signals: cos(e_cf, e_sem), |e_cf - e_sem|, e_cf * e_sem, and
+                      optionally an offline neighbourhood-agreement prior
+                      (tools/build_semantic_neighborhood_agreement.py).
+                      At init all Linears are ~N(0, 0.01) so e_sem ~ 0 and the
+                      model starts as pure CF; the correction is grown only if
+                      training finds it useful.
 
     Padding items (item_id == 0) always produce zero vectors.
     """
@@ -70,24 +81,29 @@ class ItemEncoder(nn.Module):
         compl_dim: int = 32,
         compl_hidden: int = 64,
         cgscd_gate_mode: str = "basic",
+        # ── RASRF params ──
+        neigh_prior: torch.Tensor = None,
+        rasrf_gate_mode: str = "scalar",
+        rasrf_gate_input: str = "agree_diff_inter",
+        rasrf_gate_hidden: int = 64,
     ):
         super().__init__()
         self.item_num = int(item_num)
         self.emb_size = int(emb_size)
         self.mode = mode
 
-        if mode not in ("id", "llm_replace", "residual", "aspcf", "cgscd"):
+        if mode not in ("id", "llm_replace", "residual", "aspcf", "cgscd", "rasrf"):
             raise ValueError(
                 f"Unknown item_encoder mode: '{mode}'. "
-                f"Supported: id, llm_replace, residual, aspcf, cgscd"
+                f"Supported: id, llm_replace, residual, aspcf, cgscd, rasrf"
             )
 
-        # --- ID embedding (used in 'id' and 'residual' modes) ---
-        if mode in ("id", "residual"):
+        # --- ID embedding (used in 'id', 'residual' and 'rasrf' modes) ---
+        if mode in ("id", "residual", "rasrf"):
             self.id_embedding = nn.Embedding(item_num, emb_size)
 
-        # --- LLM-based modes (llm_replace, residual, aspcf, cgscd) ---
-        if mode in ("llm_replace", "residual", "aspcf", "cgscd"):
+        # --- LLM-based modes (llm_replace, residual, aspcf, cgscd, rasrf) ---
+        if mode in ("llm_replace", "residual", "aspcf", "cgscd", "rasrf"):
             if llm_table is None:
                 raise ValueError(f"item_encoder='{mode}' requires llm_table, got None")
             if llm_table.shape[0] != item_num:
@@ -98,8 +114,8 @@ class ItemEncoder(nn.Module):
             self.register_buffer("llm_table", llm_table, persistent=False)
             d_llm = llm_table.size(1)
 
-        # --- llm_replace / residual adapter ---
-        if mode in ("llm_replace", "residual"):
+        # --- llm_replace / residual / rasrf adapter (semantic branch) ---
+        if mode in ("llm_replace", "residual", "rasrf"):
             act = get_activation(adapter_activation)
             layers = [
                 nn.Linear(d_llm, adapter_hidden),
@@ -238,6 +254,44 @@ class ItemEncoder(nn.Module):
                 nn.Linear(gate_hidden, 2),
             )
 
+        # --- RASRF ---
+        if mode == "rasrf":
+            if rasrf_gate_mode not in ("scalar", "vector"):
+                raise ValueError(f"Unknown rasrf_gate_mode: {rasrf_gate_mode}")
+            if rasrf_gate_input not in ("agree", "agree_diff", "agree_diff_inter"):
+                raise ValueError(f"Unknown rasrf_gate_input: {rasrf_gate_input}")
+
+            self.rasrf_gate_mode = rasrf_gate_mode
+            self.rasrf_gate_input = rasrf_gate_input
+
+            # Consistency-signal layout
+            n_sig = 1                                  # cos(e_cf, e_sem)
+            if rasrf_gate_input in ("agree_diff", "agree_diff_inter"):
+                n_sig += emb_size                      # |e_cf - e_sem|
+            if rasrf_gate_input == "agree_diff_inter":
+                n_sig += emb_size                      # e_cf * e_sem
+
+            self.has_neigh = neigh_prior is not None
+            if self.has_neigh:
+                if neigh_prior.dim() != 2 or neigh_prior.size(0) != item_num:
+                    raise ValueError(
+                        f"neigh_prior must be [item_num={item_num}, n_signals], "
+                        f"got {tuple(neigh_prior.shape)}"
+                    )
+                self.register_buffer("neigh_prior", neigh_prior, persistent=False)
+                self.neigh_dim = int(neigh_prior.size(1))
+                n_sig += self.neigh_dim
+            else:
+                self.neigh_dim = 0
+
+            self.gate_in_dim = n_sig
+            self.gate_out_dim = 1 if rasrf_gate_mode == "scalar" else emb_size
+            self.rasrf_gate = nn.Sequential(
+                nn.Linear(self.gate_in_dim, rasrf_gate_hidden),
+                nn.GELU(),
+                nn.Linear(rasrf_gate_hidden, self.gate_out_dim),
+            )
+
         self._mode = mode  # stored for logging
 
     @property
@@ -278,6 +332,8 @@ class ItemEncoder(nn.Module):
             return self._forward_aspcf(item_ids, return_components=return_components)
         elif self.mode == "cgscd":
             return self._forward_cgscd(item_ids, return_components=return_components)
+        elif self.mode == "rasrf":
+            return self._forward_rasrf(item_ids, return_components=return_components)
         else:
             raise RuntimeError(f"Unknown mode: {self.mode}")
 
@@ -378,6 +434,49 @@ class ItemEncoder(nn.Module):
                 "alpha_comp": alpha_comp * (1.0 - pad_mask.squeeze(-1)),
                 "z_shared": z_sh * (1.0 - pad_mask),
                 "z_private": z_pv * (1.0 - pad_mask),
+            }
+        return e
+
+    def _forward_rasrf(self, item_ids: torch.Tensor, return_components: bool = False):
+        """Reliability-aware semantic residual fusion.
+
+        e = e_cf + gate(consistency(e_cf, e_sem)) * e_sem
+
+        e_cf is the main path (collaborative, learned only from interactions).
+        The semantic correction is gated per item by explicit cross-view
+        consistency signals, so it can be suppressed where the LLM view does
+        not agree with the collaborative view.
+        """
+        e_cf = self.id_embedding(item_ids)                    # [*, D]
+        e_sem = self.adapter(self.llm_table[item_ids])        # [*, D]
+
+        parts = []
+        if self.rasrf_gate_input in ("agree", "agree_diff", "agree_diff_inter"):
+            cos = F.cosine_similarity(e_cf, e_sem, dim=-1, eps=1e-8)
+            parts.append(cos.unsqueeze(-1))                   # [*, 1]
+        if self.rasrf_gate_input in ("agree_diff", "agree_diff_inter"):
+            parts.append(torch.abs(e_cf - e_sem))             # [*, D]
+        if self.rasrf_gate_input == "agree_diff_inter":
+            parts.append(e_cf * e_sem)                        # [*, D]
+        if self.has_neigh:
+            parts.append(self.neigh_prior[item_ids])          # [*, neigh_dim]
+
+        gate_in = torch.cat(parts, dim=-1)                    # [*, gate_in_dim]
+        gate = torch.sigmoid(self.rasrf_gate(gate_in))        # [*, 1] or [*, D]
+
+        e = e_cf + gate * e_sem                               # [*, D]
+
+        pad_mask = (item_ids == 0).float().unsqueeze(-1)
+        e = e * (1.0 - pad_mask)
+
+        if return_components:
+            return {
+                "emb": e,
+                "semantic": (gate * e_sem) * (1.0 - pad_mask),   # gated correction
+                "complement": e_cf * (1.0 - pad_mask),           # CF main path
+                "gate": gate * (1.0 - pad_mask),
+                "e_cf": e_cf * (1.0 - pad_mask),
+                "e_sem_raw": e_sem * (1.0 - pad_mask),
             }
         return e
 

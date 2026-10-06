@@ -126,6 +126,22 @@ CAISD / TASID / confidence calibration / semantic hard-negative 等既有机制*
 
 ## 2. Chapter 3 — Item Representation
 
+### 2.0 冻结（Phase 1 Round 2 结束）
+
+> 冻结日期：2026-10-06
+>
+> **Chapter 3 = frozen ASPCF。** 方法、结构、超参数全部冻结，不再修改。
+>
+> - 最终方法：`LLMMIRecASPCF` + `ItemEncoder(mode="aspcf")`
+> - 完整资产见 **`CHAPTER3_FINAL.md`**（结构 / 三个贡献 / 与 LLMEmb 的继承与区别 / 已有实验 / 缺口图表）
+> - 最终结果（5 seeds）：Beauty NDCG@5 **0.1075 ± 0.0014**；ML-1M **0.2140 ± 0.0023**
+> - ~~CGSCD~~：❌ negative exploration，已停止（`THESIS_CH3_ROUND1.md`）
+> - ~~RASRF~~：❌ negative exploration，已停止（`CHAPTER3_FINAL.md` §6.2）
+>
+> 下方 §2.1–2.3 保留为 ASPCF 的设计记录与 Phase 0 的分析依据，**不再作为待实现方案**。
+
+
+
 ### 2.1 旧基础与其局限
 
 **旧基础：LLMMIRec + ASPCF**
