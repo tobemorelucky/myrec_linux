@@ -23,13 +23,20 @@ from models.sequential.llmmi_utils import get_activation
 class ItemEncoder(nn.Module):
     """Shared item embedding module.
 
-    Four modes:
+    Five modes:
       - id:           e = id_embedding(item_id)
       - llm_replace:  e = adapter(llm_table[item_id])
       - residual:     e = id_embedding(item_id) + gamma * adapter(llm_table[item_id])
       - aspcf:        e = concat(sqrt(α_s) * s, sqrt(α_c) * c)
                         where s=semantic_branch(z_high), c=complement_branch(z_low, id),
                         [α_s,α_c]=softmax(gate([s;c]))
+      - cgscd:        same fusion skeleton as aspcf, but the split is data-driven:
+                        z_sh = (z - z_mean) @ U_r          (shared subspace, [d_llm, r])
+                        z_pv = (z - z_mean) - z_sh @ U_r^T (private residual)
+                        s    = shared_branch(z_sh)
+                        c    = complement_mlp([tail(z_pv); cf_table[item]])
+                      U_r comes from cross-view association between the LLM and
+                      collaborative item views (tools/build_cgscd_basis.py).
 
     Padding items (item_id == 0) always produce zero vectors.
     """
@@ -54,24 +61,33 @@ class ItemEncoder(nn.Module):
         complement_hidden: int = 64,
         gate_hidden: int = 64,
         aspcf_gate_mode: str = "basic",
+        # ── CGSCD params ──
+        shared_basis: torch.Tensor = None,
+        z_mean: torch.Tensor = None,
+        cf_table: torch.Tensor = None,
+        shared_dim: int = 32,
+        shared_hidden: int = 128,
+        compl_dim: int = 32,
+        compl_hidden: int = 64,
+        cgscd_gate_mode: str = "basic",
     ):
         super().__init__()
         self.item_num = int(item_num)
         self.emb_size = int(emb_size)
         self.mode = mode
 
-        if mode not in ("id", "llm_replace", "residual", "aspcf"):
+        if mode not in ("id", "llm_replace", "residual", "aspcf", "cgscd"):
             raise ValueError(
                 f"Unknown item_encoder mode: '{mode}'. "
-                f"Supported: id, llm_replace, residual, aspcf"
+                f"Supported: id, llm_replace, residual, aspcf, cgscd"
             )
 
         # --- ID embedding (used in 'id' and 'residual' modes) ---
         if mode in ("id", "residual"):
             self.id_embedding = nn.Embedding(item_num, emb_size)
 
-        # --- LLM-based modes (llm_replace, residual, aspcf) ---
-        if mode in ("llm_replace", "residual", "aspcf"):
+        # --- LLM-based modes (llm_replace, residual, aspcf, cgscd) ---
+        if mode in ("llm_replace", "residual", "aspcf", "cgscd"):
             if llm_table is None:
                 raise ValueError(f"item_encoder='{mode}' requires llm_table, got None")
             if llm_table.shape[0] != item_num:
@@ -150,6 +166,78 @@ class ItemEncoder(nn.Module):
                 nn.Linear(gate_hidden, 2),
             )
 
+        # --- CGSCD ---
+        if mode == "cgscd":
+            if shared_dim + compl_dim != emb_size:
+                raise ValueError(
+                    f"shared_dim({shared_dim}) + compl_dim({compl_dim}) "
+                    f"!= emb_size({emb_size})"
+                )
+            if shared_basis is None or z_mean is None or cf_table is None:
+                raise ValueError(
+                    "item_encoder='cgscd' requires shared_basis, z_mean and cf_table"
+                )
+            if shared_basis.dim() != 2 or shared_basis.size(0) != d_llm:
+                raise ValueError(
+                    f"shared_basis must be [d_llm={d_llm}, r], "
+                    f"got {tuple(shared_basis.shape)}"
+                )
+            if z_mean.numel() != d_llm:
+                raise ValueError(f"z_mean must have {d_llm} entries, got {z_mean.numel()}")
+            if cf_table.shape[0] != item_num:
+                raise ValueError(
+                    f"cf_table shape[0]={cf_table.shape[0]} != item_num={item_num}"
+                )
+
+            self.shared_dim = int(shared_dim)
+            self.compl_dim = int(compl_dim)
+            self.cgscd_gate_mode = cgscd_gate_mode
+            self.cf_dim = int(cf_table.size(1))
+
+            # The private residual keeps the full d_llm width.
+            self.register_buffer("shared_basis", shared_basis, persistent=False)
+            self.register_buffer("z_mean", z_mean, persistent=False)
+            self.register_buffer("cf_table", cf_table, persistent=False)
+
+            # Shared branch: z_shared -> s  (mirrors ASPCF semantic_branch shape)
+            self.shared_branch = nn.Sequential(
+                nn.Linear(shared_basis.size(1), shared_hidden),
+                nn.GELU(),
+                nn.Linear(shared_hidden, shared_dim),
+            )
+
+            # Complement: private residual processing (mirrors ASPCF complement_tail)
+            self.compl_tail = nn.Sequential(
+                nn.Linear(d_llm, compl_hidden),
+                nn.GELU(),
+            )
+
+            # Complement: fusion with the collaborative item embedding
+            self.compl_mlp = nn.Sequential(
+                nn.Linear(compl_hidden + self.cf_dim, compl_hidden),
+                nn.GELU(),
+                nn.Linear(compl_hidden, compl_dim),
+            )
+
+            # Gate: basic=[s;c], conflict=[s;c;|s-c|;s*c]
+            if cgscd_gate_mode == "basic":
+                gate_in_dim = shared_dim + compl_dim
+            elif cgscd_gate_mode == "conflict":
+                if shared_dim != compl_dim:
+                    raise ValueError(
+                        f"cgscd_gate_mode='conflict' requires shared_dim == compl_dim "
+                        f"(|s-c| and s*c are elementwise), got "
+                        f"shared_dim={shared_dim}, compl_dim={compl_dim}"
+                    )
+                gate_in_dim = (shared_dim + compl_dim) * 2
+            else:
+                raise ValueError(f"Unknown cgscd_gate_mode: {cgscd_gate_mode}")
+            self.gate = nn.Sequential(
+                nn.Linear(gate_in_dim, gate_hidden),
+                nn.GELU(),
+                nn.Linear(gate_hidden, 2),
+            )
+
         self._mode = mode  # stored for logging
 
     @property
@@ -188,6 +276,8 @@ class ItemEncoder(nn.Module):
             emb = e_cf + self._gamma_value() * e_llm
         elif self.mode == "aspcf":
             return self._forward_aspcf(item_ids, return_components=return_components)
+        elif self.mode == "cgscd":
+            return self._forward_cgscd(item_ids, return_components=return_components)
         else:
             raise RuntimeError(f"Unknown mode: {self.mode}")
 
@@ -239,6 +329,55 @@ class ItemEncoder(nn.Module):
                 "complement": c * (1.0 - pad_mask),
                 "alpha_sem": alpha_sem * (1.0 - pad_mask.squeeze(-1)),
                 "alpha_comp": alpha_comp * (1.0 - pad_mask.squeeze(-1)),
+            }
+        return e
+
+    def _forward_cgscd(self, item_ids: torch.Tensor, return_components: bool = False):
+        """CGSCD forward: data-driven shared / private split of the LLM view.
+
+        z_sh = (z - z_mean) @ U_r            shared subspace coordinates
+        z_pv = (z - z_mean) - z_sh @ U_r^T   private residual (orthogonal complement)
+        """
+        z = self.llm_table[item_ids]                       # [*, d_llm]
+        z_c = z - self.z_mean                              # [*, d_llm]
+        z_sh = z_c @ self.shared_basis                     # [*, r]
+        z_pv = z_c - z_sh @ self.shared_basis.t()          # [*, d_llm]
+
+        # Shared branch
+        s = self.shared_branch(z_sh)                       # [*, shared_dim]
+
+        # Complement branch: private residual + collaborative item embedding
+        c_anchor = self.cf_table[item_ids]                 # [*, d_cf]
+        comp_input = torch.cat([self.compl_tail(z_pv), c_anchor], dim=-1)
+        c = self.compl_mlp(comp_input)                     # [*, compl_dim]
+
+        # Gate
+        if self.cgscd_gate_mode == "basic":
+            gate_input = torch.cat([s, c], dim=-1)
+        else:  # conflict
+            gate_input = torch.cat([s, c, torch.abs(s - c), s * c], dim=-1)
+        gate_weights = F.softmax(self.gate(gate_input), dim=-1)
+        alpha_sem = gate_weights[..., 0]
+        alpha_comp = gate_weights[..., 1]
+
+        eps = 1e-8
+        e = torch.cat([
+            torch.sqrt(alpha_sem.unsqueeze(-1) + eps) * s,
+            torch.sqrt(alpha_comp.unsqueeze(-1) + eps) * c,
+        ], dim=-1)                                          # [*, emb_size]
+
+        pad_mask = (item_ids == 0).float().unsqueeze(-1)
+        e = e * (1.0 - pad_mask)
+
+        if return_components:
+            return {
+                "emb": e,
+                "semantic": s * (1.0 - pad_mask),
+                "complement": c * (1.0 - pad_mask),
+                "alpha_sem": alpha_sem * (1.0 - pad_mask.squeeze(-1)),
+                "alpha_comp": alpha_comp * (1.0 - pad_mask.squeeze(-1)),
+                "z_shared": z_sh * (1.0 - pad_mask),
+                "z_private": z_pv * (1.0 - pad_mask),
             }
         return e
 

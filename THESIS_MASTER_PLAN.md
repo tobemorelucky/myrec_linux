@@ -312,6 +312,38 @@ c = f_compl([z_pv, c_table[ids]])    # [*, c_dim]
 
 ## 3. Chapter 4 — Interest Representation
 
+### 3.0 修订（Phase 1）：主方向改为 Semantic Feedback Competitive Routing
+
+> 修订日期：2026-10-03（THESIS PHASE 1）
+> 本节**取代**下方 §3.3 的模块 2（Multi-Interest Semantic Coverage）作为 Chapter 4 的主方向。
+> §3.1–3.2 的问题定义与已有结论仍然有效，予以保留。
+
+**新主方向**：
+
+> **语义信息必须进入 `history → interest` 的 routing forward 路径，
+> 而不是只通过 profile / coverage 这类训练期 loss 间接影响兴趣。**
+
+**在推荐链路中的位置**：`history items → K interests` 这一步（路由层）。
+
+**与旧方案的差别**：
+
+| | 旧方案（CAISD / Coverage） | 新方案（Semantic Feedback Competitive Routing） |
+|---|---|---|
+| 语义的作用时机 | **训练期**：KL 蒸馏一个 teacher profile | **前向期**：参与 history→interest 的路由计算本身 |
+| 语义的作用方式 | 改变 `V_k` 的方向（间接） | 改变"哪个 item 被分配到哪个 interest"（直接） |
+| 前向行为是否改变 | 否（`attention_maps` 与无 teacher 时一致） | **是** |
+| 测试期是否使用语义 | 否（teacher 只在 training 分支） | **是**（routing 是前向的一部分） |
+
+**为什么这个转向有依据**：Phase 0 核对出的事实是——HSDIR 把兴趣结构改变得很大（Beauty 兴趣间余弦 0.9457→0.8691，有效秩 1.714→2.280，route membership entropy 0.913→0.543），但收益不稳定。这说明**训练期结构监督**与**前向路由行为**之间存在缺口：teacher 只改变了参数的落点，没有改变"给定这条历史，模型如何分配兴趣"这一前向计算本身。
+
+**"Competitive" 的含义**：K 个 interest 对同一个 history item 形成竞争——一个 item 的语义归属不是被预先指定的，而是 K 路路由（协同侧 + 语义侧）相互竞争后产生的分配。这要求 routing 权重是对所有 K 个 interest 归一化的（softmax over K），并且每一路都能看到语义信号。
+
+**Phase 1 阶段不实现**。本节只固定方向。
+
+**保留为后续可选辅助机制**（不再是核心创新）：`L_profile`（CAISD 的兴趣语义 profile 蒸馏）、`L_coverage` / `L_focus`、`L_sem_relation`。
+
+---
+
 ### 3.1 已有探索与结论
 
 已探索：`LLMMIRecHSDIR`（层次语义路由蒸馏）、`LLMMIRecCHIR`（prototype query + dual-view routing）、`LLMMIRecCASIR`（协同锚定语义兴趣精炼）、`LLMMIRecCAISD`（兴趣级语义分布蒸馏）。
@@ -399,6 +431,48 @@ L_total = L_BPR
 ---
 
 ## 4. Chapter 5 — Interest Decision
+
+### 4.0 修订（Phase 1）：主方向改为 Candidate-Aware Interest Selection
+
+> 修订日期：2026-10-03（THESIS PHASE 1）
+> 本节**取代**下方 §4.3 的模块 1–3 作为 Chapter 5 的主方向。
+> §4.1 的已有基础与 §4.2 的问题定义仍然有效，予以保留。
+
+**新主方向**：
+
+> **每个 candidate 根据其与 K 个 interests 的协同/语义匹配，
+> 产生自己的 interest distribution 和 candidate-specific user representation，
+> 直接改变 prediction path。**
+
+**在推荐链路中的位置**：`candidate × interests → score`（决策层）。
+
+**与旧方案（TASID）的差别**：
+
+| | 旧方案（TASID） | 新方案（Candidate-Aware Interest Selection） |
+|---|---|---|
+| interest 权重 | `w_k` 由 **history** 决定（`InterestAggregator`），对同一用户的所有 candidate 相同 | **每个 candidate 有自己的** `π_k(c)` |
+| user representation | `Σ_k w_k V_k`，**与 candidate 无关** | **candidate-specific** |
+| target 信息的作用时机 | **仅训练期**（KL 的 teacher 与 student 都只在 training 分支） | **前向期**，每个 candidate 都参与 |
+| 打分路径是否改变 | 否 | **是** |
+| train / test 一致性 | 天然一致（target 不进前向） | **必须显式保证**（见下） |
+
+**核心工程约束（必须在设计阶段解决，否则不可实现）**：
+
+旧方案之所以"test 时无 target 泄露"，是因为 target 只出现在训练期 loss 中。新方案要让 candidate 参与前向打分，就必须回答：
+
+1. **测试期每个 candidate 都要算一次 `π(c)`**。评测时候选集大小是 `1 + num_neg`（dev/test），但全库排序场景下是 `n_items`。必须确保前向复杂度可接受（`K × D` 的内积对每个 candidate 是廉价的，但需要确认实现方式不会把 batch 维度炸开）。
+2. **训练期与测试期的 candidate 集合不同**（训练是 `1 + num_neg=1`，测试是 `1 + neg` 或全库）。`π(c)` 的构造必须对 candidate 数量**不变**，即逐 candidate 独立计算，不能有跨 candidate 的归一化（如 softmax over candidates）——否则 train/test 不一致。
+3. **`π(c)` 必须是 candidate 的函数，不能是 candidate 的标签**。即只用 candidate 的表示（item embedding）计算，不引入任何测试期不可得的信息。
+
+**为什么这个转向有依据**：Phase 0 核对出的事实是——现有 TASID 的 `prediction = <Σ_k w_k V_k, e_cand>` 完全不受 target 影响，`w_k` 由 history-only 的 `InterestAggregator` 给出。因此 target-interest 知识在打分时**已经被丢弃**。这解释了为什么 TASID 的收益不稳定。
+
+**Phase 1 阶段不实现**。本节只固定方向。
+
+**保留为后续可选辅助机制**（不再是核心创新）：confidence calibration、semantic hard-negative bank / `L_disc`、`L_tasid`。
+
+**注意**：semantic hard-negative bank（`data/<ds>/handled/semantic_hardneg_top100.pkl`）在 Phase 0 已验证可用，属于已完成资产，无论 Chapter 5 走哪个方向都可复用。
+
+---
 
 ### 4.1 已有基础
 
