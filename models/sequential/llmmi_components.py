@@ -752,3 +752,221 @@ class DualViewInterestExtractor(nn.Module):
             "semantic_query": semantic_query,
             "collaborative_query": collaborative_query,
         }
+
+
+# =========================
+#  Chapter 4 — ECTIR: transport routing + evidence aggregation
+# =========================
+
+# Finite stand-in for -inf: exp(-1e4) underflows to exactly 0, and unlike -inf it
+# cannot produce NaN through (-inf) - (-inf) in the Sinkhorn normalisations.
+_NEG = -1e4
+
+
+class TransportInterestRouter(nn.Module):
+    """Evidence-Constrained Transport Interest Routing (Chapter 4, Module 1 + 2).
+
+    Replaces the per-interest independent softmax over history with a globally
+    coupled entropic optimal-transport assignment:
+
+      - history side: row marginal `a` = uniform over valid positions
+      - interest side: column marginal `b` = softmax_k(logsumexp_l S[l,k] / tau_c),
+        i.e. capacity is derived from each interest's affinity evidence and is
+        NOT forced to be uniform
+      - Sinkhorn (log domain) solves for the transport plan T [B, L, K]
+
+    T is then row-normalised and used to form V_k as a convex combination of
+    values, so V_k keeps the same form as the baseline attention output; only
+    the way the weights are produced changes.
+
+    Module 2 (optional, n_refine > 0) re-derives the interest query from the
+    current V_k, making the assignment sequence-specific.
+
+    Shapes: internal affinity/transport use [B, L, K]; returned interest vectors
+    use the baseline convention [B, K, D].
+    """
+
+    def __init__(self, K: int, emb_size: int, attn_size: int,
+                 eps: float = 0.1, tau_c: float = 1.0,
+                 n_sinkhorn: int = 5, n_refine: int = 1):
+        super().__init__()
+        if eps <= 0:
+            raise ValueError(f"ectir eps must be > 0, got {eps}")
+        if n_sinkhorn < 1:
+            raise ValueError(f"ectir n_sinkhorn must be >= 1, got {n_sinkhorn}")
+        if n_refine < 0:
+            raise ValueError(f"ectir n_refine must be >= 0, got {n_refine}")
+
+        self.K = int(K)
+        self.emb_size = int(emb_size)
+        self.attn_size = int(attn_size)
+        self.eps = float(eps)
+        self.tau_c = float(tau_c)
+        self.n_sinkhorn = int(n_sinkhorn)
+        self.n_refine = int(n_refine)
+
+        # same parameter shapes/semantics as QueryMultiInterestExtractor
+        self.query = nn.Parameter(torch.empty(K, emb_size))
+        nn.init.normal_(self.query, mean=0.0, std=0.01)
+        self.Wq = nn.Linear(emb_size, attn_size)
+        self.Wk = nn.Linear(emb_size, attn_size)
+        self.Wv = nn.Linear(emb_size, emb_size)
+
+        # Module 2 refinement: near-zero init => q^(1) ~ q at start of training
+        self.W_r = nn.Linear(emb_size, emb_size) if n_refine > 0 else None
+
+    def _affinity(self, Kmat: torch.Tensor, Q: torch.Tensor) -> torch.Tensor:
+        """Kmat [B, L, d], Q [B, K, d] -> S [B, L, K]."""
+        return torch.bmm(Kmat, Q.transpose(1, 2)) / math.sqrt(self.attn_size)
+
+    def _sinkhorn(self, S: torch.Tensor, valid: torch.Tensor):
+        """Log-domain entropic transport.
+
+        Args:
+            S: [B, L, K] affinity, padding already set to _NEG
+            valid: [B, L] float mask (1 = valid)
+
+        Returns:
+            T: [B, L, K] transport plan (exactly 0 at padding, row sums = a,
+               column sums ~= b)
+            b: [B, K] interest capacity (column marginal target)
+        """
+        B, L, K = S.shape
+        mb = valid.bool()
+
+        # history-side mass: uniform over valid positions
+        a = valid / valid.sum(dim=1, keepdim=True).clamp(min=1.0)
+        log_a = torch.log(a + 1e-12)
+
+        # interest-side capacity: from affinity evidence, NOT uniform
+        evidence = torch.logsumexp(S, dim=1)                  # [B, K]
+        b = torch.softmax(evidence / self.tau_c, dim=-1)      # [B, K]
+        log_b = torch.log(b + 1e-12)
+
+        M = S / self.eps
+        f = S.new_zeros(B, L)
+        g = S.new_zeros(B, K)
+        for _ in range(self.n_sinkhorn):
+            f_new = log_a - torch.logsumexp(M + g[:, None, :], dim=2)   # [B, L]
+            f = torch.where(mb, f_new, torch.full_like(f_new, _NEG))
+            g = log_b - torch.logsumexp(M + f[:, :, None], dim=1)       # [B, K]
+
+        T = torch.exp(M + f[:, :, None] + g[:, None, :]) * valid[:, :, None]
+        return T, b
+
+    def _values(self, T: torch.Tensor, Vmat: torch.Tensor):
+        """T [B, L, K], Vmat [B, L, D] -> (V [B, K, D], A [B, K, L]).
+
+        A is the row-normalised plan, i.e. the actual attention used to form V.
+        It follows the baseline convention (rows sum to 1 over L), which is what
+        the downstream diagnostics expect. The raw plan is reported separately
+        via `transport` in the info dict.
+        """
+        Tm = T.transpose(1, 2)                                # [B, K, L]
+        denom = Tm.sum(dim=-1, keepdim=True).clamp(min=1e-8)
+        A = Tm / denom
+        return torch.bmm(A, Vmat), A
+
+    def forward(self, history_emb: torch.Tensor, lengths: torch.Tensor,
+                return_intermediate: bool = False):
+        B, L, D = history_emb.shape
+        valid = (torch.arange(L, device=history_emb.device)[None, :]
+                 < lengths[:, None]).float()                  # [B, L]
+        # match the baseline: keep raw scores free of -inf before masking
+        valid_f = valid
+        neg_mask = ~valid.bool()
+
+        Kmat = self.Wk(history_emb)                           # [B, L, d]
+        Vmat = self.Wv(history_emb)                           # [B, L, D]
+
+        # ---- step 0 ----
+        Q0 = self.Wq(self.query).unsqueeze(0).expand(B, -1, -1)        # [B, K, d]
+        S = self._affinity(Kmat, Q0).masked_fill(neg_mask[:, :, None], _NEG)
+        T, b_cap = self._sinkhorn(S, valid_f)
+        V, A = self._values(T, Vmat)
+
+        # ---- Module 2: sequence-specific refinement ----
+        if self.W_r is not None:
+            for _ in range(self.n_refine):
+                q_t = self.query.unsqueeze(0) + self.W_r(V)            # [B, K, D]
+                Q_t = self.Wq(q_t)
+                S = self._affinity(Kmat, Q_t).masked_fill(neg_mask[:, :, None], _NEG)
+                T, b_cap = self._sinkhorn(S, valid_f)
+                V, A = self._values(T, Vmat)
+
+        if return_intermediate:
+            return V, A, {"transport": T, "capacity": b_cap, "affinity": S}
+        return V, A
+
+
+class TransportEvidenceAggregator(nn.Module):
+    """Transport-Evidence Interest Aggregation (Chapter 4, Module 3).
+
+    Interest weights are produced from three evidence features computed off the
+    FINAL transport plan, together with the interest vector and a history
+    summary:
+
+      mass_k : total transport mass acquired by interest k
+      conc_k : concentration of that mass over history (1 - normalised entropy)
+      rec_k  : temporal centroid (how recent the mass is)
+
+    Everything is history-only (no candidate/target information), so the
+    aggregation remains leakage-free.
+
+    NOTE: the MLP here is only a local parameterisation of the evidence. The
+    contribution is the evidence features themselves, not the gate.
+    """
+
+    def __init__(self, K: int, emb_size: int, hidden: int = 64, n_evidence: int = 3):
+        super().__init__()
+        self.K = int(K)
+        self.emb_size = int(emb_size)
+        self.n_evidence = int(n_evidence)
+        self.ln = nn.LayerNorm(emb_size)
+        in_dim = emb_size + n_evidence + emb_size          # V_k ; evidence ; h_sum
+        self.mlp = nn.Sequential(
+            nn.Linear(in_dim, hidden),
+            nn.GELU(),
+            nn.Linear(hidden, 1),
+        )
+
+    def forward(self, interest_vectors: torch.Tensor, transport: torch.Tensor,
+                history_emb: torch.Tensor, lengths: torch.Tensor,
+                position: torch.Tensor):
+        """
+        Args:
+            interest_vectors: [B, K, D]
+            transport:        [B, L, K]  final plan
+            history_emb:      [B, L, D]  raw (no position) history embeddings
+            lengths:          [B]
+            position:         [B, L]     baseline position values (larger = newer)
+        Returns:
+            weights: [B, K] softmax over K
+        """
+        B, L, K = transport.shape
+        device = transport.device
+        valid = (torch.arange(L, device=device)[None, :] < lengths[:, None]).float()
+
+        mass = transport.sum(dim=1)                                    # [B, K]
+        p = transport / mass[:, None, :].clamp(min=1e-8)               # [B, L, K]
+        ent = -(p * torch.log(p + 1e-12)).sum(dim=1)                   # [B, K]
+        logL = torch.log(valid.sum(dim=1).clamp(min=2.0))[:, None]     # [B, 1]
+        conc = (1.0 - ent / logL.clamp(min=1e-6)).clamp(0.0, 1.0)      # [B, K]
+
+        pos_max = position.max().clamp(min=1.0)
+        rec = (transport * position[:, :, None]).sum(dim=1) / mass.clamp(min=1e-8)
+        rec = (rec / pos_max).clamp(0.0, 1.0)                          # [B, K]
+
+        # history summary: same construction as InterestAggregator
+        sum_emb = (history_emb * valid[:, :, None]).sum(dim=1)
+        count = valid.sum(dim=1, keepdim=True).clamp(min=1.0)
+        mean_his = sum_emb / count
+        last_idx = (lengths - 1).clamp(min=0).long()
+        last_his = history_emb[torch.arange(B, device=device), last_idx]
+        h_sum = self.ln(mean_his + last_his)                           # [B, D]
+
+        ev = torch.stack([mass, conc, rec], dim=-1)                    # [B, K, 3]
+        h_rep = h_sum[:, None, :].expand(-1, self.K, -1)               # [B, K, D]
+        feat = torch.cat([interest_vectors, ev, h_rep], dim=-1)        # [B, K, 2D+3]
+        logits = self.mlp(feat).squeeze(-1)                            # [B, K]
+        return torch.softmax(logits, dim=-1)
