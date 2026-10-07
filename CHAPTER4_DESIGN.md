@@ -1,24 +1,40 @@
 # CHAPTER4_DESIGN.md
 
 > Chapter 4 方向设计（**只给方案，不写代码、不训练**）
-> 日期：2026-10-06
-> 前置约束：Chapter 3 = frozen ASPCF（`CHAPTER3_FINAL.md`），ASPCF `ItemEncoder` 固定不动。
->
-> ## ⚠️ 状态说明（2026-10-06 更新）
->
-> - **§3 的 SCIR（Semantic-Competitive Interest Routing）标记为 `DRAFT`**，
->   **不作为最终方案实现**，保留为备选。
-> - **§8 的 RCIR（Residual Competitive Interest Routing）为当前主候选**。
-> - 在 `CHAPTER4_PHASE0_DIAGNOSIS` 的结论出来之前，**两者都不实现**。
-> - 诊断决定分支：**A** interest routing 是瓶颈 → 实现 RCIR；
->   **B** aggregation/scoring 是瓶颈 → 优先转 candidate-aware scoring；
->   **C** 两者都有问题 → 再规划两阶段结构。
+> 更新日期：2026-10-06（第二次修订）
+> 前置约束：Chapter 3 = frozen ASPCF（`CHAPTER3_FINAL.md`），ASPCF `ItemEncoder` 完全冻结。
 
 ---
 
-## 1. 失败复盘：Chapter 4 已有探索为何全部没有稳定收益
+## 0. 修订说明与明确排除项
 
-### 1.1 已有方法与其真实结果
+### 0.1 本版取代的内容
+
+| 内容 | 处置 |
+|---|---|
+| 旧 §3 SCIR（Semantic-Competitive Interest Routing，用 `softmax_K` **替换** `softmax_L`） | ❌ **superseded**，不再作为候选。它丢弃了 attention 在 history 上的加权能力，破坏性过大 |
+| 旧 §8 RCIR（Residual Competitive Interest Routing） | ✅ 保留并**升级为 Module 1**，纳入核心结构 |
+| Adaptive Interest Cardinality / dynamic-K | ❌ **明确排除，不是 Chapter 4 的创新**（见 §0.2） |
+
+### 0.2 明确排除：K 的选择属于公平调参，不是创新
+
+**PoMRec 的标准配置本来就按数据集调 K**：Beauty `K=4`，ML-1M `K=2`。
+因此 ASPCF 也必须被允许做同样的 K 选择——**这是公平调参，不是方法贡献**。
+
+据此：
+- ❌ 不把 "Adaptive / Dynamic Interest Cardinality" 写成 Chapter 4 的核心创新；
+- ❌ 不做 K 敏感性扫描、不做 learnable K；
+- ✅ 只补一个**最小 K baseline**（K=2），用于
+  1. 量化 ML-1M 当前约 2% 差距中有多少只是 K 造成的；
+  2. 给 Chapter 4 建立**公平的 dataset-specific ASPCF baseline**。
+
+K=2 baseline 的实验设置见 §6，其结果只作为**对照基线**出现在论文中，不作为 contribution。
+
+---
+
+## 1. 失败复盘：已有探索为何全部没有稳定收益
+
+### 1.1 已有方法与真实结果
 
 | 方法 | 核心机制 | 作用位置 | Beauty NDCG@5 | ML-1M NDCG@5 | seeds |
 |---|---|---|---|---|---|
@@ -30,332 +46,300 @@
 | CAISD（5-seed, responsibility） | 兴趣语义 profile 蒸馏 | 训练期 loss | **0.10738** | **0.21042** | 5 |
 | TASID（llm_only / asymmetric） | target 条件蒸馏 | 训练期 loss | 0.1082 | 0.2135 | 1 |
 
-† HSDIR 在其**自己的**超参配置（Beauty lr=0.008/bs=2048；ML-1M lr=0.002/bs=2048）下运行，
-与冻结 ASPCF（lr=0.004 或 0.001 / bs=1024）**不同配置，不可直接比较**。
+† HSDIR 在其**自己的**超参配置下运行，与冻结 ASPCF **不同配置，不可直接比较**。
 
 **唯一有 5-seed 公平对比的是 CAISD：Beauty 打平、ML-1M 落后 ASPCF 1.68%。**
-其余全部是单 seed，且没有一条稳定超过冻结 ASPCF。
 
-### 1.2 HSDIR 是最好的诊断样本
-
-HSDIR 是唯一在**结构指标**上有大幅、方向一致的改变、却仍未能稳定转化为收益的方法：
-
-| 指标 | Beauty baseline → HSDIR | ML-1M baseline → HSDIR |
-|---|---|---|
-| 兴趣间余弦 | 0.9457 → **0.8691** | 0.7620 → **0.7377** |
-| 有效兴趣数 | 1.714 → **2.280** | 2.762 → **3.028** |
-| route membership entropy | 0.913 → **0.543** | — |
-| effective active K | 3.833 → **2.632** | — |
-| route 与语义结构相关性 | ~0.03 → **~0.36 / 0.38** | — |
-
-### 1.3 共同的结构性原因
-
-上表所有方法，无论机制如何，都落入以下三类之一：
+### 1.2 失败共性
 
 | 类型 | 方法 | 问题 |
 |---|---|---|
-| **A. 训练期监督** | HSDIR、CAISD、TASID | 前向路由算子完全不变。teacher 只改变了参数的落点，没有给模型任何**新能力**。测试期模型做的事与 baseline 逐字相同 |
-| **B. 只改 query 来源** | CHIR | 路由算子仍是 `softmax over L`，只是 query 换成 prototype 派生。表达能力未变，只换了输入 |
-| **C. 在打分路径上加残差** | CASIR | 改的是 `V_k` 的数值而不是 `history → V_k` 的**映射**，且与 ASPCF 的 item 表示耦合，容易互相干扰 |
+| **A. 训练期监督** | HSDIR、CAISD、TASID | 前向路由算子完全不变。teacher 只改变参数落点，测试期模型做的事与 baseline 逐字相同 |
+| **B. 只改 query 来源** | CHIR | 路由算子仍是 `softmax over L`，表达能力未变 |
+| **C. 打分路径加残差** | CASIR | 改 `V_k` 的数值而非 `history → V_k` 的映射 |
 
-**结论：Chapter 4 要有效，必须改变 `history → K interests` 的算子本身（类型 D），
-而不是在它外面套监督或残差。**
+**结论：必须改变 `history → K interests` 与 `interests → user vector` 的前向算子本身。**
 
 ---
 
-## 2. 设计原则（从失败中推导）
+## 2. 设计原则
 
-| # | 原则 | 来自 |
+| # | 原则 | 来源 |
 |---|---|---|
-| **P1** | 必须改变**前向算子**。测试期 `V_k` 的计算方式要与 baseline 不同，而不只是参数不同 | HSDIR 的核心教训 |
-| **P2** | 核心创新不能是"再加一个 auxiliary loss"。辅助 loss 只能作为可选增益项，默认关闭 | 用户约束 + HSDIR 教训 |
-| **P3** | 语义信息必须进入**前向路由计算**，而不是只出现在训练期 teacher 里 | 用户约束 |
+| **P1** | 改变**前向算子**，测试期计算方式必须与 baseline 不同 | HSDIR 教训 |
+| **P2** | 核心创新不能是"再加一个 auxiliary loss" | 用户约束 |
+| **P3** | 不依赖新增 auxiliary loss 才成立（`LOSS = 原 BPR`） | 用户约束 |
 | **P4** | K 个 interest 之间要有**显式竞争** | 用户约束 |
-| **P5** | 不许碰 ASPCF `ItemEncoder` | 用户约束（Ch3 已冻结） |
-| **P6** | 必须在 Beauty **和** ML-1M 同时验证，且先看无辅助 loss 的版本 | `CHAPTER3_FINAL.md` §6.3 的结构性风险 |
+| **P5** | ASPCF `ItemEncoder` 完全冻结 | 用户约束 |
+| **P6** | 必须在 Beauty **和** ML-1M 同时验证 | `CHAPTER3_FINAL.md` §6.3 |
+| **P7** | 与基线的退化关系必须严格：某个超参置零时应**逐字**回到 baseline | 工程安全性 |
 
 ---
 
-## 3. 方案：Semantic-Competitive Interest Routing (SCIR)
+## 3. 核心问题（本版新定义）
 
-### 3.1 当前算子（ASPCF backbone）
+> ### 当前 `QueryMultiInterestExtractor` 对每个 interest **独立**沿 history 做 softmax，
+> ### 不同 interests 之间**没有显式竞争**，
+> ### 因此多个 interest 可能重复关注相同的历史行为，并形成冗余表示。
 
-```
-Q = Wq(query_k)                    # [K, d]  K 个可学习 query
-Km = Wk(h)                         # [B, L, d]
-scores = Q · Kmᵀ / √d              # [B, K, L]
-attn   = softmax_L(scores)         ← ★ softmax 在 HISTORY 上
-V_k    = Σ_l attn[k,l] · Wv(h_l)   # [B, K, D]
-```
-
-**关键**：softmax 在 `L` 维上。每个 interest **独立地**在历史上分配质量，
-K 个 interest 之间**没有任何竞争**——同一个 position 可以同时以 1.0 的权重进入所有 K 个 interest。
-
-### 3.2 新算子
+### 3.1 为什么这是问题：当前算子的结构
 
 ```
-# ── 竞争性分配：softmax 在 K 上，不在 L 上 ──
-S[b,l,k] = collab(b,l,k) + β · sem(b,l,k)
-R        = softmax_K( S / τ_r )          # ★ [B, L, K]  每个 item 在 K 个 interest 间分配归属
-
-# ── item 级质量（防止丢失"重要性"信息）──
-m[b,l]   = σ( w_m · h_{b,l} + b_m )      # [B, L]
-
-# ── interest = 其归属 item 的加权平均 ──
-V_k = Σ_l m[b,l] · R[b,l,k] · Wv(h_l)
-      ──────────────────────────────────      # [B, K, D]
-        Σ_l m[b,l] · R[b,l,k] + ε
-```
-
-其中两个打分通道：
-
-| 通道 | 定义 | 来源 |
-|---|---|---|
-| `collab(b,l,k)` | `Wk(h_{b,l}) · Wq(q_k) / √d` | **完全复用现有 `QueryMultiInterestExtractor` 的投影** |
-| `sem(b,l,k)` | `cos( s_{b,l} , A_k ) / τ_sem` | `s_{b,l}` = ASPCF item 表示的**前 32 维**；`A_k ∈ R³²` 为 K 个**可学习语义锚点** |
-
-> **`s_{b,l}` 的取法（关键复用点）**：ASPCF 的 item 表示为
-> `e = concat[√α_s·s , √α_c·c]`，因此 `e[:, :32] ∝ s`。
-> **余弦相似度对正标量不敏感**，所以 `cos(e[:, :32], A_k) = cos(s, A_k)`。
-> → **`ItemEncoder` 一行都不用改**，直接从已有表示切片即可。
-
-### 3.3 为什么这个改动对应 P1–P4
-
-| 原则 | 如何满足 |
-|---|---|
-| **P1 改前向算子** | `softmax_L` → `softmax_K` + 归一化加权平均。即便 `β=0`（不加语义），测试期 `V_k` 的**计算方式**也已不同于 baseline。这是新的表达能力，不是新的参数落点 |
-| **P2 非辅助 loss** | 核心是算子本身。`LOSS = 原 BPR`。HSDIR 的共属图蒸馏可作为**可选增益项**（默认 `λ=0`），用于消融而非主干 |
-| **P3 语义进前向** | `sem(b,l,k)` 直接进入路由打分。语义相干的历史 item 会**自然地**被分配到对应 interest——不需要 loss 去"教" |
-| **P4 显式竞争** | `softmax_K`：每个 item 的归属是一个在 K 个 interest 上的概率分布。一个 item 强烈归属 interest 1 时，就不可能同时强烈归属 interest 2。这是**定义上的竞争** |
-
-### 3.4 为什么这个设计能绕开 HSDIR 的失败
-
-HSDIR 监督的是**行为共属图** `G_route = R @ Rᵀ`——一个**二阶、置换不变、按用户平均**的统计量。
-它可以被大量不同的路由配置满足，其中绝大多数对排序没有帮助；而且它只在训练期起作用，
-测试期的前向仍然是 `softmax_L`。
-
-SCIR 把路由**本身**变成机制：任何结构性的路由行为都是前向算子的**结果**，
-因此**在测试期必然存在**，不需要靠 loss 去维持。
-若之后要叠加 HSDIR 的共属图蒸馏，它作用的对象也变成了新的 `R`，是锦上添花而非支柱。
-
-### 3.5 与已有工作的关系（论文定位需要）
-
-该算子在形式上接近 **slot attention / soft k-means 聚类路由**：
-K 个 slot（interest）对输入集合（history）做竞争性分配，再用分配权重做加权平均。
-本章的贡献点是：
-
-1. 把该算子引入**多兴趣序列推荐**的 `history → interest` 环节，并论证它比 attention 路由更适合该任务；
-2. 在分配打分中引入**语义通道** `sem(b,l,k)`，且该通道**完全复用已冻结的 ASPCF item 表示**，零额外表示学习成本；
-3. **P4 的竞争性是显式的**，可直接用分配分布 `R` 度量（熵、active K），诊断指标与 Ch3 的诊断工具链通用。
-
----
-
-## 4. 与现有代码的复用关系
-
-### 4.1 直接复用（不改动）
-
-| 组件 | 位置 | 用途 |
-|---|---|---|
-| `ItemEncoder(mode="aspcf")` | `llmmi_components.py` | item 表示。**完全不动**；`s` 从 `e[:, :32]` 切片 |
-| `InterestAggregator` | `llmmi_components.py:352` | `w_k`（history-only），**不变** |
-| `LLMMIRecASPCF.py` 的 forward step 1–3、5–7 | `LLMMIRecASPCF.py:156-238` | 模型骨架 |
-| 位置编码 / dropout / NaN 检查 / `return_intermediate` 契约 | 同上 | — |
-| `main.py` 模型注册 | `main.py` | 加一行 import |
-| `new_bash/run_llmmirec_aspcf_phase2_{beauty,ml1m}.sh` | `new_bash/` | 超参配置模板 |
-| HSDIR 的 `return_route_scores` 管线 | `llmmi_components.py:274-345` | 暴露 `S` 供诊断 |
-| `tools/analyze_cgscd_itemrep.py` | `tools/` | 表示诊断（可小改复用） |
-
-### 4.2 需要新增
-
-| 组件 | 说明 | 预计行数 |
-|---|---|---|
-| `CompetitiveInterestRouter` | 新类，放进 `llmmi_components.py`。复用现有 `Wq/Wk/Wv` 的**参数形状与 mask 约定**，只替换算子；新增 `A_k`（K×32）与 `m` 的头 | ~130 |
-| `LLMMIRecSCIR.py` | 模型，以 `LLMMIRecASPCF.py` 为骨架 | ~290 |
-| `tools/test_llmmirec_scir.py` | CPU 单测：分配归一化、padding 零、`β=0` 退化路径、梯度覆盖、与 ASPCF 回归 | ~230 |
-| `tools/analyze_scir_routing.py` | 诊断：`R` 的熵 / active-K / 与语义的一致性；对比 attention 路由 | ~260 |
-| `new_bash/run_llmmirec_scir_phase1_beauty.sh` | 实验脚本 | ~110 |
-
-### 4.3 明确不复用
-
-| 不复用 | 原因 |
-|---|---|
-| `QueryMultiInterestExtractor` 作为路由算子 | 正是要被替换的对象。但复用其参数初始化与 mask 逻辑 |
-| CAISD / TASID 的 teacher 与 KL | 属"训练期监督"类型（§1.3 类型 A），不作为主干 |
-| CASIR 的残差注入 | 属类型 C，与 ASPCF 表示耦合 |
-| HSDIR 的 loss 作为主干 | 降级为**可选增益项**，默认 `λ_hsr=0` |
-
----
-
-## 5. 最小实验矩阵
-
-**第一阶段只在 Beauty、seed 42 上跑，4 个新配置，2 张卡并行约 40 分钟。**
-全部 `LOSS = 原 BPR`（无任何辅助 loss）。
-
-| # | 配置 | 隔离的变量 | 关键 flag |
-|---|---|---|---|
-| **0** | ASPCF（冻结基线） | — | 已有：0.1592 / 0.1088 |
-| **1** | SCIR，`β=0`，含质量项 `m` | **路由算子变更本身**（无任何语义参与） | `--scir_sem_beta 0 --scir_use_mass 1` |
-| **2** | SCIR，`β=0`，无质量项 `m` | 质量项是否必要 | `--scir_sem_beta 0 --scir_use_mass 0` |
-| **3** | SCIR，`β>0`，含质量项 `m` | **语义进入前向路由的增量** | `--scir_sem_beta 1.0 --scir_use_mass 1` |
-| **4** | 容量对照：ASPCF + 与 SCIR 等量的额外参数 | 排除"多参数带来的收益" | 新增约 `K×32 + 65` 个参数加在 ASPCF 上 |
-
-**判读逻辑**：
-- 若 ① ≈ ⓪ → 路由算子变更本身无效 → **停止**，不做 ②③
-- 若 ① > ⓪ 且 ③ ≈ ① → 竞争路由有效，但语义通道无增量 → 保留算子，去掉语义通道
-- 若 ③ > ① → 语义进入前向路由确有增量 → 这是本章的核心证据
-- 若 ① ≈ ④ → 收益来自参数量而非算子 → **停止**
-
-**成功判据**：Beauty seed 42 上 NDCG@5 > 0.1088（ASPCF 同 seed），
-且最终目标是 `FINAL_EXPERIMENT_TARGETS.md` 的 SATCRec Beauty N@5 = 0.1107。
-
-**通过后才进入**：ML-1M 同配置同 seed（**硬性要求，见 §6**）。
-
-### 5.1 参数（预计）
-
-| 参数 | 默认 | 说明 |
-|---|---|---|
-| `--scir_sem_beta` | 1.0 | 语义通道权重 |
-| `--scir_sem_tau` | 0.1 | 语义通道温度 |
-| `--scir_route_tau` | 1.0 | 分配温度 `τ_r` |
-| `--scir_use_mass` | 1 | 是否使用质量项 `m` |
-| `--scir_route_mode` | `competitive` | `competitive` / `attention`（后者= 复现 baseline 用于对照） |
-
-`--scir_route_mode attention` 让新模型文件能**逐字复现 ASPCF 路由**，作为同一代码路径内的对照，
-避免"两个模型文件配置漂移"这类历史问题。
-
----
-
-## 6. 风险与停止条件
-
-| # | 风险 | 监测指标 | 缓解 / 停止条件 |
-|---|---|---|---|
-| **R1** | `softmax_K` 在 K=4 上是硬瓶颈，分配可能塌缩（所有 item 挤到 1 个 interest） | 分配熵、active-K（`R` 的列质量分布） | 调 `τ_r`；若 active-K ≈ 1 且无法通过温度缓解 → 停止 |
-| **R2** | 丢掉 attention 的"按重要性加权"能力会伤性能 | ① vs ⓪ | 这正是质量项 `m` 的作用；若 ① 与 ② 都差于 ⓪ → 停止 |
-| **R3** | 语义通道 `s = e[:, :32]` 是**与另一半共适应**的表示，训练早期不稳定 | `sem` 分数的方差、`A_k` 的范数 | 对 `s` 做 L2 normalize；必要时 detach；若 `β>0` 明显差于 `β=0` 且 `A_k` 发散 → 说明该表示不适合做路由信号 |
-| **R4** | **数据集依赖**（`CHAPTER3_FINAL.md` §6.3 已第四次出现） | Beauty vs ML-1M | **ML-1M 是硬性判据**，Beauty 通过不构成成功 |
-| **R5** | 参数量增加带来的混淆 | 配置 ④ | 若 ① ≈ ④ → 判定为容量效应，停止 |
-| **R6** | 与 ASPCF 的超参不匹配（历史教训：HSDIR 用 lr=0.008/bs=2048 与冻结基线不可比） | — | 严格复用 `run_llmmirec_aspcf_phase2_beauty.sh` 的 lr/batch/K/emb/history_max/dropout/l2 |
-
----
-
-## 7. 本阶段不做的事
-
-- ❌ 不写任何代码
-- ❌ 不训练
-- ❌ 不改 ASPCF `ItemEncoder` 或 `LLMMIRecASPCF`
-- ❌ 不以增加 auxiliary loss 作为本章核心创新
-- ❌ 不启动 Chapter 5
-
----
-
-## 8. 主候选：Residual Competitive Interest Routing (RCIR)
-
-> 状态：**当前主候选**。记录备用，**本阶段不实现**。
-> 替代 §3 的 SCIR 作为首选方案，因为它是 §3 的**严格嵌套特例**（见 §8.4），
-> 工程成本更低、风险更可控、且失败时可完全归零。
-
-### 8.1 定义
-
-保留原 collaborative logits：
-
-```
-C[k,l] = (Wq(q_k) · Wk(h_l)) / √d          # [B, K, L]  与现 ASPCF 完全一致
-```
-
-增加 **behavior-to-interest competition**（在 K 维上归一化）：
-
-```
-R_cf[k,l] = softmax_K( C[k,l] / τ )        # [B, K, L]  每个 history item 在 K 个 interest 间的归属分布
-```
-
-**不直接用 `R_cf` 替换原 attention**，而是作为 logit 空间的残差：
-
-```
-C_new[k,l] = C[k,l] + λ_comp · log( K · R_cf[k,l] + ε )
-```
-
-最终仍使用原有的 history 维 softmax：
-
-```
-A[k,l] = softmax_L( C_new[k,l] )           # ★ 仍然是 softmax over L
+C[k,l] = (Wq(q_k) · Wk(h_l)) / √d          # [B, K, L]
+A[k,l] = softmax over L( C[k,l] )          # ★ 逐 k 独立，softmax 只在 l 维
 V_k    = Σ_l A[k,l] · value_l
 ```
 
-### 8.2 数学简化（实现时的重要性质）
+`softmax` 在 `l` 维上且**逐 interest 独立**：
+同一个历史位置可以同时以接近 1.0 的权重进入**所有** K 个 interest，
+**没有任何机制阻止两个 interest 学到相同的注意力分布**。
 
-`log(K · R_cf + ε) = log K + log(R_cf + ε/K)`。
+### 3.2 实测证据（Chapter 4 Phase 0 诊断 + HSDIR 诊断）
 
-由于后续 `softmax_L` 是**在 l 维上**做的，而 `log K` 对固定的 k 是一个常数，
-在 `softmax_L` 中被完全消去。因此等价地：
+| 指标 | Beauty ASPCF | ML-1M ASPCF | 上界 |
+|---|---|---|---|
+| interest 两两余弦（mean） | **0.8699** | **0.7876** | 1.0 |
+| interest 有效秩 effR（mean） | **1.110** | **1.615** | K−1 = 3 |
+| attention entropy | 1.5051 | 2.4691 | — |
+| 聚合权重熵 wEnt | **1.3854** | 1.2865 | ln4 = 1.386 |
 
-```
-C_new[k,l] = C[k,l] + λ_comp · log( R_cf[k,l] + ε )
-```
+- **effR 仅为上界（K−1=3）的 37% / 54%**：4 个 interest 高度共线。
+- **Beauty 上聚合权重熵 = 1.3854 ≈ ln4，且 p05 = p50 = p95 = 1.386**：
+  聚合权重**在所有样本上完全相同且恰好均匀**——`InterestAggregator` 实际退化为"对 4 个兴趣取平均"，
+  没有在做选择。
+- 对比：HSDIR 诊断中 baseline 的 interest 余弦为 0.9457、有效秩 1.714。
 
-即：**只有 `log softmax_K(C/τ)` 这一项真正起作用**，`K·` 系数不影响结果。
-
-### 8.3 与现有代码的关系（重要复用点）
-
-`QueryMultiInterestExtractor` **已经实现了这个残差机制**：
-
-```python
-# models/sequential/llmmi_components.py
-if attention_prior is not None and prior_strength > 0:
-    scores = scores + prior_strength * torch.log(attention_prior + 1e-8)
-```
-
-该 `attention_prior` / `prior_strength` 钩子由 HSDIR/CHIR 引入并已在 CHIR 中使用过。
-
-**因此 RCIR 的实现只需要**：把 `attention_prior` 传成 `softmax_K(C/τ)`（自竞争分布），
-`prior_strength = λ_comp`。**算子、mask、value 投影、聚合路径全部不变。**
-
-已知细节：padding 位置的 `R_cf` 为 0，`log(1e-8) ≈ −18.4`，
-但由于 padding 随后被 mask 成 `−inf`，**无实际影响**（与 CHIR/HSDIR 的既有行为一致）。
-
-### 8.4 关键性质
-
-| 性质 | 说明 |
-|---|---|
-| **严格嵌套** | `λ_comp = 0` 时 `C_new = C`，**逐字退化为当前 ASPCF extractor**。这消除了"新模型文件与基线配置漂移"的历史风险 |
-| **非辅助 loss** | 它改变的是**前向路由 logits**，不是训练期监督，满足设计原则 P1 |
-| **显式竞争** | `R_cf` 是 item 在 K 个 interest 上的归属分布；某 interest 占优时其余被压低，构成竞争（P4） |
-| **不引入语义** | 第一版**不含** semantic routing。语义通道留待诊断确认 routing 是瓶颈后再考虑 |
-| **改动极小** | 新增仅：一个 `τ`、一个 `λ_comp`，以及 `R_cf` 的计算（一次 softmax）。参数量 **+0** |
-
-### 8.5 第一版明确不加入
-
-按用户约束，第一版**不包含**：
-
-- ❌ semantic routing（语义通道）
-- ❌ quality gate（质量项 `m`）
-- ❌ auxiliary loss（任何形式）
-- ❌ HSDIR loss（共属图蒸馏）
-- ❌ coverage / focus
-
-即第一版是**纯结构、零新增参数、零新增 loss**的最小干预。
-
-### 8.6 最小实验矩阵（待诊断结论后启动）
-
-| # | 配置 | 说明 |
-|---|---|---|
-| 0 | ASPCF 基线 | 已有：Beauty 0.1592/0.1088；ML-1M 0.3068/0.2134（seed 42） |
-| 1 | RCIR，`λ_comp = 0` | **必须逐位复现基线**——验证实现的正确性（sanity check） |
-| 2 | RCIR，`λ_comp > 0`（单个合理默认值） | 竞争是否带来增益 |
-| 3 | RCIR，`τ` 敏感性（仅当 ② 有希望） | 0.1 / 0.5 / 1.0 |
-
-**判据**：(1) 必须与基线数值完全一致（否则实现有误）；
-(2) 若 ② 在 Beauty 上无增益 → 结合诊断结论判断是否转向 candidate-aware scoring；
-(3) 任何结论都必须先在 ML-1M 上复验（`CHAPTER3_FINAL.md` §7.4 硬性要求）。
+**结论：兴趣冗余（模块 1 要解决的）与聚合失效（模块 2 要解决的）都是实测存在的，不是假设。**
 
 ---
 
-## 9. 三方案关系总结
+## 4. 两个核心前向模块
 
-| | SCIR（§3，DRAFT） | **RCIR（§8，主候选）** | Candidate-aware scoring（备选） |
+Chapter 4 的核心由**两个前向模块**构成，不依赖任何新增 auxiliary loss。
+`LOSS = 原 BPR`。
+
+### 4.1 Module 1 — Competitive Diversified Interest Routing (CDIR)
+
+在**不替换**原 attention 的前提下，向 logit 空间注入 behavior-to-interest 竞争。
+
+```
+# ── 原 collaborative logits（不变）──
+C[k,l] = (Wq(q_k) · Wk(h_l)) / √d                    # [B, K, L]
+
+# ── 原 attention（不变）──
+A[k,l] = softmax over L( C[k,l] )
+
+# ── 新增：behavior-to-interest ownership ──
+R[k,l] = softmax over K( C[k,l] / τ )                # [B, K, L]  每个行为在 K 个兴趣间的归属
+
+# ── 新增：residual competitive routing（★ 不直接用 R 替换 A）──
+C_new[k,l] = C[k,l] + λ_comp · log( K · R[k,l] + ε )
+
+# ── 最终仍用 history 维 softmax ──
+A[k,l] = softmax over L( C_new[k,l] )
+V_k    = Σ_l A[k,l] · value_l
+```
+
+**数学简化**（实现时的重要性质）：`log(K·R + ε) = log K + log(R + ε/K)`。
+`log K` 对固定的 k 是常数，在 `softmax_L` 中被消去，因此等价于
+
+```
+C_new[k,l] = C[k,l] + λ_comp · log( R[k,l] + ε )
+```
+
+**关键性质**
+
+| 性质 | 说明 |
+|---|---|
+| **严格退化（P7）** | `λ_comp = 0` 时 `C_new = C`，**逐字回到当前 extractor** |
+| **改前向（P1）** | 改变的是前向 logits 与 `V_k` 的取值，测试期生效 |
+| **显式竞争（P4）** | `R` 在 K 维归一化：某 interest 占优时其余被压低 |
+| **零新增参数** | 只多 `τ`、`λ_comp` 两个标量 |
+| **与已有代码兼容** | `QueryMultiInterestExtractor` 已有 `attention_prior` / `prior_strength` 钩子（HSDIR/CHIR 引入并已使用），本模块只需把 prior 传为 `softmax_K(C/τ)` |
+
+> 注：padding 位置 `R=0` → `log(ε)` 很小，但随后被 mask 成 `−inf`，无影响（与 CHIR/HSDIR 既有行为一致）。
+
+### 4.2 Module 2 — Evidence-Aware Interest Aggregation (EAIA)
+
+**问题**：当前 `InterestAggregator` 计算 `w_k` 时**看不到 interest 本身**。
+
+```
+# 现状
+context = LayerNorm( mean_his + last_his )      # [B, D]
+logits  = MLP(context)                          # [B, K]  ← 与 V_k 无关
+w       = softmax_k(logits)
+```
+
+权重只由 history 摘要决定，与"第 k 个 interest 实际是什么"无关。
+这解释了 §3.2 的实测：Beauty 上 `w` 在所有样本上恒为均匀分布。
+
+**新设计**：让 `w_k` 同时看到 interest 向量、其**占用度/证据量**、以及 history 摘要。
+
+```
+# occupancy / evidence（来自 Module 1 的 R）
+o_k = mean over l( R[k,l] )                     # [B, K]  第 k 个兴趣占用了多少行为
+
+# history summary（复用现有 InterestAggregator 的构造）
+h_sum = LayerNorm( mean_his + last_his )        # [B, D]
+
+# 融合
+u_k = MLP_a( [ V_k ; o_k ; h_sum ] )            # [B, K, H]
+w   = softmax over K( Linear(u_k) )             # [B, K]
+```
+
+**必须保持的性质**
+
+- **history-only，无 target 泄露**：`V_k`、`o_k`、`h_sum` 全部只由 history 计算，不含 candidate/target 信息。
+  这一点与现状一致，必须保持。
+- `o_k` 在 `λ_comp = 0` 时**依然有定义**（`R = softmax_K(C/τ)` 与 `λ_comp` 无关），
+  因此 Module 2 可以**单独**开启/关闭，支持 §5 的 2×2 归因。
+
+**为什么这能修正 §3.2 的退化**：`w_k` 现在能看到 `V_k` 的实际内容与 `o_k`
+——冗余或"空"的 interest（`o_k` 小）可以被自动降权，而不是被迫均分。
+
+### 4.3 两个模块与原则的对应
+
+| 原则 | Module 1 | Module 2 |
+|---|---|---|
+| P1 改前向 | ✅ 改 logits 与 `V_k` | ✅ 改 `w_k` 的生成 |
+| P3 无 aux loss | ✅ 纯结构 | ✅ 纯结构 |
+| P4 显式竞争 | ✅ `softmax_K` | ✅ `o_k` 反映竞争结果 |
+| P7 严格退化 | ✅ `λ_comp=0` | ✅ 可单独关闭，回到原 `InterestAggregator` |
+
+---
+
+## 5. 最小实验矩阵（2×2 归因）
+
+**先只跑 Beauty、seed 42。全部 `LOSS = 原 BPR`，无任何 auxiliary loss。**
+
+| # | 配置 | Module 1 | Module 2 | 隔离的变量 |
+|---|---|---|---|---|
+| **0** | ASPCF（冻结基线） | — | — | 已有 |
+| **0'** | **ASPCF K=2**（公平 baseline） | — | — | K 的影响（§6） |
+| **1** | 仅 Module 1 | `λ_comp>0` | 关 | 竞争路由本身的增量 |
+| **2** | 仅 Module 2 | `λ_comp=0` | 开 | 证据感知聚合本身的增量 |
+| **3** | Module 1 + 2 | `λ_comp>0` | 开 | 两者的联合（核心配置） |
+| **4** | sanity：`λ_comp=0` + Module 2 关 | `=0` | 关 | **必须逐位复现 baseline**，否则实现有误 |
+
+**判读逻辑**
+
+- 配置 ④ 若与 baseline 不完全一致 → 实现有 bug，先修再谈其他
+- 若 ① ≈ ⓪ 且 ② ≈ ⓪ → 两个模块都无效 → **停止**，转向 candidate-aware scoring
+- 若 ② > ⓪ 而 ① ≈ ⓪ → 瓶颈在 aggregation，不在 routing → 与诊断结论交叉验证
+- 若 ① > ⓪ 而 ② ≈ ⓪ → 瓶颈在 routing
+- 若 ③ > max(①, ②) → 两模块互补，这是本章的核心证据
+
+**结构指标（次要但重要，HSDIR 的教训）**：必须同时报告
+`interest 两两余弦`、`effR/(K−1)`、`active_K`、`wEnt`，
+并确认结构改变**出现在测试期前向**（两个模块都在 forward 中，因此必然满足）。
+
+**参数**（预计）
+
+| 参数 | 默认 | 说明 |
+|---|---|---|
+| `--cdir_lambda_comp` | 0.0 | `λ_comp`；0 = 严格退化 |
+| `--cdir_tau` | 1.0 | ownership 温度 `τ` |
+| `--eaia_enable` | 0 | Module 2 开关 |
+| `--eaia_hidden` | 64 | Module 2 隐层 |
+
+---
+
+## 6. K=2 公平 baseline 的实验设置（非创新，仅对照）
+
+| 项 | 值 |
+|---|---|
+| 目的 | ① 量化 ML-1M 约 2% 差距中 K 的贡献；② 建立 dataset-specific ASPCF baseline |
+| 配置 | **除 `--K` 外，与 frozen ASPCF 稳定配置逐字相同**（含各数据集 lr：beauty 0.004 / ml-1m 0.001） |
+| 新增运行 | Beauty `K=2` seed 42；ML-1M `K=2` seed 42 |
+| 不重跑 | K=4（已有 5 seeds） |
+| 不扫描 | 不测其他 K 值，不做 learnable K |
+| 脚本 | `new_bash/run_llmmirec_aspcf_K.sh`、`new_bash/run_aspcf_k2_baseline.sh` |
+| 输出 | `new_log/llmmirec_aspcf_K2/<ds>/` |
+| 论文定位 | **对照基线**，不作为 contribution |
+
+**当前状态**：Beauty K=2 已启动运行；ML-1M K=2 待 Beauty 结果出来后再决定是否启动。
+
+---
+
+## 7. 与现有代码的复用关系
+
+### 7.1 直接复用（不改动）
+
+| 组件 | 位置 | 用途 |
+|---|---|---|
+| `ItemEncoder(mode="aspcf")` | `llmmi_components.py` | **完全冻结，不碰** |
+| `QueryMultiInterestExtractor` 的 `Wq/Wk/Wv` 与 mask 约定 | `llmmi_components.py:250-345` | Module 1 复用，且其 `attention_prior`/`prior_strength` 钩子已存在 |
+| `InterestAggregator` 的 `h_sum = LayerNorm(mean + last)` | `llmmi_components.py:352-409` | Module 2 复用该 history 摘要构造 |
+| `LLMMIRecASPCF.py` forward step 1–3、5–7 | `LLMMIRecASPCF.py:156-238` | 模型骨架 |
+| 「`λ=0` 严格退化」的既有先例 | TASID `tasid_mode=none` | 设计模式一致 |
+| 诊断工具 | `tools/diagnose_ch4_phase0.py` | 结构指标可直接复用 |
+
+### 7.2 需要新增
+
+| 组件 | 说明 | 预计行数 |
+|---|---|---|
+| Module 1 实现 | 在 `QueryMultiInterestExtractor` 内计算 `R = softmax_K(C/τ)` 并作为 prior 注入；**或**新增 `CompetitiveInterestRouter` 类 | ~90 |
+| Module 2 实现 | `EvidenceAwareAggregator`（`V_k` + `o_k` + `h_sum` → `w`） | ~70 |
+| `LLMMIRecCDIR.py` | 模型，以 `LLMMIRecASPCF.py` 为骨架 | ~300 |
+| `tools/test_llmmirec_cdir.py` | CPU 单测：`λ_comp=0` 逐位复现、padding、梯度、EAIA 开关、ASPCF 回归 | ~250 |
+| 实验脚本 | `new_bash/run_llmmirec_cdir_phase1_beauty.sh` | ~110 |
+
+### 7.3 第一版明确不使用（用户约束）
+
+- ❌ semantic routing（语义通道）
+- ❌ HSDIR / CAISD / TASID loss
+- ❌ coverage / focus loss
+- ❌ 额外的 quality gate
+- ❌ 任何 auxiliary loss
+
+---
+
+## 8. 风险与停止条件
+
+| # | 风险 | 监测指标 | 缓解 / 停止条件 |
 |---|---|---|---|
-| 改变的位置 | 路由算子（`softmax_L` → `softmax_K`） | 路由 **logits**（加竞争残差） | 打分路径 |
-| 与基线的关系 | 替换算子，非嵌套 | **严格嵌套**（λ=0 即基线） | 新增分支 |
-| 新增参数 | `A_k`(K×32) + `m` 头 | **0** | 待定 |
-| 破坏性 | 高（丢弃 attention 的加权能力） | **低** | 中 |
-| 与 P1/P4 的符合度 | 强 | 中（改 logits 而非算子） | 弱（P1 不满足） |
-| 当前状态 | 保留为备选 | **待诊断后决定** | 待诊断后决定 |
+| **R1** | `softmax_K` 在 K=4 上过尖，`R` 退化为 one-hot，`log R` 变成极端项 | `R` 的熵、`λ_comp` 的有效幅值 | 调 `τ`；若 `R` 熵 ≈ 0 且无法通过温度缓解 → 停止 |
+| **R2** | Module 1 与 attention 重复，无增量 | 配置 ① vs ⓪ | 若 ① ≈ ⓪ → 瓶颈不在此 |
+| **R3** | Module 2 参数少、表达力不足 | 配置 ② vs ⓪ | 若 ② ≈ ⓪ 但诊断显示 aggregation 确实退化 → 增大 `--eaia_hidden` 前先确认不是实现问题 |
+| **R4** | **数据集依赖**（`CHAPTER3_FINAL.md` §6.3 已四次出现） | Beauty vs ML-1M | **ML-1M 是硬性判据** |
+| **R5** | K 的选择混淆 | 配置 ⓪ vs ⓪' | 所有 Chapter 4 比较必须对照 **K 匹配**的 baseline |
+| **R6** | 超参与 baseline 不匹配（HSDIR 的历史教训） | — | 严格复用稳定脚本的 lr/batch/emb/history_max/dropout/l2 |
+
+---
+
+## 9. 后续 TODO（仅记录，本阶段不执行）
+
+### TODO-1：ML-1M 训练时间 profiling 与 fast-screening 配置
+
+**背景**：ML-1M 单次正式训练约 **80 分钟**（seed 42 为 4279 s；5 seeds 均值约 4970 s），
+Beauty 约 18 分钟。Chapter 4 要做的是 **2×2 结构归因 + 多个结构变体**，
+若全部按 batch=1024 跑，实验轮次成本会显著拖慢迭代。
+
+**待办**：
+
+1. 单独 profile ML-1M 的训练时间构成（数据加载 / 前向 / 反向 / 评测各占多少），
+   确认瓶颈在算力还是 DataLoader；
+2. 在此基础上考虑建立 **batch=2048 的 fast-screening 配置**，用于结构探索阶段的快速筛选。
+
+**硬性约束（必须写进任何使用该配置的实验）**：
+
+> ⚠️ **fast-screening 配置必须有它自己的 ASPCF baseline，不得与 batch=1024 的正式结果直接比较。**
+>
+> 理由：batch=2048 属于**不同的训练 regime**（已有 HSDIR 的历史教训——
+> 它在 lr=0.008/bs=2048 下运行，与冻结 ASPCF 的 lr=0.004/bs=1024 不可比，
+> 导致其增益无法与基线对照）。
+>
+> 因此 batch=2048 只能用于**同一配置内部**的相对比较（结构 A vs 结构 B），
+> 任何要写进论文的绝对数字必须在 batch=1024 的正式配置下重跑。
+
+**当前状态**：❌ 不执行 profiling，不建立 fast-screening 配置。
+
+---
+
+## 10. 本阶段不做的事
+
+- ❌ 不实现 Chapter 4 的任何模块
+- ❌ 不训练除 K=2 baseline 之外的任何模型
+- ❌ 不把 K 选择写成方法贡献
+- ❌ 不启动 Chapter 5
+- ❌ 不修改 ASPCF `ItemEncoder` / `LLMMIRecASPCF`
