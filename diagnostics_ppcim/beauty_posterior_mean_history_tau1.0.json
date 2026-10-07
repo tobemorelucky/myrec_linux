@@ -1,0 +1,37 @@
+{
+  "num_users": 3840,
+  "K": 4,
+  "max_entropy": 1.3862943611198906,
+  "pos_posterior_entropy_mean": 1.3803881406784058,
+  "neg_posterior_entropy_mean": 1.3798993825912476,
+  "neg_posterior_entropy_std": 0.008434775285422802,
+  "prior_entropy_mean": 1.383331060409546,
+  "pos_top_interest_hist": [
+    0,
+    240,
+    2944,
+    656
+  ],
+  "neg_top_interest_hist": [
+    0,
+    153829,
+    2773608,
+    912563
+  ],
+  "pos_top_interest_frac": [
+    0.0,
+    0.0625,
+    0.7666666666666667,
+    0.17083333333333334
+  ],
+  "neg_top_interest_frac": [
+    0.0,
+    0.04005963541666667,
+    0.72229375,
+    0.23764661458333333
+  ],
+  "pos_neg_top_agree_frac": 0.6410427083333333,
+  "candidate_pair_js_mean": 0.0012740102829411626,
+  "candidate_pair_cos_mean": 0.9954983462321771,
+  "n_pairs": 215040
+}
