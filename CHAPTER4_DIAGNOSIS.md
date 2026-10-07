@@ -254,6 +254,73 @@ ASPCF 应被允许同样的 K 选择。**这是公平调参，不是方法创新
 
 ---
 
+### 6.4 ⚠️ 修订（2026-10-07）：比 interest redundancy 更重要的代码级瓶颈
+
+> 本节由 ECTIR Round 1 的失败直接导出（`CHAPTER4_ECTIR_ROUND1.md`），
+> **推翻了 §6.2 原先的方向判断**。
+
+#### 6.4.1 事实 F6：所有 candidate 共用同一个 user vector
+
+代码审计（全部 7 个模型逐一核对 scoring path）：
+
+| 模型 | 文件:行 | 打分路径 |
+|---|---|---|
+| LLMMIRecASPCF | `:200-201` | `user_vector = Σ_k w_k V_k` → `pred_j = <user_vector, e_j>` |
+| LLMMIRecHSDIR | `:293-294` | 同上 |
+| LLMMIRecCAISD | `:409-410` | 同上（`V`） |
+| LLMMIRecCASIR | `:275-276` | 同上（`V_refined`） |
+| LLMMIRecCGSCD | `:234-235` | 同上 |
+| LLMMIRecCHIR | `:359-360` | 同上 |
+| LLMMIRecECTIR | `:279-280` | 同上 |
+
+**七个模型逐字相同**：
+
+```
+interest_weights = history_only_aggregator(H)        # 只看 history，与 candidate 无关
+u                = Σ_k w_k · V_k                     # ★ 打分前先压成单一向量
+score_j          = uᵀ e_j                            # 所有 candidate 共用同一个 u
+```
+
+**K 个 interest 在打分之前就被压缩成一个 candidate-independent 的向量 `u`。**
+
+#### 6.4.2 这解释了为什么改变 `V_k` 的结构不起作用
+
+HSDIR / CAISD / ECTIR 都显著改变了 `V_k` 的结构（cosine、effR、routing 熵），
+但这些改动**在被压缩成同一个 `u` 之后，候选侧无法区分**。
+结构改变确实发生了，只是它对 `score_j` 的影响路径被 `u` 这个瓶颈截断了。
+
+**ECTIR Round 1 的实测是该判断的直接证据**：
+
+| | interest cosine | ranking |
+|---|---|---|
+| ASPCF | 0.8823 | 0.1592 / 0.1088 |
+| ECTIR-1 | **0.7182**（−19%） | 0.1578 / 0.1063（**下降**） |
+| ECTIR-Full | **1.0000**（完全塌缩） | 0.1449 / 0.0976（**−8.98%**） |
+
+**冗余度与排序指标之间没有单调关系**，完全塌缩时才崩，而改善冗余时也不涨。
+
+#### 6.4.3 Chapter 4 核心问题的修订
+
+> **原问题（已废弃）**：
+> ~~"如何让多个 interests 更分散"~~
+>
+> **修订后的问题**：
+> ### **"如何让多个 interests 真正参与 candidate-specific ranking，
+> ### 而不是在打分前重新压缩成单一 user vector"**
+
+**判定依据的变化**：
+
+| | 旧判断（§6.2） | 新判断（§6.4） |
+|---|---|---|
+| 瓶颈位置 | interest 冗余（routing 层） | **打分前的向量压缩（`Σ_k w_k V_k`）** |
+| 证据 | F1 effR 仅为上界 37% | **F6 全部 7 模型共用 `u`** + ECTIR 的结构-性能解耦 |
+| 方向 | 让兴趣竞争/分化 | **让 candidate 直接与 K 个 interest 交互** |
+
+**ECTIR / HSDIR 保留为该判断的 negative evidence**：
+它们证明了"只改 `V_k` 结构、不改打分路径"是不够的。
+
+---
+
 ## 7. ⚠️ Unresolved Issue（必须在最终正式基线阶段单独追溯）
 
 > **本仓库的 PoMRec ML-1M checkpoint 低于论文/最终冻结目标，

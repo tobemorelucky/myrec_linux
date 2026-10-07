@@ -1,7 +1,7 @@
 # CHAPTER4_DESIGN.md
 
 > Chapter 4 方向设计
-> 更新日期：2026-10-07（第三次修订）
+> 更新日期：2026-10-07（第四次修订）
 > 前置约束：Chapter 3 ASPCF **结构**冻结（`CHAPTER3_FINAL.md`）。
 > **注意：「冻结」指结构冻结，不是冻结梯度** —— 新模型仍按现有方式 end-to-end 训练，
 > 并保留 Chapter 3 的 `lambda_relation = 0.01`。
@@ -12,10 +12,23 @@
 
 | 内容 | 本版处置 |
 |---|---|
-| **ECTIR**（Evidence-Constrained Transport Interest Routing） | ✅ **主候选**（§4） |
-| CDIR + EAIA（Residual Competitive Routing + Evidence-Aware Aggregation） | 🔸 降为 **simple candidate / ablation**（§5），不再是首选 |
+| **PPCIM**（Prior–Posterior Candidate Interest Matching） | ✅ **主候选**（§11） |
+| **ECTIR**（Evidence-Constrained Transport Interest Routing） | ❌ **已停止**（Round 1 失败，`CHAPTER4_ECTIR_ROUND1.md`），降为 negative evidence（§4） |
+| CDIR + EAIA | 🔸 simple candidate / ablation（§5） |
 | SCIR（用 `softmax_K` 替换 `softmax_L`） | ❌ superseded |
 | Adaptive Interest Cardinality / dynamic-K | ❌ **不是创新**；K 属公平调参（§6） |
+
+### 0.1 核心问题的两次修订
+
+| 版本 | 核心问题 | 状态 |
+|---|---|---|
+| v1 | ~~如何让多个 interests 更分散~~ | ❌ 被 ECTIR Round 1 否证（结构改善 ≠ 排序改善） |
+| **v2（当前）** | **如何让多个 interests 真正参与 candidate-specific ranking，而不是在打分前重新压缩成单一 user vector** | ✅ 见 §11.0，依据为 `CHAPTER4_DIAGNOSIS.md` §6.4 的事实 F6 |
+
+**关键依据**：全部 7 个模型的打分路径逐字相同 ——
+`u = Σ_k w_k V_k`（`w` 只由 history 决定）→ `score_j = uᵀ e_j`。
+**K 个 interest 在打分前被压成一个与 candidate 无关的向量。**
+这解释了为何 HSDIR / CAISD / ECTIR 都显著改变了 `V_k` 的结构却不改善排序。
 
 ---
 
@@ -395,3 +408,401 @@ LOSS = BPR + λ_relation · L_relation        # λ_relation = 0.01（Chapter 3 �
 - ❌ 不做大规模 transport 超参搜索
 - ❌ 不跑 ML-1M / 3 seeds / Toys
 - ❌ 不启动 Chapter 5
+
+---
+
+## 11. 主候选（2026-10-07 修订）：PPCIM
+
+> **ECTIR 已停止**（见 `CHAPTER4_ECTIR_ROUND1.md`）。CDIR/EAIA 仍为 simple candidate。
+> PPCIM = **Prior–Posterior Candidate Interest Matching**，当前主候选。
+>
+> **本节只做设计与审计，不训练。**
+
+### 11.0 核心问题（由 `CHAPTER4_DIAGNOSIS.md` §6.4 修订而来）
+
+> ~~"如何让多个 interests 更分散"~~ ← 已被 ECTIR Round 1 否证
+>
+> ### **"如何让多个 interests 真正参与 candidate-specific ranking，
+> ### 而不是在打分前重新压缩成单一 user vector"**
+
+**依据（事实 F6）**：全部 7 个模型（ASPCF/HSDIR/CAISD/CASIR/CGSCD/CHIR/ECTIR）的打分路径
+逐字相同：`u = Σ_k w_k V_k` → `score_j = uᵀ e_j`，`w` 只由 history 决定。
+**K 个 interest 在打分前被压成一个 candidate-independent 向量。**
+
+ECTIR 证明：只改 `V_k` 的结构（cosine 0.8823 → 0.7182，effR 1.103 → 1.437）
+而打分路径不变，排序**不会改善**（−0.88%）。
+
+### 11.1 约束
+
+| # | 约束 |
+|---|---|
+| C1 | Chapter 3 ASPCF `ItemEncoder` 不改 |
+| C2 | 原 `QueryMultiInterestExtractor` **第一版不改** |
+| C3 | K = 4 |
+| C4 | history-only aggregator **仅作为 interest prior**，不再是最终打分权重 |
+
+### 11.2 Module 1 — history interest prior
+
+```
+p_k = P(z = k | H)                                  # [B, K]
+```
+
+**第一版直接复用现有 `InterestAggregator` 的输出**（`llmmi_components.py:590`）：
+
+```
+h_sum   = LayerNorm(mean_his + last_his)            # [B, D]
+p       = softmax(MLP(h_sum))                       # [B, K]
+```
+
+`p` **只依赖 history**，不含任何 candidate / target 信息 → 无泄露。
+它从"最终打分权重"降级为"兴趣先验"。
+
+### 11.3 Module 2 — candidate–interest matching
+
+**统一的 shape 约定（本文档仅使用这一套，不得混用）**：
+
+| 符号 | shape | 含义 |
+|---|---|---|
+| `V` | `[B, K, D]` | `interest_vectors`，来自**未修改**的 `QueryMultiInterestExtractor` |
+| `E` | `[B, C, D]` | `candidate_emb`，`C = 1 + N`，第 0 列恒为 positive |
+| **`m`** | **`[B, K, C]`** | match logits（**不是 `[B,C,K]`**） |
+| `p` | `[B, K]` | history prior |
+| `pi` | `[B, K, C]` | posterior（与 `m` 同布局） |
+| `z` | `[B, K, C]` | `log p + m/τ`，logsumexp 前的 logits |
+
+```
+sqrtD = sqrt(D)
+m     = torch.bmm(V, E.transpose(1, 2)) / sqrtD     # [B, K, C]
+```
+
+- `D = emb_size = 64`，`K = 4`，训练 `C = 2`，dev/test `C = 1001`
+- **第一版不引入任何额外参数**（无 bilinear projection）
+
+> **为什么选 `[B,K,C]` 而不是 `[B,C,K]`**：
+> `softmax`/`logsumexp` 沿 **兴趣维 K** 做（Module 3/4），
+> 放在 `[B,K,C]` 布局下即 `dim=1`，避免转置；且 `bmm(V, Eᵀ)` 天然给出该布局，
+> 无需额外的 `transpose/contiguous`。
+> **代价**：`return_intermediate` 输出的 `m`/`pi` 是 `[B,K,C]`，诊断脚本需注意。
+> 本文档早期版本混用过 `[B,C,K]`，**已统一修正**。
+
+### 11.4 Module 3 — candidate-specific posterior
+
+```
+log_p = torch.log(p + eps).unsqueeze(-1)                    # [B, K, 1]
+z     = log_p + m / tau                                     # [B, K, C]
+pi    = softmax(z, dim=1)                                   # [B, K, C]
+```
+
+- **每个 candidate 拥有独立的 `pi[:, :, j]`**（区别于 F6 中所有 candidate 共用一个 `u`）。
+- **positive 与所有 negative 使用完全相同的公式**，不允许按正负号分支 → 无 target leakage。
+- 先验 `p_k` 以 log 形式加性进入 → 自然的先验-似然分解。
+- `pi` **只在需要时（`return_intermediate` 或 `posterior_mean` 模式）才显式保留**；
+  主 `marginal` 模式可直接从 `z` 做 `logsumexp`，**无需长期保存 `pi`**。
+
+### 11.5 Module 4 — latent-interest marginal scoring
+
+**主 scoring（PPCIM Round 1 采用）**：
+
+```
+score_marginal = sqrtD * tau * torch.logsumexp(z, dim=1)     # [B, C]
+```
+
+> #### ⚠️ `sqrtD` 因子是必需的（不是可选的缩放）
+>
+> `m = <V_k, e_j> / √D`，因此
+> ```
+> τ · log Σ_k p_k exp(m_k/τ)  --(τ→∞)-->  Σ_k p_k m_k = (1/√D) · Σ_k p_k <V_k, e_j>
+> ```
+> 而 ASPCF 的打分是 `score_ASPCF = uᵀe_j = Σ_k p_k <V_k, e_j>`。
+>
+> **因此必须乘回 `√D`**：
+> ```
+> √D · (τ · logsumexp)  --(τ→∞)-->  Σ_k p_k <V_k, e_j>  =  score_ASPCF   ✅
+> ```
+> 若不乘 `√D`，虽然**排序**在 `τ→∞` 时仍等价（全局正标量不影响 argsort），
+> 但 **BPR 的分数尺度会被缩小约 `√D = 8` 倍**，
+> 而 BPR 的 `sigmoid(pos − neg)` 对尺度敏感 ⇒ 梯度行为改变 ⇒
+> **无法做到"只改 scoring operator、其余完全公平"**。
+>
+> 这一条必须写进单元测试（测试 J）。
+
+**同时实现但仅作为 ablation**：
+
+```
+score_posterior_mean = sqrtD * Σ_k pi[:, k, :] * m[:, k, :]      # [B, C]
+```
+
+**不需要显式构造 `u_j`**（由关系 1 直接算，省一个 `[B,C,D]` 张量）。
+
+#### 两种 scoring 的数学关系（必须写清）
+
+**关系 1 —— 精确恒等式**：由 `m[j,k] = <V_k, e_j>/√D` 得
+
+```
+score_posterior_mean_j
+  = Σ_k pi[j,k] <V_k, e_j>
+  = sqrt(D) * Σ_k pi[j,k] * m[j,k]          ← 不需要构造 u_j
+```
+
+即它是 **posterior 加权平均的匹配分**，与 `u_j = Σ_k π[j,k]V_k` 的 `<u_j, e_j>` **精确相等**。
+
+**关系 2 —— 泛函形式**：
+
+| | `score_marginal`（主） | `score_posterior_mean`（ablation） |
+|---|---|---|
+| 形式 | `√D·τ·log Σ_k p_k exp(m/τ)` | `√D · Σ_k π_k m` |
+| 加权用 | **先验 `p_k`** | **后验 `π_k`** |
+| 算子 | log-sum-exp（**soft-max**） | 加权平均 |
+| 数学身份 | **log-partition（潜在变量边际似然）** | **后验期望匹配分** |
+| `τ→0` | → `√D·max_k m[j,k]`（硬最大） | 不变（无 τ） |
+| `τ→∞` | → `√D·Σ_k p_k m[j,k]` = **ASPCF** | 不变 |
+| 对 `m` 的梯度 | `∂score/∂m[:,k,j] = √D·π[:,k,j]`（**不穿过 softmax Jacobian**） | `√D·π + √D·Σ m·∂π/∂m`（**多一项**） |
+
+**关键差别**：`score_marginal` 的梯度**恰好是 `√D·π`**，不包含对归一化的反传；
+`score_posterior_mean` 则要穿过 `softmax` 的 Jacobian。
+
+**τ 的作用**：`score_marginal` 在 "最佳匹配兴趣"（τ→0）与 "先验平均 = ASPCF"（τ→∞）之间连续插值。
+默认 `τ = 1.0`。
+
+**注意**：`score_posterior_mean` **即使 `p` 均匀且 `τ→∞` 也不等于 ASPCF**
+（它用**后验** `π`，ASPCF 用**先验** `p`）；二者仅在 `m` 对所有 k 相等时一致。
+消融解读时必须注意这一点。
+
+### 11.6 新增 Chapter 4 loss（**只写入文档，第一轮不启用**）
+
+**PPCIM-1（第一轮）**：只改前向 scoring。
+```
+LOSS = L_BPR + lambda_relation * L_relation        # 与 Chapter 3 完全相同
+```
+
+**PPCIM-2（仅当 PPCIM-1 有希望时才考虑）**：加入与 latent-interest 结构匹配的 pairwise objective。
+
+对 `(positive, negative)` 对，定义逐兴趣的边际差：
+
+```
+delta_k = m_pos,k - m_neg,k                          # [B, K]
+L_LI    = -log( Σ_k p_k * sigmoid( delta_k / tau_r ) )
+L       = L_BPR + lambda_relation * L_relation + lambda_LI * L_LI
+```
+
+**含义**：`L_LI` 是"**至少有一个（按先验加权的）latent interest 能把正样本与负样本区分开**"的
+软最大化目标。`sigmoid(delta_k/τ_r)` ∈ (0,1) 是兴趣 k 的判别成功率，
+`Σ_k p_k ·` 是按先验的期望，取 `-log` 即最大化它。
+
+**约束**：`lambda_LI` 默认 **0**，第一轮**不打开**。理由：先验证结构本身。
+
+### 11.7 代码审计
+
+#### (a) Tensor shape（`C` = candidate 数，`K` = 4，`D` = 64）
+
+| 量 | shape | 备注 |
+|---|---|---|
+| `V` | `[B, K, D]` | 来自未修改的 `QueryMultiInterestExtractor` |
+| `E` | `[B, C, D]` | 现有 `candidate_emb`，已存在 |
+| `p` | `[B, K]` | 来自未修改的 `InterestAggregator` |
+| `z` / `m` | **`[B, K, C]`** | `bmm(V, Eᵀ)/√D`；`softmax`/`logsumexp` 走 `dim=1` |
+| `π` | **`[B, K, C]`** | 与 `m` 同布局 |
+| `score` | `[B, C]` | 替换现有 `prediction` |
+
+#### (b) `C` 的真实取值（**实测**）
+
+| phase | C | 来源 |
+|---|---|---|
+| train | **2** | 无 `neg_items` 列；`num_neg=1` → 1 正 + 1 采样负 |
+| dev / test | **1001** | `neg_items` 列首行长度 **1000** → 1 正 + 1000 负 |
+
+（注：是 **1000** 个负样本，不是 999。）
+
+#### (c) 显存与计算量（`B = eval_batch_size = 256`，`C = 1001`）
+
+| 项 | 大小 | 说明 |
+|---|---|---|
+| `e` | 256×1001×64×4B = **65.5 MB** | **已存在**，非新增 |
+| `m` | 256×4×1001×4B = **4.1 MB** | 新增 |
+| `π` | 256×1001×4×4B = **4.1 MB** | 仅 ablation |
+| `score` | 256×1001×4B = **1.0 MB** | 替换原 `prediction` |
+| **新增合计** | **< 10 MB** | 相对现有 65.5 MB 可忽略 |
+| `m` 的计算 | `B·K·C·D` = **65.6 MFLOP** / batch | 可忽略 |
+| **不构造 `u_j`** | 省 **65.5 MB** | 由关系 1 直接从 `m, π` 算 `score_mean_j` |
+
+**结论：999/1000 负样本评测不构成显存或算力障碍。**
+
+#### (d) 全向量化
+
+```
+m      = torch.bmm(V, e.transpose(1, 2)) / math.sqrt(D)          # [B, K, C]
+logits = torch.log(p + eps).unsqueeze(-1) + m / tau              # [B, K, C]
+score  = tau * torch.logsumexp(logits, dim=1)                     # [B, C]
+```
+全部为 `bmm` + 逐元素 + `logsumexp`，**无 Python 循环、无 `[B,C,D]` 中间张量**。
+ablation：`score_mean = math.sqrt(D) * (pi * m.transpose(1,2)).sum(-1)`（同样是 `bmm` 级别）。
+
+#### (e) train / dev / test 打分一致性
+
+**`score_j` 是逐 candidate 独立的（pointwise）**：
+它只依赖 `p`（history）与 `m[:, :, j]`（candidate j 自身），
+**不含任何跨 candidate 的归一化**（如 `softmax over C`）。
+
+⇒ train（C=2）与 dev/test（C=1001）**使用完全相同的公式**，
+`C` 变化不影响任何单个 `score_j`。**这是本设计的关键正确性属性。**
+（若采用"对 candidate 做 softmax"那类写法则会破坏这一点。）
+
+#### (f) 与 TiMiRec / MIND greedy matching 的区别
+
+> ### ⚠️ 未核验 —— 不得作为已确认的 novelty claim
+>
+> 以下仅为**结构性区分**，基于对这两类方法的**通行描述**，**本轮未回原文核对**。
+> **正式写论文前必须回原文核验确切公式**。
+> 在核验之前，**禁止**把"与 MIND/TiMiRec 不同"写成已成立的 novelty 声明。
+
+| 维度 | MIND 式 greedy / max | TiMiRec 式 target-interest matching | **PPCIM** |
+|---|---|---|---|
+| candidate 是否参与 | 是 | 是 | 是 |
+| 兴趣选择方式 | **硬 argmax / 取最大**（单兴趣） | 以 target 为 query 做注意力 | **温度控制的 soft-max**（`logsumexp`） |
+| 是否使用 history 先验 | 通常不使用 | — | **显式 `p_k` 加性进入 logit** |
+| `τ` 可调 | 无 | — | **有**（`τ→0` 退化为硬最大） |
+| 是否可退化到 baseline | 否 | 否 | **是**：见 §11.7(g) |
+| 与 loss 的关系 | — | — | 后验 `π` 可直接用于 `L_LI`（§11.6） |
+
+**设计层面的实质差别**：PPCIM 把"选哪个兴趣"表述为一个**带先验的潜在变量边际化**
+（log-partition），而不是一次性的 argmax；因此它天然保留了"当没有任何兴趣匹配时，
+退回先验"的行为，并且 `τ` 提供一个从硬选择到软平均的连续谱。
+
+#### (g) 与 baseline 的退化关系（重要）
+
+`PPCIM` **不是**严格嵌套 baseline 的。原因：baseline 的
+`score_j = <Σ_k w_k V_k, e_j> = Σ_k w_k <V_k, e_j> = √D Σ_k p_k m[j,k]`
+是**先验 `p` 的加权平均**（一次平均），而 PPCIM 主 scoring 是 `log-partition`（soft-max）。
+
+但存在一条**精确对应**：
+
+```
+tau → infinity 时,  score_j → Σ_k p_k m[j,k] = score_baseline_j / sqrt(D)
+```
+
+即 **PPCIM 在 `τ→∞` 时逐点等于 baseline 打分的 `1/√D` 倍**。
+由于 BPR 只依赖分数之差、且 `1/√D` 是全局正常数（对所有 candidate 相同），
+**`τ→∞` 时 PPCIM 的排序与 baseline 完全一致**。
+
+⇒ 这提供了一个**可验证的退化路径**（虽然不是严格恒等，但排序等价），
+应写入单元测试：`τ = 1e6` 时 `argsort(score_PPCIM) == argsort(score_baseline)`。
+
+同时说明：**PPCIM 的 ablation `score_mean_j` 在 `p` 为均匀且 `τ→∞` 时也不等于 baseline**
+（`score_mean_j` 用的是**后验** `π`，而 baseline 用**先验** `p`）；
+两者只有在 `m` 对所有 k 相等时才一致。这一点必须在消融解读中注意。
+
+#### (h) 与现有 TASID 的关系（关键区别）
+
+**代码核实**（`models/sequential/LLMMIRecCAISD.py`）：
+
+| | TASID | **PPCIM** |
+|---|---|---|
+| target/candidate 信息进入的位置 | `distill_info["_tasid_loss"]`（`:359`）→ `out_dict`（`:431`）→ `total += λ·L` (`:484-486`) | **`prediction` 本身** |
+| 是否改变 `prediction` | ❌ **否**。`prediction = <Σ_k w_k V_k, e_cand>` 完全未变 | ✅ **是**。`score_j` 每个 candidate 独立计算 |
+| 测试期是否生效 | ❌ 否（`if self.training` 门控） | ✅ 是 |
+| 本质 | 训练期正则 | **前向打分算子** |
+
+> **TASID 的 target teacher 以前只进入 loss；
+> PPCIM 的 candidate information 必须进入真实 prediction path。**
+> 这是两者最根本的差别，也是 PPCIM 满足 P1（改前向算子）而 TASID 不满足的地方。
+
+#### (i) Candidate leakage 检查
+
+| 风险 | 检查结论 |
+|---|---|
+| 先验 `p_k` 是否用到 candidate | ❌ 否，只由 history 计算（`InterestAggregator`） |
+| positive 与 negative 是否走不同分支 | ❌ 否，**同一个公式** `pi[j,k]`、`score_j` |
+| 是否依赖 candidate 集合 | ❌ 否，`score_j` **逐点独立**（§11.7(e)） |
+| dev/test 是否泄露 target | ❌ 否。target 只作为 candidate 之一参与打分，与所有 negative 同权 |
+| `test_all` 模式下是否仍成立 | ✅ 成立（pointwise，`C = n_items` 亦可） |
+| 与 baseline 相比是否引入新的信息 | 无新信息源；**只是改变了 candidate 如何与 K 个 interest 交互** |
+
+### 11.8 相对现有 ASPCF forward 的最小代码 diff
+
+只改 forward step 5–7 的 **2 行**：
+
+```python
+# ---- ASPCF 现状（LLMMIRecASPCF.py:199-201）----
+interest_weights = self.aggregator(history_emb_raw, lengths)          # [B, K]
+user_vector = (interest_vectors * interest_weights[:, :, None]).sum(dim=1)   # [B, D]
+prediction = (user_vector[:, None, :] * candidate_emb).sum(dim=-1)     # [B, C]
+
+# ---- PPCIM（marginal）----
+p   = self.aggregator(history_emb_raw, lengths)                        # [B, K]   先验
+m   = torch.bmm(interest_vectors, candidate_emb.transpose(1, 2)) / math.sqrt(self.emb_size)
+z   = torch.log(p + 1e-8).unsqueeze(-1) + m / self.ppcim_tau           # [B, K, C]
+prediction = math.sqrt(self.emb_size) * self.ppcim_tau * torch.logsumexp(z, dim=1)   # [B, C]
+```
+
+**其余全部不变**：item encoder、位置编码、`extractor`、relation loss、`return_intermediate` 契约。
+
+### 11.8.1 Round 1 硬约束（不可越界）
+
+> **PPCIM Round 1 只能改变 scoring path。** 以下全部保持 ASPCF 原样：
+
+| 保持不动 | 说明 |
+|---|---|
+| `ItemEncoder`（`mode="aspcf"`） | 一行不改 |
+| position encoding | 不动 |
+| `QueryMultiInterestExtractor` | **结构与代码均不改** |
+| `InterestAggregator` | **不改**，仅把其输出从"最终权重"改称"先验" |
+| relation loss | 不动，`lambda_relation = 0.01` |
+| BPR | 不动（含其 `neg_softmax` 形式） |
+| `K = 4` | 固定 |
+| `dropout` | 0.1，固定 |
+| 所有 dataset-specific 超参 | 逐项继承 frozen Beauty ASPCF |
+
+**新增可训练参数 = 0**（v1 无任何 projection）。
+
+### 11.8.2 关于 BPR 的一处澄清（避免混淆）
+
+`GeneralModel.loss`（`models/BaseModel.py:176`）对**负样本**做了 softmax：
+
+```python
+pos_pred, neg_pred = predictions[:, 0], predictions[:, 1:]
+neg_softmax = (neg_pred - neg_pred.max()).softmax(dim=1)
+loss = -((pos_pred[:, None] - neg_pred).sigmoid() * neg_softmax).sum(dim=1).log().mean()
+```
+
+这是 **loss 层**对候选的聚合，**不是 scoring 层的耦合**。
+PPCIM 的 `score_j` 仍是**逐候选独立**的，因此：
+
+- 训练（`C=2`）与评测（`C=1001`）的**打分函数完全一致**；
+- 评测用 `argsort` 对候选排序，属于排序本身，与 scoring 的逐点性不冲突。
+
+**结论：无 candidate-set coupling 问题。**
+
+### 11.9 第一轮最小实验矩阵（Beauty, seed 42）
+
+**不重跑 ASPCF baseline**（0.1592 / 0.1088）。`LOSS = BPR + relation`，`λ_LI = 0`。
+
+| # | 配置 | 隔离变量 | 关键 flag |
+|---|---|---|---|
+| 0 | ASPCF（已有） | — | — |
+| **1** | **PPCIM-1**：主 scoring（logsumexp） | **candidate-specific 打分本身** | `--ppcim_score marginal --ppcim_tau 1.0` |
+| **2** | ablation：`score_mean_j`（posterior 均值） | 两种 scoring 的差异 | `--ppcim_score posterior_mean` |
+| **3** | ablation：先验置均匀（`p = 1/K`） | history 先验是否有用 | `--ppcim_uniform_prior 1` |
+
+判读：
+- 配置 1 若 ≤ 0 → candidate-specific 打分本身无效 → **停止**，重新审视 F6
+- 配置 1 > 0 且 配置 2 ≈ 配置 1 → 两种 scoring 等价，取更简单的
+- 配置 1 > 配置 3 → **history 先验确实贡献**，否则先验可去掉
+
+**通过后才考虑**：ML-1M 同配置同 seed；之后才考虑 `λ_LI > 0`。
+
+### 11.10 新增参数（预计）
+
+| 参数 | 默认 | 说明 |
+|---|---|---|
+| `--ppcim_score` | `marginal` | `marginal`（主）/ `posterior_mean`（ablation） |
+| `--ppcim_tau` | 1.0 | 温度；`τ→∞` 排序等价 baseline |
+| `--ppcim_uniform_prior` | 0 | 1 = 先验置均匀（消融） |
+| `--ppcim_eps` | 1e-8 | `log(p+eps)` 的数值保护 |
+
+### 11.11 第一版不做
+
+- ❌ 不改 `QueryMultiInterestExtractor`
+- ❌ 不改 ASPCF `ItemEncoder`
+- ❌ 不加 bilinear projection（Module 2 保持无参数）
+- ❌ 不打开 `L_LI`
+- ❌ 不做大规模 `τ` 扫描
