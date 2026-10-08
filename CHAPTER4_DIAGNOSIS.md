@@ -362,3 +362,64 @@ diagnostics_ch4_phase0/{beauty,ml-1m}.json                 (未提交，gitignor
 new_log/ch4_phase0_diagnosis/{beauty,ml-1m}.nohup.out       (未提交，gitignored)
 new_log/llmmirec_aspcf_K2/{beauty,ml-1m}/                   (未提交，gitignored)
 ```
+
+---
+
+## 9. 事实 F7 与三条已封存的负面轴（2026-10-07）
+
+### 9.1 新结构事实 F7：进入 extractor 前不存在 history-history 交互
+
+代码级核对（`LLMMIRecASPCF.py` + `llmmi_components.py`，逐行）：
+
+```
+history_emb_raw   = item_encoder(history)        # ← 逐 item 独立，无跨位置操作
+                  + position_emb(position)       # ← 逐位置独立
+                  -> dropout
+                  -> QueryMultiInterestExtractor
+
+QueryMultiInterestExtractor 内部：
+    Q = Wq(learned interest queries)             # 与 history 无关的 K 个可学习向量
+    K = Wk(history_position)                     # 逐位置独立投影
+    V = Wv(history_position)                     # 逐位置独立投影
+    attention:  [B,K,L] over L 个位置
+```
+
+**关键点**：`Q/K/V` 三者都是**逐位置独立**计算的；
+唯一的跨位置操作是 extractor 内部那次 attention，而它是
+**K 个固定的可学习 query 对 L 个位置**的读取，
+**不是 history 位置之间的相互 contextualize**。
+
+⇒ **F7：每个 history position 在进入 extractor 之前，
+其表示完全没有被其他 history position 修改过。**
+不存在 history-history self-attention / graph propagation / message passing。
+
+`ItemEncoder` 亦为纯逐 item 模块（padding 项恒输出零向量），无跨 item 操作。
+
+### 9.2 三条已封存的负面轴
+
+围绕**已经生成的 `V_k`** 做的三类干预，全部已证否并封存：
+
+| 轴 | 干预内容 | 结果 | 归档 |
+|---|---|---|---|
+| **ECTIR** | 改变 interest **diversity**（熵最优传输 routing） | ECTIR-1 cosine 0.7182（−19%）但 ranking 0.1578/0.1063 **下降**；ECTIR-Full 塌缩到 1.0000，−8.98%。**冗余度与排序无单调关系** | `CHAPTER4_ECTIR_ROUND1.md` |
+| **PPCIM** | **candidate-specific selection**（K 个 interest 直接面对 candidate） | τ=1 未激活；τ≤0.2 真正激活后**机制越强 ranking 越差**；hardmax 最差（HR@5 −2.45% / NDCG@5 −2.39%）；6 setting × 6 指标**无一超过 ASPCF** | `PPCIM_ROUND1_5_ANALYSIS.md` |
+| **Dispersion** | **second-order additive correction**（`u_mu + λ·u_std`） | 二阶统计与 centrality **几乎正交**（Pearson **+0.072**），**但本身是反向 ranking signal**：`P(s_disp(pos)>s_disp(neg)) = 0.4716`，mean margin −0.1586。所有 λ>0 在 dev **单调变差**，λ\*=0 | `CHAPTER4_PHASE2_DISPERSION.md` |
+
+**共同点**：三者都只动 `V_k` 的**组织方式或统计量**，`V_k` 本身来自
+**逐 item 独立编码 + 一次固定-query 读取**。三条轴独立地失败。
+
+**因此停止**围绕已生成的 `V_k` 做：
+- diversity manipulation
+- candidate-specific selection
+- second-order additive correction
+
+### 9.3 新的待验证轴
+
+> **History item contextualization**：
+> 在进入 multi-interest extractor 之前，
+> 让 history 位置之间互相 contextualize（self-attention），
+> 是否优于当前"逐 item 独立表示"？
+
+**这是一个结构性 control experiment，不是 Chapter 4 的最终方法。**
+设计见 `CHAPTER4_PHASE3_CONTEXT.md`，实现见
+`models/sequential/LLMMIRecContextControl.py`（`LLMMIRecASPCF.py` 未被修改）。

@@ -670,26 +670,57 @@ ablation：`score_mean = math.sqrt(D) * (pi * m.transpose(1,2)).sum(-1)`（同�
 
 #### (g) 与 baseline 的退化关系（重要）
 
-`PPCIM` **不是**严格嵌套 baseline 的。原因：baseline 的
-`score_j = <Σ_k w_k V_k, e_j> = Σ_k w_k <V_k, e_j> = √D Σ_k p_k m[j,k]`
-是**先验 `p` 的加权平均**（一次平均），而 PPCIM 主 scoring 是 `log-partition`（soft-max）。
+> **⚠️ 本节已于 2026-10-07 修正**。此前版本误写为"τ→∞ 时等于 baseline 的 `1/√D` 倍"，
+> 那是**代码尚未乘回 `√D` 时**的结论。当前代码为
+> `score_marginal = √D · τ · logsumexp_k(log p_k + m/τ)`，
+> 因此下面的表述才是正确的。
 
-但存在一条**精确对应**：
+**主 scoring (`marginal`) 的 τ→∞ 极限**
 
 ```
-tau → infinity 时,  score_j → Σ_k p_k m[j,k] = score_baseline_j / sqrt(D)
+score_marginal = √D · τ · log Σ_k p_k exp(m_k/τ)
+  --(τ→∞, 展开 τ·log[Σp + (1/τ)Σ p m + O(1/τ²)])-->
+  √D · Σ_k p_k m_k
+= √D · Σ_k p_k · <V_k, e_j>/√D
+= Σ_k p_k <V_k, e_j>
+= <Σ_k p_k V_k, e_j>
+= score_baseline_j          ★ 精确等于 ASPCF 分数本身
 ```
 
-即 **PPCIM 在 `τ→∞` 时逐点等于 baseline 打分的 `1/√D` 倍**。
-由于 BPR 只依赖分数之差、且 `1/√D` 是全局正常数（对所有 candidate 相同），
-**`τ→∞` 时 PPCIM 的排序与 baseline 完全一致**。
+即 **`τ→∞` 时 `score_marginal` 逐点收敛到 ASPCF 打分**（不是它的 `1/√D` 倍）。
+这提供了可验证的退化路径：`τ` 足够大时 `argsort(score_PPCIM) == argsort(score_baseline)`
+（单元测试 J 已验证误差随 τ 单调收敛）。
 
-⇒ 这提供了一个**可验证的退化路径**（虽然不是严格恒等，但排序等价），
-应写入单元测试：`τ = 1e6` 时 `argsort(score_PPCIM) == argsort(score_baseline)`。
+**`posterior_mean` ablation 同样依赖 τ**
 
-同时说明：**PPCIM 的 ablation `score_mean_j` 在 `p` 为均匀且 `τ→∞` 时也不等于 baseline**
-（`score_mean_j` 用的是**后验** `π`，而 baseline 用**先验** `p`）；
-两者只有在 `m` 对所有 k 相等时才一致。这一点必须在消融解读中注意。
+此前版本误写为"不变（无 τ）"。实际上
+
+```
+π_k(τ) = softmax_k( log p_k + m_k/τ )
+score_posterior_mean = √D · Σ_k π_k(τ) · m_k
+```
+
+**`π` 显含 τ**，因此 `score_posterior_mean` 也随 τ 变化：
+
+| τ | `π` 的行为 | `score_posterior_mean` |
+|---|---|---|
+| `→∞` | `π → p`（先验） | `→ √D Σ_k p_k m_k` = **ASPCF 分数** |
+| `= 1` | 当前默认 | 介于两者之间 |
+| `→ 0` | `π → one-hot(argmax_k m_k)` | `→ √D·m_{k*}` = `max_k <V_k, e_j>` |
+
+⇒ **两个 scoring 在 `τ→∞` 时收敛到同一个值（ASPCF）**，
+但**在 τ→0 时分道扬镳**：
+
+- `marginal` → `max_k <V_k, e_j>`（硬最大）
+- `posterior_mean` → 同样是 `max_k <V_k, e_j>`（因为 `π` 也 one-hot）
+
+**两者在 τ→0 极限相同**（唯一最大值时），但**中间 τ 的路径不同**：
+`marginal` 走 `log-partition`，`posterior_mean` 走"用同一个 softmax 权重的加权平均"。
+这正是 Round 1 中两者表现差 2.7% 的来源。
+
+**baseline 本身不对应任何有限的 τ**：baseline 是先验 `p` 的加权平均（一次平均），
+只有在 `τ→∞` 才被恢复。因此 PPCIM 是**渐近**而非严格嵌套 baseline ——
+不存在一个 τ 使两者逐位相等（虽然排序在 τ→∞ 时一致）。
 
 #### (h) 与现有 TASID 的关系（关键区别）
 
@@ -806,3 +837,114 @@ PPCIM 的 `score_j` 仍是**逐候选独立**的，因此：
 - ❌ 不加 bilinear projection（Module 2 保持无参数）
 - ❌ 不打开 `L_LI`
 - ❌ 不做大规模 `τ` 扫描
+
+---
+
+## 12. PPCIM Round 1 结果（Beauty seed 42）
+
+> 记录日期：2026-10-07。checkpoint：`new_model/llmmirec_ppcim/beauty/*/seed42/`
+> 状态：**τ=1 当前实现未改善排序；但 candidate-specific 机制基本未被激活。
+> 需先做 inference-only temperature probe，再作最终判定。**
+
+### 12.1 结果
+
+| config | HR@5 | NDCG@5 | HR@10 | NDCG@10 | HR@20 | NDCG@20 | ΔHR@5 | σ |
+|---|---|---|---|---|---|---|---|---|
+| **ASPCF**（基线） | **0.1592** | **0.1088** | 0.2292 | 0.1313 | 0.3171 | 0.1535 | — | — |
+| ppcim_history_marginal (τ=1) | 0.1581 | 0.1074 | 0.2286 | 0.1301 | 0.3167 | 0.1523 | −0.69% | −1.00σ |
+| ppcim_uniform_marginal (τ=1) | 0.1558 | 0.1063 | 0.2287 | 0.1298 | 0.3138 | 0.1512 | −2.14% | −3.09σ |
+| ppcim_posterior_mean (τ=1) | 0.1540 | 0.1049 | 0.2228 | 0.1271 | 0.3077 | 0.1485 | −3.27% | −4.73σ |
+
+（ASPCF 5-seed std：HR@5 ±0.0011、NDCG@5 ±0.0014）
+
+**消融是内部一致的**：
+- history prior > uniform prior（0.1581 vs 0.1558，**+1.5%**）→ 先验确实起作用
+- marginal > posterior_mean（0.1581 vs 0.1540，**+2.7%**）→ 与 §11.5 的梯度论证一致
+
+### 12.2 机制诊断（关键）
+
+| 指标 | history_marginal | uniform_marginal | posterior_mean |
+|---|---|---|---|
+| prior entropy | 1.3844 | 1.3863 | 1.3833 |
+| posterior entropy | 1.3782 | 1.3809 | 1.3799 |
+| **entropy reduction** | **0.45%** | 0.37% | 0.25% |
+| **candidate posterior pairwise cosine** | **0.9907** | 0.9917 | 0.9955 |
+| candidate posterior pairwise JS | 0.0026 | 0.0022 | 0.0013 |
+| pos/neg top-interest consistency | 0.678 | 0.466 | 0.641 |
+
+（ln4 = 1.3863；top-interest 随机应为 0.250）
+
+**读数**：
+1. **不同候选的 posterior 余弦相似度 = 0.99** —— "candidate-specific posterior" 事实上**不是 candidate-specific**。
+2. **posterior 熵仅比 prior 低 0.45%** —— 几乎就是均匀分布。
+3. 正负样本 top-interest 一致率 0.68 ≫ 0.25 —— 无判别性。
+
+**根因（已量化）**：
+
+```
+||V_k|| = 5.87,  ||e_j|| = 4.00
+m = <V_k,e_j>/√D  : 全局 std = 0.4623
+z = log p + m/τ   : 跨 k 的 std = 0.1221     ← 关键量
+log p 的跨 k std  = 0.0705                    ← 先验也几乎均匀
+```
+
+`softmax over k` **对每个 (batch, candidate) 加常数不变**。`m` 的全局 std（0.4623）
+主要来自**候选之间**的差异，它对所有 k 同加一个量，**对 softmax 完全无效**。
+真正起作用的只有 **`m` 在 k 方向的散布 = 0.1221**，这个量推不动 posterior 离开均匀。
+
+这同时解释了为什么 `score_marginal ≈ ASPCF`：posterior 接近均匀时
+`τ·logsumexp_k(log p_k + m_k/τ) ≈ Σ_k p_k m_k + (1/2τ)·Var_p(m)`，
+即 baseline 分数加一个**二阶小量**。
+
+### 12.3 结论的准确表述
+
+- ❌ **不要写成"PPCIM 已被否定"**
+- ✅ 应写成：**"PPCIM τ=1 当前实现未改善排序；但 candidate-specific mechanism
+  基本未被激活（posterior cos 0.99、熵降 0.45%），需要一次 inference-only
+  temperature probe 后再做最终判定。"**
+
+**τ 是控制机制是否激活的旋钮**：实测若 `τ=0.1`，`z` 的跨 k 标准差会从 0.122 升到约 0.96，
+posterior 才会真正非均匀。`τ=1.0` 对当前 `|m|` 而言过大。
+
+---
+
+## 13. PPCIM Round 1.5 温度探针 —— 最终裁定（2026-10-07）
+
+> 完整数据见 `PPCIM_ROUND1_5_ANALYSIS.md`。
+> §12.3 中"需要一次 inference-only temperature probe 后再做最终判定"的**待办已完成**。
+
+**探针**：同一 checkpoint（`ppcim_history_marginal τ=1.0 seed42`），仅推理覆盖
+`τ ∈ {1.0, 0.5, 0.2, 0.1, 0.05}` + `hardmax(τ→0)`。`m` 与 `p` 不依赖 τ，故合法。
+自校验：τ=1.0 复算 HR@5 0.1581 / NDCG@5 0.1074，与训练日志一致。
+
+**机制**：τ=0.2 起真正激活（候选间 posterior cos 0.877、熵降 7.6%），
+τ=0.1 强激活（0.767、18.4%），τ=0.05 时 0.654、34.3%。
+
+**排序**：**6 个 setting × 6 个指标无一超过 ASPCF**；从 τ=0.5 起严格单调下降。
+
+| setting | HR@5 | NDCG@5 |
+|---|---|---|
+| ASPCF | **0.1592** | **0.1088** |
+| τ = 0.5 | 0.1591（−0.06%） | 0.1079（−0.83%） |
+| τ = 0.2 | 0.1591（−0.06%） | 0.1079（−0.83%） |
+| τ = 0.1 | 0.1580 | 0.1072 |
+| τ = 0.05 | 0.1576 | 0.1068 |
+| hardmax (τ→0) | 0.1553（−2.45%） | 0.1062（−2.39%） |
+
+**§12.3 的待定表述已作废，最终结论为**：
+
+> **在当前 ASPCF 表示下，`candidate-specific interest selection` 不值得继续。**
+> PPCIM 状态：`stopped negative exploration`。
+> **不重训 τ=0.2；不引入 `L_LI` 抢救。**
+
+**判据应用**：A 成立（机制可激活）；B 不通过（τ=0.2 HR@5 通过但 NDCG@5 −0.83%）；
+C 不成立（无任何 τ 超过 ASPCF）；D 接近成立；E 成立（不应继续降低 τ）。
+
+**遗留修正**：top-interest 一致率**不得**再用 `1/K` 作 chance level。
+实测边际高度不均匀（τ=1.0 时 interest 3 占 79%），
+必须用 empirical chance `Σ_k q_k²`。按此重算，τ=1.0 的超出 chance 仅 **+0.013**，
+比原表述更彻底地证明"未激活"。
+
+**对全局诊断 F6 的补充**：真正解除 F6 所描述的瓶颈（K 个 interest 直接面对 candidate）
+**同样无用，且越彻底越差**（NDCG@5 0.1079 → 0.1072 → 0.1062）。
+⇒ **F6 可能不是真瓶颈或不是唯一瓶颈。**
