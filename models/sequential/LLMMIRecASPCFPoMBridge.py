@@ -62,9 +62,9 @@ class LLMMIRecASPCFPoMBridge(LLMMIRecASPCF):
         if L > self.max_his:
             raise ValueError("history exceeds history_max")
         valid = history > 0
-        expected = torch.arange(L, device=history.device)[None, :] < lengths[:, None]
-        if lengths.shape != (B,) or torch.any(lengths < 0) or torch.any(lengths > L) or not torch.equal(valid, expected):
-            raise ValueError("history requires lengths-consistent valid prefix/right padding")
+        if lengths.shape != (B,):
+            raise ValueError("lengths shape does not match history")
+        self.backbone._check_history_layout(valid, lengths)
         comps = {}
         if return_intermediate:
             hist_out = self.item_encoder(history, return_components=True)
@@ -79,10 +79,10 @@ class LLMMIRecASPCFPoMBridge(LLMMIRecASPCF):
         position = (lengths[:, None] - torch.arange(self.max_his, device=history.device)[None, :L]) * valid.long()
         H = self.dropout(Hraw + self.position_emb(position))
         if return_intermediate:
-            details = self.backbone(H, valid, lengths, return_intermediate=True)
+            details = self.backbone(H, valid, lengths, return_intermediate=True, validate_history=False)
             V, w = details["interest_vectors"], details["interest_weights"]
         else:
-            V, w = self.backbone(H, valid, lengths)
+            V, w = self.backbone(H, valid, lengths, validate_history=False)
         V = self.dropout(V)
         u = (V * w[:, :, None]).sum(1)
         prediction = (u[:, None, :] * candidates).sum(-1)

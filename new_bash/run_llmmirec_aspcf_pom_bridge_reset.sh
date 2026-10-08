@@ -9,6 +9,9 @@ DATASET=$1
 MODE=$2
 GPU=$3
 RUN_ID=$4
+# Preserve seed42 default; explicit environment input for paired experiments.
+SEED=${BRIDGE_SEED:-42}
+[[ "$SEED" =~ ^[0-9]+$ ]] || exit 2
 ACTION=${5:---preview}
 [[ "$DATASET" == beauty || "$DATASET" == ml-1m ]] || exit 2
 [[ "$MODE" == clean || "$MODE" == pom_centrality || "$MODE" == pom_full ]] || exit 2
@@ -21,15 +24,15 @@ LR=0.004
 [[ "$DATASET" != ml-1m ]] || LR=0.001
 DISP=0
 [[ "$MODE" != pom_full ]] || DISP=1
-LOG_DIR="$ROOT/new_log/ch4_backbone_reset/$DATASET/${MODE}_seed42_$RUN_ID"
-MODEL_DIR="$ROOT/new_model/ch4_backbone_reset/$DATASET/${MODE}_seed42_$RUN_ID"
+LOG_DIR="$ROOT/new_log/ch4_backbone_reset/$DATASET/${MODE}_seed${SEED}_$RUN_ID"
+MODEL_DIR="$ROOT/new_model/ch4_backbone_reset/$DATASET/${MODE}_seed${SEED}_$RUN_ID"
 for dir in "$LOG_DIR" "$MODEL_DIR"; do
   resolved=$(realpath -m -- "$dir")
   [[ "$resolved" == "$ROOT/"* ]] || { echo "Output escapes project" >&2; exit 2; }
   [[ ! -e "$dir" && ! -L "$dir" ]] || { echo "Refusing existing output: $dir" >&2; exit 2; }
 done
 CMD=(python -B main.py --model_name LLMMIRecASPCFPoMBridge
-  --dataset "$DATASET" --path ./data/ --gpu "$GPU" --random_seed 42
+  --dataset "$DATASET" --path ./data/ --gpu "$GPU" --random_seed "$SEED"
   --bridge_mode "$MODE" --bridge_attn_size 8 --bridge_prompt_num 3
   --bridge_n_layers 2 --bridge_lambda_disp "$DISP"
   --emb_size 64 --attn_size 64 --K 4 --history_max 20
@@ -62,7 +65,7 @@ printf '\n' >> "$LOG_DIR/command.txt"
 date -Is > "$LOG_DIR/started.txt"
 "${CMD[@]}" 2>&1 | tee "$LOG_DIR/console.out"
 date -Is > "$LOG_DIR/finished.txt"
-python -B - "$LOG_DIR" "$DATASET" "$MODE" "$LR" "$DISP" <<'PY'
+python -B - "$LOG_DIR" "$DATASET" "$MODE" "$LR" "$DISP" "$SEED" <<'PY'
 import json, re, sys
 from pathlib import Path
 out = Path(sys.argv[1])
@@ -74,7 +77,7 @@ required = [f'{m}@{k}' for k in (5,10,20) for m in ('HR','NDCG')]
 if any(key not in metrics for key in required):
     raise RuntimeError('Missing one of six required ranking metrics')
 counts = re.findall(r'#params:\s*(\d+)', text)
-summary = dict(dataset=sys.argv[2], mode=sys.argv[3], seed=42,
+summary = dict(dataset=sys.argv[2], mode=sys.argv[3], seed=int(sys.argv[6]),
                lr=float(sys.argv[4]), lambda_disp=float(sys.argv[5]),
                bridge_attn_size=8, prompt_num=3, n_layers=2, K=4,
                parameter_count=int(counts[-1]), best_dev=best,

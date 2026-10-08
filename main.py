@@ -47,6 +47,7 @@ import models.sequential.LLMMIRecECTIR as LLMMIRecECTIR
 import models.sequential.LLMMIRecPPCIM as LLMMIRecPPCIM
 import models.sequential.LLMMIRecContextControl as LLMMIRecContextControl
 import models.sequential.LLMMIRecASPCFPoMBridge as LLMMIRecASPCFPoMBridge
+import models.sequential.LLMMIRecASPCFRelationAttention as LLMMIRecASPCFRelationAttention
 
 def parse_global_args(parser):
     default_gpu = os.environ.get('CUDA_VISIBLE_DEVICES', '0')

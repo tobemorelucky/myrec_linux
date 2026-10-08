@@ -51,7 +51,21 @@ class PoMRecInterestBackbone(nn.Module):
         safe = torch.where(positive, variance, torch.ones_like(variance))
         return torch.where(positive, torch.sqrt(safe), torch.zeros_like(variance))
 
-    def forward(self, history_embeddings, valid_mask, lengths, return_intermediate=False):
+    @staticmethod
+    def _check_history_layout(valid_mask, lengths):
+        L = valid_mask.size(1)
+        expected = torch.arange(L, device=lengths.device)[None, :] < lengths[:, None]
+        valid_layout = ((lengths >= 0).all() & (lengths <= L).all()
+                        & (valid_mask == expected).all())
+        message = "history must have a valid prefix and right padding"
+        if valid_layout.is_cuda:
+            # Device assertion; no CUDA scalar readback into Python.
+            torch._assert_async(valid_layout, message)
+        elif not valid_layout:
+            raise ValueError(message)
+
+    def forward(self, history_embeddings, valid_mask, lengths, return_intermediate=False,
+                validate_history=True):
         if history_embeddings.ndim != 3 or history_embeddings.size(-1) != self.emb_size:
             raise ValueError("history_embeddings must have shape [B,L,emb_size]")
         B, L, _ = history_embeddings.shape
@@ -59,9 +73,8 @@ class PoMRecInterestBackbone(nn.Module):
             raise ValueError("mask/lengths shapes do not match history")
         if valid_mask.dtype != torch.bool:
             raise ValueError("valid_mask must be boolean")
-        expected = torch.arange(L, device=lengths.device)[None, :] < lengths[:, None]
-        if torch.any(lengths < 0) or torch.any(lengths > L) or not torch.equal(valid_mask, expected):
-            raise ValueError("history must have a valid prefix and right padding")
+        if validate_history:
+            self._check_history_layout(valid_mask, lengths)
         history = history_embeddings.masked_fill(~valid_mask[:, :, None], 0)
         mask = torch.cat([valid_mask, torch.ones(B, 5, device=valid_mask.device, dtype=torch.bool)], 1)
         p1 = torch.cat([self.prompt_pad, self.prompt1.weight], 0)
