@@ -48,6 +48,8 @@ import models.sequential.LLMMIRecPPCIM as LLMMIRecPPCIM
 import models.sequential.LLMMIRecContextControl as LLMMIRecContextControl
 import models.sequential.LLMMIRecASPCFPoMBridge as LLMMIRecASPCFPoMBridge
 import models.sequential.LLMMIRecASPCFRelationAttention as LLMMIRecASPCFRelationAttention
+import models.sequential.LLMMIRecASPCFAuxNeg as LLMMIRecASPCFAuxNeg
+import models.sequential.LLMMIRecASPCFSAIT as LLMMIRecASPCFSAIT
 
 def parse_global_args(parser):
     default_gpu = os.environ.get('CUDA_VISIBLE_DEVICES', '0')
@@ -65,6 +67,8 @@ def parse_global_args(parser):
                         help='To train the model or not.')
     parser.add_argument('--regenerate', type=int, default=0,
                         help='Whether to regenerate intermediate files')
+    parser.add_argument('--dev_only', type=int, default=0, choices=[0, 1],
+                        help='Skip test Dataset/evaluation; exploratory runs only.')
     return parser
 
 
@@ -84,8 +88,14 @@ def main():
         args.device = torch.device('cuda')
     logging.info('Device: {}'.format(args.device))
 
+    # Development protocol: no test Dataset or test evaluation.
+    if args.dev_only and args.test_epoch != -1:
+        raise ValueError('dev_only requires test_epoch=-1')
+
     # Read data
     corpus_path = os.path.join(args.path, args.dataset, model_name.reader + '.pkl')
+    if args.dev_only and (args.regenerate or not os.path.exists(corpus_path)):
+        raise ValueError('dev_only requires an existing corpus cache; Reader regeneration disabled')
     if not args.regenerate and os.path.exists(corpus_path):
         logging.info('Load corpus from {}'.format(corpus_path))
         corpus = pickle.load(open(corpus_path, 'rb'))
@@ -101,7 +111,8 @@ def main():
 
     # Run model
     data_dict = dict()
-    for phase in ['train', 'dev', 'test']:
+    phases = ['train', 'dev'] if args.dev_only else ['train', 'dev', 'test']
+    for phase in phases:
         data_dict[phase] = model_name.Dataset(model, corpus, phase)
         data_dict[phase].prepare()
     runner = runner_name(args)
@@ -110,8 +121,13 @@ def main():
         model.load_model()
     if args.train > 0:
         runner.train(data_dict)
-    eval_res = runner.print_res(data_dict['test'])
-    logging.info(os.linesep + 'Test After Training: ' + eval_res)
+    if not args.dev_only:
+        eval_res = runner.print_res(data_dict['test'])
+        logging.info(os.linesep + 'Test After Training: ' + eval_res)
+    elif not args.train:
+        logging.info(os.linesep + 'Dev Evaluation: ' + runner.print_res(data_dict['dev']))
+    else:
+        logging.info('Dev-only run: test Dataset and all test evaluation skipped.')
     # save_rec_results(data_dict['dev'], runner, 100)
     model.actions_after_train()
     logging.info(os.linesep + '-' * 45 + ' END: ' + utils.get_time() + ' ' + '-' * 45)
