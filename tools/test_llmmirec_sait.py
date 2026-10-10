@@ -157,6 +157,42 @@ class Tests(unittest.TestCase):
                 self.assertTrue(torch.allclose(o["next_state"],expected,atol=1e-7))
                 self.assertEqual(sum(p.numel() for p in b.forecaster.parameters()),16512)
 
+    def test_static_same_decoder_and_no_transition(self):
+        full,static=make(),make("static",weight=0)
+        for k,v in full.forecaster.decoder.state_dict().items():
+            self.assertTrue(torch.equal(v,static.forecaster.decoder.state_dict()[k]))
+        self.assertEqual(sum(p.numel() for p in static.forecaster.parameters()),16512)
+        self.assertEqual(list(static.forecaster._modules),["decoder"])
+        self.assertEqual(list(static.forecaster._parameters),[])
+        static.eval();o=static(feed(),True)
+        self.assertTrue(torch.equal(o["predicted_state"],o["current_state"]))
+        self.assertIsNone(o["transition_kernel"])
+        static.sait_eval_prior = torch.full_like(static.sait_eval_prior,float("nan"))
+        other=static(feed(),True)
+        self.assertTrue(torch.equal(o["prediction"],other["prediction"]))
+
+    def test_static_loss_gradient_padding_and_target_independence(self):
+        static=make("static",weight=0);c0=make(baseline=True)
+        torch.manual_seed(73);o=static(feed(),True)
+        torch.manual_seed(73);base=c0(feed())
+        total=static.loss(o);c0.loss(base)
+        self.assertTrue(torch.equal(o["loss_relation"],base["loss_relation"]))
+        self.assertNotIn("_sait_target_state",o)
+        self.assertNotIn("loss_transition",o)
+        total.backward();self.assertTrue(torch.isfinite(total))
+        for p in static.forecaster.parameters():
+            self.assertIsNotNone(p.grad)
+            self.assertTrue(torch.isfinite(p.grad).all())
+            self.assertGreater(float(p.grad.abs().sum()),0)
+        static.eval();f=feed();a=static(f,True)
+        g=copy.deepcopy(f);g["item_id"]=g["item_id"][:,[1,0]]
+        b=static(g,True)
+        self.assertTrue(torch.equal(a["prediction"][:,[1,0]],b["prediction"]))
+        self.assertTrue(torch.equal(a["user_vector"],b["user_vector"]))
+        pad=copy.deepcopy(f);pad["history_items"]=torch.nn.functional.pad(pad["history_items"],(0,2))
+        self.assertTrue(torch.allclose(a["prediction"],static(pad)["prediction"],atol=1e-8))
+        with self.assertRaises(ValueError):make("static",weight=.01)
+
     def test_builder_io_train_only_and_refuses_existing_output(self):
         from tools.build_sait_transition_assets import construct
         # Existing output must fail before any PCA/train/dev/test read.

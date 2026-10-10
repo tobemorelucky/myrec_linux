@@ -5,7 +5,7 @@ from torch import nn
 from torch.nn import functional as F
 
 class SemanticInterestTransition(nn.Module):
-    def __init__(self, dim=64, states=32, rank=8, personalize=True):
+    def __init__(self, dim=64, states=32, rank=8, personalize=True, static=False):
         super().__init__()
         self.rank = rank
         if personalize:
@@ -21,9 +21,12 @@ class SemanticInterestTransition(nn.Module):
         if personalize:
             nn.init.normal_(self.source, 0., .01)
             nn.init.normal_(self.destination, 0., .01)
+        if static:
+            # Keep exactly the full-mode decoder initialization, without idle parameters.
+            del self.context, self.source, self.destination
 
     def forward(self, vectors, weights, attention, raw_history, lengths,
-                assignments, prior, personalize=True, markov=False):
+                assignments, prior, personalize=True, markov=False, static=False):
         batch, interests, dim = vectors.shape
         width = raw_history.shape[1]
         mask = torch.arange(width, device=lengths.device)[None, :] < lengths[:, None]
@@ -35,9 +38,12 @@ class SemanticInterestTransition(nn.Module):
         recent = raw_history[rows, last_index]
         if markov:
             current = assignments[rows, last_index][:, None, :].expand(-1, interests, -1)
-        if prior.ndim == 2:
+        if not static and prior.ndim == 2:
             prior = prior[None, :, :].expand(batch, -1, -1)
-        if personalize and not markov:
+        if static:
+            predicted = current
+            kernel = None
+        elif personalize and not markov:
             condition = torch.tanh(self.context(torch.cat(
                 [vectors, recent[:, None, :].expand(-1, interests, -1)], dim=-1)))
             adjustment = torch.einsum("bkr,mr,nr->bkmn",

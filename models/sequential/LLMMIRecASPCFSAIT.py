@@ -9,7 +9,7 @@ from torch.nn import functional as F
 from models.sequential.LLMMIRecASPCF import LLMMIRecASPCF
 from models.sequential.sait_components import SemanticInterestTransition
 
-MODES = ("baseline", "full", "semantic_only", "behavior_only", "markov")
+MODES = ("baseline", "full", "semantic_only", "behavior_only", "markov", "static")
 
 class LLMMIRecASPCFSAIT(LLMMIRecASPCF):
     extra_log_args = LLMMIRecASPCF.extra_log_args + [
@@ -32,13 +32,16 @@ class LLMMIRecASPCFSAIT(LLMMIRecASPCF):
                 or args.sait_rank != 8 or self.K != 4 or self.emb_size != 64
                 or not math.isfinite(self.lambda_transition) or self.lambda_transition < 0):
             raise ValueError("SAIT prototype requires frozen ASPCF and registered settings")
+        if self.sait_mode == "static" and self.lambda_transition != 0:
+            raise ValueError("Static decoder ablation requires lambda_transition=0")
         if self.sait_mode == "baseline":
             return
         self._load_asset(args.sait_asset_path)
         # New parameters must not consume the native model/dropout/global RNG stream.
         with torch.random.fork_rng(devices=[]):
             self.forecaster = SemanticInterestTransition(self.emb_size, 32, args.sait_rank,
-                                                         personalize=self.sait_mode != 'markov')
+                                                         personalize=self.sait_mode != 'markov',
+                                                         static=self.sait_mode == 'static')
         logging.info("[SAIT] added_params=%d total_params=%d mode=%s lambda_transition=%s",
                      sum(p.numel() for p in self.forecaster.parameters()),
                      self.count_variables(), self.sait_mode, self.lambda_transition)
@@ -98,7 +101,8 @@ class LLMMIRecASPCFSAIT(LLMMIRecASPCF):
                      if self.training else self.sait_behavior_eval)
         state = self.forecaster(out["interest_vectors"], out["interest_weights"],
                                 out["attention_maps"], out["history_vectors"], lengths,
-                                assignments, prior, markov=self.sait_mode=="markov")
+                                assignments, prior, markov=self.sait_mode=="markov",
+                                static=self.sait_mode=="static")
         out["prediction"] = (state["user_vector"][:, None] * out["candidate_vectors"]).sum(-1)
         out["_sait_next_state"] = state["next_state"]
         if self.training and self.lambda_transition > 0:
