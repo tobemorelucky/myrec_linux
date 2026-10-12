@@ -19,10 +19,10 @@ class LLMMIRecASPCFCICL(LLMMIRecASPCF):
     def __init__(self,args,corpus):
         super().__init__(args,corpus)
         self.lambda_contribution=float(args.lambda_contribution)
-        if (self.K!=4 or self.emb_size!=64 or self.semantic_rank!=512 or
+        if (self.K not in (2,4) or self.emb_size!=64 or self.semantic_rank!=512 or
             self.item_encoder_mode!="aspcf" or self.aspcf_gate_mode!="basic" or
             self.num_neg!=1 or not math.isfinite(self.lambda_contribution) or self.lambda_contribution<0):
-            raise ValueError("CICL requires frozen ASPCF K4/D64/rank512/one original BPR negative")
+            raise ValueError("CICL requires frozen ASPCF K2/4/D64/rank512/one original BPR negative")
         path=Path(args.cicl_proto_path).resolve()
         if not path.is_relative_to(Path(__file__).resolve().parents[2]):
             raise ValueError("Prototype must resolve inside project")
@@ -35,7 +35,7 @@ class LLMMIRecASPCFCICL(LLMMIRecASPCF):
         self.register_buffer("cicl_q",torch.from_numpy(q),persistent=False)
         with torch.random.fork_rng(devices=[]):
             self.contribution_predictor=ContributionPredictor()
-            self.coalition_teacher=CoalitionTeacher()
+            self.coalition_teacher=CoalitionTeacher(interests=self.K)
         self._cicl_stats=None;self._cicl_epoch=0
         logging.info("[CICL] extra_params=%d total_params=%d lambda=%s teacher_temp=.1 correction_bound=1",
                      sum(p.numel() for p in self.contribution_predictor.parameters()),self.count_variables(),self.lambda_contribution)

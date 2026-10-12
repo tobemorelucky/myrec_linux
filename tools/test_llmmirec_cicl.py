@@ -14,11 +14,11 @@ ROOT=Path(__file__).resolve().parents[1]
 TABLE=torch.randn(33,1536,generator=torch.Generator().manual_seed(17));TABLE[0]=0
 rng=np.random.default_rng(21);Q=rng.dirichlet(np.ones(32),size=33).astype(np.float32);Q[0]=0
 ASSET=dict(soft_assignments=Q,semantic_rank=512)
-def make(c0=False,weight=.01):
+def make(c0=False,weight=.01,interests=4):
     args=CICL.parse_model_args(argparse.ArgumentParser()).parse_args([])
     args.device=torch.device("cpu");args.model_path="unused";args.buffer=0
     args.llm_emb_path="synthetic";args.cicl_proto_path=str(ROOT/"data/synthetic/proto.pkl")
-    args.lambda_contribution=weight;args.relation_sample_size=5
+    args.lambda_contribution=weight;args.relation_sample_size=5;args.K=interests
     torch.manual_seed(42)
     with patch("models.sequential.LLMMIRecASPCF.load_llm_table",return_value=TABLE),patch("models.sequential.LLMMIRecASPCFCICL.Path.open",mock_open()),patch("models.sequential.LLMMIRecASPCFCICL.pickle.load",return_value=ASSET):
         return (C0 if c0 else CICL)(args,SimpleNamespace(n_items=33,n_users=4))
@@ -118,4 +118,85 @@ class Tests(unittest.TestCase):
         b.eval();f=feed();f["history_items"]=torch.tensor([[1,0,0],[3,0,0]]);f["lengths"]=torch.ones(2,dtype=torch.long)
         a=b(f,True);f["history_items"]=f["history_items"][:,:1];c=b(f,True)
         self.assertTrue(torch.allclose(a["prediction"],c["prediction"],atol=1e-8))
+
+    def test_k2_coalition_math_and_permutation(self):
+        t=CoalitionTeacher(interests=2).double()
+        scores=torch.tensor([[[3.,.5],[-1.,0.]],[[0.,0.],[0.,0.]]],dtype=torch.float64)
+        phi,q,u=t(scores)
+        self.assertEqual(tuple(u.shape),(2,4))
+        self.assertTrue(torch.equal(u[:,0],torch.zeros(2,dtype=torch.float64)))
+        margins=scores[:,:,0]-scores[:,:,1]
+        self.assertTrue(torch.equal(u[:,1],torch.sigmoid(margins[:,0])-.5))
+        self.assertTrue(torch.equal(u[:,2],torch.sigmoid(margins[:,1])-.5))
+        self.assertTrue(torch.equal(u[:,3],torch.sigmoid(margins.mean(1))-.5))
+        ref=torch.stack([.5*u[:,1]+.5*(u[:,3]-u[:,2]),.5*u[:,2]+.5*(u[:,3]-u[:,1])],1)
+        self.assertTrue(torch.allclose(phi,ref,atol=1e-14))
+        self.assertTrue(torch.allclose(phi.sum(1),u[:,3],atol=1e-14))
+        ph2,q2,_=t(scores[:,[1,0]])
+        self.assertTrue(torch.allclose(phi[:,[1,0]],ph2,atol=1e-14))
+        self.assertTrue(torch.allclose(q[:,[1,0]],q2,atol=1e-14))
+
+    def test_k4_legacy_teacher_bit_exact(self):
+        # Reference is the previous K4 formula and float32 coefficient construction.
+        masks=torch.tensor([[bool(s & (1<<k)) for k in range(4)] for s in range(16)],dtype=torch.float32)
+        coalition=masks/masks.sum(-1,keepdim=True).clamp_min(1)
+        coeff=torch.zeros(16,4)
+        for k in range(4):
+            for s in range(16):
+                if s & (1<<k):continue
+                n=int(masks[s].sum())
+                factor=math.factorial(n)*math.factorial(3-n)/math.factorial(4)
+                coeff[s|(1<<k),k]+=factor;coeff[s,k]-=factor
+        t=CoalitionTeacher(interests=4)
+        self.assertTrue(torch.equal(t.coalition,coalition))
+        self.assertTrue(torch.equal(t.coeff,coeff))
+        for dtype in [torch.float32,torch.float64]:
+            scores=torch.randn(8,4,2,generator=torch.Generator().manual_seed(52),dtype=dtype)
+            u=torch.sigmoid((scores[:,:,0]-scores[:,:,1])@coalition.to(dtype).T)-.5
+            phi=u@coeff.to(dtype);q=torch.softmax(phi/.1,-1)
+            actual=t.to(dtype)(scores)
+            for a,b in zip(actual,(phi,q,u)):self.assertTrue(torch.equal(a,b))
+
+    def test_nokl_same_capacity_weights_and_serving_path(self):
+        a,b=make(weight=.01),make(weight=0)
+        self.assertEqual(a.count_variables(),b.count_variables())
+        for k,v in a.state_dict().items():self.assertTrue(torch.equal(v,b.state_dict()[k]),k)
+        with torch.no_grad():
+            a.contribution_predictor.output.weight.normal_(0,.02)
+            b.load_state_dict(a.state_dict())
+        torch.manual_seed(83);oa=a(feed(),True)
+        with patch.object(b.coalition_teacher,"forward",side_effect=AssertionError("noKL teacher")):
+            torch.manual_seed(83);ob=b(feed(),True)
+        self.assertTrue(torch.equal(oa["prediction"],ob["prediction"]))
+        self.assertTrue(torch.equal(oa["interest_weights"],ob["interest_weights"]))
+        self.assertNotIn("_cicl_teacher",ob)
+        loss=b.loss(ob);loss.backward()
+        self.assertTrue(torch.isfinite(loss))
+        self.assertGreater(float(b.contribution_predictor.output.weight.grad.abs().sum()),0)
+        self.assertGreater(float(b.contribution_predictor.hidden.weight.grad.abs().sum()),0)
+        for m in [a,b]:
+            m.eval()
+            with patch.object(m.coalition_teacher,"forward",side_effect=AssertionError("eval teacher")):
+                old=m(feed(),True);f=feed();f["item_id"]=f["item_id"][:,[1,0]];new=m(f,True)
+            self.assertTrue(torch.equal(old["user_vector"],new["user_vector"]))
+
+    def test_k2_model_zero_path_features_and_finite_loss(self):
+        a,b=make(True,interests=2),make(interests=2)
+        torch.manual_seed(63);oa=a(feed(),True)
+        torch.manual_seed(63);ob=b(feed(),True)
+        self.assertTrue(torch.equal(oa["prediction"],ob["prediction"]))
+        self.assertEqual(tuple(ob["_cicl_teacher"].shape),(2,2))
+        self.assertEqual(b.contribution_predictor.hidden.in_features,322)
+        self.assertEqual(sum(p.numel() for p in b.contribution_predictor.parameters()),20736)
+        loss=b.loss(ob);loss.backward()
+        self.assertTrue(torch.isfinite(loss))
+        self.assertTrue(all(torch.isfinite(p.grad).all() for p in b.parameters() if p.grad is not None))
+        b.eval()
+        with torch.no_grad():b.contribution_predictor.output.weight.normal_(0,.02)
+        o=b(feed(),True)
+        p=b.contribution_predictor
+        orig=p(o["interest_vectors"],o["attention_maps"],o["history_vectors"],feed()["lengths"],b.cicl_q[feed()["history_items"]])
+        perm=p(o["interest_vectors"][:,[1,0]],o["attention_maps"][:,[1,0]],o["history_vectors"],feed()["lengths"],b.cicl_q[feed()["history_items"]])
+        self.assertTrue(torch.allclose(orig[:,[1,0]],perm,atol=1e-7))
+
 if __name__=="__main__":unittest.main(verbosity=2)

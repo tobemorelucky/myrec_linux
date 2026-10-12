@@ -51,6 +51,12 @@ import models.sequential.LLMMIRecASPCFRelationAttention as LLMMIRecASPCFRelation
 import models.sequential.LLMMIRecASPCFAuxNeg as LLMMIRecASPCFAuxNeg
 import models.sequential.LLMMIRecASPCFSAIT as LLMMIRecASPCFSAIT
 import models.sequential.LLMMIRecASPCFCICL as LLMMIRecASPCFCICL
+import models.sequential.LLMMIRecASPCFSampledSoftmax as LLMMIRecASPCFSampledSoftmax
+import models.sequential.LLMMIRecASPCFBatchBPR as LLMMIRecASPCFBatchBPR
+import models.sequential.LLMMIRecASPCFSemanticCandidate as LLMMIRecASPCFSemanticCandidate
+import models.sequential.LLMMIRecASPCFCIGR as LLMMIRecASPCFCIGR
+import models.sequential.LLMMIRecASPCFTIA as LLMMIRecASPCFTIA
+import models.sequential.LLMMIRecASPCFPositionMLP as LLMMIRecASPCFPositionMLP
 
 def parse_global_args(parser):
     default_gpu = os.environ.get('CUDA_VISIBLE_DEVICES', '0')

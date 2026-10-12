@@ -7,9 +7,10 @@ from torch.nn import functional as F
 class CoalitionTeacher(nn.Module):
     def __init__(self, interests=4, temperature=.1):
         super().__init__()
-        if interests != 4 or temperature != .1:
-            raise ValueError("Round 1 fixed K=4 and teacher temperature=.1")
+        if interests not in (2,4) or temperature != .1:
+            raise ValueError("CICL supports K=2/4 and fixed teacher temperature=.1")
         self.temperature=temperature
+        self.interests=interests
         masks=torch.tensor([[bool(s & (1<<k)) for k in range(interests)]
                             for s in range(1<<interests)],dtype=torch.float32)
         normalized=masks/masks.sum(-1,keepdim=True).clamp_min(1)
@@ -26,7 +27,7 @@ class CoalitionTeacher(nn.Module):
 
     @torch.no_grad()
     def forward(self, scores):
-        if scores.ndim!=3 or scores.shape[1]!=4 or scores.shape[2]!=2:
+        if scores.ndim!=3 or scores.shape[1]!=self.interests or scores.shape[2]!=2:
             raise ValueError("CICL teacher requires original positive plus one BPR negative")
         margins=scores.detach()[:,:,0]-scores.detach()[:,:,1]
         coalition_margin=margins @ self.coalition.T
