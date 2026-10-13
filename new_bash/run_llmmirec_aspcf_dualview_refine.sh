@@ -8,9 +8,10 @@ DATASET=${1:?dataset}
 GPU=${2:?GPU}
 SEED=${3:-42}
 ENCODER=aspcf
-CONDITION=dualview_refine_k4_h20
+K=${K:-4}
+case "$K" in 1|4) ;; *) echo "K must be 1 or 4" >&2; exit 2 ;; esac
+CONDITION="dualview_refine_k${K}_h20"
 MODEL=LLMMIRecASPCFDualViewRefine
-K=4
 case "$DATASET" in beauty) LR=.004 ;; ml-1m) LR=.001 ;; *) exit 2 ;; esac
 RUN_ID=${RUN_ID:-$(date -u +%Y%m%dT%H%M%SZ)_$$}
 LOG_DIR="new_log/aspcf_dualview_refine/${DATASET}/${CONDITION}_seed${SEED}_${RUN_ID}"
