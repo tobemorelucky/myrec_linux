@@ -19,6 +19,7 @@ import os
 from helpers import *
 from models.sequential import PoMRec
 import models.sequential.PoMRecLLMEmb as PoMRecLLMEmb
+import models.sequential.PoMRecBatchObjective as PoMRecBatchObjective
 import models.sequential.PoMRecLLMEmbLinear as PoMRecLLMEmbLinear
 from utils import utils
 import models.sequential.MyModel as MyModel
@@ -57,6 +58,7 @@ import models.sequential.LLMMIRecASPCFSemanticCandidate as LLMMIRecASPCFSemantic
 import models.sequential.LLMMIRecASPCFCIGR as LLMMIRecASPCFCIGR
 import models.sequential.LLMMIRecASPCFTIA as LLMMIRecASPCFTIA
 import models.sequential.LLMMIRecASPCFPositionMLP as LLMMIRecASPCFPositionMLP
+import models.sequential.LLMMIRecASPCFDualViewRefine as LLMMIRecASPCFDualViewRefine
 
 def parse_global_args(parser):
     default_gpu = os.environ.get('CUDA_VISIBLE_DEVICES', '0')
