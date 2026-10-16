@@ -1,0 +1,9 @@
+{
+  "dataset": "ml-1m",
+  "seed": 42,
+  "checkpoint_sha256": "11034426986ebd7ac7f0217c088ae6f45f972c22d983504ef451add4012cef20",
+  "started_utc": "2026-10-15T13:41:09.336443+00:00",
+  "test_csv_sha256": "19a1f866a710c3e3b5fded962274d1d7133b1bd85a9ad9af76340a3fbe5ae088",
+  "selection": "fixed delayed60 best-dev, not selected using Test",
+  "candidates": 1001
+}

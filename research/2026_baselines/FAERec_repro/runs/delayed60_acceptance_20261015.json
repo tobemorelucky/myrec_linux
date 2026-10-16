@@ -1,0 +1,343 @@
+{
+  "new": {
+    "beauty": {
+      "status": "complete",
+      "stop_reason": "early_stop",
+      "dataset": "beauty",
+      "seed": 42,
+      "best_epoch": 78,
+      "best_epoch_index": 77,
+      "end_epoch": 88,
+      "end_epoch_index": 87,
+      "first_dev_epoch_index": 61,
+      "first_dev_completed_epoch": 62,
+      "star_test": 60,
+      "best_dev": {
+        "HR@5": 0.19272906139605597,
+        "NDCG@5": 0.13845544126981071,
+        "HR@10": 0.2527388990743639,
+        "NDCG@10": 0.1577734799186397,
+        "HR@20": 0.32066359611858875,
+        "NDCG@20": 0.17494015860972292
+      },
+      "reloaded_dev": {
+        "HR@5": 0.19272906139605597,
+        "NDCG@5": 0.13845544126981071,
+        "HR@10": 0.2527388990743639,
+        "NDCG@10": 0.1577734799186397,
+        "HR@20": 0.32066359611858875,
+        "NDCG@20": 0.17494015860972292
+      },
+      "checkpoint": "/home/yyx/hzgcode/pom2.0/research/2026_baselines/FAERec_repro/runs/beauty_seed42_delayed60_20261015/best.pt",
+      "checkpoint_sha256": "9f23925cec58f4adf8c0e0ac42a7758e435510b004656251e331ff363b040dfb",
+      "checkpoint_unchanged_by_dev": true,
+      "parameters": 3326080,
+      "total_seconds": 1544.4289264660329,
+      "mean_epoch_seconds": 17.398254316935148,
+      "projected_200_epoch_seconds": 3479.6508633870294,
+      "peak_allocated_MiB": 285.85498046875,
+      "peak_reserved_MiB": 520.0,
+      "test_evaluated": false,
+      "config": "/home/yyx/hzgcode/pom2.0/research/2026_baselines/FAERec_repro/runs/beauty_seed42_delayed60_20261015/config.json"
+    },
+    "ml-1m": {
+      "status": "complete",
+      "stop_reason": "early_stop",
+      "dataset": "ml-1m",
+      "seed": 42,
+      "best_epoch": 62,
+      "best_epoch_index": 61,
+      "end_epoch": 72,
+      "end_epoch_index": 71,
+      "first_dev_epoch_index": 61,
+      "first_dev_completed_epoch": 62,
+      "star_test": 60,
+      "best_dev": {
+        "HR@5": 0.1968543046357616,
+        "NDCG@5": 0.13097992449658213,
+        "HR@10": 0.29089403973509936,
+        "NDCG@10": 0.16134698197483235,
+        "HR@20": 0.4107615894039735,
+        "NDCG@20": 0.1915158656849116
+      },
+      "reloaded_dev": {
+        "HR@5": 0.1968543046357616,
+        "NDCG@5": 0.13097992449658213,
+        "HR@10": 0.29089403973509936,
+        "NDCG@10": 0.16134698197483235,
+        "HR@20": 0.4107615894039735,
+        "NDCG@20": 0.1915158656849116
+      },
+      "checkpoint": "/home/yyx/hzgcode/pom2.0/research/2026_baselines/FAERec_repro/runs/ml-1m_seed42_delayed60_20261015/best.pt",
+      "checkpoint_sha256": "11034426986ebd7ac7f0217c088ae6f45f972c22d983504ef451add4012cef20",
+      "checkpoint_unchanged_by_dev": true,
+      "parameters": 2251520,
+      "total_seconds": 359.8186723748222,
+      "mean_epoch_seconds": 4.895138358723165,
+      "projected_200_epoch_seconds": 979.027671744633,
+      "peak_allocated_MiB": 278.333984375,
+      "peak_reserved_MiB": 440.0,
+      "test_evaluated": false,
+      "config": "/home/yyx/hzgcode/pom2.0/research/2026_baselines/FAERec_repro/runs/ml-1m_seed42_delayed60_20261015/config.json"
+    }
+  },
+  "old": {
+    "beauty": {
+      "status": "complete",
+      "stop_reason": "early_stop",
+      "dataset": "beauty",
+      "seed": 42,
+      "best_epoch": 21,
+      "end_epoch": 31,
+      "best_dev": {
+        "HR@5": 0.183025533246881,
+        "NDCG@5": 0.12988800596125427,
+        "HR@10": 0.24714930912668245,
+        "NDCG@10": 0.15053758108702409,
+        "HR@20": 0.32629790278585163,
+        "NDCG@20": 0.17051141629451866
+      },
+      "reloaded_dev": {
+        "HR@5": 0.183025533246881,
+        "NDCG@5": 0.12988800596125427,
+        "HR@10": 0.24714930912668245,
+        "NDCG@10": 0.15053758108702409,
+        "HR@20": 0.32629790278585163,
+        "NDCG@20": 0.17051141629451866
+      },
+      "checkpoint": "/home/yyx/hzgcode/pom2.0/research/2026_baselines/FAERec_repro/runs/beauty_seed42_20261015/best.pt",
+      "checkpoint_sha256": "4b123e1981f5d1e802f10bcd4c520c469dde6228ba1e9d9895208d6e1842b4a0",
+      "checkpoint_unchanged_by_dev": true,
+      "parameters": 3326080,
+      "total_seconds": 597.7909080674872,
+      "mean_epoch_seconds": 18.85673323423872,
+      "projected_200_epoch_seconds": 3771.346646847744,
+      "peak_allocated_MiB": 284.35595703125,
+      "peak_reserved_MiB": 520.0,
+      "test_evaluated": false,
+      "config": "/home/yyx/hzgcode/pom2.0/research/2026_baselines/FAERec_repro/runs/beauty_seed42_20261015/config.json"
+    },
+    "ml-1m": {
+      "status": "complete",
+      "stop_reason": "early_stop",
+      "dataset": "ml-1m",
+      "seed": 42,
+      "best_epoch": 36,
+      "end_epoch": 46,
+      "best_dev": {
+        "HR@5": 0.18675496688741722,
+        "NDCG@5": 0.1253904643130905,
+        "HR@10": 0.27847682119205297,
+        "NDCG@10": 0.15472901699843286,
+        "HR@20": 0.3955298013245033,
+        "NDCG@20": 0.18422736897999992
+      },
+      "reloaded_dev": {
+        "HR@5": 0.18675496688741722,
+        "NDCG@5": 0.1253904643130905,
+        "HR@10": 0.27847682119205297,
+        "NDCG@10": 0.15472901699843286,
+        "HR@20": 0.3955298013245033,
+        "NDCG@20": 0.18422736897999992
+      },
+      "checkpoint": "/home/yyx/hzgcode/pom2.0/research/2026_baselines/FAERec_repro/runs/ml-1m_seed42_20261015/best.pt",
+      "checkpoint_sha256": "1545d0b52d8ef740c6227f7540a06f8dd0fece555e178c79a2ff2974061375b8",
+      "checkpoint_unchanged_by_dev": true,
+      "parameters": 2251520,
+      "total_seconds": 262.57909833360463,
+      "mean_epoch_seconds": 5.551872151438147,
+      "projected_200_epoch_seconds": 1110.3744302876294,
+      "peak_allocated_MiB": 278.333984375,
+      "peak_reserved_MiB": 440.0,
+      "test_evaluated": false,
+      "config": "/home/yyx/hzgcode/pom2.0/research/2026_baselines/FAERec_repro/runs/ml-1m_seed42_20261015/config.json"
+    }
+  },
+  "test": {
+    "beauty": {
+      "status": "complete",
+      "dataset": "beauty",
+      "seed": 42,
+      "model": "FAERec-SASRec",
+      "classification": "LLM-enhanced single-vector sequential recommendation; not explicit K interests",
+      "test": {
+        "HR@5": 0.16996825112909716,
+        "NDCG@5": 0.12217486532858884,
+        "HR@10": 0.2268479184367035,
+        "NDCG@10": 0.14053286723684302,
+        "HR@20": 0.290479810401109,
+        "NDCG@20": 0.1566184130954024
+      },
+      "dev": {
+        "HR@5": 0.19272906139605597,
+        "NDCG@5": 0.13845544126981071,
+        "HR@10": 0.2527388990743639,
+        "NDCG@10": 0.1577734799186397,
+        "HR@20": 0.32066359611858875,
+        "NDCG@20": 0.17494015860972292
+      },
+      "checkpoint": "/home/yyx/hzgcode/pom2.0/research/2026_baselines/FAERec_repro/runs/beauty_seed42_delayed60_20261015/best.pt",
+      "checkpoint_sha256": "9f23925cec58f4adf8c0e0ac42a7758e435510b004656251e331ff363b040dfb",
+      "checkpoint_unchanged": true,
+      "in_memory_weights_unchanged": true,
+      "best_epoch": 78,
+      "best_epoch_index": 77,
+      "star_test": 60,
+      "test_users": 22363,
+      "candidate_slots": 1001,
+      "duplicate_slots_preserved": true,
+      "history_max": 20,
+      "history_sources": "Train+chronologically prior Dev, excluding current Test target",
+      "evaluator": "helpers.BaseRunner.BaseRunner.evaluate_method (unchanged)",
+      "train_csv_sha256": "37e80f5cf976292b1d9cb43a131d624f6479cdf265850b06e885365c08e7d00e",
+      "dev_csv_sha256": "7e856e762759467f2f047f827c6489eaccd2bd9e4141924316eb0036644943f9",
+      "test_csv_sha256": "f88bd2bcec8e079c76a8f7ad6692fcbabccec4b51f6d1b7ed19dafd06e5a93ea",
+      "embedding_sha256": "bc282725f08c2bb7fbb524739d1711cee44810ab402f18119aa838d9e5ed859f",
+      "elapsed_seconds": 15.174694841727614,
+      "research_visible_test": true,
+      "not_used_for_selection": true,
+      "upstream_commit": "8e2d4be320a567d724535d426b72ded20e140dcb"
+    },
+    "ml-1m": {
+      "status": "complete",
+      "dataset": "ml-1m",
+      "seed": 42,
+      "model": "FAERec-SASRec",
+      "classification": "LLM-enhanced single-vector sequential recommendation; not explicit K interests",
+      "test": {
+        "HR@5": 0.1837748344370861,
+        "NDCG@5": 0.12340774751982926,
+        "HR@10": 0.273841059602649,
+        "NDCG@10": 0.1523373721187659,
+        "HR@20": 0.38145695364238413,
+        "NDCG@20": 0.17955320410437794
+      },
+      "dev": {
+        "HR@5": 0.1968543046357616,
+        "NDCG@5": 0.13097992449658213,
+        "HR@10": 0.29089403973509936,
+        "NDCG@10": 0.16134698197483235,
+        "HR@20": 0.4107615894039735,
+        "NDCG@20": 0.1915158656849116
+      },
+      "checkpoint": "/home/yyx/hzgcode/pom2.0/research/2026_baselines/FAERec_repro/runs/ml-1m_seed42_delayed60_20261015/best.pt",
+      "checkpoint_sha256": "11034426986ebd7ac7f0217c088ae6f45f972c22d983504ef451add4012cef20",
+      "checkpoint_unchanged": true,
+      "in_memory_weights_unchanged": true,
+      "best_epoch": 62,
+      "best_epoch_index": 61,
+      "star_test": 60,
+      "test_users": 6040,
+      "candidate_slots": 1001,
+      "duplicate_slots_preserved": true,
+      "history_max": 20,
+      "history_sources": "Train+chronologically prior Dev, excluding current Test target",
+      "evaluator": "helpers.BaseRunner.BaseRunner.evaluate_method (unchanged)",
+      "train_csv_sha256": "d4d11c18c2984da301842ad117e00bbedb477058a52314aebc0d1fefd26b85ff",
+      "dev_csv_sha256": "cb0c538f4331a2cf68b7a54968421fed7f43ac693f962985fa1350e28dd626b5",
+      "test_csv_sha256": "19a1f866a710c3e3b5fded962274d1d7133b1bd85a9ad9af76340a3fbe5ae088",
+      "embedding_sha256": "81fb4fe364c6393eb333f8efc4c854319458d6882ef877d5b82eb91566556bcf",
+      "elapsed_seconds": 6.77768228482455,
+      "research_visible_test": true,
+      "not_used_for_selection": true,
+      "upstream_commit": "8e2d4be320a567d724535d426b72ded20e140dcb"
+    }
+  },
+  "config_differences": {
+    "beauty": {
+      "star_test": [
+        null,
+        60
+      ],
+      "validation_condition": [
+        null,
+        "epoch_index > star_test"
+      ],
+      "first_dev_epoch_index": [
+        null,
+        61
+      ],
+      "controller_source_sha256": [
+        null,
+        "359619e77c9bc06ed2a3c8224208bcb31e98d0b53f583383934be6c2e35566bd"
+      ],
+      "epoch_index_base": [
+        null,
+        0
+      ],
+      "shared_adapter_sha256": [
+        null,
+        "f80a5e92cbf3eb4f609b392f22f74b051dfb20bff1d24fe03830ef1f3d2895b3"
+      ],
+      "log_file": [
+        "/home/yyx/hzgcode/pom2.0/research/2026_baselines/FAERec_repro/runs/beauty_seed42_20261015/official.log",
+        "/home/yyx/hzgcode/pom2.0/research/2026_baselines/FAERec_repro/runs/beauty_seed42_delayed60_20261015/official.log"
+      ],
+      "training_test_enabled": [
+        null,
+        false
+      ],
+      "first_dev_completed_epoch": [
+        null,
+        62
+      ]
+    },
+    "ml-1m": {
+      "star_test": [
+        null,
+        60
+      ],
+      "validation_condition": [
+        null,
+        "epoch_index > star_test"
+      ],
+      "first_dev_epoch_index": [
+        null,
+        61
+      ],
+      "controller_source_sha256": [
+        null,
+        "359619e77c9bc06ed2a3c8224208bcb31e98d0b53f583383934be6c2e35566bd"
+      ],
+      "epoch_index_base": [
+        null,
+        0
+      ],
+      "shared_adapter_sha256": [
+        null,
+        "f80a5e92cbf3eb4f609b392f22f74b051dfb20bff1d24fe03830ef1f3d2895b3"
+      ],
+      "log_file": [
+        "/home/yyx/hzgcode/pom2.0/research/2026_baselines/FAERec_repro/runs/ml-1m_seed42_20261015/official.log",
+        "/home/yyx/hzgcode/pom2.0/research/2026_baselines/FAERec_repro/runs/ml-1m_seed42_delayed60_20261015/official.log"
+      ],
+      "training_test_enabled": [
+        null,
+        false
+      ],
+      "first_dev_completed_epoch": [
+        null,
+        62
+      ]
+    }
+  },
+  "schedule_checks": {
+    "beauty": {
+      "no_dev_first_61_completed_epochs": true,
+      "first_dev_completed_epoch": 62,
+      "mean_predev_seconds": 16.718930547018765,
+      "mean_validated_epoch_seconds": 18.93302283415364
+    },
+    "ml-1m": {
+      "no_dev_first_61_completed_epochs": true,
+      "first_dev_completed_epoch": 62,
+      "mean_predev_seconds": 4.806768076799687,
+      "mean_validated_epoch_seconds": 5.385191740298813
+    }
+  },
+  "baseline_references": "/home/yyx/hzgcode/pom2.0/research/2026_baselines/FAERec_repro/runs/baseline_references_delayed60_20261015.json",
+  "upstream_hashes_unchanged": true,
+  "old_checkpoints_preserved": true,
+  "original_csv_and_seqreader_hashes_unchanged_after_test": true,
+  "upstream_worktree_clean_after_test": true
+}

@@ -1,0 +1,40 @@
+{
+  "status": "complete",
+  "stop_reason": "early_stop",
+  "dataset": "beauty",
+  "seed": 42,
+  "best_epoch": 78,
+  "best_epoch_index": 77,
+  "end_epoch": 88,
+  "end_epoch_index": 87,
+  "first_dev_epoch_index": 61,
+  "first_dev_completed_epoch": 62,
+  "star_test": 60,
+  "best_dev": {
+    "HR@5": 0.19272906139605597,
+    "NDCG@5": 0.13845544126981071,
+    "HR@10": 0.2527388990743639,
+    "NDCG@10": 0.1577734799186397,
+    "HR@20": 0.32066359611858875,
+    "NDCG@20": 0.17494015860972292
+  },
+  "reloaded_dev": {
+    "HR@5": 0.19272906139605597,
+    "NDCG@5": 0.13845544126981071,
+    "HR@10": 0.2527388990743639,
+    "NDCG@10": 0.1577734799186397,
+    "HR@20": 0.32066359611858875,
+    "NDCG@20": 0.17494015860972292
+  },
+  "checkpoint": "/home/yyx/hzgcode/pom2.0/research/2026_baselines/FAERec_repro/runs/beauty_seed42_delayed60_20261015/best.pt",
+  "checkpoint_sha256": "9f23925cec58f4adf8c0e0ac42a7758e435510b004656251e331ff363b040dfb",
+  "checkpoint_unchanged_by_dev": true,
+  "parameters": 3326080,
+  "total_seconds": 1544.4289264660329,
+  "mean_epoch_seconds": 17.398254316935148,
+  "projected_200_epoch_seconds": 3479.6508633870294,
+  "peak_allocated_MiB": 285.85498046875,
+  "peak_reserved_MiB": 520.0,
+  "test_evaluated": false,
+  "config": "/home/yyx/hzgcode/pom2.0/research/2026_baselines/FAERec_repro/runs/beauty_seed42_delayed60_20261015/config.json"
+}

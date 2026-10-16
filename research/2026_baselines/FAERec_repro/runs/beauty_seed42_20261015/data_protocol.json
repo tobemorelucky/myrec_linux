@@ -1,0 +1,20 @@
+{
+  "train_rows": 153776,
+  "train_users": 22363,
+  "dev_users": 22363,
+  "train_sequence_users": 22363,
+  "dev_history_min": 3,
+  "dev_history_max": 20,
+  "candidates": 1001,
+  "candidate_duplicates_preserved": true,
+  "test_read": false,
+  "source_embedding": "/home/yyx/hzgcode/pom2.0/data/beauty/handled/llm_table_pca1536.pkl",
+  "embedding_sha256": "bc282725f08c2bb7fbb524739d1711cee44810ab402f18119aa838d9e5ed859f",
+  "train_sha256": "37e80f5cf976292b1d9cb43a131d624f6479cdf265850b06e885365c08e7d00e",
+  "dev_sha256": "7e856e762759467f2f047f827c6489eaccd2bd9e4141924316eb0036644943f9",
+  "embedding_shape": [
+    12102,
+    1536
+  ],
+  "time_violations": 0
+}

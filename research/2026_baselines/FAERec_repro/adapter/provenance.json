@@ -1,0 +1,17 @@
+{
+  "url": "https://github.com/ZhifuWei/FAERec.git",
+  "commit": "8e2d4be320a567d724535d426b72ded20e140dcb",
+  "license": "Apache-2.0",
+  "source_sha256": {
+    "FAERec/src/datasets.py": "1f04eb4a5ec2fc4115757324fe1b162475b31572a4252455b8811c44dc4961e7",
+    "FAERec/src/ht_process.py": "9fd1e156abd381c7bde7c7917efca209bfa43e2201d4981db33e2351965904da",
+    "FAERec/src/llm.py": "4461b7558ff133c2ada7da2b3c6ff745f83819dd83d23bf81491bbc571604d0f",
+    "FAERec/src/main.py": "d7104aae080e121bcf82d431cc0e870c79c40c2127d6f5186798e8b417c2d4c5",
+    "FAERec/src/models.py": "5ea5a861f86a565eb41b70e8422bbdbabbba4a64da2db8b573f9e86efdd56259",
+    "FAERec/src/modules.py": "6d08615f4f445854d111aa93ec31afd251baaaf1cb64d1feb2e903175f9f789a",
+    "FAERec/src/trainers.py": "433da3c0a4ecfc88a3cef4d002d0c9dc9f240d9aaf89f0defe4e8e72e82738b8",
+    "FAERec/src/utils.py": "e5e7df43e52957a8f4688570332282343e32ab52b1556ed3a72f5e5c0f4f3013"
+  },
+  "upstream_worktree_clean": true,
+  "transport": "Official HTTPS shallow clone; temporary SSH loopback forwarding used after server TLS failures; TLS verification retained"
+}

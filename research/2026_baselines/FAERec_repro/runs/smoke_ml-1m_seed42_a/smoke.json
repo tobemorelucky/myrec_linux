@@ -1,0 +1,40 @@
+{
+  "status": "passed",
+  "dataset": "ml-1m",
+  "losses": [
+    14.528700828552246,
+    12.746414184570312,
+    8.911433219909668,
+    255.32510375976562
+  ],
+  "gradient_l2": 16980.21484375,
+  "component_gradient_l2": [
+    4.310379505157471,
+    84901.046875,
+    237.44961547851562
+  ],
+  "checks": [
+    "train_dev_time",
+    "embedding_full_row_equality",
+    "all_original_losses_backward",
+    "duplicate_item_contrastive_mask",
+    "strict_checkpoint_roundtrip",
+    "single_user_eval_independence"
+  ],
+  "partial_dev_users": 64,
+  "partial_dev_metrics": {
+    "HR@5": 0.078125,
+    "NDCG@5": 0.04538492762563345,
+    "HR@10": 0.1875,
+    "NDCG@10": 0.08143984314789904,
+    "HR@20": 0.25,
+    "NDCG@20": 0.09721835022202253
+  },
+  "elapsed_seconds": 9.114448443055153,
+  "peak_allocated_MiB": 279.57421875,
+  "peak_reserved_MiB": 374.0,
+  "checkpoint_sha256": "572ba9c3d76760581169bc11a166e1c428be94fa6090a5b17a6a6d287e8737f2",
+  "parameters": 2251520,
+  "gpu_name": "Quadro RTX 5000",
+  "test_read": false
+}

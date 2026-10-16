@@ -1,0 +1,24 @@
+{
+  "beauty": {
+    "train_rows": 153776,
+    "eligible_train_users": 22363,
+    "effective_positive_positions_per_epoch": 117194,
+    "maximum_history": 20,
+    "training_unit": "one_train_user_sequence",
+    "asset_sha256": {
+      "itm_emb_np.npy": "6773d4f5bb6e731978dc29bab20249d169d1d3c8847be30ac18c169718f667e9",
+      "pca_itm_emb_np.npy": "4f70f68c10c6f6216e04015dfaaffa03f4a1cc5061ac2c0fe0dcfec0bf03ca3d"
+    }
+  },
+  "ml-1m": {
+    "train_rows": 988129,
+    "eligible_train_users": 6040,
+    "effective_positive_positions_per_epoch": 120283,
+    "maximum_history": 20,
+    "training_unit": "one_train_user_sequence",
+    "asset_sha256": {
+      "itm_emb_np.npy": "609519f48ffcaf16776e2474b090993917756417ff63a3fd73ea721dd96896c7",
+      "pca_itm_emb_np.npy": "f109b9bc5a8806fb977e30670f0b7aaaac63cb91c1a3984deb58817888baaffd"
+    }
+  }
+}

@@ -38,6 +38,7 @@ import models.sequential.MyModelCIRF as MyModelCIRF
 import models.sequential.MyModelSHNC as MyModelSHNC
 import models.sequential.LLMMIRec as LLMMIRec
 import models.sequential.LLMMIRecASPCF as LLMMIRecASPCF
+import models.sequential.LLMMIRecASPCFInterestMetric as LLMMIRecASPCFInterestMetric
 import models.sequential.LLMMIRecASPCFLowRankQueryBPR as LLMMIRecASPCFLowRankQueryBPR
 import models.sequential.LLMMIRecCHIR as LLMMIRecCHIR
 import models.sequential.LLMMIRecHSDIR as LLMMIRecHSDIR

@@ -1,0 +1,35 @@
+{
+  "status": "complete",
+  "stop_reason": "early_stop",
+  "dataset": "beauty",
+  "seed": 42,
+  "best_epoch": 21,
+  "end_epoch": 31,
+  "best_dev": {
+    "HR@5": 0.183025533246881,
+    "NDCG@5": 0.12988800596125427,
+    "HR@10": 0.24714930912668245,
+    "NDCG@10": 0.15053758108702409,
+    "HR@20": 0.32629790278585163,
+    "NDCG@20": 0.17051141629451866
+  },
+  "reloaded_dev": {
+    "HR@5": 0.183025533246881,
+    "NDCG@5": 0.12988800596125427,
+    "HR@10": 0.24714930912668245,
+    "NDCG@10": 0.15053758108702409,
+    "HR@20": 0.32629790278585163,
+    "NDCG@20": 0.17051141629451866
+  },
+  "checkpoint": "/home/yyx/hzgcode/pom2.0/research/2026_baselines/FAERec_repro/runs/beauty_seed42_20261015/best.pt",
+  "checkpoint_sha256": "4b123e1981f5d1e802f10bcd4c520c469dde6228ba1e9d9895208d6e1842b4a0",
+  "checkpoint_unchanged_by_dev": true,
+  "parameters": 3326080,
+  "total_seconds": 597.7909080674872,
+  "mean_epoch_seconds": 18.85673323423872,
+  "projected_200_epoch_seconds": 3771.346646847744,
+  "peak_allocated_MiB": 284.35595703125,
+  "peak_reserved_MiB": 520.0,
+  "test_evaluated": false,
+  "config": "/home/yyx/hzgcode/pom2.0/research/2026_baselines/FAERec_repro/runs/beauty_seed42_20261015/config.json"
+}

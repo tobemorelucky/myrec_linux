@@ -1,0 +1,9 @@
+{
+  "dataset": "beauty",
+  "seed": 42,
+  "checkpoint_sha256": "9f23925cec58f4adf8c0e0ac42a7758e435510b004656251e331ff363b040dfb",
+  "started_utc": "2026-10-15T13:40:56.408458+00:00",
+  "test_csv_sha256": "f88bd2bcec8e079c76a8f7ad6692fcbabccec4b51f6d1b7ed19dafd06e5a93ea",
+  "selection": "fixed delayed60 best-dev, not selected using Test",
+  "candidates": 1001
+}

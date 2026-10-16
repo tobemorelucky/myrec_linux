@@ -1,0 +1,40 @@
+{
+  "status": "complete",
+  "stop_reason": "early_stop",
+  "dataset": "ml-1m",
+  "seed": 42,
+  "best_epoch": 62,
+  "best_epoch_index": 61,
+  "end_epoch": 72,
+  "end_epoch_index": 71,
+  "first_dev_epoch_index": 61,
+  "first_dev_completed_epoch": 62,
+  "star_test": 60,
+  "best_dev": {
+    "HR@5": 0.1968543046357616,
+    "NDCG@5": 0.13097992449658213,
+    "HR@10": 0.29089403973509936,
+    "NDCG@10": 0.16134698197483235,
+    "HR@20": 0.4107615894039735,
+    "NDCG@20": 0.1915158656849116
+  },
+  "reloaded_dev": {
+    "HR@5": 0.1968543046357616,
+    "NDCG@5": 0.13097992449658213,
+    "HR@10": 0.29089403973509936,
+    "NDCG@10": 0.16134698197483235,
+    "HR@20": 0.4107615894039735,
+    "NDCG@20": 0.1915158656849116
+  },
+  "checkpoint": "/home/yyx/hzgcode/pom2.0/research/2026_baselines/FAERec_repro/runs/ml-1m_seed42_delayed60_20261015/best.pt",
+  "checkpoint_sha256": "11034426986ebd7ac7f0217c088ae6f45f972c22d983504ef451add4012cef20",
+  "checkpoint_unchanged_by_dev": true,
+  "parameters": 2251520,
+  "total_seconds": 359.8186723748222,
+  "mean_epoch_seconds": 4.895138358723165,
+  "projected_200_epoch_seconds": 979.027671744633,
+  "peak_allocated_MiB": 278.333984375,
+  "peak_reserved_MiB": 440.0,
+  "test_evaluated": false,
+  "config": "/home/yyx/hzgcode/pom2.0/research/2026_baselines/FAERec_repro/runs/ml-1m_seed42_delayed60_20261015/config.json"
+}

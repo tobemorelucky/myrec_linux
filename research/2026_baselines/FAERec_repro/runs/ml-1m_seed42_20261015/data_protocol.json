@@ -1,0 +1,20 @@
+{
+  "train_rows": 988129,
+  "train_users": 6040,
+  "dev_users": 6040,
+  "train_sequence_users": 6040,
+  "dev_history_min": 18,
+  "dev_history_max": 20,
+  "candidates": 1001,
+  "candidate_duplicates_preserved": true,
+  "test_read": false,
+  "source_embedding": "/home/yyx/hzgcode/pom2.0/data/ml-1m/handled/llm_table_pca1536.pkl",
+  "embedding_sha256": "81fb4fe364c6393eb333f8efc4c854319458d6882ef877d5b82eb91566556bcf",
+  "train_sha256": "d4d11c18c2984da301842ad117e00bbedb477058a52314aebc0d1fefd26b85ff",
+  "dev_sha256": "cb0c538f4331a2cf68b7a54968421fed7f43ac693f962985fa1350e28dd626b5",
+  "embedding_shape": [
+    3707,
+    1536
+  ],
+  "time_violations": 0
+}
