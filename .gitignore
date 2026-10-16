@@ -116,3 +116,4 @@ speed_test/myrec_speed/**/*.pyc
 speed_test/myrec_speed/**/*.pyo
 speed_test/myrec_speed/**/*.pydanalysis_figures/
 /research/2026_baselines/FAERec_repro/upstream/
+/research/2026_baselines/FAERec_repro/runs/
