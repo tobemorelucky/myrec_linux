@@ -65,6 +65,9 @@ import models.sequential.LLMMIRecASPCFPositionMLP as LLMMIRecASPCFPositionMLP
 import models.sequential.LLMMIRecASPCFDualViewRefine as LLMMIRecASPCFDualViewRefine
 import models.sequential.LLMMIRecASPCFRefineControls as LLMMIRecASPCFUserRefine
 import models.sequential.LLMMIRecASPCFRefineControls as LLMMIRecASPCFSliceRefine
+import models.sequential.LLMMIRecASPCFRelativeSemantic as LLMMIRecASPCFRelativeSemantic
+import models.sequential.LLMMIRecASPCFMultiPositive as LLMMIRecASPCFMultiPositive
+import models.sequential.LLMMIRecASPCFComiRecReference as LLMMIRecASPCFComiRecReference
 
 def parse_global_args(parser):
     default_gpu = os.environ.get('CUDA_VISIBLE_DEVICES', '0')
