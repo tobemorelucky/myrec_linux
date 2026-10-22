@@ -1,0 +1,16 @@
+{
+  "global_step": 4,
+  "files": {
+    "v2_rng_state.pth": "91334610d6efe680b9b7cc44f0bba48801296d01874c2394c434a0e5d5a58465",
+    "training_args.bin": "27cca7a999de785ed7f00db56d5ddbece8d1af7197c51771b0cfc307a13e2021",
+    "scheduler.pt": "9c6d7be16b2e8184fd3f027b8243dbffc55e11c6d3419114cba6e2281998c625",
+    "trainer_state.json": "70d0fe575078ac03df7671219f77ca0fc213deb52c7571c6d13a162d79c06942",
+    "adapter_model.bin": "f8bcf80c069eec1cf2857572e9891df63226bf0934c57d2572e1e01da12622c3",
+    "rng_state.pth": "58961e4555913a003d7602c522f611dac39ab439f8bb73ecf6c10787bb3acc27",
+    "optimizer.pt": "7f5cf7db0cccf2ac96e9180d4a02a7420e4578bf9e3d3a6aa4456d3ac0a81813",
+    "v2_extra_trainable.pt": "a4d2b7d3a6453334dffcdd6fec9b717440b7d4e943d599bd2533393e6787061e",
+    "training_args.json": "108e2eb4956c58adfdea2b6164727f70e1b9e94979059ab4c8f087c078c47680",
+    "adapter_config.json": "89ed69e4253012a6ca9549030f3381f94c40c47554f995894b69d872f2d9c91c"
+  },
+  "adapter_only": true
+}

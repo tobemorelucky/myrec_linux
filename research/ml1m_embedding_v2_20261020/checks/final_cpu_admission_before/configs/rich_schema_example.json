@@ -1,0 +1,11 @@
+[
+  {
+    "movie_id": "SCHEMA_ONLY_NOT_A_MOVIE",
+    "title": "MUST_MATCH_ORIGINAL_TITLE",
+    "year": "MUST_MATCH_ORIGINAL_YEAR",
+    "plot": null,
+    "themes": [],
+    "verified": false,
+    "sources": []
+  }
+]

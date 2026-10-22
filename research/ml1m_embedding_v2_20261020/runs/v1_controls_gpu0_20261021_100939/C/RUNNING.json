@@ -1,0 +1,9 @@
+{
+  "queue_pid": 1706612,
+  "started": "2026-10-21T10:42:11.507325+08:00",
+  "gpu": 0,
+  "job_sha256": "629e358256037c6fa2c0d352746d5ba381bfbd1d7d4e9016ef3af1debfcc1ad0",
+  "entry_sha256": "1b94a6fc8590f7b4e57d732e156d5fbe607c7be7c0cc0492762b64dbc3686400",
+  "parameter_count": 407974,
+  "embedding_sha256": "5546240cc16beff4666a74a18cb758f41dbf23f21f46a9082778193501c59aad"
+}

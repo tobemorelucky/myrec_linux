@@ -1,0 +1,61 @@
+{
+  "producer_manifest": {
+    "passed": true,
+    "variant": "B0_v2lora_base",
+    "encoding_config": "/root/autodl-tmp/pomrec/research/ml1m_embedding_v2_20261020/ops/cross_v3_20261021/encoding/B0_v2lora_base.json",
+    "encoding_config_sha256": "791b104cd27bf584b193bd28b8c21ecccadcab919616f378e297c5c71184787a",
+    "prompt_sha256": "e399ec0c6e58a85f6b1525d878f4865bc700199a32c3ef939e09bcf43d37e40d",
+    "adapter_sha256": "1b3cbff717024e156ef7192a978b31891ced7d2c7261bfd47a968a18872ba65c",
+    "adapter_path": "/root/autodl-tmp/pomrec/research/ml1m_embedding_v2_20261020/runs/rich512_l2_D400_seed42_20261021/checkpoint-400",
+    "model_path": "/root/autodl-tmp/LLMemb/llama-7b",
+    "max_source_length": 1024,
+    "batch_size": 4,
+    "raw_inference_l2_normalized": false,
+    "raw_sha256": "dc9a6758ce1d656e3f9151dd83102ec80e3a7c023e2c11f86bcc6297d7730569",
+    "pca_model_sha256": "e1e202d97279d063838a0713bb4e787e6c399de8660139336d28b9bcef341c99",
+    "pkl_sha256": "70630546070652cd926fa13e9eff89de7e052d34e9ad0cfbc72b03376df702af",
+    "pca_filename": "base_pca.pkl",
+    "release_dir": "/root/autodl-tmp/pomrec/research/ml1m_embedding_v2_20261020/runs/cross_B0_v2lora_base_20261021/release",
+    "pkl_path": "/root/autodl-tmp/pomrec/research/ml1m_embedding_v2_20261020/runs/cross_B0_v2lora_base_20261021/release/base_pca.pkl",
+    "mapping_sha256": "d26c890a61c6a2996855d83352931cecd14ff09aa42758013bdc3f9fd9d61280",
+    "shape": [
+      3707,
+      1536
+    ],
+    "dtype": "float32",
+    "padding_zero": true,
+    "canonical_items": 3706,
+    "raw_quality": {
+      "rows": 3706,
+      "dim": 4096,
+      "min_norm": 56.87865808288774,
+      "median_norm": 71.27071892402924,
+      "max_norm": 88.97754846085606,
+      "near_zero_threshold": 0.0001,
+      "duplicate_vectors": 0
+    },
+    "pca_quality": {
+      "rows": 3706,
+      "dim": 1536,
+      "min_norm": 52.65175655922553,
+      "median_norm": 68.64801308443923,
+      "max_norm": 87.21383412125617,
+      "near_zero_threshold": 0.0001,
+      "duplicate_vectors": 0
+    },
+    "pca_fit_items": 3704,
+    "PCA_protocol": "independently full-SVD1536, float64, same Train-catalog IDs, whitenFalse, seed42",
+    "forward_seconds": 55.79604183183983,
+    "model_load_seconds": 127.38134132092819,
+    "peak_gpu_bytes": 13478204928,
+    "truncated": 0,
+    "training_performed": false,
+    "long_Rich_OOD_for_old_LoRA": false
+  },
+  "run_name": "aspcf_B0_k4_seed42_20261021_cross",
+  "canonical_item_ids": "1..3706",
+  "lora_family": "v2",
+  "embedding_sha256": "70630546070652cd926fa13e9eff89de7e052d34e9ad0cfbc72b03376df702af",
+  "text_recipe": "base_original",
+  "variant": "B0"
+}

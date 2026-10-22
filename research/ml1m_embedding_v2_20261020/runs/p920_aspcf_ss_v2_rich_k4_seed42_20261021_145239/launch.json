@@ -1,0 +1,10 @@
+{
+  "supervisor_pid": 1722035,
+  "gpu": 0,
+  "run_dir": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/p920_aspcf_ss_v2_rich_k4_seed42_20261021_145239",
+  "start": "2026-10-21T14:52:39.882668+08:00",
+  "entry_sha256": "10bb889f354e2c15cc7f15a03d580a6cbb0f59dedb337b60d834567036eeae3a",
+  "embedding_sha256": "e9e7f7d7fd2cdbf23c79102842826275e785314413f08e7e08ab28c557eee3eb",
+  "from_scratch": true,
+  "Dev_only": true
+}

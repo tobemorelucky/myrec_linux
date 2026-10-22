@@ -1,0 +1,273 @@
+{
+  "start": "2026-10-21T18:02:31.710011+08:00",
+  "stage": "Train only",
+  "train_path": "/home/yyx/hzgcode/pom2.0/data/ml-1m/train.csv",
+  "train_sha256": "d4d11c18c2984da301842ad117e00bbedb477058a52314aebc0d1fefd26b85ff",
+  "train_rows": 988129,
+  "train_users": 6040,
+  "train_catalog": 3704,
+  "directed_adjacent_transitions": 982089,
+  "sample_queries": 512,
+  "seed_queries": 20261021,
+  "seed_uniform": 20261022,
+  "seed_popularity_matched": 20261023,
+  "candidate_catalog": "Train positive catalog only; self excluded",
+  "tie_handling": "stable original train row order for tied user timestamps",
+  "topk": 10,
+  "controls": "one fixed uniform set shared across embeddings, plus five fixed popularity-decile matched target sets per embedding",
+  "formulas": {
+    "transition_degree_cosine": "count(i->j)/sqrt(out_transition_count(i)*in_transition_count(j))",
+    "transition_lift": "count(i->j)*all_transitions/(out_transition_count(i)*in_transition_count(j))",
+    "co_user_cosine": "shared_users(i,j)/sqrt(user_degree(i)*user_degree(j))",
+    "co_user_lift": "shared_users(i,j)*n_users/(user_degree(i)*user_degree(j))"
+  },
+  "versions": {
+    "V1": {
+      "path": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/imported_assets/v1_rebuilt_20261020/base_pca.pkl",
+      "sha256": "5546240cc16beff4666a74a18cb758f41dbf23f21f46a9082778193501c59aad",
+      "shape": [
+        3707,
+        1536
+      ],
+      "mean_top10_cosine": 0.48190879821777344,
+      "semantic": {
+        "directed_transition_present": 0.2546874999999999,
+        "directed_transition_count": 1.2988281250000022,
+        "transition_out_probability": 0.004025960622785804,
+        "transition_degree_cosine": 0.0036067591325440822,
+        "transition_lift": 39.19312329287414,
+        "co_user_count": 78.9666015625,
+        "co_user_cosine": 0.20300839799463166,
+        "co_user_lift": 15.533046944540963,
+        "target_train_frequency": 302.2505859374999
+      },
+      "uniform": {
+        "directed_transition_present": 0.04335937500000001,
+        "directed_transition_count": 0.07792968750000012,
+        "transition_out_probability": 0.0002259635704110337,
+        "transition_degree_cosine": 0.00019556283736826374,
+        "transition_lift": 0.9706060783093765,
+        "co_user_count": 31.375195312500004,
+        "co_user_cosine": 0.08964005937420899,
+        "co_user_lift": 5.4723559193493925,
+        "target_train_frequency": 271.9849609374999
+      },
+      "popularity_matched": {
+        "directed_transition_present": 0.057460937499999795,
+        "directed_transition_count": 0.14976562500000015,
+        "transition_out_probability": 0.00037678714370954807,
+        "transition_degree_cosine": 0.00028041607176404525,
+        "transition_lift": 2.28310870334443,
+        "co_user_count": 48.4696875,
+        "co_user_cosine": 0.10740234001413063,
+        "co_user_lift": 7.277252659600784,
+        "target_train_frequency": 304.1825390624997
+      },
+      "semantic_minus_popularity_matched": {
+        "directed_transition_present": 0.19722656250000012,
+        "directed_transition_count": 1.149062500000001,
+        "transition_out_probability": 0.0036491734790762616,
+        "transition_degree_cosine": 0.0033263430607800345,
+        "transition_lift": 36.91001458952978,
+        "co_user_count": 30.49691406249999,
+        "co_user_cosine": 0.095606057980501,
+        "co_user_lift": 8.25579428494018,
+        "target_train_frequency": -1.9319531249999953
+      }
+    },
+    "V2": {
+      "path": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/imported_assets/v2_rich512_l2_d400_20261021/rich_pca.pkl",
+      "sha256": "e9e7f7d7fd2cdbf23c79102842826275e785314413f08e7e08ab28c557eee3eb",
+      "shape": [
+        3707,
+        1536
+      ],
+      "mean_top10_cosine": 0.28086018562316895,
+      "semantic": {
+        "directed_transition_present": 0.1273437500000003,
+        "directed_transition_count": 0.7402343750000006,
+        "transition_out_probability": 0.001998819717583752,
+        "transition_degree_cosine": 0.0019481716966997767,
+        "transition_lift": 19.41523126926248,
+        "co_user_count": 56.032617187499966,
+        "co_user_cosine": 0.14642549927413162,
+        "co_user_lift": 9.73011304632497,
+        "target_train_frequency": 281.17832031249986
+      },
+      "uniform": {
+        "directed_transition_present": 0.04335937500000001,
+        "directed_transition_count": 0.07792968750000012,
+        "transition_out_probability": 0.0002259635704110337,
+        "transition_degree_cosine": 0.00019556283736826374,
+        "transition_lift": 0.9706060783093765,
+        "co_user_count": 31.375195312500004,
+        "co_user_cosine": 0.08964005937420899,
+        "co_user_lift": 5.4723559193493925,
+        "target_train_frequency": 271.9849609374999
+      },
+      "popularity_matched": {
+        "directed_transition_present": 0.04874999999999982,
+        "directed_transition_count": 0.12121093750000027,
+        "transition_out_probability": 0.0002968718460864108,
+        "transition_degree_cosine": 0.0002315051880471426,
+        "transition_lift": 1.3463147527569257,
+        "co_user_count": 40.04796874999998,
+        "co_user_cosine": 0.09866522498190036,
+        "co_user_lift": 6.420137090800449,
+        "target_train_frequency": 280.86624999999987
+      },
+      "semantic_minus_popularity_matched": {
+        "directed_transition_present": 0.07859374999999993,
+        "directed_transition_count": 0.6190234375000006,
+        "transition_out_probability": 0.0017019478714973431,
+        "transition_degree_cosine": 0.0017166665086526338,
+        "transition_lift": 18.068916516505567,
+        "co_user_count": 15.984648437500017,
+        "co_user_cosine": 0.04776027429223119,
+        "co_user_lift": 3.309975955524519,
+        "target_train_frequency": 0.31207031250000145
+      }
+    }
+  },
+  "V2_minus_V1": {
+    "semantic": {
+      "directed_transition_present": {
+        "mean": -0.12734375,
+        "query_bootstrap_95CI": [
+          -0.145703125,
+          -0.111513671875
+        ]
+      },
+      "directed_transition_count": {
+        "mean": -0.55859375,
+        "query_bootstrap_95CI": [
+          -0.720732421875,
+          -0.397216796875
+        ]
+      },
+      "transition_out_probability": {
+        "mean": -0.002027140905202054,
+        "query_bootstrap_95CI": [
+          -0.0024203211973148646,
+          -0.001658831720242849
+        ]
+      },
+      "transition_degree_cosine": {
+        "mean": -0.001658587435844302,
+        "query_bootstrap_95CI": [
+          -0.001977265555333756,
+          -0.0013706242352352033
+        ]
+      },
+      "transition_lift": {
+        "mean": -19.777892023611713,
+        "query_bootstrap_95CI": [
+          -29.22152093676094,
+          -12.106321911062775
+        ]
+      },
+      "co_user_count": {
+        "mean": -22.933984375,
+        "query_bootstrap_95CI": [
+          -29.204208984375,
+          -17.899145507812502
+        ]
+      },
+      "co_user_cosine": {
+        "mean": -0.05658289872050003,
+        "query_bootstrap_95CI": [
+          -0.06272118772755843,
+          -0.05077305793204082
+        ]
+      },
+      "co_user_lift": {
+        "mean": -5.802933898215999,
+        "query_bootstrap_95CI": [
+          -9.903333663149336,
+          -2.5112658821780456
+        ]
+      },
+      "target_train_frequency": {
+        "mean": -21.072265625,
+        "query_bootstrap_95CI": [
+          -41.359316406249995,
+          -2.8005908203125083
+        ]
+      }
+    },
+    "popularity_excess": {
+      "directed_transition_present": {
+        "mean": -0.1186328125,
+        "query_bootstrap_95CI": [
+          -0.1349716796875,
+          -0.1029638671875
+        ]
+      },
+      "directed_transition_count": {
+        "mean": -0.5300390625,
+        "query_bootstrap_95CI": [
+          -0.684556640625,
+          -0.37334960937500006
+        ]
+      },
+      "transition_out_probability": {
+        "mean": -0.0019472256075789172,
+        "query_bootstrap_95CI": [
+          -0.0023404221925954903,
+          -0.0015837618441774193
+        ]
+      },
+      "transition_degree_cosine": {
+        "mean": -0.0016096765521273998,
+        "query_bootstrap_95CI": [
+          -0.001932241570873808,
+          -0.0013218288040901481
+        ]
+      },
+      "transition_lift": {
+        "mean": -18.841098073024206,
+        "query_bootstrap_95CI": [
+          -28.43032716825746,
+          -11.110460425090297
+        ]
+      },
+      "co_user_count": {
+        "mean": -14.512265625000001,
+        "query_bootstrap_95CI": [
+          -16.8570146484375,
+          -12.398080078125002
+        ]
+      },
+      "co_user_cosine": {
+        "mean": -0.04784578368826975,
+        "query_bootstrap_95CI": [
+          -0.05214806886907949,
+          -0.043546902228426554
+        ]
+      },
+      "co_user_lift": {
+        "mean": -4.945818329415665,
+        "query_bootstrap_95CI": [
+          -8.426156434220328,
+          -2.0511533174544603
+        ]
+      },
+      "target_train_frequency": {
+        "mean": 2.244023437499999,
+        "query_bootstrap_95CI": [
+          -4.615833984375001,
+          9.210080078124998
+        ]
+      }
+    }
+  },
+  "elapsed_seconds": 3.9959756433963776,
+  "limitations": [
+    "Only Train structure association, not independent predictive evidence; no Dev/Test labels read.",
+    "512 fixed uniformly sampled Train-catalog queries; 10 semantic cosine neighbors, not an all-item benchmark.",
+    "Adjacency preserves timestamp ties in CSV order, and is not proof of causal or next-item generalization.",
+    "Degree/popularity adjustment reduces but cannot remove confounding; popularity-decile matching remains approximate.",
+    "Query bootstrap intervals are descriptive; shared users/items and repeated-neighbor dependencies are not independent.",
+    "No retraining, GPU, cache, corpus, checkpoint, or original-asset writes."
+  ]
+}

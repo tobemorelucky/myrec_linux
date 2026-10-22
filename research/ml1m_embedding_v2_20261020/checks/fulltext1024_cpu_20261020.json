@@ -1,0 +1,101 @@
+{
+  "policy": {
+    "max_source_length": 1024,
+    "field_caps": {},
+    "fail_on_truncation": true
+  },
+  "items": 3706,
+  "complete_normalized_overviews": 3666,
+  "base_fallback": 40,
+  "prompt_sha256": "08538381ddb5882c5f347e1478fe6bf0ec32315df2711e88eb241ebff9a8547f",
+  "prompt_file_changed": false,
+  "raw_body_tokens": {
+    "n": 3706,
+    "min": 27,
+    "p50": 141.0,
+    "p95": 317.75,
+    "max": 900
+  },
+  "raw_body_plus_eos_tokens": {
+    "n": 3706,
+    "min": 28,
+    "p50": 142.0,
+    "p95": 318.75,
+    "max": 901
+  },
+  "official_model_input_tokens": {
+    "n": 7412,
+    "min": 19,
+    "p50": 102.0,
+    "p95": 265.4499999999998,
+    "max": 896
+  },
+  "augmentation": {
+    "items": 3706,
+    "prompt_sha256": "08538381ddb5882c5f347e1478fe6bf0ec32315df2711e88eb241ebff9a8547f",
+    "seed": 42,
+    "audit_order": "actual SCFT input file order",
+    "file_order_is_canonical": true,
+    "identical_two_views": 647,
+    "identical_fraction": 0.17458175930922828,
+    "unaugmented_lengths": {
+      "n": 3706,
+      "min": 28,
+      "p50": 142.0,
+      "p95": 318.75,
+      "max": 901
+    },
+    "view_lengths": {
+      "n": 7412,
+      "min": 19,
+      "p50": 102.0,
+      "p95": 265.4499999999998,
+      "max": 896
+    },
+    "field_clipped_items": 0,
+    "truncated_views": 0,
+    "truncated_fraction": 0.0,
+    "different_movie_token_collision_pairs": 0,
+    "contrastive_other_items_full_microbatch": 15,
+    "contrastive_other_items_tail_microbatch": 9,
+    "optimizer_accumulation_does_not_expand_negative_pool": true
+  },
+  "body_eos_and_official_input_equal": true,
+  "full_prompt_retention_fraction": 1.0,
+  "field_clipped_items": 0,
+  "unaugmented_over_1024": 0,
+  "augmented_over_1024": 0,
+  "dynamic_padding_verified": true,
+  "forced_1024_padding": false,
+  "admission_first_batch": {
+    "microbatch": 1,
+    "optimizer_step": 1,
+    "item_ids": [
+      2466,
+      3511,
+      1824,
+      2143,
+      1465,
+      2581,
+      3611,
+      2782,
+      1985,
+      1495,
+      1496,
+      1917,
+      1743,
+      3539,
+      3046,
+      3613
+    ],
+    "shape": [
+      32,
+      896
+    ],
+    "nonpadding_tokens": 14581
+  },
+  "all_24_admission_microbatches_checked": true,
+  "no_pretrained_model_loaded": true,
+  "plan_sha256": "0c49bff5bc27ba008ae465fccfc0fa0952e8e440f360b5a75122807c0426a361",
+  "normalization_note": "Only existing newline/semicolon attribute formatting; no plot token clipping. Attribute dropout still intentionally omits attributes in training views."
+}

@@ -1,0 +1,28 @@
+{
+  "status": "CPU_READY_NOT_AUTHORIZED_FOR_D",
+  "code_sha256": "76d899c8509bbdccf09453f1d0c1425d81f7e830414f5a7acaa38bfb9abbbd12",
+  "prior_C_proof": "/root/autodl-tmp/pomrec/research/ml1m_embedding_v2_20261020/runs/admission_c_bf16_numeric_20261020_203705/ADMISSION_COMPLETE.json",
+  "prior_C_proof_sha256": "0bf80b4df5c9d7f6b2ffd53f5d78235fb2266c13ebb4d919d210b926626065c8",
+  "resume_cpu_proof": "/root/autodl-tmp/pomrec/research/ml1m_embedding_v2_20261020/checks/RESUME_CPU_COMPLETE_20261020.json",
+  "resume_cpu_proof_sha256": "4b7aa2435369eb3b993c6e85431860fdbd65fb6ece0880292a3d3f7b283e92b3",
+  "config_sha256": [
+    "309394a8b1b21f9a66187377fe5bbf65ea761b76efaa9df3becfd89e0783ee29"
+  ],
+  "changes": [
+    "native BF16 production selection",
+    "adapter-only checkpoint every 100 updates",
+    "manual HF optimizer/scheduler/global-step/RNG resume"
+  ],
+  "unchanged": [
+    "soft-target SCFT",
+    "data",
+    "LoRA",
+    "batch16",
+    "accumulation8",
+    "full1024",
+    "gradient checkpointing"
+  ],
+  "gpu_resume_not_tested": true,
+  "B_max512_requires_new_GPU_admission": true,
+  "formal_D_requires_explicit_user_approval": true
+}

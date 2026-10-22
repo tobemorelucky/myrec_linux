@@ -1,0 +1,63 @@
+{
+  "passed": true,
+  "variant": "V2-Rich512-L2-D400",
+  "canonical_items": 3706,
+  "shape": [
+    3707,
+    1536
+  ],
+  "dtype": "float32",
+  "padding": "row0 all zero; canonical item_id1..3706 equals matrix row index",
+  "mapping_sha256": "d26c890a61c6a2996855d83352931cecd14ff09aa42758013bdc3f9fd9d61280",
+  "prompt_sha256": "08538381ddb5882c5f347e1478fe6bf0ec32315df2711e88eb241ebff9a8547f",
+  "adapter_sha256": "1b3cbff717024e156ef7192a978b31891ced7d2c7261bfd47a968a18872ba65c",
+  "D_config_sha256": "68c6d4e3d36430d9c54d787fdaf7700de97079966ae714f4eb8fc4e8fde8e410",
+  "encode_config_sha256": "e707abe0ac0302de42ed3ae4947d81e63c5d799d2e20f143e1d254f1ee677988",
+  "raw_sha256": "d04bbb3e953e897de20f2ce063ae96de459698569337b955ec6c2b3b9752d445",
+  "raw_npy_sha256": "137a7d828fbbefda3dc4bb97d67c8336905c78cf6ba7569990a9d5eee41b55e0",
+  "pca_model_sha256": "045426ffc7a32e726b54b3f598e762422de9d4ec5ed5e310fe7e71b1cd6f21de",
+  "pkl_sha256": "e9e7f7d7fd2cdbf23c79102842826275e785314413f08e7e08ab28c557eee3eb",
+  "matrix_sha256": "55f7b97e4eda87817cd89c8168a3a858e8a656f48fd5177ed7898b467a80f8c0",
+  "pca_fit": "V2 Rich metadata; same V1 protocol: Train-catalog item IDs only, no interaction labels or padding row",
+  "pca_fit_items": 3704,
+  "dim": 1536,
+  "svd_solver": "full",
+  "whiten": false,
+  "random_state": 42,
+  "pca_transform_max_abs_difference": 0.0,
+  "pca_explained_variance_ratio_sum": 0.9306316716113647,
+  "raw_quality": {
+    "rows": 3706,
+    "dim": 4096,
+    "min_norm": 62.58821662152728,
+    "median_norm": 103.3397958821889,
+    "max_norm": 110.96301801407444,
+    "near_zero_threshold": 0.0001,
+    "duplicate_vectors": 0
+  },
+  "pca_quality": {
+    "rows": 3706,
+    "dim": 1536,
+    "min_norm": 57.161452261867325,
+    "median_norm": 99.63453953673128,
+    "max_norm": 109.80614546753023,
+    "near_zero_threshold": 0.0001,
+    "duplicate_vectors": 0
+  },
+  "no_imputation": true,
+  "raw_inference_l2_normalized": false,
+  "encode_forward_seconds": 165.45457318704575,
+  "model_load_seconds": 127.73221610626206,
+  "pca_and_release_seconds": 17.83045132504776,
+  "truncated_prompts": 18,
+  "field_tokens_clipped": {},
+  "raw_output": "/root/autodl-tmp/pomrec/research/ml1m_embedding_v2_20261020/runs/rich512_l2_D400_E_20261021/raw",
+  "pca_model_path": "/root/autodl-tmp/pomrec/research/ml1m_embedding_v2_20261020/runs/rich512_l2_D400_E_20261021/pca/pca_model.npz",
+  "LoRA_and_raw_retained_on_rental": true,
+  "transfer_allowlist": [
+    "rich_pca.pkl",
+    "manifest.json",
+    "encode_config.json",
+    "SHA256SUMS"
+  ]
+}

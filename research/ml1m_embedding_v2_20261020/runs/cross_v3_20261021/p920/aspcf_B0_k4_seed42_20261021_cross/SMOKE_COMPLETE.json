@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "loss": 6.595301151275635,
+  "train_batch": 1024,
+  "history_shape": [
+    1024,
+    20
+  ],
+  "parameter_count": 405894,
+  "peak_reserved_bytes": 341835776,
+  "optimizer_steps": 0,
+  "Train_only": true
+}

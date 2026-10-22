@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "loss": 0.7054193019866943,
+  "original_loss_function": "models.sequential.LLMMIRecCAISD.LLMMIRecCAISD.loss",
+  "forward_keys": [
+    "prediction",
+    "_relation_ids",
+    "_sem_loss",
+    "_sem_profile_loss",
+    "_tasid_loss",
+    "loss_relation",
+    "loss_interest_semantic_profile",
+    "loss_interest_semantic",
+    "loss_tasid"
+  ],
+  "query_grad_norm": 3.4097535905885934e-10,
+  "parameter_count": 407974,
+  "peak_reserved_bytes": 308281344,
+  "initial_parameter_sha256": "aa185f62b8c2c71077022dbfee757277177e6b0f94f25bbcd07b7a59f227e8cd",
+  "optimizer_steps": 0,
+  "Train_only": true,
+  "embedding_sha256": "03cf9649844da2c172487a0f552a49a4d331d8262135e3b70e48d6e772ad7905",
+  "teacher_sha256": "651eb74d28d3418a1cfd18510bbee229b952bbc6c83d96dfcaf01b54148c8a01"
+}

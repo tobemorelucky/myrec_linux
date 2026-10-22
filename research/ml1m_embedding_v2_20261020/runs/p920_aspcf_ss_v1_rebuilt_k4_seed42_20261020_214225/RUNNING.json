@@ -1,0 +1,6 @@
+{
+  "pid": 1683539,
+  "start": "2026-10-20T21:42:26.549129+08:00",
+  "gpu": "1",
+  "checkpoint": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/p920_aspcf_ss_v1_rebuilt_k4_seed42_20261020_214225/best.pt"
+}

@@ -1,0 +1,77 @@
+{
+  "variant": "A1",
+  "path": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/cross_v3_20261021/p920/incoming/A1_oldlora_rich512/rich_pca.pkl",
+  "sha256": "03cf9649844da2c172487a0f552a49a4d331d8262135e3b70e48d6e772ad7905",
+  "shape": [
+    3707,
+    1536
+  ],
+  "dtype": "float32",
+  "finite": true,
+  "padding_zero": true,
+  "nonzero_rows": 3706,
+  "no_duplicate_rows": true,
+  "delivery_manifest": {
+    "producer_manifest": {
+      "passed": true,
+      "variant": "A1_oldlora_rich512",
+      "encoding_config": "/root/autodl-tmp/pomrec/research/ml1m_embedding_v2_20261020/ops/cross_v3_20261021/encoding/A1_oldlora_rich512.json",
+      "encoding_config_sha256": "fbfffc938b6fd551e04c567f3c2aafde45825d4dc9f3c5f8edb0b2fdf2489625",
+      "prompt_sha256": "08538381ddb5882c5f347e1478fe6bf0ec32315df2711e88eb241ebff9a8547f",
+      "adapter_sha256": "6b33f280d7856fa37903c5b3582d5defceab6891ab39df82372ae66317bbe186",
+      "adapter_path": "/root/autodl-tmp/pomrec/saved/lora-0722_avg_ml1m/checkpoint-1000",
+      "model_path": "/root/autodl-tmp/LLMemb/llama-7b",
+      "max_source_length": 512,
+      "batch_size": 4,
+      "raw_inference_l2_normalized": false,
+      "raw_sha256": "b299682fd233cca049e72addf8ccbf14b79c345fd9752ec3b288903e1daf23cb",
+      "pca_model_sha256": "622f4877ed64efcabf3cf481c5f95e2f500682cca68dc723a1b9ba1ac86a7636",
+      "pkl_sha256": "03cf9649844da2c172487a0f552a49a4d331d8262135e3b70e48d6e772ad7905",
+      "pca_filename": "rich_pca.pkl",
+      "release_dir": "/root/autodl-tmp/pomrec/research/ml1m_embedding_v2_20261020/runs/cross_A1_oldlora_rich512_20261021/release",
+      "pkl_path": "/root/autodl-tmp/pomrec/research/ml1m_embedding_v2_20261020/runs/cross_A1_oldlora_rich512_20261021/release/rich_pca.pkl",
+      "mapping_sha256": "d26c890a61c6a2996855d83352931cecd14ff09aa42758013bdc3f9fd9d61280",
+      "shape": [
+        3707,
+        1536
+      ],
+      "dtype": "float32",
+      "padding_zero": true,
+      "canonical_items": 3706,
+      "raw_quality": {
+        "rows": 3706,
+        "dim": 4096,
+        "min_norm": 16.729562312478095,
+        "median_norm": 27.943441720809076,
+        "max_norm": 54.99246197217376,
+        "near_zero_threshold": 0.0001,
+        "duplicate_vectors": 0
+      },
+      "pca_quality": {
+        "rows": 3706,
+        "dim": 1536,
+        "min_norm": 10.590971763616643,
+        "median_norm": 16.737048776114783,
+        "max_norm": 56.58261320703364,
+        "near_zero_threshold": 0.0001,
+        "duplicate_vectors": 0
+      },
+      "pca_fit_items": 3704,
+      "PCA_protocol": "independently full-SVD1536, float64, same Train-catalog IDs, whitenFalse, seed42",
+      "forward_seconds": 136.95421847188845,
+      "model_load_seconds": 126.914832490962,
+      "peak_gpu_bytes": 13875999232,
+      "truncated": 18,
+      "training_performed": false,
+      "long_Rich_OOD_for_old_LoRA": true
+    },
+    "run_name": "aspcf_A1_k4_seed42_20261021_cross",
+    "canonical_item_ids": "1..3706",
+    "lora_family": "old",
+    "embedding_sha256": "03cf9649844da2c172487a0f552a49a4d331d8262135e3b70e48d6e772ad7905",
+    "text_recipe": "rich512",
+    "variant": "A1"
+  },
+  "identity_note": "LoRA/text/canonical alignment attested by producer manifest; matrix SHA and shape independently verified",
+  "global_scaling": 1.0
+}

@@ -1,0 +1,5 @@
+{
+  "reason": "Only result-path discovery reads actual launched V3 run directory, not obsolete date",
+  "before_sha256": "f7da4cf3fab59c40dcbc27b1f3994531f50f24d5b9ffecfd9c5585729e628cc9",
+  "after_sha256": "a2beb134cce512eca30cce7705a0510a5c01871d13fca07d2110698788ba84eb"
+}

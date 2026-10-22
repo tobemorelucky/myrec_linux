@@ -1,0 +1,4 @@
+{"experiment": "E1", "exit_code": 0, "time": "2026-10-21T22:55:37.830000+08:00", "no_retry": true}
+{"experiment": "E3", "exit_code": 0, "time": "2026-10-22T02:43:40.846875+08:00", "no_retry": true}
+{"experiment": "E4", "exit_code": 0, "time": "2026-10-22T03:54:09.560357+08:00", "no_retry": true}
+{"experiment": "E2", "exit_code": 0, "time": "2026-10-22T05:07:16.712568+08:00", "no_retry": true}

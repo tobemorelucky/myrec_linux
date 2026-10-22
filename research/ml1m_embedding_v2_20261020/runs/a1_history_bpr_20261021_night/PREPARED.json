@@ -1,0 +1,25 @@
+{
+  "time": "2026-10-21T21:12:53.813085+08:00",
+  "six_jobs": true,
+  "E7": "not scheduled: historical confidence uses different profile/teacher settings; avoid adding unmatched arm",
+  "gpu0": "reserved for V3 receiver, then E5,E6",
+  "gpu1": "E1,E3,E4,E2",
+  "git_head": "1773f4bba702dabf48486c0495aac447474d02ab",
+  "sources": {
+    "main.py": "6bfbd7caedf7fb336ea03686295529d07cff041d828f21340e0008bffe86bc2f",
+    "helpers/BaseRunner.py": "b0417f18bd4793c079555fe237a787474237597e1042de6f4d429b50aae93fbc",
+    "helpers/SeqReader.py": "74ed2b2e5aec81bdbb6f8c3acdcfa233d86499faa90e455504b7739fd0e5176e",
+    "helpers/BaseReader.py": "934cc0786d392b5490412f707a84780cbf6b61377f9dc8b149bb188458dfcca3",
+    "models/BaseModel.py": "57c1fa6ceb582a75d006ed6765d79a3593e58e097317063e92f687e5e4a73150",
+    "models/sequential/LLMMIRecASPCF.py": "08dfe95d6fa60773f5d34aafef422e29b7254ce7c1ca9963da956118a490ffe8",
+    "models/sequential/LLMMIRecCAISD.py": "d779f78dd73167f4410b6b30443764d911ff44d119d0efc08187881adc694cc2",
+    "models/sequential/LLMMIRecHSDIR.py": "07f4aa7437f50e898ce18621d03fc672df48ee7cf45290a56aeb01527fe4be72",
+    "models/sequential/llmmi_components.py": "d71903c5a54391416630f00fa8e1aef1e6ca6b414f7dd3d064b67c8beb8c93f6",
+    "models/sequential/llmmi_utils.py": "ae33b3e4e5a76146f666b91fdc58a7b3675b15b13297d9df96352e643225c96c"
+  },
+  "teacher_sha256": {
+    "a1_proto32_sr512.pkl": "651eb74d28d3418a1cfd18510bbee229b952bbc6c83d96dfcaf01b54148c8a01",
+    "a1_hier_proto32_8_sr512.pkl": "c518f9c2e6e659f0d43e060bb285684224348fa77d88521f5f0c0980fabb755a"
+  },
+  "reference_config": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/p920_aspcf_ss_v1_rebuilt_k4_seed42_20261020_214225/config.json"
+}

@@ -1,0 +1,10 @@
+{
+  "test_offline.py": {
+    "exit_code": 0,
+    "log": "test_augmentation_seed_and_real_attributes (__main__.Tests) ... ok\ntest_common_pca_and_padding_synthetic_only (__main__.Tests) ... ok\ntest_contrastive_fp32_without_formula_change (__main__.Tests) ... ok\ntest_mean_imputation_then_centering_explains_zero (__main__.Tests) ... ok\ntest_official_processor_and_pair_order (__main__.Tests) ... ok\ntest_pool_empty_nonfinite_rejected (__main__.Tests) ... ok\ntest_pool_fp32_overflow_prevention (__main__.Tests) ... ok\ntest_pool_padding_and_batch_invariance (__main__.Tests) ... ok\ntest_prompt_id_validation_and_reject_bad_vectors (__main__.Tests) ... ok\ntest_real_mask_forward_and_odd_inference_tiny_model (__main__.Tests) ... ok\ntest_static_all_sources (__main__.Tests) ... ok\ntest_trainable_tau_stays_fp32 (__main__.Tests) ... ok\ntest_write_boundary (__main__.Tests) ... ok\n\n----------------------------------------------------------------------\nRan 13 tests in 0.133s\n\nOK\n"
+  },
+  "test_production.py": {
+    "exit_code": 0,
+    "log": "test_adapter_save_load_extra_and_no_full_backbone (__main__.Production) ... ok\ntest_original_scft_has_finite_task_gradients (__main__.Production) ... ok\ntest_quality_blocks_nearzero_and_duplicates (__main__.Production) ... ok\ntest_tau_has_no_effect_on_inference (__main__.Production) ... ok\ntest_title_identity_kept_and_two_views (__main__.Production) ... ok\ntest_trainer_checkpoint_contains_training_state (__main__.Production) ... /home/yyx/anaconda3/envs/hzg_py10/lib/python3.10/site-packages/transformers/optimization.py:411: FutureWarning: This implementation of AdamW is deprecated and will be removed in a future version. Use the PyTorch implementation torch.optim.AdamW instead, or set `no_deprecation_warning=True` to disable this warning\n  warnings.warn(\nok\ntest_truncation_is_bounded_and_counted (__main__.Production) ... ok\n\n----------------------------------------------------------------------\nRan 7 tests in 1.319s\n\nOK\nsys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute\n"
+  }
+}

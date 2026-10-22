@@ -1,0 +1,75 @@
+{
+  "finished": "2026-10-21T11:27:22.539558+08:00",
+  "elapsed_seconds": 3052.5424858108163,
+  "results": [
+    {
+      "label": "A",
+      "name": "LLMEmb-style LLMMIRec llm_replace GELU / filtered Softmax",
+      "loss": "filtered Batch Softmax tau1, no relation",
+      "exit_code": null,
+      "training_seconds": 1514.483202,
+      "parameter_count": 428548,
+      "embedding_sha256": "5546240cc16beff4666a74a18cb758f41dbf23f21f46a9082778193501c59aad",
+      "end": "2026-10-21T10:42:00.337186+08:00",
+      "test_called": false,
+      "adopted_existing_training": true,
+      "best_epoch": 42,
+      "end_epoch": 62,
+      "best_train_log_metrics": "HR@5:0.3765,NDCG@5:0.2731",
+      "checkpoint_sha256": "cfaa626340d306cb57112dc5ae12c1d2baaf19a69b59a036fcae9fd115e30024",
+      "status": "COMPLETE",
+      "Dev": {
+        "HR@5": 0.37649006622516556,
+        "NDCG@5": 0.2730883734131152,
+        "HR@10": 0.48460264900662253,
+        "NDCG@10": 0.30813880626040563,
+        "HR@20": 0.5910596026490066,
+        "NDCG@20": 0.33504996920172103
+      }
+    },
+    {
+      "label": "C",
+      "name": "LLMMIRecCAISD uniform responsibility / BPR",
+      "loss": "original BPR + relation .01 + CAISD profile .01",
+      "exit_code": 0,
+      "training_seconds": 2688.973993071355,
+      "parameter_count": 407974,
+      "embedding_sha256": "5546240cc16beff4666a74a18cb758f41dbf23f21f46a9082778193501c59aad",
+      "end": "2026-10-21T11:27:00.490867+08:00",
+      "test_called": false,
+      "adopted_existing_training": false,
+      "best_epoch": 116,
+      "end_epoch": 136,
+      "best_train_log_metrics": "HR@5:0.3401,NDCG@5:0.2366",
+      "checkpoint_sha256": "3717591683cafdb4c0992065beca78e5e68cf51301eeac481ea4214578929910",
+      "status": "COMPLETE",
+      "Dev": {
+        "HR@5": 0.3400662251655629,
+        "NDCG@5": 0.23659545840830565,
+        "HR@10": 0.4629139072847682,
+        "NDCG@10": 0.2763703331741032,
+        "HR@20": 0.6004966887417219,
+        "NDCG@20": 0.3110679823323427
+      }
+    },
+    {
+      "label": "ASPCF_reference",
+      "status": "COMPLETE",
+      "loss": "filtered Batch Softmax + relation .01",
+      "training_seconds": 2666.869823137298,
+      "checkpoint_sha256": "bd94836bb88b7649141bf1f0976422b75590044aad98699e6534cfa5b0429b72",
+      "best_line": "Best Iter(dev)=   47\t dev=(HR@5:0.3738,NDCG@5:0.2721) [2656.1 s] ",
+      "embedding_sha256": "5546240cc16beff4666a74a18cb758f41dbf23f21f46a9082778193501c59aad",
+      "Dev": {
+        "HR@5": 0.373841059602649,
+        "NDCG@5": 0.2721348685543765,
+        "HR@10": 0.48112582781456953,
+        "NDCG@10": 0.3066589452640147,
+        "HR@20": 0.5791390728476821,
+        "NDCG@20": 0.3314528086500216
+      },
+      "parameter_count": 405894
+    }
+  ],
+  "test_called": false
+}

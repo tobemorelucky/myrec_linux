@@ -1,0 +1,22 @@
+{
+  "time": "2026-10-21T21:13:19.900957+08:00",
+  "queues": [
+    {
+      "gpu": 1,
+      "pid": 1765362,
+      "log": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/a1_history_bpr_20261021_night/gpu1_queue.out"
+    },
+    {
+      "gpu": 0,
+      "pid": 1765363,
+      "log": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/a1_history_bpr_20261021_night/gpu0_queue.out"
+    }
+  ],
+  "code_sha256": {
+    "receive_V3.before.py": "3d2600e8191603a6d196cba77534a3ef18f15459a55c983e4075884a6e60318f",
+    "gpu_scheduler.py": "37df37fe59b56d5559b04f6a03e59a80236c8a809bfabd2cb62fe7d63ff0f286",
+    "entry.py": "3593d17e0f96ce9aedef6e3997955add684606ccc3cfe433d77a81f56454c30a",
+    "prepare.py": "5be68c37cd04ee1abf1b961c71460ef896020509271865706fa39b470088db7e"
+  },
+  "V3_GPU0_reserved": true
+}

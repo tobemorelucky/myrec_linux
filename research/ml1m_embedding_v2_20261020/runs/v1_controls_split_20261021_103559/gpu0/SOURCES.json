@@ -1,0 +1,19 @@
+{
+  "files": {
+    "main.py": "6bfbd7caedf7fb336ea03686295529d07cff041d828f21340e0008bffe86bc2f",
+    "models/BaseModel.py": "57c1fa6ceb582a75d006ed6765d79a3593e58e097317063e92f687e5e4a73150",
+    "helpers/BaseRunner.py": "b0417f18bd4793c079555fe237a787474237597e1042de6f4d429b50aae93fbc",
+    "helpers/SeqReader.py": "74ed2b2e5aec81bdbb6f8c3acdcfa233d86499faa90e455504b7739fd0e5176e",
+    "models/sequential/LLMMIRec.py": "3ef539690b451c44aa3acab84a180d8b26a5c9aab957f3ffa22208461d0e1350",
+    "models/sequential/LLMMIRecASPCF.py": "08dfe95d6fa60773f5d34aafef422e29b7254ce7c1ca9963da956118a490ffe8",
+    "models/sequential/LLMMIRecASPCFSampledSoftmax.py": "a74f27deac0e15ab189345d57179ca1e80050a4acb68788d2ae335e9218669df",
+    "models/sequential/llmmi_components.py": "d71903c5a54391416630f00fa8e1aef1e6ca6b414f7dd3d064b67c8beb8c93f6",
+    "models/sequential/llmmi_utils.py": "ae33b3e4e5a76146f666b91fdc58a7b3675b15b13297d9df96352e643225c96c",
+    "models/sequential/PoMRec.py": "8afdee06b87c5d07d59ed24a897a5afb56113e9b7b614bd5c9a1ec1a3b8adbbe",
+    "models/sequential/PoMRecLLMEmbLinear.py": "5af66b8dcc27be3939bb9d10ef896f6167546066589c3724fb3267fb398b45bb",
+    "models/sequential/LLMMIRecCAISD.py": "d779f78dd73167f4410b6b30443764d911ff44d119d0efc08187881adc694cc2",
+    "research/ml1m_embedding_v2_20261020/ops/v1_controls_entry_20261021.py": "1b94a6fc8590f7b4e57d732e156d5fbe607c7be7c0cc0492762b64dbc3686400",
+    "research/ml1m_embedding_v2_20261020/ops/v1_controls_queue_20261021.py": "ebd7ca85c39a7f1014fa726ae4e2f7588f611b613121960dba4d9ea232430169"
+  },
+  "only_changes": "GPU allocation and B wall limit; A process preserved"
+}

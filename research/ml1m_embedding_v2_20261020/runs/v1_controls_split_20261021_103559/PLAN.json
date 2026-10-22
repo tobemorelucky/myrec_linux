@@ -1,0 +1,13 @@
+{
+  "previous_queue": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/v1_controls_gpu0_20261021_100939",
+  "gpu0": [
+    "A adopted unchanged PID1703470",
+    "C"
+  ],
+  "gpu1": [
+    "B"
+  ],
+  "B_wall_timeout": null,
+  "models_and_optimizer_unchanged": true,
+  "test_forbidden": true
+}

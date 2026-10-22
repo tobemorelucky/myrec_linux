@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "checkpoint": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/checks/resume_cpu_e004c4effa07416090d6b048309a771d/first/checkpoint-2",
+  "max_parameter_difference": 0.0,
+  "optimizer_equal": true,
+  "scheduler_equal": true,
+  "rng_equal": true,
+  "resumed_global_step": 4,
+  "adapter_only": true,
+  "actual_lora_dropout": 0.1,
+  "no_7b_loaded": true,
+  "no_gpu": true
+}

@@ -1,0 +1,19 @@
+{
+  "pid": 1683292,
+  "gpu": 1,
+  "run_dir": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/p920_aspcf_ss_v1_rebuilt_k4_seed42_20261020_214110",
+  "command": [
+    "nohup",
+    "/home/yyx/anaconda3/envs/hzg_py10/bin/python",
+    "-u",
+    "-B",
+    "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/ops/run_v1_aspcf_softmax_20261020.py",
+    "--run-dir",
+    "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/p920_aspcf_ss_v1_rebuilt_k4_seed42_20261020_214110",
+    "--gpu",
+    "1"
+  ],
+  "started": "2026-10-20T21:41:10.587794+08:00",
+  "launcher_sha256": "cd78645992a770aba2185166dba1069ba4854cb0e640d4db933a06e345f8c6e3",
+  "test_forbidden": true
+}

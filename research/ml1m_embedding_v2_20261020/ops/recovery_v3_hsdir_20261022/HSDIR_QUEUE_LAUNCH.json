@@ -1,0 +1,11 @@
+{
+  "pid": 1999431,
+  "time": "2026-10-22T10:21:36.054477+08:00",
+  "gpu": 1,
+  "experiments": [
+    "E5",
+    "E6"
+  ],
+  "entry_sha256": "de31e2e546a64038de1cc0021bc37885cf0af0af9f834e9752636671aba4954d",
+  "original_entry_reused": true
+}

@@ -1,0 +1,35 @@
+{
+  "exit_code": 0,
+  "start": "2026-10-21T16:43:28.746124+08:00",
+  "end": "2026-10-21T17:33:06.213860+08:00",
+  "training_seconds": 2977.4678207160905,
+  "test_called": false,
+  "best_epoch": 55,
+  "end_epoch": 75,
+  "checkpoint_sha256": "1b93ca3a793499f6c3b1e0c29fb87b4001cadf442cff2677ce2b927f36e24b19",
+  "Dev": {
+    "HR@5": 0.371523178807947,
+    "NDCG@5": 0.26925602351034067,
+    "HR@10": 0.47665562913907283,
+    "NDCG@10": 0.3033988540393372,
+    "HR@20": 0.5864238410596027,
+    "NDCG@20": 0.3311368431690972
+  },
+  "parameter_count": 405894,
+  "embedding_sha256": "b5a71f1cd8ebb9b4a74274707e03f79ffcf61303c44204b5dc732d5d9ff580e3",
+  "NDCG5_delta_vs_V1_Rebuilt": -0.0028788450440358493,
+  "NDCG5_relative_vs_V1_Rebuilt": -0.010578743765283477,
+  "train_complete": true,
+  "Dev_best_selected": true,
+  "Test_accepted": true,
+  "scale": 0.10049099616356975,
+  "exploratory": true,
+  "Test": {
+    "HR@5": 0.33228476821192054,
+    "NDCG@5": 0.2409343907741434,
+    "HR@10": 0.4413907284768212,
+    "NDCG@10": 0.2761512935062254,
+    "HR@20": 0.5427152317880795,
+    "NDCG@20": 0.30176890360184017
+  }
+}

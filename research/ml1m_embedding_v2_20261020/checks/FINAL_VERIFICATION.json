@@ -1,0 +1,106 @@
+{
+  "cpu_tests_passed": 13,
+  "gpu_runs": 0,
+  "real_pca_fits": 0,
+  "upstream_files_unchanged": 64,
+  "python": "3.10.19",
+  "packages": {
+    "torch": "2.7.1",
+    "transformers": "4.30.2",
+    "datasets": "4.4.2",
+    "deepspeed": "0.18.3",
+    "numpy": "2.1.0",
+    "scikit-learn": "1.7.1",
+    "tokenizers": "0.13.3"
+  },
+  "files": {
+    "adapter/model_patch.py": {
+      "bytes": 2367,
+      "sha256": "d62b9760b4edb1dd90ca91a40e75e3f9e8dc535f02847f13fb0a9f4ca2ad6557"
+    },
+    "adapter/run_scft.py": {
+      "bytes": 4413,
+      "sha256": "90ac5c85440b9ac86f5ed638b4221ac3fada74f00aded0ad08d3e8994ce1749f"
+    },
+    "adapter/prepare_prompts.py": {
+      "bytes": 3925,
+      "sha256": "0184e7078840e4a0365604697050da4c6b4d2c12e41e0b6c86ec90b6422f78a0"
+    },
+    "adapter/quality_pca.py": {
+      "bytes": 3322,
+      "sha256": "42172378503094891b08954dc7953c9f6ead591cbd2fa32d36563f811a0ae058"
+    },
+    "adapter/common.py": {
+      "bytes": 4208,
+      "sha256": "a87ff73eb0ef20d4342657ccbb991c038be0b6e261f716f726f4bbe99cc120ae"
+    },
+    "adapter/run_encode.py": {
+      "bytes": 5390,
+      "sha256": "71df40cb8520d0e4ad4523fda913038c7cfe53246e1e1c2110780776da5ed4e8"
+    },
+    "configs/encode_base_proposed.json": {
+      "bytes": 545,
+      "sha256": "4e2ea581a01720447e931477819c03219e72e919a6d54d003ea29b77c7123cb8"
+    },
+    "configs/scft_proposed.json": {
+      "bytes": 458,
+      "sha256": "866aaa8441553f31d1686e57aacd94c169272cf3fa2de37e47c0e463087ec6d2"
+    },
+    "configs/encode_rich_proposed.json": {
+      "bytes": 545,
+      "sha256": "7ec652e136eb372e4c3337c228a0efc5ccd22fc332fd3aa2d5685b6bde242e33"
+    },
+    "tests/test_offline.py": {
+      "bytes": 6968,
+      "sha256": "ee6a9f2cc8134cbea8fd736c02608a68bf1518935d0669e7c457cb6ae322c60d"
+    }
+  },
+  "dry_run_configs": {
+    "scft_proposed.json": {
+      "stage": "scft",
+      "model_path": "/root/autodl-tmp/LLMemb/llama-7b",
+      "prompt": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/inputs/base_prompts.jsonl",
+      "output_dir": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/scft_base_seed42",
+      "seed": 42,
+      "max_source_length": 256,
+      "batch_size": 16,
+      "gradient_accumulation_steps": 8,
+      "max_steps": 1000,
+      "learning_rate": 0.0002,
+      "precision": "fp16",
+      "gradient_checkpointing": true,
+      "target_modules": "q_proj,k_proj,v_proj,o_proj,down_proj,gate_proj,up_proj"
+    },
+    "encode_base_proposed.json": {
+      "stage": "encode",
+      "variant": "V2-Base",
+      "model_path": "/root/autodl-tmp/LLMemb/llama-7b",
+      "tokenizer_path": "/root/autodl-tmp/pomrec/saved/lora-0722_avg_ml1m/checkpoint-1000",
+      "adapter_path": "/root/autodl-tmp/pomrec/saved/lora-0722_avg_ml1m/checkpoint-1000",
+      "allow_legacy_adapter_without_tau": true,
+      "mapping": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/inputs/item2id.json",
+      "prompt": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/inputs/base_prompts.jsonl",
+      "output_dir": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/encode_base",
+      "seed": 42,
+      "max_source_length": 256,
+      "batch_size": 1,
+      "precision": "fp16"
+    },
+    "encode_rich_proposed.json": {
+      "stage": "encode",
+      "variant": "V2-Rich",
+      "model_path": "/root/autodl-tmp/LLMemb/llama-7b",
+      "tokenizer_path": "/root/autodl-tmp/pomrec/saved/lora-0722_avg_ml1m/checkpoint-1000",
+      "adapter_path": "/root/autodl-tmp/pomrec/saved/lora-0722_avg_ml1m/checkpoint-1000",
+      "allow_legacy_adapter_without_tau": true,
+      "mapping": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/inputs/item2id.json",
+      "prompt": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/inputs/rich_prompts.jsonl",
+      "output_dir": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/encode_rich",
+      "seed": 42,
+      "max_source_length": 256,
+      "batch_size": 1,
+      "precision": "fp16"
+    }
+  },
+  "revision_note": "Final mapping manifest lookup normalizes relative paths; prior manifest retained."
+}

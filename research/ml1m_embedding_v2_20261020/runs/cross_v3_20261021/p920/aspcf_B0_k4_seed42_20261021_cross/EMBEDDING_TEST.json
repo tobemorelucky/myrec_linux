@@ -1,0 +1,10 @@
+{
+  "path": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/cross_v3_20261021/p920/incoming/B0_v2lora_base/base_pca.pkl",
+  "sha256": "70630546070652cd926fa13e9eff89de7e052d34e9ad0cfbc72b03376df702af",
+  "shape": [
+    3707,
+    1536
+  ],
+  "dtype": "torch.float32",
+  "model_buffer_verified": true
+}

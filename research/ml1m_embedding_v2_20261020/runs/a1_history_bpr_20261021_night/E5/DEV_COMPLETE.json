@@ -1,0 +1,19 @@
+{
+  "metrics": {
+    "HR@5": 0.33211920529801325,
+    "NDCG@5": 0.22822419372885822,
+    "HR@10": 0.4551324503311258,
+    "NDCG@10": 0.2677135106236516,
+    "HR@20": 0.5913907284768212,
+    "NDCG@20": 0.3020981210238256
+  },
+  "samples": 6040,
+  "candidate_slots": 1001,
+  "duplicates_preserved": true,
+  "checkpoint_sha256": "a8530c4dd42432e2b454100a53f26c5d4b5ce7715682e185a4e7755e85830d0b",
+  "embedding_sha256": "03cf9649844da2c172487a0f552a49a4d331d8262135e3b70e48d6e772ad7905",
+  "teacher_sha256": "c518f9c2e6e659f0d43e060bb285684224348fa77d88521f5f0c0980fabb755a",
+  "optimizer_updates": 0,
+  "exploratory": true,
+  "time": "2026-10-22T11:04:18.182775+08:00"
+}

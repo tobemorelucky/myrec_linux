@@ -1,0 +1,8 @@
+{
+  "time": "2026-10-21T10:34:54.533658+08:00",
+  "old_queue_pid": 1703457,
+  "stopped_manager_only": true,
+  "A_python_pid_preserved": 1703470,
+  "B_not_started": true,
+  "new_assignment": "A,C GPU0; B GPU1 without wall timeout"
+}

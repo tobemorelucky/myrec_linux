@@ -1,0 +1,346 @@
+[
+  {
+    "movie_id": "1061",
+    "item_id": 67,
+    "title": "Sleepers",
+    "year": "1996",
+    "base_genres": [
+      "Crime",
+      "Drama"
+    ],
+    "source_genres": "Thriller ",
+    "action": "keep original Base genres; no ID remap"
+  },
+  {
+    "movie_id": "1138",
+    "item_id": 141,
+    "title": "Dadetown",
+    "year": "1995",
+    "base_genres": [
+      "Documentary"
+    ],
+    "source_genres": "Drama ",
+    "action": "keep original Base genres; no ID remap"
+  },
+  {
+    "movie_id": "1181",
+    "item_id": 178,
+    "title": "Shooter, The",
+    "year": "1995",
+    "base_genres": [
+      "Action"
+    ],
+    "source_genres": "Western ",
+    "action": "keep original Base genres; no ID remap"
+  },
+  {
+    "movie_id": "1364",
+    "item_id": 371,
+    "title": "Zero Kelvin (Kjærlighetens kjøtere)",
+    "year": "1995",
+    "base_genres": [
+      "Action"
+    ],
+    "source_genres": "Drama ",
+    "action": "keep original Base genres; no ID remap"
+  },
+  {
+    "movie_id": "18",
+    "item_id": 782,
+    "title": "Four Rooms",
+    "year": "1995",
+    "base_genres": [
+      "Thriller"
+    ],
+    "source_genres": "Comedy ",
+    "action": "keep original Base genres; no ID remap"
+  },
+  {
+    "movie_id": "2192",
+    "item_id": 1207,
+    "title": "See the Sea (Regarde la mer)",
+    "year": "1997",
+    "base_genres": [
+      "Drama"
+    ],
+    "source_genres": "Thriller ",
+    "action": "keep original Base genres; no ID remap"
+  },
+  {
+    "movie_id": "2264",
+    "item_id": 1277,
+    "title": "We're No Angels",
+    "year": "1989",
+    "base_genres": [
+      "Drama"
+    ],
+    "source_genres": "Comedy Crime ",
+    "action": "keep original Base genres; no ID remap"
+  },
+  {
+    "movie_id": "2347",
+    "item_id": 1366,
+    "title": "Pope of Greenwich Village, The",
+    "year": "1984",
+    "base_genres": [
+      "Action"
+    ],
+    "source_genres": "Drama ",
+    "action": "keep original Base genres; no ID remap"
+  },
+  {
+    "movie_id": "2579",
+    "item_id": 1619,
+    "title": "Following",
+    "year": "1998",
+    "base_genres": [
+      "Drama"
+    ],
+    "source_genres": "Crime Mystery Thriller ",
+    "action": "keep original Base genres; no ID remap"
+  },
+  {
+    "movie_id": "2583",
+    "item_id": 1624,
+    "title": "Cookie's Fortune",
+    "year": "1999",
+    "base_genres": [
+      "Mystery"
+    ],
+    "source_genres": "Comedy Drama ",
+    "action": "keep original Base genres; no ID remap"
+  },
+  {
+    "movie_id": "2678",
+    "item_id": 1724,
+    "title": "Desert Blue",
+    "year": "1999",
+    "base_genres": [
+      "Drama"
+    ],
+    "source_genres": "Comedy ",
+    "action": "keep original Base genres; no ID remap"
+  },
+  {
+    "movie_id": "2762",
+    "item_id": 1815,
+    "title": "Sixth Sense, The",
+    "year": "1999",
+    "base_genres": [
+      "Thriller"
+    ],
+    "source_genres": "Drama Horror Mystery ",
+    "action": "keep original Base genres; no ID remap"
+  },
+  {
+    "movie_id": "2887",
+    "item_id": 1949,
+    "title": "Simon Sez",
+    "year": "1999",
+    "base_genres": [
+      "Drama"
+    ],
+    "source_genres": "Action Comedy ",
+    "action": "keep original Base genres; no ID remap"
+  },
+  {
+    "movie_id": "298",
+    "item_id": 2048,
+    "title": "Pushing Hands",
+    "year": "1992",
+    "base_genres": [
+      "Comedy"
+    ],
+    "source_genres": "Drama ",
+    "action": "keep original Base genres; no ID remap"
+  },
+  {
+    "movie_id": "3008",
+    "item_id": 2080,
+    "title": "Last Night",
+    "year": "1998",
+    "base_genres": [
+      "Thriller"
+    ],
+    "source_genres": "Drama Sci-Fi ",
+    "action": "keep original Base genres; no ID remap"
+  },
+  {
+    "movie_id": "3030",
+    "item_id": 2103,
+    "title": "Yojimbo",
+    "year": "1961",
+    "base_genres": [
+      "Comedy",
+      "Drama",
+      "Western"
+    ],
+    "source_genres": "Action Adventure ",
+    "action": "keep original Base genres; no ID remap"
+  },
+  {
+    "movie_id": "3075",
+    "item_id": 2151,
+    "title": "Repulsion",
+    "year": "1965",
+    "base_genres": [
+      "Thriller"
+    ],
+    "source_genres": "Drama Horror ",
+    "action": "keep original Base genres; no ID remap"
+  },
+  {
+    "movie_id": "3189",
+    "item_id": 2275,
+    "title": "My Dog Skip",
+    "year": "1999",
+    "base_genres": [
+      "Comedy"
+    ],
+    "source_genres": "Children Drama ",
+    "action": "keep original Base genres; no ID remap"
+  },
+  {
+    "movie_id": "3274",
+    "item_id": 2362,
+    "title": "Single White Female",
+    "year": "1992",
+    "base_genres": [
+      "Action"
+    ],
+    "source_genres": "Drama Thriller ",
+    "action": "keep original Base genres; no ID remap"
+  },
+  {
+    "movie_id": "3310",
+    "item_id": 2401,
+    "title": "Kid, The",
+    "year": "1921",
+    "base_genres": [
+      "Action"
+    ],
+    "source_genres": "Comedy Drama ",
+    "action": "keep original Base genres; no ID remap"
+  },
+  {
+    "movie_id": "3534",
+    "item_id": 2642,
+    "title": "28 Days",
+    "year": "2000",
+    "base_genres": [
+      "Comedy"
+    ],
+    "source_genres": "Drama ",
+    "action": "keep original Base genres; no ID remap"
+  },
+  {
+    "movie_id": "3568",
+    "item_id": 2675,
+    "title": "Smiling Fish and Goat on Fire",
+    "year": "1999",
+    "base_genres": [
+      "Drama"
+    ],
+    "source_genres": "Comedy Romance ",
+    "action": "keep original Base genres; no ID remap"
+  },
+  {
+    "movie_id": "3581",
+    "item_id": 2690,
+    "title": "Human Traffic",
+    "year": "1999",
+    "base_genres": [
+      "Drama"
+    ],
+    "source_genres": "Comedy ",
+    "action": "keep original Base genres; no ID remap"
+  },
+  {
+    "movie_id": "3682",
+    "item_id": 2797,
+    "title": "Magnum Force",
+    "year": "1973",
+    "base_genres": [
+      "Western"
+    ],
+    "source_genres": "Action Crime Drama Thriller ",
+    "action": "keep original Base genres; no ID remap"
+  },
+  {
+    "movie_id": "3798",
+    "item_id": 2924,
+    "title": "What Lies Beneath",
+    "year": "2000",
+    "base_genres": [
+      "Thriller"
+    ],
+    "source_genres": "Drama Horror Mystery ",
+    "action": "keep original Base genres; no ID remap"
+  },
+  {
+    "movie_id": "3899",
+    "item_id": 3033,
+    "title": "Circus",
+    "year": "2000",
+    "base_genres": [
+      "Comedy"
+    ],
+    "source_genres": "Crime Drama Thriller ",
+    "action": "keep original Base genres; no ID remap"
+  },
+  {
+    "movie_id": "394",
+    "item_id": 3078,
+    "title": "Coldblooded",
+    "year": "1995",
+    "base_genres": [
+      "Action"
+    ],
+    "source_genres": "Comedy ",
+    "action": "keep original Base genres; no ID remap"
+  },
+  {
+    "movie_id": "549",
+    "item_id": 3258,
+    "title": "Thirty-Two Short Films About Glenn Gould",
+    "year": "1993",
+    "base_genres": [
+      "Documentary"
+    ],
+    "source_genres": "Drama Musical ",
+    "action": "keep original Base genres; no ID remap"
+  },
+  {
+    "movie_id": "600",
+    "item_id": 3316,
+    "title": "Love and a .45",
+    "year": "1994",
+    "base_genres": [
+      "Thriller"
+    ],
+    "source_genres": "Action Comedy Crime ",
+    "action": "keep original Base genres; no ID remap"
+  },
+  {
+    "movie_id": "950",
+    "item_id": 3656,
+    "title": "Thin Man, The",
+    "year": "1934",
+    "base_genres": [
+      "Mystery"
+    ],
+    "source_genres": "Comedy Crime ",
+    "action": "keep original Base genres; no ID remap"
+  },
+  {
+    "movie_id": "966",
+    "item_id": 3673,
+    "title": "Walk in the Sun, A",
+    "year": "1945",
+    "base_genres": [
+      "Drama"
+    ],
+    "source_genres": "War ",
+    "action": "keep original Base genres; no ID remap"
+  }
+]

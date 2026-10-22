@@ -1,0 +1,14 @@
+{
+  "Dev": {
+    "HR@5": 0.36241721854304637,
+    "NDCG@5": 0.261577000166368,
+    "HR@10": 0.47052980132450334,
+    "NDCG@10": 0.2966088368504463,
+    "HR@20": 0.5769867549668874,
+    "NDCG@20": 0.32356365050689073
+  },
+  "checkpoint_sha256": "9b91b25d6ee7aa5d63424b9de4bea6b7b6aa5fa746b40583c7c12c265a3c76fa",
+  "parameter_count": 405894,
+  "embedding_sha256": "70630546070652cd926fa13e9eff89de7e052d34e9ad0cfbc72b03376df702af",
+  "test_called": false
+}

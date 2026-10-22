@@ -1,0 +1,24 @@
+{
+  "items": 3706,
+  "batch_items": 16,
+  "two_view_rows": 32,
+  "collated_shapes": {
+    "input_ids": [
+      32,
+      188
+    ],
+    "labels": [
+      32,
+      188
+    ],
+    "attention_mask": [
+      32,
+      188
+    ]
+  },
+  "all_input_ids_valid": true,
+  "official_loader_processor_collator": true,
+  "provenance_retained_in_source": true,
+  "pretrained_model_loaded": false,
+  "prompt_sha256": "08538381ddb5882c5f347e1478fe6bf0ec32315df2711e88eb241ebff9a8547f"
+}

@@ -1,0 +1,15 @@
+{
+  "stage": "scft",
+  "model_path": "/root/autodl-tmp/LLMemb/llama-7b",
+  "prompt": "@V2_ROOT@/inputs/base_prompts.jsonl",
+  "output_dir": "@V2_ROOT@/runs/scft_base_seed42",
+  "seed": 42,
+  "max_source_length": 256,
+  "batch_size": 16,
+  "gradient_accumulation_steps": 8,
+  "max_steps": 1000,
+  "learning_rate": 0.0002,
+  "precision": "fp16",
+  "gradient_checkpointing": true,
+  "target_modules": "q_proj,k_proj,v_proj,o_proj,down_proj,gate_proj,up_proj"
+}

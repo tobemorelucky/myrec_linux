@@ -1,0 +1,14 @@
+{
+  "llm_emb_path": [
+    "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/imported_assets/v1_rebuilt_20261020/base_pca.pkl",
+    "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/cross_v3_20261021/p920/incoming/B0_v2lora_base/base_pca.pkl"
+  ],
+  "model_path": [
+    "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/p920_aspcf_ss_v1_rebuilt_k4_seed42_20261020_214225/best.pt",
+    "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/cross_v3_20261021/p920/aspcf_B0_k4_seed42_20261021_cross/best.pt"
+  ],
+  "log_file": [
+    "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/p920_aspcf_ss_v1_rebuilt_k4_seed42_20261020_214225/train.log",
+    "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/cross_v3_20261021/p920/aspcf_B0_k4_seed42_20261021_cross/train.log"
+  ]
+}

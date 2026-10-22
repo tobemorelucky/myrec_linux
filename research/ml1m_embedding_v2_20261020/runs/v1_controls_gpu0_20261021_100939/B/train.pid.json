@@ -1,0 +1,15 @@
+{
+  "pid": 1706625,
+  "command": [
+    "/home/yyx/anaconda3/envs/hzg_py10/bin/python",
+    "-u",
+    "-B",
+    "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/ops/v1_controls_entry_20261021.py",
+    "--job",
+    "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/v1_controls_gpu0_20261021_100939/B/job_gpu1_unlimited.json",
+    "--mode",
+    "train"
+  ],
+  "start": "2026-10-21T10:36:30.060532+08:00",
+  "max_seconds": 0
+}

@@ -1,0 +1,9 @@
+{
+  "pid": 2000143,
+  "gpu": 0,
+  "time": "2026-10-22T10:25:38.398276+08:00",
+  "log": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/ops/recovery_v3_hsdir_20261022/v3_receiver.out",
+  "embedding_sha256": "b393145c5520c7018c751938cec01a834ccdd8fe3df1626673ea62a1c8179700",
+  "independent_background": true,
+  "original_receiver_reused": true
+}

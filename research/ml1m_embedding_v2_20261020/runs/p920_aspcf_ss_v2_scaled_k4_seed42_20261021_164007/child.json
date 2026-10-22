@@ -1,0 +1,15 @@
+{
+  "pid": 1739989,
+  "start": "2026-10-21T16:43:28.746124+08:00",
+  "gpu": "0",
+  "command": [
+    "/home/yyx/anaconda3/envs/hzg_py10/bin/python",
+    "-u",
+    "-B",
+    "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/ops/run_v2_scaled_aspcf_20261021.py",
+    "--run-dir",
+    "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/p920_aspcf_ss_v2_scaled_k4_seed42_20261021_164007",
+    "--mode",
+    "train"
+  ]
+}

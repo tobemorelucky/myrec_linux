@@ -1,0 +1,16 @@
+{
+  "global_step": 2,
+  "files": {
+    "v2_rng_state.pth": "6403103a42ea824edf07f5beb645e2a8d3f64f1205e7cb1c3a4b18709bf807e4",
+    "training_args.bin": "9574f139dc6ad4b80663b107aa11d916078bedf472d81462d8dad0162b787c53",
+    "scheduler.pt": "5ebd3a6b9ad305ac4e41e1f0d12b51517d28ae08653fa6c78223b0539acd6258",
+    "trainer_state.json": "10311a2178fe3ea656bef2e3cd72028801df114d829a9f2ea49d15258361c495",
+    "adapter_model.bin": "ce1638acd72d236083b75270a724ea02f8a95851d18a5737b5ca98af419bc87a",
+    "rng_state.pth": "c1971a7f5a4b2dbf37c7eaedcc9ddd90b7f2853c5557f35719c1a2082903b821",
+    "optimizer.pt": "268ddfa11e0be9e896abc696cec11641b14d1dc3524c94f6aaae0f169b8496fb",
+    "v2_extra_trainable.pt": "936e7e4a3a7a0febb83041ef0bd4e480990d146090904ba4649c3a756c02e617",
+    "training_args.json": "be1c760ceb630b51d3370ba1aca2bdb17c6138d4b958d5913b2c01ec06d5c3d4",
+    "adapter_config.json": "f673916334058065c3e3635e3e24a14428d4797197268425e4b0afae84ea2077"
+  },
+  "adapter_only": true
+}

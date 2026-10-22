@@ -1,0 +1,25 @@
+{
+  "label": "B",
+  "name": "PoMRecLLMEmbLinear stable_v2 / BPR",
+  "loss": "original single-negative BPR; no relation or alignment",
+  "exit_code": 0,
+  "training_seconds": 20114.716512594372,
+  "parameter_count": 1474169,
+  "embedding_sha256": "5546240cc16beff4666a74a18cb758f41dbf23f21f46a9082778193501c59aad",
+  "end": "2026-10-21T16:11:44.825291+08:00",
+  "test_called": false,
+  "adopted_existing_training": false,
+  "best_epoch": 157,
+  "end_epoch": 177,
+  "best_train_log_metrics": "HR@5:0.3187,NDCG@5:0.2221",
+  "checkpoint_sha256": "71a82b0d6d4ad2c3a5120f45735e5e1e465d7bbbb8c0d954727d4d4b2d0db8aa",
+  "status": "COMPLETE",
+  "Dev": {
+    "HR@5": 0.31870860927152317,
+    "NDCG@5": 0.22205540926285833,
+    "HR@10": 0.43890728476821195,
+    "NDCG@10": 0.26088402793033044,
+    "HR@20": 0.5697019867549669,
+    "NDCG@20": 0.29406386666221357
+  }
+}

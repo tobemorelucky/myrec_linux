@@ -1,0 +1,96 @@
+{
+  "prompt_sha256": "08538381ddb5882c5f347e1478fe6bf0ec32315df2711e88eb241ebff9a8547f",
+  "tokenizer_sha256": "bcd04f0eadf90287bd26e1a183ac487d8a141b09b06aecb7725bbdd343640f2e",
+  "seed": 42,
+  "movie_count": 3706,
+  "same_two_views": 647,
+  "full": {
+    "512": {
+      "texts": 3706,
+      "max": 901,
+      "median": 142.0,
+      "p95": 318.75,
+      "truncated": 18,
+      "overview_tokens_total": 468929,
+      "overview_tokens_lost": 1841,
+      "base_fields_partly_or_fully_truncated": {
+        "title": 0,
+        "release year": 0,
+        "genres": 0
+      },
+      "eos_retained": true
+    },
+    "1024": {
+      "texts": 3706,
+      "max": 901,
+      "median": 142.0,
+      "p95": 318.75,
+      "truncated": 0,
+      "overview_tokens_total": 468929,
+      "overview_tokens_lost": 0,
+      "base_fields_partly_or_fully_truncated": {
+        "title": 0,
+        "release year": 0,
+        "genres": 0
+      },
+      "eos_retained": true
+    }
+  },
+  "views": {
+    "512": {
+      "texts": 7412,
+      "max": 896,
+      "median": 102.0,
+      "p95": 265.4499999999998,
+      "truncated": 19,
+      "overview_tokens_total": 626830,
+      "overview_tokens_lost": 1991,
+      "base_fields_partly_or_fully_truncated": {
+        "title": 0,
+        "release year": 4,
+        "genres": 4
+      },
+      "eos_retained": true
+    },
+    "1024": {
+      "texts": 7412,
+      "max": 896,
+      "median": 102.0,
+      "p95": 265.4499999999998,
+      "truncated": 0,
+      "overview_tokens_total": 626830,
+      "overview_tokens_lost": 0,
+      "base_fields_partly_or_fully_truncated": {
+        "title": 0,
+        "release year": 0,
+        "genres": 0
+      },
+      "eos_retained": true
+    }
+  },
+  "dynamic_padding": {
+    "512": {
+      "microbatches": 232,
+      "max_batch_length": 512,
+      "mean_batch_max_length": 328.30172413793105,
+      "p95_batch_max_length": 512.0,
+      "padded_tokens": 2434168,
+      "nonpadding_tokens": 838538,
+      "padding_fraction": 0.6555135060521706,
+      "attention_quadratic_proxy": 871935824,
+      "not_wall_time": true
+    },
+    "1024": {
+      "microbatches": 232,
+      "max_batch_length": 896,
+      "mean_batch_max_length": 333.73275862068965,
+      "p95_batch_max_length": 517.5999999999999,
+      "padded_tokens": 2474488,
+      "nonpadding_tokens": 840595,
+      "padding_fraction": 0.6602953823174733,
+      "attention_quadratic_proxy": 922331600,
+      "not_wall_time": true
+    }
+  },
+  "augmentation": "actual title-preserving common.dropout_feature, once before training"
+}

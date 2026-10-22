@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "time": "2026-10-22T10:25:38.396826+08:00",
+  "sha256": "b393145c5520c7018c751938cec01a834ccdd8fe3df1626673ea62a1c8179700",
+  "shape": [
+    3707,
+    1536
+  ],
+  "dtype": "float32",
+  "padding_zero": true,
+  "finite": true,
+  "valid_nonzero_unique_rows": 3706,
+  "mapping_sha256": "d26c890a61c6a2996855d83352931cecd14ff09aa42758013bdc3f9fd9d61280",
+  "bytes": 22775972,
+  "source": "One-shot rental SCP to Windows (SHA) then P920 SCP (SHA); no raw/model weights"
+}

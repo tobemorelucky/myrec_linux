@@ -1,0 +1,97 @@
+{
+  "passed": true,
+  "prompt_sha256": "08538381ddb5882c5f347e1478fe6bf0ec32315df2711e88eb241ebff9a8547f",
+  "mapping_sha256": "d26c890a61c6a2996855d83352931cecd14ff09aa42758013bdc3f9fd9d61280",
+  "coverage_sha256": "652386d137456e7a63ec9335f2176c1b9761029a570f32f16e9ffc8f9104c241",
+  "coverage": {
+    "items": 3706,
+    "source_text_rows": 3859,
+    "source_mapping_rows": 3197,
+    "source_text_target_id_overlap": 3685,
+    "successful_unique_identity_matches": 3684,
+    "title_year_crosschecked": 3196,
+    "publisher_id_without_external_mapping": 488,
+    "duplicate_source_ids": 0,
+    "many_to_one_external_ids": 0,
+    "identity_pending": 1,
+    "missing_text_records": 21,
+    "empty_or_invalid_target_plots": 18,
+    "verified_rich": 3666,
+    "verified_overview": 3666,
+    "overview_coverage": 0.9892066918510524,
+    "overview_missing": 40,
+    "director_coverage": 0.0,
+    "cast_coverage": 0.0,
+    "pending": 40,
+    "ambiguous_observed": 1,
+    "uninspected": 0,
+    "ready_for_rich_scft": true,
+    "genre_taxonomy_warnings": 31,
+    "excluded_source_columns": [
+      "tags",
+      "reviews",
+      "genres"
+    ],
+    "llm_generated_claim": "No LLM generation evidence in publisher documentation; per-record crawl chain incomplete",
+    "license": {
+      "zenodo_deposit": "cc-by-4.0",
+      "attribution_required": true,
+      "underlying_source_rights_not_relicensed": true
+    },
+    "source": {
+      "doi": "10.5281/zenodo.15403972",
+      "paper_doi": "10.1145/3705328.3748162",
+      "repository": "https://github.com/swapUniba/multimodal_ml1m_dbbook_lfm2k",
+      "commit": "e8c90c3f93ed14753fec4905d37c401de2255160"
+    },
+    "inputs": {
+      "research/ml1m_embedding_v2_20261020/inputs/enhance_zenodo_20261020/movies.dat": {
+        "sha256": "0140fc2356357c1a851d0f52e893a1e4d3696df632c4141cea8d5bc3d621f0b9",
+        "bytes": 171308
+      },
+      "research/ml1m_embedding_v2_20261020/inputs/enhance_zenodo_20261020/text_ml1m.tsv": {
+        "sha256": "4676223139ff78710f4451bcca0cc389cca03303db6f4980d96eefc1f90925a3",
+        "bytes": 24319609
+      },
+      "research/ml1m_embedding_v2_20261020/inputs/enhance_zenodo_20261020/ml1m_full_extended_mapping.tsv": {
+        "sha256": "a3b548c2bfe8fa14155ba22900f82c21419cf38f56176f6ae5f31372af15f46d",
+        "bytes": 695506
+      },
+      "data/ml-1m/item2id.json": {
+        "sha256": "d26c890a61c6a2996855d83352931cecd14ff09aa42758013bdc3f9fd9d61280",
+        "bytes": 60856
+      }
+    },
+    "rich_source_sha256": "a762559586a4dc10187b34b17d217a3dfc51821e085a413dd3ef0e4d3a435fe2"
+  },
+  "augmentation": {
+    "items": 3706,
+    "prompt_sha256": "08538381ddb5882c5f347e1478fe6bf0ec32315df2711e88eb241ebff9a8547f",
+    "seed": 42,
+    "audit_order": "actual SCFT input file order",
+    "file_order_is_canonical": true,
+    "identical_two_views": 647,
+    "identical_fraction": 0.17458175930922828,
+    "unaugmented_lengths": {
+      "n": 3706,
+      "min": 28,
+      "p50": 142.0,
+      "p95": 198.0,
+      "max": 212
+    },
+    "view_lengths": {
+      "n": 7412,
+      "min": 19,
+      "p50": 102.0,
+      "p95": 188.0,
+      "max": 203
+    },
+    "field_clipped_items": 864,
+    "truncated_views": 0,
+    "truncated_fraction": 0.0,
+    "different_movie_token_collision_pairs": 0,
+    "contrastive_other_items_full_microbatch": 15,
+    "contrastive_other_items_tail_microbatch": 9,
+    "optimizer_accumulation_does_not_expand_negative_pool": true
+  }
+}

@@ -1,0 +1,18 @@
+test_augmentation_seed_and_real_attributes (__main__.Tests) ... ok
+test_common_pca_and_padding_synthetic_only (__main__.Tests) ... ok
+test_contrastive_fp32_without_formula_change (__main__.Tests) ... ok
+test_mean_imputation_then_centering_explains_zero (__main__.Tests) ... ok
+test_official_processor_and_pair_order (__main__.Tests) ... ok
+test_pool_empty_nonfinite_rejected (__main__.Tests) ... ok
+test_pool_fp32_overflow_prevention (__main__.Tests) ... ok
+test_pool_padding_and_batch_invariance (__main__.Tests) ... ok
+test_prompt_id_validation_and_reject_bad_vectors (__main__.Tests) ... ok
+test_real_mask_forward_and_odd_inference_tiny_model (__main__.Tests) ... ok
+test_static_all_sources (__main__.Tests) ... ok
+test_trainable_tau_stays_fp32 (__main__.Tests) ... ok
+test_write_boundary (__main__.Tests) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.115s
+
+OK

@@ -1,0 +1,14 @@
+{
+  "selected_format": "safetensors only",
+  "files": {
+    "model-00001-of-00002.safetensors": {
+      "bytes": 9976578928,
+      "sha256": "4ec71fd53e99766de38f24753b30c9e8942630e9e576a1ba27b0ec531e87be41"
+    },
+    "model-00002-of-00002.safetensors": {
+      "bytes": 3500297344,
+      "sha256": "41780b5dac322ac35598737e99208d90bdc632a1ba3389ebedbb46a1d8385a7f"
+    }
+  },
+  "seconds": 32.41809900710359
+}

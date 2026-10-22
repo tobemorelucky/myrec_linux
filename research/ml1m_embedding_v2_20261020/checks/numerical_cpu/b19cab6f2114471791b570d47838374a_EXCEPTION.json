@@ -1,0 +1,24 @@
+{
+  "error_type": "RuntimeError",
+  "error": "synthetic interruption",
+  "module_stack": [
+    ""
+  ],
+  "module_input_metadata": [
+    {
+      "module": "",
+      "tensors": [
+        {
+          "shape": [
+            2,
+            2
+          ],
+          "dtype": "torch.float32",
+          "device": "cpu"
+        }
+      ]
+    }
+  ],
+  "checked_ops": 0,
+  "checked_modules": 0
+}

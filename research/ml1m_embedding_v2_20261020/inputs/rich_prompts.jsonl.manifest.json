@@ -1,0 +1,20 @@
+{
+  "records": 3706,
+  "rich_records": 3666,
+  "inputs": {
+    "research/ml1m_embedding_v2_20261020/inputs/enhance_zenodo_20261020/movies.dat": {
+      "bytes": 171308,
+      "sha256": "0140fc2356357c1a851d0f52e893a1e4d3696df632c4141cea8d5bc3d621f0b9"
+    },
+    "data/ml-1m/item2id.json": {
+      "bytes": 60856,
+      "sha256": "d26c890a61c6a2996855d83352931cecd14ff09aa42758013bdc3f9fd9d61280"
+    },
+    "research/ml1m_embedding_v2_20261020/inputs/rich_zenodo_20261020/rich_verified.json": {
+      "bytes": 7027428,
+      "sha256": "a762559586a4dc10187b34b17d217a3dfc51821e085a413dd3ef0e4d3a435fe2"
+    }
+  },
+  "prompt_sha256": "08538381ddb5882c5f347e1478fe6bf0ec32315df2711e88eb241ebff9a8547f",
+  "rich_source_validated": true
+}

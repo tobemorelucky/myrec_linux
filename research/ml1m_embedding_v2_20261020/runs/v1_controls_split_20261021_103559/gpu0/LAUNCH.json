@@ -1,0 +1,16 @@
+{
+  "pid": 1706612,
+  "gpu": 0,
+  "time": "2026-10-21T10:36:29.917823+08:00",
+  "command": [
+    "nohup",
+    "/home/yyx/anaconda3/envs/hzg_py10/bin/python",
+    "-u",
+    "-B",
+    "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/ops/v1_controls_queue_20261021.py",
+    "--queue",
+    "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/v1_controls_split_20261021_103559/gpu0",
+    "--gpu",
+    "0"
+  ]
+}

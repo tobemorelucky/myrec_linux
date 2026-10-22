@@ -1,0 +1,22 @@
+{
+  "exit_code": 0,
+  "start": "2026-10-21T18:15:00.413216+08:00",
+  "end": "2026-10-21T18:46:09.096469+08:00",
+  "training_seconds": 1868.6833171937615,
+  "test_called": false,
+  "best_epoch": 35,
+  "end_epoch": 55,
+  "checkpoint_sha256": "9b91b25d6ee7aa5d63424b9de4bea6b7b6aa5fa746b40583c7c12c265a3c76fa",
+  "Dev": {
+    "HR@5": 0.36241721854304637,
+    "NDCG@5": 0.261577000166368,
+    "HR@10": 0.47052980132450334,
+    "NDCG@10": 0.2966088368504463,
+    "HR@20": 0.5769867549668874,
+    "NDCG@20": 0.32356365050689073
+  },
+  "parameter_count": 405894,
+  "embedding_sha256": "70630546070652cd926fa13e9eff89de7e052d34e9ad0cfbc72b03376df702af",
+  "NDCG5_delta_vs_V1_Rebuilt": -0.01055786838800854,
+  "NDCG5_relative_vs_V1_Rebuilt": -0.03879645575774103
+}

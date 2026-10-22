@@ -1,0 +1,32 @@
+{
+  "files": {
+    "main.py": "6bfbd7caedf7fb336ea03686295529d07cff041d828f21340e0008bffe86bc2f",
+    "models/BaseModel.py": "57c1fa6ceb582a75d006ed6765d79a3593e58e097317063e92f687e5e4a73150",
+    "helpers/BaseRunner.py": "b0417f18bd4793c079555fe237a787474237597e1042de6f4d429b50aae93fbc",
+    "helpers/SeqReader.py": "74ed2b2e5aec81bdbb6f8c3acdcfa233d86499faa90e455504b7739fd0e5176e",
+    "models/sequential/LLMMIRec.py": "3ef539690b451c44aa3acab84a180d8b26a5c9aab957f3ffa22208461d0e1350",
+    "models/sequential/LLMMIRecASPCF.py": "08dfe95d6fa60773f5d34aafef422e29b7254ce7c1ca9963da956118a490ffe8",
+    "models/sequential/LLMMIRecASPCFSampledSoftmax.py": "a74f27deac0e15ab189345d57179ca1e80050a4acb68788d2ae335e9218669df",
+    "models/sequential/llmmi_components.py": "d71903c5a54391416630f00fa8e1aef1e6ca6b414f7dd3d064b67c8beb8c93f6",
+    "models/sequential/llmmi_utils.py": "ae33b3e4e5a76146f666b91fdc58a7b3675b15b13297d9df96352e643225c96c",
+    "models/sequential/PoMRec.py": "8afdee06b87c5d07d59ed24a897a5afb56113e9b7b614bd5c9a1ec1a3b8adbbe",
+    "models/sequential/PoMRecLLMEmbLinear.py": "5af66b8dcc27be3939bb9d10ef896f6167546066589c3724fb3267fb398b45bb",
+    "models/sequential/LLMMIRecCAISD.py": "d779f78dd73167f4410b6b30443764d911ff44d119d0efc08187881adc694cc2",
+    "research/ml1m_embedding_v2_20261020/ops/v1_controls_entry_20261021.py": "d3a817103d37d7e840f9b1dd0919014d5c82756e5f2513e3c3a834d3b95079e5",
+    "research/ml1m_embedding_v2_20261020/ops/v1_controls_queue_20261021.py": "ad03f7bf464514c25b557dff7522bc6d530ecf50341aca1da19784bb0cb983b5"
+  },
+  "data": {
+    "train.csv": "d4d11c18c2984da301842ad117e00bbedb477058a52314aebc0d1fefd26b85ff",
+    "dev.csv": "cb0c538f4331a2cf68b7a54968421fed7f43ac693f962985fa1350e28dd626b5",
+    "SeqReader.pkl": "66b51d76455a0a80acb05655c5ecae43b0536e63a3d6e6d0af2edda43eb13ec3",
+    "item2id.json": "d26c890a61c6a2996855d83352931cecd14ff09aa42758013bdc3f9fd9d61280"
+  },
+  "embedding_sha256": "5546240cc16beff4666a74a18cb758f41dbf23f21f46a9082778193501c59aad",
+  "job_sha256": {
+    "A": "cb699f1fcd9b46a1d0c0bce780a60c5cfc422402847d18c4643174155eb7f491",
+    "B": "44528012775e13361ddfff43f9d67d4d4380a1bb0a839cc800278d259d0b2229",
+    "C": "629e358256037c6fa2c0d352746d5ba381bfbd1d7d4e9016ef3af1debfcc1ad0"
+  },
+  "no_Test": true,
+  "only_new_files": "isolated entry/queue/config/results and derived teacher; no model/Reader/Runner modifications"
+}

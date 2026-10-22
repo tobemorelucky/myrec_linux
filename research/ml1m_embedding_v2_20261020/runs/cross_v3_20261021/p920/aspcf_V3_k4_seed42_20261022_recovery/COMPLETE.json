@@ -1,0 +1,37 @@
+{
+  "exit_code": 0,
+  "start": "2026-10-22T10:25:58.333940+08:00",
+  "end": "2026-10-22T11:09:14.403313+08:00",
+  "training_seconds": 2596.0694578513503,
+  "test_called": false,
+  "best_epoch": 55,
+  "end_epoch": 75,
+  "checkpoint_sha256": "e66cf0e0ac0b1fd3af8d9b48055b23064b9f511e735e273ff2020cb3f7417ee8",
+  "Dev": {
+    "HR@5": 0.36688741721854307,
+    "NDCG@5": 0.26761629440212475,
+    "HR@10": 0.4728476821192053,
+    "NDCG@10": 0.30191117457273453,
+    "HR@20": 0.5769867549668874,
+    "NDCG@20": 0.3283036207459174
+  },
+  "parameter_count": 405894,
+  "embedding_sha256": "b393145c5520c7018c751938cec01a834ccdd8fe3df1626673ea62a1c8179700",
+  "NDCG5_delta_vs_V1_Rebuilt": -0.004518574152251764,
+  "NDCG5_relative_vs_V1_Rebuilt": -0.016604171954351696,
+  "variant": "V3",
+  "Test": {
+    "HR@5": 0.3302980132450331,
+    "NDCG@5": 0.24152806413525485,
+    "HR@10": 0.4332781456953642,
+    "NDCG@10": 0.27486820498708003,
+    "HR@20": 0.5375827814569536,
+    "NDCG@20": 0.30124746955138676
+  },
+  "train_complete": true,
+  "Dev_best_selected": true,
+  "Test_accepted": true,
+  "exploratory": true,
+  "all_epoch_loss_finite": true,
+  "complete_epochs": 75
+}

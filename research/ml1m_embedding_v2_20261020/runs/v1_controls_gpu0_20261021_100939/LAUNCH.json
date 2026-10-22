@@ -1,0 +1,24 @@
+{
+  "pid": 1703457,
+  "gpu": 0,
+  "started": "2026-10-21T10:16:45.688908+08:00",
+  "queue_dir": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/v1_controls_gpu0_20261021_100939",
+  "command": [
+    "nohup",
+    "/home/yyx/anaconda3/envs/hzg_py10/bin/python",
+    "-u",
+    "-B",
+    "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/ops/v1_controls_queue_20261021.py",
+    "--queue",
+    "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/v1_controls_gpu0_20261021_100939"
+  ],
+  "jobs": [
+    "A",
+    "B",
+    "C"
+  ],
+  "test_forbidden": true,
+  "no_GPU1_access": true,
+  "all_smokes_passed": true,
+  "all_embed_sha256": "5546240cc16beff4666a74a18cb758f41dbf23f21f46a9082778193501c59aad"
+}

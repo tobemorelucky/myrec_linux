@@ -1,0 +1,22 @@
+{
+  "dataset": "ML-1M",
+  "raw_movies": {
+    "path": "E:/work/dataset/meta_ml1m/ml-1m/movies.dat",
+    "rows": 3883,
+    "sha256": "0140fc2356357c1a851d0f52e893a1e4d3696df632c4141cea8d5bc3d621f0b9"
+  },
+  "mapped_items": 3706,
+  "mapping_sha256": "d26c890a61c6a2996855d83352931cecd14ff09aa42758013bdc3f9fd9d61280",
+  "base_prompt_sha256": "e399ec0c6e58a85f6b1525d878f4865bc700199a32c3ef939e09bcf43d37e40d",
+  "base_fields": [
+    "title",
+    "year",
+    "genres"
+  ],
+  "rich_fields": [
+    "plot",
+    "themes"
+  ],
+  "rich_status": "not_collected_not_frozen",
+  "ratings_or_user_statistics": false
+}

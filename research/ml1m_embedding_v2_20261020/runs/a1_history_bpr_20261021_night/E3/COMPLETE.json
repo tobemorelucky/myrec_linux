@@ -1,0 +1,34 @@
+{
+  "exit_code": 0,
+  "best_epoch": 146,
+  "end_epoch": 166,
+  "training_seconds": 6239.202768648975,
+  "checkpoint_sha256": "49b9a7829292ed055e511fb8c4199255fd194f534fcbcc189f530175051321cd",
+  "train_complete": true,
+  "Dev_best_selected": true,
+  "Test_accepted": true,
+  "time": "2026-10-22T02:43:18.752932+08:00",
+  "Dev": {
+    "HR@5": 0.32764900662251656,
+    "NDCG@5": 0.23095272145902226,
+    "HR@10": 0.4566225165562914,
+    "NDCG@10": 0.2724759806243823,
+    "HR@20": 0.5932119205298013,
+    "NDCG@20": 0.30684660421395754
+  },
+  "Test": {
+    "HR@5": 0.30033112582781457,
+    "NDCG@5": 0.2111189049413576,
+    "HR@10": 0.43559602649006623,
+    "NDCG@10": 0.25472262472539386,
+    "HR@20": 0.5632450331125828,
+    "NDCG@20": 0.2869296657980565
+  },
+  "model": "LLMMIRecCAISD",
+  "mechanism": "CAISD uniform + TASID asymmetric",
+  "Loss": "BPR+relation+profile+TASID",
+  "embedding_sha256": "03cf9649844da2c172487a0f552a49a4d331d8262135e3b70e48d6e772ad7905",
+  "teacher_sha256": "651eb74d28d3418a1cfd18510bbee229b952bbc6c83d96dfcaf01b54148c8a01",
+  "parameter_count": 407974,
+  "exploratory": true
+}

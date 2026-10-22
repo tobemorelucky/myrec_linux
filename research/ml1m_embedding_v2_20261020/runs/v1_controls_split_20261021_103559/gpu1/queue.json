@@ -1,0 +1,61 @@
+{
+  "gpu": 1,
+  "jobs": [
+    {
+      "label": "B",
+      "name": "PoMRecLLMEmbLinear stable_v2 / BPR",
+      "loss": "original single-negative BPR; no relation or alignment",
+      "config": {
+        "dataset": "ml-1m",
+        "path": "./data/",
+        "gpu": "1",
+        "random_seed": 42,
+        "emb_size": 64,
+        "history_max": 20,
+        "l2": 1e-06,
+        "optimizer": "Adam",
+        "eval_batch_size": 256,
+        "num_neg": 1,
+        "epoch": 200,
+        "early_stop": 10,
+        "metric": "NDCG,HR",
+        "topk": "5,10,20",
+        "num_workers": 5,
+        "test_epoch": -1,
+        "test_all": 0,
+        "dev_only": 1,
+        "regenerate": 0,
+        "train": 1,
+        "load": 0,
+        "llm_emb_path": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/imported_assets/v1_rebuilt_20261020/base_pca.pkl",
+        "model_name": "PoMRecLLMEmbLinear",
+        "attn_size": 8,
+        "K": 3,
+        "prompt_num": 4,
+        "n_layers": 2,
+        "lamb": 3.0,
+        "lr": 0.0001,
+        "batch_size": 256,
+        "dropout": 0,
+        "grad_clip": 1.0,
+        "llm_scale": 0.1,
+        "use_llmemb": 0,
+        "llm_fuse": 0,
+        "log_file": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/v1_controls_gpu0_20261021_100939/B/train.log",
+        "model_path": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/v1_controls_gpu0_20261021_100939/B/best.pt"
+      },
+      "output_dir": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/v1_controls_gpu0_20261021_100939/B",
+      "embedding_sha256": "5546240cc16beff4666a74a18cb758f41dbf23f21f46a9082778193501c59aad",
+      "max_wall_seconds": 0,
+      "job_file": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/v1_controls_gpu0_20261021_100939/B/job_gpu1_unlimited.json"
+    }
+  ],
+  "asset_manifest": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/imported_assets/v1_rebuilt_20261020/P920_MANIFEST.json",
+  "state": "PREPARING",
+  "test_forbidden": true,
+  "queue_order": [
+    "B"
+  ],
+  "baseline_dir": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/p920_aspcf_ss_v1_rebuilt_k4_seed42_20261020_214225",
+  "previous_queue": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/v1_controls_gpu0_20261021_100939"
+}

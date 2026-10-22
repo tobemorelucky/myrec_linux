@@ -1,0 +1,7 @@
+{
+  "pid": 2000143,
+  "state": "preparing",
+  "time": "2026-10-22T10:25:38.544687+08:00",
+  "gpu": 0,
+  "release": "POSIX lock closes on any exit; no persistent logical reservation"
+}

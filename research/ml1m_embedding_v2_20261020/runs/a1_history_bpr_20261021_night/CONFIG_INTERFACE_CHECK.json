@@ -1,0 +1,25 @@
+{
+  "passed": true,
+  "six_configs": true,
+  "pair_differences": {
+    "E3-E4": {
+      "tasid_student_mode": [
+        "asymmetric",
+        "llm_only"
+      ]
+    },
+    "E5-E6": {
+      "lambda_hsr": [
+        0.0,
+        0.01
+      ]
+    },
+    "E2-E4": {
+      "tasid_mode": [
+        "none",
+        "target"
+      ]
+    }
+  },
+  "time": "2026-10-21T21:15:00.223477+08:00"
+}

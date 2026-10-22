@@ -1,0 +1,47 @@
+{
+  "exploratory": true,
+  "inputs": {
+    "V1_Rebuilt": {
+      "path": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/imported_assets/v1_rebuilt_20261020/base_pca.pkl",
+      "sha256": "5546240cc16beff4666a74a18cb758f41dbf23f21f46a9082778193501c59aad",
+      "P5": 8.317484330080548,
+      "P50": 10.012374130344702,
+      "P95": 11.876376265681458,
+      "mean": 10.05267084651564,
+      "std": 1.0922887404489625
+    },
+    "V2_Rich": {
+      "path": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/imported_assets/v2_rich512_l2_d400_20261021/rich_pca.pkl",
+      "sha256": "e9e7f7d7fd2cdbf23c79102842826275e785314413f08e7e08ab28c557eee3eb",
+      "P5": 89.59554549607383,
+      "P50": 99.63453953673128,
+      "P95": 105.61041097531019,
+      "mean": 98.79720783128094,
+      "std": 5.7911399246980535
+    }
+  },
+  "scale": 0.10049099616356975,
+  "V2_over_V1": 9.951140282979129,
+  "output": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/p920_aspcf_ss_v2_scaled_k4_seed42_20261021_164007/rich_scaled_pca.pkl",
+  "output_sha256": "b5a71f1cd8ebb9b4a74274707e03f79ffcf61303c44204b5dc732d5d9ff580e3",
+  "shape": [
+    3707,
+    1536
+  ],
+  "dtype": "float32",
+  "mapping_sha256": "d26c890a61c6a2996855d83352931cecd14ff09aa42758013bdc3f9fd9d61280",
+  "padding_zero": true,
+  "valid_items": 3706,
+  "scaled_norms": {
+    "P5": 9.003545618942631,
+    "P50": 10.012374146211956,
+    "P95": 10.61289540806897,
+    "mean": 9.92822983309768,
+    "std": 0.5819574200284375
+  },
+  "max_direction_cosine_error": 6.661338147750939e-16,
+  "formula": "float32(float64(V2)*global_positive_scale); row0=0",
+  "no_PCA_refit": true,
+  "no_per_item_normalization": true,
+  "source_assets_unchanged": true
+}

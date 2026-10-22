@@ -1,0 +1,34 @@
+{
+  "exit_code": 0,
+  "best_epoch": 81,
+  "end_epoch": 101,
+  "training_seconds": 2356.6291660256684,
+  "checkpoint_sha256": "fbc776b0ad077439dce9910a58e836ae9e3db4ab763dfeaae3a476f1ee1b1383",
+  "train_complete": true,
+  "Dev_best_selected": true,
+  "Test_accepted": true,
+  "time": "2026-10-22T11:44:00.592367+08:00",
+  "Dev": {
+    "HR@5": 0.3271523178807947,
+    "NDCG@5": 0.227160850662912,
+    "HR@10": 0.4552980132450331,
+    "NDCG@10": 0.26849679823060024,
+    "HR@20": 0.5836092715231788,
+    "NDCG@20": 0.30090230253598654
+  },
+  "Test": {
+    "HR@5": 0.3031456953642384,
+    "NDCG@5": 0.20965422855732735,
+    "HR@10": 0.4236754966887417,
+    "NDCG@10": 0.24859246573885296,
+    "HR@20": 0.5673841059602649,
+    "NDCG@20": 0.285008470973049
+  },
+  "model": "LLMMIRecHSDIR",
+  "mechanism": "HSDIR hierarchical absolute lambda_hsr.01",
+  "Loss": "BPR+relation+HSR",
+  "embedding_sha256": "03cf9649844da2c172487a0f552a49a4d331d8262135e3b70e48d6e772ad7905",
+  "teacher_sha256": "c518f9c2e6e659f0d43e060bb285684224348fa77d88521f5f0c0980fabb755a",
+  "parameter_count": 405894,
+  "exploratory": true
+}

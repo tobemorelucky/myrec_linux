@@ -1,0 +1,8 @@
+{
+  "progress_parse": true,
+  "nonfinite_detection": true,
+  "monitor_interval_seconds": 1800,
+  "final_exit_sample_without_wait": true,
+  "detached_session": true,
+  "no_model_executed": true
+}

@@ -1,0 +1,21 @@
+{
+  "approved": true,
+  "time": "2026-10-21T18:27:54.520822+08:00",
+  "short_proof_sha256": "c4e6c306a0377f4d24998eaa5081b3481e802828af48386d31980bbc85adc87f",
+  "numerical_evidence": "12 finite effective updates;448/448 LoRA tensors changed; restore true; fixed-movie no collapse; matched real batch teacher/student entropy improved",
+  "student_temperature": 0.2,
+  "teacher_temperature": 0.2,
+  "max_formal_lora_runs": 1,
+  "max_steps": 800,
+  "hard_limit_hours": 5,
+  "fresh_base_new_LoRA": true,
+  "cross_review": {
+    "time": "2026-10-21T18:27:09+08:00",
+    "A1_complete": false,
+    "B0_complete": false,
+    "A1_failed": false,
+    "B0_failed": false,
+    "verdict": "No completed strong opposite cross result available at pre-production review; no Test-driven config selection"
+  },
+  "user_authorization": "Current explicit conditional V3 authorization; no new human approval needed after passed admission"
+}

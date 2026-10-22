@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "loss": 0.700900673866272,
+  "original_loss_function": "models.sequential.LLMMIRecASPCF.LLMMIRecASPCF.loss",
+  "forward_keys": [
+    "prediction",
+    "_relation_ids",
+    "loss_relation"
+  ],
+  "query_grad_norm": 1.5283324952819477e-11,
+  "parameter_count": 405894,
+  "peak_reserved_bytes": 304087040,
+  "initial_parameter_sha256": "06a4a6ba49230f2ecb57b349416ed25852ad99e6c9c7608a5819d6c9e00b867f",
+  "optimizer_steps": 0,
+  "Train_only": true,
+  "embedding_sha256": "03cf9649844da2c172487a0f552a49a4d331d8262135e3b70e48d6e772ad7905",
+  "teacher_sha256": null
+}

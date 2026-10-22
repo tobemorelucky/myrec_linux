@@ -1,0 +1,12 @@
+{
+  "path": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/cross_v3_20261021/p920/incoming/A1_oldlora_rich512/rich_pca.pkl",
+  "sha256": "03cf9649844da2c172487a0f552a49a4d331d8262135e3b70e48d6e772ad7905",
+  "mapping_sha256": "d26c890a61c6a2996855d83352931cecd14ff09aa42758013bdc3f9fd9d61280",
+  "shape": [
+    3707,
+    1536
+  ],
+  "dtype": "float32",
+  "padding_zero": true,
+  "valid_items": 3706
+}

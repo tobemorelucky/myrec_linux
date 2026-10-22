@@ -1,0 +1,15 @@
+{
+  "stage": "encode",
+  "variant": "V2-Base",
+  "model_path": "/root/autodl-tmp/LLMemb/llama-7b",
+  "tokenizer_path": "/root/autodl-tmp/pomrec/saved/lora-0722_avg_ml1m/checkpoint-1000",
+  "adapter_path": "/root/autodl-tmp/pomrec/saved/lora-0722_avg_ml1m/checkpoint-1000",
+  "allow_legacy_adapter_without_tau": true,
+  "mapping": "@V2_ROOT@/inputs/item2id.json",
+  "prompt": "@V2_ROOT@/inputs/base_prompts.jsonl",
+  "output_dir": "@V2_ROOT@/runs/encode_base",
+  "seed": 42,
+  "max_source_length": 256,
+  "batch_size": 1,
+  "precision": "fp16"
+}

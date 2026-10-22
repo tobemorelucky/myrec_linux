@@ -1,0 +1,32 @@
+{
+  "stage": "scft",
+  "model_path": "/root/autodl-tmp/LLMemb/llama-7b",
+  "prompt": "@V2_ROOT@/inputs/rich_prompts.jsonl",
+  "output_dir": "@V2_ROOT@/runs/scft_rich_seed42",
+  "seed": 42,
+  "max_source_length": 256,
+  "batch_size": 16,
+  "gradient_accumulation_steps": 8,
+  "max_steps": 1000,
+  "learning_rate": 0.0002,
+  "precision": "fp16",
+  "gradient_checkpointing": true,
+  "target_modules": "q_proj,k_proj,v_proj,o_proj,down_proj,gate_proj,up_proj",
+  "mapping": "/root/autodl-tmp/pomrec/data/ml-1m/item2id.json",
+  "source_manifest": "@V2_ROOT@/configs/source_provenance.json",
+  "weight_lock": "@V2_ROOT@/configs/base_weights_lock.json",
+  "expected_mapping_sha256": "d26c890a61c6a2996855d83352931cecd14ff09aa42758013bdc3f9fd9d61280",
+  "expected_prompt_sha256": null,
+  "min_disk_free_gib": 8,
+  "min_gpu_free_gib": 24,
+  "tokenizer_path": "/root/autodl-tmp/LLMemb/llama-7b",
+  "variant": "V2-Rich",
+  "readiness_certificate": "@V2_ROOT@/inputs/RICH_READY.json",
+  "readiness_policy": "@V2_ROOT@/configs/rich_readiness_policy.json",
+  "field_caps": {
+    "overview": 160,
+    "plot": 160,
+    "director": 24,
+    "cast": 24
+  }
+}

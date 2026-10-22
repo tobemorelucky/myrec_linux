@@ -1,0 +1,22 @@
+{
+  "reference": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/p920_aspcf_ss_v1_rebuilt_k4_seed42_20261020_214225",
+  "sources": {
+    "main.py": "6bfbd7caedf7fb336ea03686295529d07cff041d828f21340e0008bffe86bc2f",
+    "models/sequential/LLMMIRecASPCFSampledSoftmax.py": "a74f27deac0e15ab189345d57179ca1e80050a4acb68788d2ae335e9218669df",
+    "models/sequential/LLMMIRecASPCF.py": "08dfe95d6fa60773f5d34aafef422e29b7254ce7c1ca9963da956118a490ffe8",
+    "models/sequential/llmmi_components.py": "d71903c5a54391416630f00fa8e1aef1e6ca6b414f7dd3d064b67c8beb8c93f6",
+    "models/sequential/llmmi_utils.py": "ae33b3e4e5a76146f666b91fdc58a7b3675b15b13297d9df96352e643225c96c",
+    "helpers/BaseRunner.py": "b0417f18bd4793c079555fe237a787474237597e1042de6f4d429b50aae93fbc",
+    "helpers/SeqReader.py": "74ed2b2e5aec81bdbb6f8c3acdcfa233d86499faa90e455504b7739fd0e5176e",
+    "models/BaseModel.py": "57c1fa6ceb582a75d006ed6765d79a3593e58e097317063e92f687e5e4a73150"
+  },
+  "data_sha256": {
+    "train.csv": "d4d11c18c2984da301842ad117e00bbedb477058a52314aebc0d1fefd26b85ff",
+    "dev.csv": "cb0c538f4331a2cf68b7a54968421fed7f43ac693f962985fa1350e28dd626b5",
+    "SeqReader.pkl": "66b51d76455a0a80acb05655c5ecae43b0536e63a3d6e6d0af2edda43eb13ec3"
+  },
+  "embedding_sha256": "03cf9649844da2c172487a0f552a49a4d331d8262135e3b70e48d6e772ad7905",
+  "from_scratch": true,
+  "test_forbidden": true,
+  "launcher_sha256": "a3c41a95ec8d7b3a76e438a251c4e02780bbf1a9fcf250853ae085ac8ec39bdd"
+}

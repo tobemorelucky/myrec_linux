@@ -1,0 +1,16 @@
+test_adapter_save_load_extra_and_no_full_backbone (__main__.Production) ... ok
+test_original_epoch_accumulation_boundaries (__main__.Production) ... ok
+test_original_scft_has_finite_task_gradients (__main__.Production) ... ok
+test_quality_blocks_nearzero_and_duplicates (__main__.Production) ... ok
+test_tau_has_no_effect_on_inference (__main__.Production) ... ok
+test_title_identity_kept_and_two_views (__main__.Production) ... ok
+test_trainer_checkpoint_contains_training_state (__main__.Production) ... /home/yyx/anaconda3/envs/hzg_py10/lib/python3.10/site-packages/transformers/optimization.py:411: FutureWarning: This implementation of AdamW is deprecated and will be removed in a future version. Use the PyTorch implementation torch.optim.AdamW instead, or set `no_deprecation_warning=True` to disable this warning
+  warnings.warn(
+ok
+test_truncation_is_bounded_and_counted (__main__.Production) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 1.336s
+
+OK
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

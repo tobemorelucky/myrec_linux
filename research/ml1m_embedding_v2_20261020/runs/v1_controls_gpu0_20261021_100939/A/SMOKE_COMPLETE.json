@@ -1,0 +1,31 @@
+{
+  "passed": true,
+  "model": "LLMEmb-style LLMMIRec llm_replace GELU / filtered Softmax",
+  "embedding_path": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/imported_assets/v1_rebuilt_20261020/base_pca.pkl",
+  "embedding_sha256": "5546240cc16beff4666a74a18cb758f41dbf23f21f46a9082778193501c59aad",
+  "parameter_count": 428548,
+  "parameters_with_task_gradient": 428548,
+  "loss": "filtered Batch Softmax tau1, no relation",
+  "train_batch": 1024,
+  "forward_backward_seconds": [
+    0.5361697878688574,
+    0.07120267301797867,
+    0.016953946091234684
+  ],
+  "loss_samples": [
+    6.582202911376953,
+    6.582207202911377,
+    6.582213878631592
+  ],
+  "peak_allocated_bytes": 2154244608,
+  "peak_reserved_bytes": 2422210560,
+  "evaluation_shape": [
+    256,
+    1001
+  ],
+  "duplicate_slots_retained": true,
+  "train_prefix_only": true,
+  "optimizer_steps": 0,
+  "A_forward_exact_original_LLMMIRec": true,
+  "no_Test": true
+}

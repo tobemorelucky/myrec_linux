@@ -1,0 +1,264 @@
+{
+  "url": "https://codeload.github.com/Applied-Machine-Learning-Lab/LLMEmb/tar.gz/3458a5e225062e94b4f1a01e41f3ec82089f0407",
+  "commit": "3458a5e225062e94b4f1a01e41f3ec82089f0407",
+  "license": "MIT",
+  "archive_sha256": "c197f7c0299ec5fa23f8b3b54402d53074b268fad680d25877d4cab66a53feec",
+  "files": {
+    "LICENSE": {
+      "bytes": 1055,
+      "sha256": "28d0000d8857280206c926237c256ae8fe190e121415f1f17991586b7fb7d9e7"
+    },
+    "README.md": {
+      "bytes": 3445,
+      "sha256": "15dcda9f92f443e61c85eb5839ad7594dbdaa6ceba439169c120e91f7b118aee"
+    },
+    "data/beauty/item_prompt.ipynb": {
+      "bytes": 4808,
+      "sha256": "db9e249b294636f2282971984f904a858a735f7f3856b8133bc213a24059706d"
+    },
+    "data/convert_inter.ipynb": {
+      "bytes": 1684,
+      "sha256": "008d01d9f33a615eddb33bd7ca9b67bca65c5ba60ebe18e5bd1bfc9d47ebc863"
+    },
+    "data/data_process.py": {
+      "bytes": 21915,
+      "sha256": "7556f5a811968def1a67a7ab09bdc83c5a73835f9c8216b1f523c361d1a4304b"
+    },
+    "data/fashion/item_prompt.ipynb": {
+      "bytes": 5280,
+      "sha256": "bafaf829efcd7aea6eeb74f3c53cbf526436515d6fd0971d0c1e60f24dfb7b21"
+    },
+    "data/yelp/item_prompt.ipynb": {
+      "bytes": 4547,
+      "sha256": "e3901512597e17ec19e8f4f5a338f00664e94898a75a81ce52abe302f9e07673"
+    },
+    "experiments/beauty/pretrain/avg.bash": {
+      "bytes": 2289,
+      "sha256": "1ab3209aea4015597ffcadc85e2841e9a6ce15d3339b8d423a8a9819b6a79744"
+    },
+    "experiments/beauty/pretrain/last.bash": {
+      "bytes": 2216,
+      "sha256": "34f7d31bb1319112be8b0b3f1f4fe29374418b69527cd604d44f19f75ad83362"
+    },
+    "experiments/beauty/pretrain/said.bash": {
+      "bytes": 2238,
+      "sha256": "30bdc2cb0a45fcb688a94ef4a933d6d7459f2ad0a2e1b963c5a3ccffaf57c120"
+    },
+    "experiments/beauty/pretrain/tslrec.bash": {
+      "bytes": 2228,
+      "sha256": "94432042f26d5075f65dffeedceca40c6f9a8c5db51cf2aa996842cb38ac0180"
+    },
+    "experiments/beauty/srs/ablation.bash": {
+      "bytes": 3162,
+      "sha256": "2f83459ffabd9312edc1ac084988e6fa260942bf6767e80970abeb776f26d3b3"
+    },
+    "experiments/beauty/srs/general.bash": {
+      "bytes": 1256,
+      "sha256": "29e8e095ec0beb95c6724975d12814cd2c3aaa305578f1916eb44fe3e27c8c30"
+    },
+    "experiments/beauty/srs/llm2x.bash": {
+      "bytes": 1975,
+      "sha256": "0e5e3e07e38275b7bad1db2861615fd308e4fb4c226d7d2571ef562653983701"
+    },
+    "experiments/beauty/srs/llmemb.bash": {
+      "bytes": 2306,
+      "sha256": "6e3eaf38f2933a34f104c83f855fbf325e51abcdf9ab7757b10a0a33ca058458"
+    },
+    "experiments/beauty/srs/said.bash": {
+      "bytes": 1984,
+      "sha256": "fafff5b83a377b5cf5e92945876fd255d8125178695c81477cbb679e5d8f9d6b"
+    },
+    "experiments/beauty/srs/tslrec.bash": {
+      "bytes": 1981,
+      "sha256": "4066ea71610e887526782d074aec391be12ee1484a5959ed2686b38f3be56f49"
+    },
+    "experiments/fashion/rat/llmemb.bash": {
+      "bytes": 2395,
+      "sha256": "c18929489c8edc9cb2d4658736d01b9f7461632a4e692e14a367e5025656fbbd"
+    },
+    "experiments/fashion/scft/avg.bash": {
+      "bytes": 2229,
+      "sha256": "3d1edd320d96d30548fb43bba278820e138137b621c938428f247f06fac3428d"
+    },
+    "experiments/yelp/rat/general.bash": {
+      "bytes": 1166,
+      "sha256": "0d93100eeca4a6dd12637a4e3476f766b8e135faee5fa81644f76efd251686da"
+    },
+    "experiments/yelp/rat/llmemb.bash": {
+      "bytes": 2299,
+      "sha256": "f46811d2b679765be870a0a9266a8889ac4d4489b6f6cc7070d023081a594f64"
+    },
+    "experiments/yelp/scft/avg.bash": {
+      "bytes": 2215,
+      "sha256": "1e92539824e674d0812025d7c84521dda7e4b1ccc83053b215404772eb61500c"
+    },
+    "generators/bert_generator.py": {
+      "bytes": 865,
+      "sha256": "1346882c01f04d8de66cac988def61bf6afd0b4275299cb16e387a2ae4c8a240"
+    },
+    "generators/data.py": {
+      "bytes": 5591,
+      "sha256": "e63095884b49cf5de181f852c1e17cf9a2d7afdabf3615b62e08f3cf5da0e3e0"
+    },
+    "generators/generator.py": {
+      "bytes": 4927,
+      "sha256": "4fcd7b2c29091e29c5d58728b2bcc1479118482a4a1e6409f42ff31f90b519df"
+    },
+    "llm/arguments.py": {
+      "bytes": 9833,
+      "sha256": "d9f7aa50ec98a48fb7003dac20a7168a757da50d88422c1f3ea7e5bb376c6d16"
+    },
+    "llm/data_processor/collator.py": {
+      "bytes": 2137,
+      "sha256": "8f8e2cc1f6ff31fa2a3d43fdb0071e8a612974b7a758e69168f87310f2b75631"
+    },
+    "llm/data_processor/llama.py": {
+      "bytes": 6373,
+      "sha256": "bedc52f00b850759f41de809c47d9316c48b0b1b94d34d2bd921529076a1dc1a"
+    },
+    "llm/ds.config": {
+      "bytes": 1212,
+      "sha256": "d64ed4558184adcc58bf3b783377550bbbf1c93557cdadea66845e937aaaea81"
+    },
+    "llm/llama.py": {
+      "bytes": 6041,
+      "sha256": "25875c167e17679101a1890f716b4190b6eb145a63056b89377e00bbd9aa97c4"
+    },
+    "llm/lora_cls.py": {
+      "bytes": 14097,
+      "sha256": "782238c5e2fcc926f9fac18046a72691387a4615cfe15e7540db88ff7c71ff84"
+    },
+    "llm/peft/__init__.py": {
+      "bytes": 1762,
+      "sha256": "c9e857d56f895a0293c896b9c487a45ae9377ceb4d1090dc7f1eac6d3c2834ef"
+    },
+    "llm/peft/import_utils.py": {
+      "bytes": 720,
+      "sha256": "1318f47203ce052affdf2e5a47ea86cfbc9eb0385aa9704a10376ebd261b85cc"
+    },
+    "llm/peft/mapping.py": {
+      "bytes": 4427,
+      "sha256": "913341b2ff20e8f400907b4f2fa756ae8d41db69759c23115b3e1e3c5597d36c"
+    },
+    "llm/peft/peft_model.py": {
+      "bytes": 52660,
+      "sha256": "f6e3a3989feb5e065cca4305d6fd82a39753d62ef4d8f9277173419f1b876b51"
+    },
+    "llm/peft/tuners/__init__.py": {
+      "bytes": 1180,
+      "sha256": "247d510ffef88038dd6e16b3c4dd2ec9d1b0bce07d83f5921d4cb04983d185fe"
+    },
+    "llm/peft/tuners/adalora.py": {
+      "bytes": 29922,
+      "sha256": "c9f275554f165dec90cc6ff873b598404ae34b1ad7f007639b8929ca2d9001cb"
+    },
+    "llm/peft/tuners/adaption_prompt.py": {
+      "bytes": 15980,
+      "sha256": "3abe71f9fc6cf6f755d060c714768d1d1ae2dcb19a203e6fe1b024bbc1d0dd01"
+    },
+    "llm/peft/tuners/lora.py": {
+      "bytes": 25047,
+      "sha256": "9ade38234a356e0dccd326b6503eb255989731ff6c0ee57d5e696c1b2b66ea2b"
+    },
+    "llm/peft/tuners/p_tuning.py": {
+      "bytes": 6755,
+      "sha256": "db8bbd6a0d5484c93e8e6f68ea4fbeac27cb4a851b26b7feacf16a30a374708f"
+    },
+    "llm/peft/tuners/prefix_tuning.py": {
+      "bytes": 3785,
+      "sha256": "ea4f31a4b210d115a877926babb9c850b1789a36737cebff4a00791d7400d96d"
+    },
+    "llm/peft/tuners/prompt_tuning.py": {
+      "bytes": 4935,
+      "sha256": "141071a5db404f500be163fbcfe476e2c6f72ea933d929264585ec3a12c38069"
+    },
+    "llm/peft/utils/__init__.py": {
+      "bytes": 1398,
+      "sha256": "15c885ec96aa9d7445693f7b9db0fc4d8bc3ae87560df82069fa696270f5c5a2"
+    },
+    "llm/peft/utils/config.py": {
+      "bytes": 6877,
+      "sha256": "a1d55f3903bd716963ceafb40e218f94908b9d5c16ca08025f616ae5af15406f"
+    },
+    "llm/peft/utils/other.py": {
+      "bytes": 9321,
+      "sha256": "e97402a14b3232538e2c0413ff59a2a1cc51ba1940d0e9c886bfaf09eae04766"
+    },
+    "llm/peft/utils/save_and_load.py": {
+      "bytes": 5829,
+      "sha256": "9c4ae4660202a829f5483abcea28db1a5bee4862d89798186c619bed8ca29170"
+    },
+    "llm/trainer_seq2seq.py": {
+      "bytes": 13797,
+      "sha256": "8c5925691b659dfdb406383191184ff5c1ac258830fcc3dae0598029490b2a0e"
+    },
+    "main.py": {
+      "bytes": 2184,
+      "sha256": "9c1fcce4ec90fe6a837607b26d34f9cf32b4a745fbb52391d99364388738e745"
+    },
+    "main_llm.py": {
+      "bytes": 8564,
+      "sha256": "e861ec235c116d74d0d17bd354e0c189f331e6676b56dcb872e9af443f8aa503"
+    },
+    "models/Adapter.py": {
+      "bytes": 4939,
+      "sha256": "cf217c94fa4493a80ca3aff100e01b20cb1f355457d7493d5d67f4afce3bd917"
+    },
+    "models/BaseModel.py": {
+      "bytes": 1409,
+      "sha256": "9adf4725e115f5ec17187a81b625c1a1dadd7f93088d474f7d451c7909377d33"
+    },
+    "models/Bert4Rec.py": {
+      "bytes": 13844,
+      "sha256": "b2f68151283689e3bfad3f877db87eccab00f6e70e865aa8675035b0fd6de36b"
+    },
+    "models/GRU4Rec.py": {
+      "bytes": 3923,
+      "sha256": "ab2a7c19a112982aefb3b1b7de3ed3d95e40484701e2d582dfc3cf7b6dcb7173"
+    },
+    "models/LLMEmb.py": {
+      "bytes": 3677,
+      "sha256": "9a56a081fa01d417b4acfe86d0d1361735fee1dffe485c37c773291b5e329514"
+    },
+    "models/SASRec.py": {
+      "bytes": 6628,
+      "sha256": "d4935a890e4ddee2eb7cf0bcc3fa86aad05c3e20d89ec6f4ba000371e6d64a34"
+    },
+    "models/utils.py": {
+      "bytes": 8172,
+      "sha256": "2e532f3af94d295f993c8e9e310e038e3df7864766bcb87f93ec0a16f3da0012"
+    },
+    "requirements.txt": {
+      "bytes": 163,
+      "sha256": "fc16737350960d738e15220b771269b14407ee38114fbc5f771525ff5b236bfa"
+    },
+    "results/convert.ipynb": {
+      "bytes": 3049,
+      "sha256": "cdaec52e7cfa489935e32bb1edea86a36d1c2cb149124f0395931ba6533b46b2"
+    },
+    "trainers/sequence_trainer.py": {
+      "bytes": 9854,
+      "sha256": "fcf3f42a8aed366ab49ef02a4b681d564a38db3961337bf9032376aa8cf732b5"
+    },
+    "trainers/trainer.py": {
+      "bytes": 6103,
+      "sha256": "8a32690b1b9e79589de77fc0585f673f649595f124a50abea8569cec700518e6"
+    },
+    "utils/argument.py": {
+      "bytes": 9684,
+      "sha256": "f6d45db40cd78cee22e6817cc6b8cdf5d93828441108daff7d49c59597c743d3"
+    },
+    "utils/earlystop.py": {
+      "bytes": 5320,
+      "sha256": "6767ea2a3840d13f7586185101cb18d95ce6bb7b6b217cf949ae01c35e8c7ce9"
+    },
+    "utils/logger.py": {
+      "bytes": 5119,
+      "sha256": "eb54bbfb7671808accdd0aa052f2ab639fa737ff30ee1378897ecf23cfec62b1"
+    },
+    "utils/utils.py": {
+      "bytes": 13378,
+      "sha256": "e92d35827d4fc869f6da4f7f838e30c1c1f650eddbf295ff017eb5df8a3cb486"
+    }
+  }
+}

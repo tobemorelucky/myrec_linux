@@ -1,0 +1,74 @@
+test_adapter_roundtrip (test_final_admission.FinalAdmission) ... ok
+test_ambiguous_movie_rejected (test_final_admission.FinalAdmission) ... ok
+test_canonical_item_id_not_movie_id (test_final_admission.FinalAdmission) ... ok
+test_full_model_save_blocked (test_final_admission.FinalAdmission) ... ok
+test_html_entity_semicolon_is_not_an_attribute (test_final_admission.FinalAdmission) ... ok
+test_identity_and_source_digest (test_final_admission.FinalAdmission) ... ok
+test_no_metadata_not_ready (test_final_admission.FinalAdmission) ... ok
+test_no_unapproved_bulk_requests (test_final_admission.FinalAdmission) ... ok
+test_original_prompt_row_order_is_not_item_id (test_final_admission.FinalAdmission) ... /home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/adapter/common.py:38: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/checks/final_cpu/92ce814fdf744130bc58c0fd37c92e95.jsonl' mode='r' encoding='utf-8'>
+  rows = [json.loads(x) for x in open(path, encoding="utf-8") if x.strip()]
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_rating_injection_rejected (test_final_admission.FinalAdmission) ... ok
+test_rental_only_execution_guard (test_final_admission.FinalAdmission) ... ok
+test_rich_pending_is_blocked_and_no_auto_base (test_final_admission.FinalAdmission) ... ok
+test_same_caps_encode_and_training (test_final_admission.FinalAdmission) ... ok
+test_admission_counts_actual_optimizer_calls (test_fulltext1024.FullText) ... /home/yyx/anaconda3/envs/hzg_py10/lib/python3.10/site-packages/transformers/optimization.py:411: FutureWarning: This implementation of AdamW is deprecated and will be removed in a future version. Use the PyTorch implementation torch.optim.AdamW instead, or set `no_deprecation_warning=True` to disable this warning
+  warnings.warn(
+ok
+test_eos_boundary (test_fulltext1024.FullText) ... ok
+test_fixed_sampler_exact_order (test_fulltext1024.FullText) ... ok
+test_full_train_processor_same_body_eos (test_fulltext1024.FullText) ... ok
+test_hidden_field_cap_rejected (test_fulltext1024.FullText) ... ok
+test_new_encode_training_policy_matches (test_fulltext1024.FullText) ... ok
+test_no_160_field_budget (test_fulltext1024.FullText) ... ok
+test_old_frozen_configs_preserved (test_fulltext1024.FullText) ... ok
+test_overlength_rejected_not_sliced (test_fulltext1024.FullText) ... ok
+test_json_alias_is_byte_identical_and_accepted (test_gpu_cli_compat.CliCompatibility) ... ok
+test_bf16_train_forward_backward_original_loss (test_numerical_admission.Numerical) ... ok
+test_chunked_finiteness_and_noncontiguous_views (test_numerical_admission.Numerical) ... ok
+test_exception_location_saved_without_gpu_allocations (test_numerical_admission.Numerical) ... ok
+test_finite_masked_forward_not_false_alarm (test_numerical_admission.Numerical) ... ok
+test_first_bad_matmul_is_recorded (test_numerical_admission.Numerical) ... ok
+test_new_config_does_not_change_protocol (test_numerical_admission.Numerical) ... ok
+test_official_half_call_really_uses_bf16 (test_numerical_admission.Numerical) ... ok
+test_probe_enables_real_training_checkpoint_and_dropout (test_numerical_admission.Numerical) ... ok
+test_augmentation_seed_and_real_attributes (test_offline.Tests) ... ok
+test_common_pca_and_padding_synthetic_only (test_offline.Tests) ... ok
+test_contrastive_fp32_without_formula_change (test_offline.Tests) ... ok
+test_mean_imputation_then_centering_explains_zero (test_offline.Tests) ... ok
+test_official_processor_and_pair_order (test_offline.Tests) ... ok
+test_pool_empty_nonfinite_rejected (test_offline.Tests) ... ok
+test_pool_fp32_overflow_prevention (test_offline.Tests) ... ok
+test_pool_padding_and_batch_invariance (test_offline.Tests) ... ok
+test_prompt_id_validation_and_reject_bad_vectors (test_offline.Tests) ... ok
+test_real_mask_forward_and_odd_inference_tiny_model (test_offline.Tests) ... ok
+test_static_all_sources (test_offline.Tests) ... ok
+test_trainable_tau_stays_fp32 (test_offline.Tests) ... ok
+test_write_boundary (test_offline.Tests) ... ok
+test_adapter_save_load_extra_and_no_full_backbone (test_production.Production) ... ok
+test_original_epoch_accumulation_boundaries (test_production.Production) ... ok
+test_original_scft_has_finite_task_gradients (test_production.Production) ... ok
+test_quality_blocks_nearzero_and_duplicates (test_production.Production) ... ok
+test_tau_has_no_effect_on_inference (test_production.Production) ... ok
+test_title_identity_kept_and_two_views (test_production.Production) ... ok
+test_trainer_checkpoint_contains_training_state (test_production.Production) ... /home/yyx/anaconda3/envs/hzg_py10/lib/python3.10/site-packages/transformers/optimization.py:411: FutureWarning: This implementation of AdamW is deprecated and will be removed in a future version. Use the PyTorch implementation torch.optim.AdamW instead, or set `no_deprecation_warning=True` to disable this warning
+  warnings.warn(
+ok
+test_truncation_is_bounded_and_counted (test_production.Production) ... ok
+test_duplicate_ids_rejected (test_public_enhance.PublicEnhance) ... ok
+test_missing_or_invalid_plot_never_filled (test_public_enhance.PublicEnhance) ... ok
+test_raw_movie_ids_not_row_positions (test_public_enhance.PublicEnhance) ... ok
+test_real_generated_catalog_coverage (test_public_enhance.PublicEnhance) ... ok
+test_review_tags_excluded (test_public_enhance.PublicEnhance) ... ok
+test_title_year_conflict_is_pending (test_public_enhance.PublicEnhance) ... ok
+test_unknown_publisher_claim_rejected (test_public_enhance.PublicEnhance) ... ok
+test_unpinned_file_rejected (test_public_enhance.PublicEnhance) ... ok
+test_provenance_not_tensorized (test_public_enhance.TextOnlyTrainingTest) ... ok
+
+----------------------------------------------------------------------
+Ran 61 tests in 1.869s
+
+OK
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

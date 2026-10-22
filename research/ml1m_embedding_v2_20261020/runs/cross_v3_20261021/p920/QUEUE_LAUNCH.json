@@ -1,0 +1,13 @@
+{
+  "pid": 1753491,
+  "time": "2026-10-21T18:08:05.332808+08:00",
+  "allowed_variants": [
+    "A1",
+    "B0"
+  ],
+  "V3_excluded": true,
+  "role": "Wait for verified A1/B0 encoding READY; train each on idle GPU; once bestDev Test",
+  "chat_polling": false,
+  "script_sha256": "2e739985b1caa377225575b80432eabb4173cb8a953448b19f9b49c5bf8953fb",
+  "log": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/cross_v3_20261021/p920/queue_AB_supervisor.out"
+}

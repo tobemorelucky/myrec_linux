@@ -1,0 +1,21 @@
+{
+  "manager_pid": 1739927,
+  "started": "2026-10-21T16:43:16.388766+08:00",
+  "gpu": 0,
+  "command": [
+    "/home/yyx/anaconda3/envs/hzg_py10/bin/python",
+    "-u",
+    "-B",
+    "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/ops/run_v2_scaled_aspcf_20261021.py",
+    "--run-dir",
+    "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/p920_aspcf_ss_v2_scaled_k4_seed42_20261021_164007",
+    "--mode",
+    "supervise"
+  ],
+  "launcher_sha256": "e6a24563fefcb579a6337ff068366dff3d50ce803f70ed81d61988bcdafdadf4",
+  "config_sha256": "f691e67b851a257369a0cb8ff3d96b1a890cc19b142d3350afd99b281a1f0d5e",
+  "scaled_embedding_sha256": "b5a71f1cd8ebb9b4a74274707e03f79ffcf61303c44204b5dc732d5d9ff580e3",
+  "expected_minutes": "45-60; normal early stopping or max200; hard budget4h",
+  "automatic_periodic_query": false,
+  "Test_after_successful_best_Dev_only": true
+}

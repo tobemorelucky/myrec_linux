@@ -1,0 +1,11 @@
+{
+  "exit_code": 0,
+  "best_epoch": 144,
+  "end_epoch": 164,
+  "training_seconds": 6101.114995465614,
+  "checkpoint_sha256": "e39807e46f636cc6fd06701c6dfb04fa44040dc93574e00a687c959645a4b127",
+  "train_complete": true,
+  "Dev_best_selected": true,
+  "Test_accepted": false,
+  "time": "2026-10-21T22:55:14.443060+08:00"
+}

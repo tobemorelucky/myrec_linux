@@ -1,0 +1,10 @@
+{
+  "path": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/imported_assets/v2_rich512_l2_d400_20261021/rich_pca.pkl",
+  "sha256": "e9e7f7d7fd2cdbf23c79102842826275e785314413f08e7e08ab28c557eee3eb",
+  "shape": [
+    3707,
+    1536
+  ],
+  "dtype": "torch.float32",
+  "model_buffer_verified": true
+}

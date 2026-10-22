@@ -1,0 +1,12 @@
+{
+  "adapter/model_patch.py": "d62b9760b4edb1dd90ca91a40e75e3f9e8dc535f02847f13fb0a9f4ca2ad6557",
+  "adapter/run_scft.py": "90ac5c85440b9ac86f5ed638b4221ac3fada74f00aded0ad08d3e8994ce1749f",
+  "adapter/prepare_prompts.py": "0184e7078840e4a0365604697050da4c6b4d2c12e41e0b6c86ec90b6422f78a0",
+  "adapter/quality_pca.py": "42172378503094891b08954dc7953c9f6ead591cbd2fa32d36563f811a0ae058",
+  "adapter/common.py": "a87ff73eb0ef20d4342657ccbb991c038be0b6e261f716f726f4bbe99cc120ae",
+  "adapter/run_encode.py": "71df40cb8520d0e4ad4523fda913038c7cfe53246e1e1c2110780776da5ed4e8",
+  "configs/encode_base_proposed.json": "4e2ea581a01720447e931477819c03219e72e919a6d54d003ea29b77c7123cb8",
+  "configs/scft_proposed.json": "866aaa8441553f31d1686e57aacd94c169272cf3fa2de37e47c0e463087ec6d2",
+  "configs/encode_rich_proposed.json": "7ec652e136eb372e4c3337c228a0efc5ccd22fc332fd3aa2d5685b6bde242e33",
+  "tests/test_offline.py": "ee6a9f2cc8134cbea8fd736c02608a68bf1518935d0669e7c457cb6ae322c60d"
+}

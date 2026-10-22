@@ -1,0 +1,4 @@
+{"time": "2026-10-21T18:11:10.557338+08:00", "variant": "A1", "state": "running", "gpu": 0, "pid": 1753821, "run_dir": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/cross_v3_20261021/p920/aspcf_A1_k4_seed42_20261021_cross"}
+{"time": "2026-10-21T18:14:45.743812+08:00", "variant": "B0", "state": "running", "gpu": 1, "pid": 1754378, "run_dir": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/cross_v3_20261021/p920/aspcf_B0_k4_seed42_20261021_cross"}
+{"time": "2026-10-21T18:46:47.673977+08:00", "variant": "B0", "exit_code": 0, "state": "complete"}
+{"time": "2026-10-21T19:09:48.996995+08:00", "variant": "A1", "exit_code": 0, "state": "complete"}

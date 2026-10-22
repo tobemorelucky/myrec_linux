@@ -1,0 +1,25 @@
+{
+  "label": "C",
+  "name": "LLMMIRecCAISD uniform responsibility / BPR",
+  "loss": "original BPR + relation .01 + CAISD profile .01",
+  "exit_code": 0,
+  "training_seconds": 2688.973993071355,
+  "parameter_count": 407974,
+  "embedding_sha256": "5546240cc16beff4666a74a18cb758f41dbf23f21f46a9082778193501c59aad",
+  "end": "2026-10-21T11:27:00.490867+08:00",
+  "test_called": false,
+  "adopted_existing_training": false,
+  "best_epoch": 116,
+  "end_epoch": 136,
+  "best_train_log_metrics": "HR@5:0.3401,NDCG@5:0.2366",
+  "checkpoint_sha256": "3717591683cafdb4c0992065beca78e5e68cf51301eeac481ea4214578929910",
+  "status": "COMPLETE",
+  "Dev": {
+    "HR@5": 0.3400662251655629,
+    "NDCG@5": 0.23659545840830565,
+    "HR@10": 0.4629139072847682,
+    "NDCG@10": 0.2763703331741032,
+    "HR@20": 0.6004966887417219,
+    "NDCG@20": 0.3110679823323427
+  }
+}

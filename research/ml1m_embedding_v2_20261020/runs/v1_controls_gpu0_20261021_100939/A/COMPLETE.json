@@ -1,0 +1,25 @@
+{
+  "label": "A",
+  "name": "LLMEmb-style LLMMIRec llm_replace GELU / filtered Softmax",
+  "loss": "filtered Batch Softmax tau1, no relation",
+  "exit_code": null,
+  "training_seconds": 1514.483202,
+  "parameter_count": 428548,
+  "embedding_sha256": "5546240cc16beff4666a74a18cb758f41dbf23f21f46a9082778193501c59aad",
+  "end": "2026-10-21T10:42:00.337186+08:00",
+  "test_called": false,
+  "adopted_existing_training": true,
+  "best_epoch": 42,
+  "end_epoch": 62,
+  "best_train_log_metrics": "HR@5:0.3765,NDCG@5:0.2731",
+  "checkpoint_sha256": "cfaa626340d306cb57112dc5ae12c1d2baaf19a69b59a036fcae9fd115e30024",
+  "status": "COMPLETE",
+  "Dev": {
+    "HR@5": 0.37649006622516556,
+    "NDCG@5": 0.2730883734131152,
+    "HR@10": 0.48460264900662253,
+    "NDCG@10": 0.30813880626040563,
+    "HR@20": 0.5910596026490066,
+    "NDCG@20": 0.33504996920172103
+  }
+}

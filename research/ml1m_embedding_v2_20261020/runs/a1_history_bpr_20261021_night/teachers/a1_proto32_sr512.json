@@ -1,0 +1,23 @@
+{
+  "embedding_path": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/cross_v3_20261021/p920/incoming/A1_oldlora_rich512/rich_pca.pkl",
+  "embedding_sha256": "03cf9649844da2c172487a0f552a49a4d331d8262135e3b70e48d6e772ad7905",
+  "teacher_sha256": "651eb74d28d3418a1cfd18510bbee229b952bbc6c83d96dfcaf01b54148c8a01",
+  "mapping_sha256": "d26c890a61c6a2996855d83352931cecd14ff09aa42758013bdc3f9fd9d61280",
+  "source_scope": "item semantic metadata only, all canonical catalog items; no Dev/Test or Train interaction labels used",
+  "builder_fine": {
+    "source": "/home/yyx/hzgcode/pom2.0/tools/build_llmmi_semantic_prototypes.py",
+    "sha256": "041646f020c21ad469f673e452dbed2589ceb11a16474fd9263e54007a1abd6a",
+    "path_only_assignments": {
+      "llm_path": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/cross_v3_20261021/p920/incoming/A1_oldlora_rich512/rich_pca.pkl",
+      "out_path": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/a1_history_bpr_20261021_night/teachers/a1_proto32_sr512.pkl"
+    }
+  },
+  "builder_hier": {
+    "source": "/home/yyx/hzgcode/pom2.0/tools/build_llmmi_hierarchical_teacher.py",
+    "sha256": "d77464e914fe498662149c775bd315f5fe1f4be996d56ba4ae9b9096e8c1b6cd",
+    "path_only_assignments": {
+      "proto_path": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/a1_history_bpr_20261021_night/teachers/a1_proto32_sr512.pkl",
+      "out_path": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/a1_history_bpr_20261021_night/teachers/a1_hier_proto32_8_sr512.pkl"
+    }
+  }
+}

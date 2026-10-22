@@ -1,0 +1,6 @@
+{
+  "time": "2026-10-22T10:21:36.044409+08:00",
+  "old_pid": 1765363,
+  "reason": "Superseded stale wait; E5/E6 moved to GPU1",
+  "no_training_stopped": true
+}

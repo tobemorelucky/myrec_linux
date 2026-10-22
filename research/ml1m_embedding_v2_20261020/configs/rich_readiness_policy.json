@@ -1,0 +1,7 @@
+{
+  "min_overview_coverage": 0.9,
+  "max_truncated_view_fraction": 0.05,
+  "forbid_unresolved_included_identity": true,
+  "max_unexplained_cross_movie_token_collisions": 0,
+  "notes": "Engineering preregistration; no automatic Base-SCFT fallback."
+}

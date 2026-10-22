@@ -1,0 +1,34 @@
+{
+  "exit_code": 0,
+  "best_epoch": 90,
+  "end_epoch": 110,
+  "training_seconds": 4352.114213271998,
+  "checkpoint_sha256": "22a7525e2db1faa7b6b0f1c0ff86c7b7ae97cd8d5cf844a0236738fe941e5f24",
+  "train_complete": true,
+  "Dev_best_selected": true,
+  "Test_accepted": true,
+  "time": "2026-10-22T05:06:54.882712+08:00",
+  "Dev": {
+    "HR@5": 0.3256622516556291,
+    "NDCG@5": 0.22784935574010076,
+    "HR@10": 0.46043046357615897,
+    "NDCG@10": 0.27129992352339494,
+    "HR@20": 0.5877483443708609,
+    "NDCG@20": 0.3034711333260987
+  },
+  "Test": {
+    "HR@5": 0.302317880794702,
+    "NDCG@5": 0.2117319690292643,
+    "HR@10": 0.4269867549668874,
+    "NDCG@10": 0.2518889803783596,
+    "HR@20": 0.5572847682119205,
+    "NDCG@20": 0.28476090493603784
+  },
+  "model": "LLMMIRecCAISD",
+  "mechanism": "CAISD uniform responsibility",
+  "Loss": "BPR+relation+profile",
+  "embedding_sha256": "03cf9649844da2c172487a0f552a49a4d331d8262135e3b70e48d6e772ad7905",
+  "teacher_sha256": "651eb74d28d3418a1cfd18510bbee229b952bbc6c83d96dfcaf01b54148c8a01",
+  "parameter_count": 407974,
+  "exploratory": true
+}

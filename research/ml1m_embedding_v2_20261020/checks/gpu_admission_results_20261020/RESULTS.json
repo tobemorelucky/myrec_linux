@@ -1,0 +1,199 @@
+{
+  "resources": {
+    "time": "2026-10-20T19:56:27.285135+08:00",
+    "gpu": "NVIDIA A800 80GB PCIe, 81920, 0, 0",
+    "disk_total_gib": 85.0,
+    "disk_free_gib": 48.51926803588867,
+    "disk_mount": "TARGET           SOURCE                                                                         FSTYPE OPTIONS\n/root/autodl-tmp /dev/md127[/docker/volumes/autodl-container-98b24ebe42-02563ea5-storage/_data] xfs    rw,relatime,attr2,inode64,sunit=1024,swidth=3072,prjquota",
+    "container_memory_limit_bytes": 128849018880,
+    "container_memory_usage_bytes": 13292302336
+  },
+  "jobs": [
+    {
+      "stage": "A",
+      "start_time": "2026-10-20T19:34:32.884920+08:00",
+      "end_time": "2026-10-20T19:36:58.684636+08:00",
+      "elapsed_seconds": 145.79975502425805,
+      "exit_code": 0,
+      "supervisor_pid": 1096,
+      "child_pid": 1097,
+      "validation": {
+        "marker": "/root/autodl-tmp/pomrec/research/ml1m_embedding_v2_20261020/runs/admission_a_old_ml_lora_full1024/SAMPLE_COMPLETE.json",
+        "sha256": "214518ae0afb75bc9b8bb2a62fad4f98fb7e0eb2a3bfc5827f9b9c59e17cb4d3",
+        "stage_qa_passed": true
+      },
+      "tag": "admission_A_20261020_1938",
+      "log": "/root/autodl-tmp/pomrec/research/ml1m_embedding_v2_20261020/ops_runs/admission_A_20261020_1938/stage.log",
+      "log_sha256": "91e3454dc1e74cb5db29473f10e3d0adb14c26534497d1677dd63dd17bf5e75a",
+      "process": {
+        "supervisor_pid": 1096,
+        "child_pid": 1097,
+        "start_time": "2026-10-20T19:34:32.884920+08:00",
+        "stage": "A",
+        "command": [
+          "bash",
+          "scripts/gpu_stages.sh",
+          "A"
+        ],
+        "runtime_code_sha256": "1ffd5248846b802bc9fac2829cab7d6849bb1345022a81c732c3f139c9ee5719",
+        "scft_config_sha256": "f1ac85a7c51c44102bf15aa8eb25bc36b262802caf95de599bcaced14cd15c8b"
+      }
+    },
+    {
+      "stage": "C",
+      "start_time": "2026-10-20T19:38:05.400017+08:00",
+      "end_time": "2026-10-20T19:38:24.467953+08:00",
+      "elapsed_seconds": 19.06797197414562,
+      "exit_code": 1,
+      "supervisor_pid": 1437,
+      "child_pid": 1438,
+      "validation_error": "Stage process failed with exit code 1",
+      "tag": "admission_C_20261020_1938",
+      "log": "/root/autodl-tmp/pomrec/research/ml1m_embedding_v2_20261020/ops_runs/admission_C_20261020_1938/stage.log",
+      "log_sha256": "6abc2ee695d2c969e68f91a41ef6b40050e5e5ea34f9f920fdc0017a70233080",
+      "process": {
+        "supervisor_pid": 1437,
+        "child_pid": 1438,
+        "start_time": "2026-10-20T19:38:05.400017+08:00",
+        "stage": "C",
+        "command": [
+          "bash",
+          "scripts/gpu_stages.sh",
+          "C"
+        ],
+        "runtime_code_sha256": "1ffd5248846b802bc9fac2829cab7d6849bb1345022a81c732c3f139c9ee5719",
+        "scft_config_sha256": "f1ac85a7c51c44102bf15aa8eb25bc36b262802caf95de599bcaced14cd15c8b"
+      }
+    },
+    {
+      "stage": "C",
+      "start_time": "2026-10-20T19:43:10.806819+08:00",
+      "end_time": "2026-10-20T19:45:35.779106+08:00",
+      "elapsed_seconds": 144.9723169351928,
+      "exit_code": 1,
+      "supervisor_pid": 1823,
+      "child_pid": 1824,
+      "validation_error": "Stage process failed with exit code 1",
+      "supervisor_exit_code": 1,
+      "tag": "admission_C_20261020_1945_retry",
+      "log": "/root/autodl-tmp/pomrec/research/ml1m_embedding_v2_20261020/ops_runs/admission_C_20261020_1945_retry/stage.log",
+      "log_sha256": "0ea32f1dc09aa3c4a68ffcc6761ada72400feb7820bd46dd60a75d15455cf91f",
+      "process": {
+        "supervisor_pid": 1823,
+        "child_pid": 1824,
+        "start_time": "2026-10-20T19:43:10.806819+08:00",
+        "stage": "C",
+        "command": [
+          "bash",
+          "scripts/gpu_stages.sh",
+          "C"
+        ],
+        "runtime_code_sha256": "c9e79453687fd1e6788ba857a9b01d7861246bfde595108c4f190f8fb3d02f96",
+        "scft_config_sha256": "f1ac85a7c51c44102bf15aa8eb25bc36b262802caf95de599bcaced14cd15c8b"
+      }
+    },
+    {
+      "stage": "C",
+      "start_time": "2026-10-20T19:49:37.206604+08:00",
+      "end_time": "2026-10-20T19:52:11.885117+08:00",
+      "elapsed_seconds": 154.67854563100263,
+      "exit_code": 1,
+      "supervisor_pid": 2408,
+      "child_pid": 2409,
+      "validation_error": "Stage process failed with exit code 1",
+      "supervisor_exit_code": 1,
+      "tag": "admission_C_20261020_1950_compat",
+      "log": "/root/autodl-tmp/pomrec/research/ml1m_embedding_v2_20261020/ops_runs/admission_C_20261020_1950_compat/stage.log",
+      "log_sha256": "544a9c8a425ba0972a95a219e5e122bd12ec0f27c6afbe260f6ef1f8cc245a94",
+      "process": {
+        "supervisor_pid": 2408,
+        "child_pid": 2409,
+        "start_time": "2026-10-20T19:49:37.206604+08:00",
+        "stage": "C",
+        "command": [
+          "bash",
+          "scripts/gpu_stages.sh",
+          "C"
+        ],
+        "runtime_code_sha256": "2cecb2dfff55d30c71d29bcebbda0635f4bdbb2bab0b6ec58c8fcc624133bc2d",
+        "scft_config_sha256": "f1ac85a7c51c44102bf15aa8eb25bc36b262802caf95de599bcaced14cd15c8b"
+      }
+    }
+  ],
+  "A": {
+    "kind": "sample_admission",
+    "canonical_ids": [
+      1,
+      2,
+      81,
+      1084,
+      1085,
+      2652,
+      2653,
+      3706
+    ],
+    "rows": 8,
+    "quality": {
+      "rows": 8,
+      "dim": 4096,
+      "min_norm": 16.6638723730858,
+      "median_norm": 17.40741468117617,
+      "max_norm": 18.149711499630374,
+      "near_zero_threshold": 0.0001,
+      "duplicate_vectors": 0
+    },
+    "encoder_key": "60a258d2b899457689c031cb562ce685cffca6fa1e71ff8a99715d05b81eacf4",
+    "config_sha256": "c7b4e183831385e89cf290063c00e069b31697cfdd19e4c8078317599b7bfb42",
+    "code_sha256": "1ffd5248846b802bc9fac2829cab7d6849bb1345022a81c732c3f139c9ee5719",
+    "prompt_sha256": "e399ec0c6e58a85f6b1525d878f4865bc700199a32c3ef939e09bcf43d37e40d",
+    "adapter_sha256": "6b33f280d7856fa37903c5b3582d5defceab6891ab39df82372ae66317bbe186",
+    "forward_seconds": 0.6234848177991807,
+    "model_load_seconds": 126.44532785192132,
+    "peak_gpu_bytes": 13470826496,
+    "peak_reserved_bytes": 13490978816,
+    "not_for_pca": true
+  },
+  "C": {
+    "passed": false,
+    "optimizer_steps_completed": 0,
+    "training_loss_obtained": false,
+    "failure": "Nonfinite token hidden states on first training forward, before SCFT loss",
+    "is_oom_error": false,
+    "failure_peak_memory_measured": false,
+    "planned_first_batch_shape": [
+      32,
+      896
+    ],
+    "gpu_retry_after_numeric_failure": false
+  },
+  "production_D": {
+    "started": false,
+    "valid_throughput_estimate": false,
+    "finish_time_estimate": null,
+    "reason": "C completed zero optimizer updates; cannot extrapolate 1000 steps"
+  },
+  "V1_planning": {
+    "linear_A_forward_only_seconds_for_3706": 288.8293418454705,
+    "raw_encoding_minutes_range": [
+      8,
+      20
+    ],
+    "including_cpu_pca_minutes_range": [
+      10,
+      30
+    ],
+    "not_measured_full_catalog": true
+  },
+  "V2_E_planning": {
+    "minutes_range": [
+      20,
+      60
+    ],
+    "not_measured_with_D_adapter": true,
+    "conditional_on_passed_C_and_D": true
+  },
+  "scft_config_sha256": "f1ac85a7c51c44102bf15aa8eb25bc36b262802caf95de599bcaced14cd15c8b",
+  "prompt_sha256": "08538381ddb5882c5f347e1478fe6bf0ec32315df2711e88eb241ebff9a8547f",
+  "C_pass_pointer_exists": false,
+  "official_entry_cpu_integration": "passed with random tiny model, real metadata/tokenizer, zero updates"
+}

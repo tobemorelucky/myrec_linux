@@ -1,0 +1,9 @@
+{
+  "time": "2026-10-21T18:08:05.397276+08:00",
+  "pid": 1753491,
+  "wait_hours": 12.0,
+  "variants": {
+    "A1": "A1_oldlora_rich512",
+    "B0": "B0_v2lora_base"
+  }
+}

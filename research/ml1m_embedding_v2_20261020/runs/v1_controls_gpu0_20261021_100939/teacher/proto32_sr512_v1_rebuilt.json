@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "embedding_path": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/imported_assets/v1_rebuilt_20261020/base_pca.pkl",
+  "embedding_sha256": "5546240cc16beff4666a74a18cb758f41dbf23f21f46a9082778193501c59aad",
+  "mapping_sha256": "d26c890a61c6a2996855d83352931cecd14ff09aa42758013bdc3f9fd9d61280",
+  "teacher_sha256": "e59e3725967d7041166eab2bebd53654f84ab86dc448325e2be8c53903dd308d",
+  "teacher_path": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/v1_controls_gpu0_20261021_100939/teacher/proto32_sr512_v1_rebuilt.pkl",
+  "algorithm_source": "/home/yyx/hzgcode/pom2.0/tools/build_llmmi_semantic_prototypes.py",
+  "algorithm_source_sha256": "041646f020c21ad469f673e452dbed2589ceb11a16474fd9263e54007a1abd6a",
+  "only_changes": "AST replaces input/output path; original clustering/softmax code executes unchanged",
+  "semantic_rank": 512,
+  "prototype_num": 32,
+  "temperature": 0.1,
+  "seed": 42,
+  "canonical_rows": 3707,
+  "fit_information": "fixed item metadata only, no interactions or Dev/Test labels"
+}

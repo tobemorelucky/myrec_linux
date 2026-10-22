@@ -1,0 +1,8 @@
+{
+  "error_type": "FloatingPointError",
+  "error": "First nonfinite activation at aten.mm.default; /home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/checks/numerical_cpu/d5ac978387d644a9b714ee5d3bb73102.json",
+  "module_stack": [],
+  "module_input_metadata": [],
+  "checked_ops": 1,
+  "checked_modules": 0
+}

@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "time": "2026-10-21T14:43:22.127719+08:00",
+  "target_dir": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/imported_assets/v2_rich512_l2_d400_20261021",
+  "pkl_path": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/imported_assets/v2_rich512_l2_d400_20261021/rich_pca.pkl",
+  "pkl_sha256": "e9e7f7d7fd2cdbf23c79102842826275e785314413f08e7e08ab28c557eee3eb",
+  "mapping_sha256": "d26c890a61c6a2996855d83352931cecd14ff09aa42758013bdc3f9fd9d61280",
+  "shape": [
+    3707,
+    1536
+  ],
+  "dtype": "float32",
+  "padding_zero": true,
+  "all_finite": true,
+  "valid_nonzero_rows": 3706,
+  "loader_max_abs_difference": 0.0,
+  "pkl_bytes": 22775972,
+  "directory_bytes_before_receipt": 22780134,
+  "loader_source": "models/sequential/llmmi_utils.py:22",
+  "loader_source_sha256": "ae33b3e4e5a76146f666b91fdc58a7b3675b15b13297d9df96352e643225c96c",
+  "P920_GPU_used": false,
+  "recommendation_training_started": false
+}

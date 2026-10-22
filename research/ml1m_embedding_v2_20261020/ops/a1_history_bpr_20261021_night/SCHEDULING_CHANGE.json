@@ -1,0 +1,6 @@
+{
+  "path": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/ops/cross_v3_20261021/p920/receive_V3.py",
+  "before_sha256": "3d2600e8191603a6d196cba77534a3ef18f15459a55c983e4075884a6e60318f",
+  "after_sha256": "3683e573ce43651f5a5775ec3f4c964714d26ac41bc2fc91abb5bf7a5dcff689",
+  "only_change": "V3 GPU selection [0,1] -> [0]; training/transfer/scientific config unchanged; GPU0 A1 queue waits V3 receiver terminal"
+}

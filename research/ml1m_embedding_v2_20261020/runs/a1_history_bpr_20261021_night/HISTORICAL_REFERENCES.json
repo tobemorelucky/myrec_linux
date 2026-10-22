@@ -1,0 +1,301 @@
+[
+  {
+    "name": "A1_ASPCF_Softmax_reference",
+    "dataset": "ml-1m",
+    "Loss": "filtered Batch Softmax+relation",
+    "K": 4,
+    "lr": 0.001,
+    "batch": 1024,
+    "strict_BPR_control": false,
+    "source": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/cross_v3_20261021/p920/aspcf_A1_k4_seed42_20261021_cross/COMPLETE.json",
+    "Dev": {
+      "HR@5": 0.3745033112582781,
+      "NDCG@5": 0.2742475064258289,
+      "HR@10": 0.48443708609271524,
+      "NDCG@10": 0.3098683575915197,
+      "HR@20": 0.5913907284768212,
+      "NDCG@20": 0.33695779872929327
+    },
+    "Test": {
+      "HR@5": 0.34205298013245033,
+      "NDCG@5": 0.2496165979817967,
+      "HR@10": 0.44917218543046356,
+      "NDCG@10": 0.28432616405168837,
+      "HR@20": 0.5582781456953643,
+      "NDCG@20": 0.311894642038669
+    },
+    "best_epoch": 76,
+    "end_epoch": 96,
+    "training_seconds": 3464.473262021318,
+    "embedding_sha256": "03cf9649844da2c172487a0f552a49a4d331d8262135e3b70e48d6e772ad7905"
+  },
+  {
+    "name": "new_log/llmmirec_caisd_phase2/ml-1m/caisd_seed42.nohup.out",
+    "dataset": "ml-1m",
+    "Loss": "historical BPR family; exact header retained",
+    "strict_current_control": false,
+    "metrics_precision": "historical log printed precision",
+    "Dev": {
+      "HR@5": 0.3262,
+      "NDCG@5": 0.2292
+    },
+    "Test": {
+      "HR@5": 0.304,
+      "NDCG@5": 0.2104,
+      "HR@10": 0.4363,
+      "NDCG@10": 0.2529,
+      "HR@20": 0.569,
+      "NDCG@20": 0.2866
+    },
+    "source": "/home/yyx/hzgcode/pom2.0/new_log/llmmirec_caisd_phase2/ml-1m/caisd_seed42.nohup.out",
+    "source_sha256": "f0914431ee7b0df9e921278aff4ee88c97e9b9efe4bcd2d2aa10c98d892ecca7"
+  },
+  {
+    "name": "new_log/llmmirec_caisd_phase2/ml-1m/tasid_asym_l001_t01_seed42.nohup.out",
+    "dataset": "ml-1m",
+    "Loss": "historical BPR family; exact header retained",
+    "strict_current_control": false,
+    "metrics_precision": "historical log printed precision",
+    "Dev": {
+      "HR@5": 0.3356,
+      "NDCG@5": 0.2339
+    },
+    "Test": {
+      "HR@5": 0.3093,
+      "NDCG@5": 0.2161,
+      "HR@10": 0.4329,
+      "NDCG@10": 0.256,
+      "HR@20": 0.5695,
+      "NDCG@20": 0.2905
+    },
+    "source": "/home/yyx/hzgcode/pom2.0/new_log/llmmirec_caisd_phase2/ml-1m/tasid_asym_l001_t01_seed42.nohup.out",
+    "source_sha256": "ef962e4ed43dd85e4a359a5f1b7acfc9610fc477b5f4bed30ddf643a5dd9d0de"
+  },
+  {
+    "name": "new_log/llmmirec_caisd_phase2/ml-1m/tasid_llmonly_l001_t01_seed42.nohup.out",
+    "dataset": "ml-1m",
+    "Loss": "historical BPR family; exact header retained",
+    "strict_current_control": false,
+    "metrics_precision": "historical log printed precision",
+    "Dev": {
+      "HR@5": 0.318,
+      "NDCG@5": 0.2222
+    },
+    "Test": {
+      "HR@5": 0.304,
+      "NDCG@5": 0.2104,
+      "HR@10": 0.4363,
+      "NDCG@10": 0.2529,
+      "HR@20": 0.569,
+      "NDCG@20": 0.2866
+    },
+    "source": "/home/yyx/hzgcode/pom2.0/new_log/llmmirec_caisd_phase2/ml-1m/tasid_llmonly_l001_t01_seed42.nohup.out",
+    "source_sha256": "1d3f03e05706726c4ccc20a3abd7daecb10e4de6ae17dd1a28bf156d9e1471a6"
+  },
+  {
+    "name": "new_log/llmmirec_caisd_phase2/beauty/caisd_seed42.nohup.out",
+    "dataset": "beauty",
+    "Loss": "historical BPR family; exact header retained",
+    "strict_current_control": false,
+    "metrics_precision": "historical log printed precision",
+    "Dev": {
+      "HR@5": 0.1909,
+      "NDCG@5": 0.1317
+    },
+    "Test": {
+      "HR@5": 0.1551,
+      "NDCG@5": 0.1036,
+      "HR@10": 0.2232,
+      "NDCG@10": 0.1255,
+      "HR@20": 0.3071,
+      "NDCG@20": 0.1466
+    },
+    "source": "/home/yyx/hzgcode/pom2.0/new_log/llmmirec_caisd_phase2/beauty/caisd_seed42.nohup.out",
+    "source_sha256": "4f4d4bc5434777846f1283ec4b55cd071839570e0f0053d666f29fe46e900711"
+  },
+  {
+    "name": "new_log/llmmirec_caisd_phase2/beauty/tasid_asym_l001_t01_seed42.nohup.out",
+    "dataset": "beauty",
+    "Loss": "historical BPR family; exact header retained",
+    "strict_current_control": false,
+    "metrics_precision": "historical log printed precision",
+    "Dev": {
+      "HR@5": 0.1861,
+      "NDCG@5": 0.127
+    },
+    "Test": {
+      "HR@5": 0.1601,
+      "NDCG@5": 0.1069,
+      "HR@10": 0.2314,
+      "NDCG@10": 0.1299,
+      "HR@20": 0.318,
+      "NDCG@20": 0.1518
+    },
+    "source": "/home/yyx/hzgcode/pom2.0/new_log/llmmirec_caisd_phase2/beauty/tasid_asym_l001_t01_seed42.nohup.out",
+    "source_sha256": "86db0a6b7daee332a0356ec0f06ec100d52c6e4c31a03e64faf3113cd479a0b9"
+  },
+  {
+    "name": "new_log/llmmirec_caisd_phase2/beauty/tasid_llmonly_l001_t01_seed42.nohup.out",
+    "dataset": "beauty",
+    "Loss": "historical BPR family; exact header retained",
+    "strict_current_control": false,
+    "metrics_precision": "historical log printed precision",
+    "Dev": {
+      "HR@5": 0.1904,
+      "NDCG@5": 0.132
+    },
+    "Test": {
+      "HR@5": 0.1608,
+      "NDCG@5": 0.1082,
+      "HR@10": 0.2282,
+      "NDCG@10": 0.1299,
+      "HR@20": 0.3107,
+      "NDCG@20": 0.1507
+    },
+    "source": "/home/yyx/hzgcode/pom2.0/new_log/llmmirec_caisd_phase2/beauty/tasid_llmonly_l001_t01_seed42.nohup.out",
+    "source_sha256": "bccb486ec6a71ad5167c7188f0ae608dbd5b135f42e994ce0ebb6d65b52f1c9d"
+  },
+  {
+    "name": "new_log/llmmirec_hsdir_phase1/ml-1m/hsdir_hierarchical_lh0/LLMMIRecHSDIR_hsdir_hierarchical_lh0_seed42.log",
+    "dataset": "ml-1m",
+    "Loss": "historical BPR family; exact header retained",
+    "strict_current_control": false,
+    "metrics_precision": "historical log printed precision",
+    "Dev": {
+      "HR@5": 0.3308,
+      "NDCG@5": 0.2319
+    },
+    "Test": {
+      "HR@5": 0.3078,
+      "NDCG@5": 0.2144,
+      "HR@10": 0.43,
+      "NDCG@10": 0.2537,
+      "HR@20": 0.5551,
+      "NDCG@20": 0.2854
+    },
+    "source": "/home/yyx/hzgcode/pom2.0/new_log/llmmirec_hsdir_phase1/ml-1m/hsdir_hierarchical_lh0/LLMMIRecHSDIR_hsdir_hierarchical_lh0_seed42.log",
+    "source_sha256": "bedc481a4ac2f917a13dbcc5ab27af016362efbaa7f37e9c4c324e5069970549"
+  },
+  {
+    "name": "new_log/llmmirec_hsdir_phase1/ml-1m/hsdir_hierarchical_lh0.01/LLMMIRecHSDIR_hsdir_hierarchical_lh0.01_seed42.log",
+    "dataset": "ml-1m",
+    "Loss": "historical BPR family; exact header retained",
+    "strict_current_control": false,
+    "metrics_precision": "historical log printed precision",
+    "Dev": {
+      "HR@5": 0.3283,
+      "NDCG@5": 0.2292
+    },
+    "Test": {
+      "HR@5": 0.3076,
+      "NDCG@5": 0.2119,
+      "HR@10": 0.4296,
+      "NDCG@10": 0.2511,
+      "HR@20": 0.5565,
+      "NDCG@20": 0.2831
+    },
+    "source": "/home/yyx/hzgcode/pom2.0/new_log/llmmirec_hsdir_phase1/ml-1m/hsdir_hierarchical_lh0.01/LLMMIRecHSDIR_hsdir_hierarchical_lh0.01_seed42.log",
+    "source_sha256": "4cc7f8aa8ac143ee7cd301558f8aeab0ac95d7e33cb10b785eef673a4107d2fb"
+  },
+  {
+    "name": "new_log/llmmirec_hsdir_phase1/beauty/hsdir_hierarchical_lh0.01/LLMMIRecHSDIR_hsdir_hierarchical_lh0.01_seed42.log",
+    "dataset": "beauty",
+    "Loss": "historical BPR family; exact header retained",
+    "strict_current_control": false,
+    "metrics_precision": "historical log printed precision",
+    "Dev": {
+      "HR@5": 0.1882,
+      "NDCG@5": 0.1283
+    },
+    "Test": {
+      "HR@5": 0.1604,
+      "NDCG@5": 0.1091,
+      "HR@10": 0.2307,
+      "NDCG@10": 0.1317,
+      "HR@20": 0.3173,
+      "NDCG@20": 0.1535
+    },
+    "source": "/home/yyx/hzgcode/pom2.0/new_log/llmmirec_hsdir_phase1/beauty/hsdir_hierarchical_lh0.01/LLMMIRecHSDIR_hsdir_hierarchical_lh0.01_seed42.log",
+    "source_sha256": "538242b5272e5ed95ff06c554313fc93048985d1ba2591841b28f0682a5e2da5"
+  },
+  {
+    "name": "V1_Rebuilt_historical_results",
+    "source": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/v1_controls_split_20261021_103559/gpu0/RESULTS.json",
+    "strict_current_control": false,
+    "original_result": {
+      "finished": "2026-10-21T11:27:22.539558+08:00",
+      "elapsed_seconds": 3052.5424858108163,
+      "results": [
+        {
+          "label": "A",
+          "name": "LLMEmb-style LLMMIRec llm_replace GELU / filtered Softmax",
+          "loss": "filtered Batch Softmax tau1, no relation",
+          "exit_code": null,
+          "training_seconds": 1514.483202,
+          "parameter_count": 428548,
+          "embedding_sha256": "5546240cc16beff4666a74a18cb758f41dbf23f21f46a9082778193501c59aad",
+          "end": "2026-10-21T10:42:00.337186+08:00",
+          "test_called": false,
+          "adopted_existing_training": true,
+          "best_epoch": 42,
+          "end_epoch": 62,
+          "best_train_log_metrics": "HR@5:0.3765,NDCG@5:0.2731",
+          "checkpoint_sha256": "cfaa626340d306cb57112dc5ae12c1d2baaf19a69b59a036fcae9fd115e30024",
+          "status": "COMPLETE",
+          "Dev": {
+            "HR@5": 0.37649006622516556,
+            "NDCG@5": 0.2730883734131152,
+            "HR@10": 0.48460264900662253,
+            "NDCG@10": 0.30813880626040563,
+            "HR@20": 0.5910596026490066,
+            "NDCG@20": 0.33504996920172103
+          }
+        },
+        {
+          "label": "C",
+          "name": "LLMMIRecCAISD uniform responsibility / BPR",
+          "loss": "original BPR + relation .01 + CAISD profile .01",
+          "exit_code": 0,
+          "training_seconds": 2688.973993071355,
+          "parameter_count": 407974,
+          "embedding_sha256": "5546240cc16beff4666a74a18cb758f41dbf23f21f46a9082778193501c59aad",
+          "end": "2026-10-21T11:27:00.490867+08:00",
+          "test_called": false,
+          "adopted_existing_training": false,
+          "best_epoch": 116,
+          "end_epoch": 136,
+          "best_train_log_metrics": "HR@5:0.3401,NDCG@5:0.2366",
+          "checkpoint_sha256": "3717591683cafdb4c0992065beca78e5e68cf51301eeac481ea4214578929910",
+          "status": "COMPLETE",
+          "Dev": {
+            "HR@5": 0.3400662251655629,
+            "NDCG@5": 0.23659545840830565,
+            "HR@10": 0.4629139072847682,
+            "NDCG@10": 0.2763703331741032,
+            "HR@20": 0.6004966887417219,
+            "NDCG@20": 0.3110679823323427
+          }
+        },
+        {
+          "label": "ASPCF_reference",
+          "status": "COMPLETE",
+          "loss": "filtered Batch Softmax + relation .01",
+          "training_seconds": 2666.869823137298,
+          "checkpoint_sha256": "bd94836bb88b7649141bf1f0976422b75590044aad98699e6534cfa5b0429b72",
+          "best_line": "Best Iter(dev)=   47\t dev=(HR@5:0.3738,NDCG@5:0.2721) [2656.1 s] ",
+          "embedding_sha256": "5546240cc16beff4666a74a18cb758f41dbf23f21f46a9082778193501c59aad",
+          "Dev": {
+            "HR@5": 0.373841059602649,
+            "NDCG@5": 0.2721348685543765,
+            "HR@10": 0.48112582781456953,
+            "NDCG@10": 0.3066589452640147,
+            "HR@20": 0.5791390728476821,
+            "NDCG@20": 0.3314528086500216
+          },
+          "parameter_count": 405894
+        }
+      ],
+      "test_called": false
+    }
+  }
+]
