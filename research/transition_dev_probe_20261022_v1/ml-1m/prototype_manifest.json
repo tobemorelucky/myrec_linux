@@ -1,0 +1,23 @@
+{
+  "version": "transition_dev_probe_v1",
+  "source_embedding": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/cross_v3_20261021/p920/incoming/A1_oldlora_rich512/rich_pca.pkl",
+  "source_embedding_sha256": "03cf9649844da2c172487a0f552a49a4d331d8262135e3b70e48d6e772ad7905",
+  "fit_source": "distinct item IDs in raw Train only; no frequency weighting",
+  "fit_train_sha256": "d4d11c18c2984da301842ad117e00bbedb477058a52314aebc0d1fefd26b85ff",
+  "fit_item_ids_sha256": "07316176a81641a5ef34b105eeb659749cad209824e93f153e73042d415c14b4",
+  "dimensions": 512,
+  "M": 32,
+  "assignment_temperature": 0.1,
+  "unit_normalize_before_fit": true,
+  "kmeans": {
+    "seed": 42,
+    "batch_size": 1024,
+    "n_init": 3,
+    "max_iter": 100
+  },
+  "smoothing_beta": 10.0,
+  "marginal_epsilon_pseudocount": 1e-08,
+  "probability_epsilon": 1e-12,
+  "source_is_not_old_SAIT": true,
+  "relations_sha256": "440bfea51d4f475abef34cc1a67dc6aae778b854effcc18638a6e8a4b8cab3ca"
+}

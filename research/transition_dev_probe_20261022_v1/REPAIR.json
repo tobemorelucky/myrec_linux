@@ -1,0 +1,9 @@
+{
+  "reason": "dictionary changed size during metric summary; first run saved no metrics",
+  "protocol_changed": false,
+  "coefficients_unchanged": true,
+  "scales_rule_unchanged": true,
+  "reuse_verified_prototypes_and_counts": true,
+  "initial_source_sha256": "c72f8840dd0448e40b08721e6b49598dab36c5131080b854d1bb3389feba8cf2",
+  "repaired_source_sha256": "a08e68fe8270bc3c39760ce672ace772cf0cdfb7d215ff96b17161b9d0a3c58e"
+}

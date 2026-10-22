@@ -1,0 +1,20 @@
+{
+  "version": "v1",
+  "grid": [
+    0,
+    0.03,
+    0.1,
+    0.2,
+    0.3
+  ],
+  "score": "base+lambda*old_Train_RMS_scale*row_centered_log1p(raw_Train_count)",
+  "scale_source": "/home/yyx/hzgcode/pom2.0/research/transition_dev_probe_20261022_v1/{dataset}/result.json",
+  "selection": "per-dataset max Dev NDCG5, smaller lambda if tied; pure frequency not a coefficient option",
+  "test_budget": "exactly one Test Dataset traversal per dataset after BOTH Dev locks; baseline/corrected/pure frequency in same pass; TEST_STARTED exclusive guard",
+  "distribution": "exact Train/raw and position>0 target counts; exact expected filtered random-batch item marginal and fixed 32-batch mask simulation; pre-stored Dev/Test negative slot counts for audit only",
+  "interests": "Dev only; cosine, energy-entropy rank, Top5/10/20 slot and unique-item Jaccard, per-head deletion with weight renormalization and score-RMS-matched control, single-head matched comparisons, popularity buckets; unchanged checkpoint",
+  "buckets": "Train positive-count catalog item quintiles, ties retained; zero-count separate",
+  "no_training": true,
+  "source_sha256": "cba411792cde54e075986aab6e8398c242206d5d3186b55a5e7da4991c88dfde",
+  "per_stage_timeout_seconds": 170
+}

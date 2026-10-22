@@ -1,0 +1,6 @@
+{
+  "started_utc": "2026-10-22T08:21:39Z",
+  "lock_sha256": "33fc32b17d2155787a0a6502659093db86dbdd44a627f21f87a1e90cd8f539af",
+  "test_pass_budget": 1,
+  "no_coefficient_change_after_lock": true
+}

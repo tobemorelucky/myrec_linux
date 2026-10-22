@@ -1,0 +1,23 @@
+{
+  "version": "transition_dev_probe_v1",
+  "source_embedding": "/home/yyx/hzgcode/pom2.0/data/beauty/handled/llm_table_pca1536.pkl",
+  "source_embedding_sha256": "bc282725f08c2bb7fbb524739d1711cee44810ab402f18119aa838d9e5ed859f",
+  "fit_source": "distinct item IDs in raw Train only; no frequency weighting",
+  "fit_train_sha256": "37e80f5cf976292b1d9cb43a131d624f6479cdf265850b06e885365c08e7d00e",
+  "fit_item_ids_sha256": "87d8cec267964641efa119cf1790e95ed8450a80882f6143e6bbfe0412636a4b",
+  "dimensions": 512,
+  "M": 32,
+  "assignment_temperature": 0.1,
+  "unit_normalize_before_fit": true,
+  "kmeans": {
+    "seed": 42,
+    "batch_size": 1024,
+    "n_init": 3,
+    "max_iter": 100
+  },
+  "smoothing_beta": 10.0,
+  "marginal_epsilon_pseudocount": 1e-08,
+  "probability_epsilon": 1e-12,
+  "source_is_not_old_SAIT": true,
+  "relations_sha256": "d78c8ddba940cc8c63d76ef04548a3b92a49d03cefa2b8a5db0182b88c54782b"
+}

@@ -1,0 +1,45 @@
+{
+  "version": "v1",
+  "phase": "Dev-only",
+  "datasets": [
+    "ml-1m",
+    "beauty"
+  ],
+  "model_training": false,
+  "test_execution": false,
+  "lambda_grid": [
+    0.01,
+    0.03,
+    0.1
+  ],
+  "scale": "Train user-fold-out row-centered RMS, frozen before Dev",
+  "prototypes": {
+    "M": 32,
+    "rank": 512,
+    "source": "actual per-dataset frozen checkpoint semantic table",
+    "fit": "distinct raw Train catalog IDs only",
+    "method": "unit-normalized MiniBatchKMeans",
+    "seed": 42,
+    "temperature": 0.1
+  },
+  "transition": {
+    "source": "raw Train adjacent same-user events, stable time order",
+    "smoothing_beta": 10.0,
+    "diagnostic": "3 user folds; own complete fold excluded"
+  },
+  "branches": [
+    "B0 original",
+    "P1 last-item cosine",
+    "P2 transition/marginal log-ratio",
+    "P3 prototype log-marginal",
+    "P3 extra direct item log-frequency"
+  ],
+  "source_sha256": "c72f8840dd0448e40b08721e6b49598dab36c5131080b854d1bb3389feba8cf2",
+  "preflight": {
+    "syntax": true,
+    "direction": true,
+    "independence_null": true
+  },
+  "selection": "report all coefficients; best Dev NDCG5 descriptive only; no automatic implementation or Test",
+  "time_bound_seconds_per_dataset": 170
+}

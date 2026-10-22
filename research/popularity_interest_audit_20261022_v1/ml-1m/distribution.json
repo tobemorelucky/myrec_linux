@@ -1,0 +1,153 @@
+{
+  "dataset": "ml-1m",
+  "raw_train_events": 988129,
+  "actual_positive_target_rows": 982089,
+  "removed_position_zero_rows": 6040,
+  "positive_frequency_vs_raw": {
+    "TV": 0.0031415879842572442,
+    "JSD_nats": 2.0051480329086396e-05
+  },
+  "negative_slot_metadata": {
+    "dev": {
+      "rows": 6040,
+      "slots": 6040000,
+      "padding_slots": 0,
+      "duplicate_slots_beyond_first": 779683
+    },
+    "test": {
+      "rows": 6040,
+      "slots": 6040000,
+      "padding_slots": 0,
+      "duplicate_slots_beyond_first": 779755
+    }
+  },
+  "expected_formula": "target_count[j]*(N - sum_u(target_rows[u]*1[j in TrainClicked[u]])); normalized",
+  "expected_distribution_note": "exact expected item-slot marginal for random shuffled batches; query-conditional masks remain non-IID",
+  "simulation": {
+    "seed": 20261022,
+    "batches": 32,
+    "allowed_negative_slots": 24322515,
+    "removed_fraction": 0.2744239963744043,
+    "note": "current exact mask on fixed simulated batches, not archived historical epoch trace"
+  },
+  "distribution_vs_expected_filtered": {
+    "raw_train": {
+      "TV": 0.09783973099968549,
+      "JSD_nats": 0.00805975870717757
+    },
+    "actual_positive_targets": {
+      "TV": 0.09693056551188467,
+      "JSD_nats": 0.007841677171471757
+    },
+    "simulated_32_batches_filtered": {
+      "TV": 0.11477732859774925,
+      "JSD_nats": 0.017209484901652507
+    },
+    "dev_negative_slots": {
+      "TV": 0.4523184811915472,
+      "JSD_nats": 0.15663369593761717
+    },
+    "test_negative_slots": {
+      "TV": 0.45230892141166007,
+      "JSD_nats": 0.1565424480127294
+    },
+    "catalog_uniform": {
+      "TV": 0.4285219690781428,
+      "JSD_nats": 0.14107803857497042
+    }
+  },
+  "bucket_thresholds": [
+    23.0,
+    74.0,
+    186.0,
+    423.0
+  ],
+  "bucket_mass": {
+    "raw_train": [
+      0.0,
+      0.006790611347303844,
+      0.03372029360538958,
+      0.09303238747167628,
+      0.21476042095718273,
+      0.6516962866184476
+    ],
+    "actual_positive_targets": [
+      0.0,
+      0.006770262165648938,
+      0.033747450587472215,
+      0.09311986999141626,
+      0.21507113917374088,
+      0.6512912780817217
+    ],
+    "expected_filtered_inbatch": [
+      0.0,
+      0.009260852180920928,
+      0.04527608261704251,
+      0.11990216173843041,
+      0.25636591958086624,
+      0.5691949838827399
+    ],
+    "simulated_32_batches_filtered": [
+      0.0,
+      0.009844253359490168,
+      0.0452241472561534,
+      0.11967660416696217,
+      0.2540598700422222,
+      0.571195125175172
+    ],
+    "dev_negative_slots": [
+      0.0005802980132450331,
+      0.21496456953642384,
+      0.2045314569536424,
+      0.2038408940397351,
+      0.19860993377483444,
+      0.1774728476821192
+    ],
+    "test_negative_slots": [
+      0.0005774834437086093,
+      0.21494900662251656,
+      0.204242880794702,
+      0.20412119205298013,
+      0.19864354304635762,
+      0.1774658940397351
+    ],
+    "catalog_uniform": [
+      0.0005396654074473826,
+      0.2050728548300054,
+      0.19643820831084727,
+      0.1985968699406368,
+      0.19967620075553158,
+      0.19967620075553158
+    ]
+  },
+  "frequency_correction_shape": {
+    "dev": {
+      "correlation_log_raw_frequency_vs_log_Qtrain_over_Qeval": 0.9476225394381678,
+      "linear_variance_R2": 0.8979884772512419,
+      "note": "distribution shape only; NOT fraction of recommendation gain causally explained"
+    },
+    "test": {
+      "correlation_log_raw_frequency_vs_log_Qtrain_over_Qeval": 0.9476407688884857,
+      "linear_variance_R2": 0.8980230268595604,
+      "note": "distribution shape only; NOT fraction of recommendation gain causally explained"
+    }
+  },
+  "inputs_sha256": {
+    "train": "d4d11c18c2984da301842ad117e00bbedb477058a52314aebc0d1fefd26b85ff",
+    "dev": "cb0c538f4331a2cf68b7a54968421fed7f43ac693f962985fa1350e28dd626b5",
+    "test": "19a1f866a710c3e3b5fded962274d1d7133b1bd85a9ad9af76340a3fbe5ae088",
+    "checkpoint": "65343d00f84bcfb4e8deb4fce47149f55da08cdfdd98c54ec77b0bcd1f26409b",
+    "embedding": "03cf9649844da2c172487a0f552a49a4d331d8262135e3b70e48d6e772ad7905",
+    "cache": "66b51d76455a0a80acb05655c5ecae43b0536e63a3d6e6d0af2edda43eb13ec3"
+  },
+  "source_sha256": {
+    "models/sequential/LLMMIRecASPCF.py": "08dfe95d6fa60773f5d34aafef422e29b7254ce7c1ca9963da956118a490ffe8",
+    "models/sequential/LLMMIRecASPCFSampledSoftmax.py": "a74f27deac0e15ab189345d57179ca1e80050a4acb68788d2ae335e9218669df",
+    "models/sequential/llmmi_components.py": "d71903c5a54391416630f00fa8e1aef1e6ca6b414f7dd3d064b67c8beb8c93f6",
+    "models/BaseModel.py": "57c1fa6ceb582a75d006ed6765d79a3593e58e097317063e92f687e5e4a73150",
+    "helpers/BaseRunner.py": "b0417f18bd4793c079555fe237a787474237597e1042de6f4d429b50aae93fbc",
+    "helpers/SeqReader.py": "74ed2b2e5aec81bdbb6f8c3acdcfa233d86499faa90e455504b7739fd0e5176e"
+  },
+  "seconds": 5.935420922003686,
+  "no_Train_or_Test_model_evaluation": true
+}

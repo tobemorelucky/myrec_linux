@@ -1,0 +1,6 @@
+{
+  "reason": "distribution-report R-squared variable name typo; no Dev/Test executed",
+  "old_sha256": "cba411792cde54e075986aab6e8398c242206d5d3186b55a5e7da4991c88dfde",
+  "new_sha256": "c31e8afe940cd3d64835eccfd565026a5f241c4eb9cb3f6159aae0b6eed82f4c",
+  "protocol_changed": false
+}

@@ -1,0 +1,51 @@
+{
+  "dataset": "beauty",
+  "lambda_normalized": 0.3,
+  "raw_lambda": 0.7891265710991445,
+  "scale_factor": 2.630421903663815,
+  "dev_metrics": {
+    "scheme": "lambda0.3",
+    "HR@5": 0.2505477798148728,
+    "HR@10": 0.3254930018333855,
+    "HR@20": 0.4035683942225998,
+    "NDCG@5": 0.1840621235710924,
+    "NDCG@10": 0.20822084025574772,
+    "NDCG@20": 0.22795547521234863,
+    "delta_HR@5": 0.05021687608997005,
+    "delta_NDCG@5": 0.03838774389427582,
+    "delta_HR@10": 0.05889191968877161,
+    "delta_NDCG@10": 0.04113126429016048,
+    "delta_HR@20": 0.06703036265259582,
+    "delta_NDCG@20": 0.04320797535924978,
+    "relative_NDCG5_pct": 26.351746943724976
+  },
+  "grid": [
+    0.0,
+    0.03,
+    0.1,
+    0.2,
+    0.3
+  ],
+  "checkpoint_sha256": "0ee64e02c64bcf96ef8f88c220c8ac6683dc4bab69ff814cbca11bb3f9970f1d",
+  "embedding_sha256": "bc282725f08c2bb7fbb524739d1711cee44810ab402f18119aa838d9e5ed859f",
+  "all_inputs_sha256": {
+    "train": "37e80f5cf976292b1d9cb43a131d624f6479cdf265850b06e885365c08e7d00e",
+    "dev": "7e856e762759467f2f047f827c6489eaccd2bd9e4141924316eb0036644943f9",
+    "test": "f88bd2bcec8e079c76a8f7ad6692fcbabccec4b51f6d1b7ed19dafd06e5a93ea",
+    "checkpoint": "0ee64e02c64bcf96ef8f88c220c8ac6683dc4bab69ff814cbca11bb3f9970f1d",
+    "embedding": "bc282725f08c2bb7fbb524739d1711cee44810ab402f18119aa838d9e5ed859f",
+    "cache": "f930e3e4054d064c9bed7342ea1408d98f2c0683d7e7b6ff6e3bcb1fdfbb552f"
+  },
+  "source_sha256": {
+    "models/sequential/LLMMIRecASPCF.py": "08dfe95d6fa60773f5d34aafef422e29b7254ce7c1ca9963da956118a490ffe8",
+    "models/sequential/LLMMIRecASPCFSampledSoftmax.py": "a74f27deac0e15ab189345d57179ca1e80050a4acb68788d2ae335e9218669df",
+    "models/sequential/llmmi_components.py": "d71903c5a54391416630f00fa8e1aef1e6ca6b414f7dd3d064b67c8beb8c93f6",
+    "models/BaseModel.py": "57c1fa6ceb582a75d006ed6765d79a3593e58e097317063e92f687e5e4a73150",
+    "helpers/BaseRunner.py": "b0417f18bd4793c079555fe237a787474237597e1042de6f4d429b50aae93fbc",
+    "helpers/SeqReader.py": "74ed2b2e5aec81bdbb6f8c3acdcfa233d86499faa90e455504b7739fd0e5176e"
+  },
+  "script_sha256": "c31e8afe940cd3d64835eccfd565026a5f241c4eb9cb3f6159aae0b6eed82f4c",
+  "frequency_file_sha256": "99e9770e5d57a957115587cc64c2407c051a9949b6d05e174f33ffa6b7249428",
+  "old_scale_source_sha256": "7e642ef6748b9a8b73b45d91f8cf4e184357d4e1a61bd515c1c606a8b5e647b8",
+  "lock_before_any_Test_scoring": true
+}

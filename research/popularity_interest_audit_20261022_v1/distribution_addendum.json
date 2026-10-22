@@ -1,0 +1,68 @@
+{
+  "results": {
+    "ml-1m": {
+      "catalog_items": 3706,
+      "raw_zero_items": 2,
+      "target_zero_items": 6,
+      "by_phase": {
+        "dev": {
+          "TV_negative_to_catalog_uniform": 0.02566836363441421,
+          "common_positive_support_items": 3700,
+          "correlation_on_common_support": 0.9966840922648589,
+          "linear_shape_R2": 0.9933791797738257,
+          "log_density_ratio_on_log_raw_frequency_slope": 1.0174036726721662,
+          "negative_mass_on_zero_target_count": 0.0017066225165562915,
+          "negative_slots_Train_clicked": 0,
+          "negative_Train_clicked_fraction": 0.0,
+          "negative_slots_equal_positive": 0,
+          "negative_equal_positive_fraction": 0.0
+        },
+        "test": {
+          "TV_negative_to_catalog_uniform": 0.02557516922620558,
+          "common_positive_support_items": 3700,
+          "correlation_on_common_support": 0.9966714818541945,
+          "linear_shape_R2": 0.993354042741436,
+          "log_density_ratio_on_log_raw_frequency_slope": 1.0172400159864343,
+          "negative_mass_on_zero_target_count": 0.0016932119205298013,
+          "negative_slots_Train_clicked": 0,
+          "negative_Train_clicked_fraction": 0.0,
+          "negative_slots_equal_positive": 0,
+          "negative_equal_positive_fraction": 0.0
+        }
+      }
+    },
+    "beauty": {
+      "catalog_items": 12101,
+      "raw_zero_items": 33,
+      "target_zero_items": 59,
+      "by_phase": {
+        "dev": {
+          "TV_negative_to_catalog_uniform": 0.009499740718040842,
+          "common_positive_support_items": 12040,
+          "correlation_on_common_support": 0.9658674902480625,
+          "linear_shape_R2": 0.9329000087180911,
+          "log_density_ratio_on_log_raw_frequency_slope": 1.1144261536671474,
+          "negative_mass_on_zero_target_count": 0.0048797567410454774,
+          "negative_slots_Train_clicked": 0,
+          "negative_Train_clicked_fraction": 0.0,
+          "negative_slots_equal_positive": 0,
+          "negative_equal_positive_fraction": 0.0
+        },
+        "test": {
+          "TV_negative_to_catalog_uniform": 0.009376672501297537,
+          "common_positive_support_items": 12040,
+          "correlation_on_common_support": 0.9659106397028872,
+          "linear_shape_R2": 0.9329833638912407,
+          "log_density_ratio_on_log_raw_frequency_slope": 1.114238010461084,
+          "negative_mass_on_zero_target_count": 0.004908286008138442,
+          "negative_slots_Train_clicked": 0,
+          "negative_Train_clicked_fraction": 0.0,
+          "negative_slots_equal_positive": 0,
+          "negative_equal_positive_fraction": 0.0
+        }
+      }
+    }
+  },
+  "scope": "metadata only; no predictive use of Dev/Test negative frequencies; locked scores unchanged",
+  "seconds": 15.20100979320705
+}

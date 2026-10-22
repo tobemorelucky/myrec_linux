@@ -1,0 +1,39 @@
+{
+  "config": {
+    "seed": 42,
+    "Train_subset_max": 131072,
+    "epochs": 4,
+    "Dev_epochs": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "batch_size": 1024,
+    "lr": {
+      "global_weights": 0.01,
+      "conditional": 0.001,
+      "user_mlp": 0.001
+    },
+    "optimizer": "Adam",
+    "weight_decay": 1e-06,
+    "hidden": 32,
+    "frequency_lambda": 0.3,
+    "loss": "original filtered in-batch Softmax tau1 with the SAME locked frequency score; relation constant under freeze omitted",
+    "selection": "best Dev NDCG@5 per arm, earliest on tie; epoch0 included",
+    "continuation": "conditional must improve BOTH domains by >=.001 N5 and beat matched MLP; conditional paired CI inspected",
+    "no_Test": true,
+    "no_full_model_training": true,
+    "no_hyperparameter_sweep": true,
+    "run_seconds_limit": 170
+  },
+  "head": "f236831666abd0ea4687e3ecd6be5a3d50360019",
+  "status_before": "## main...origin/main\n?? research/frozen_readout_softmax_20261022_v1/\n?? research/popularity_interest_audit_20261022_v1/\n?? research/transition_dev_probe_20261022_v1/\n",
+  "script_sha256": "fae7c3155477448075e58d94212ad637bc420d26449b3137bbcc953336e4c81d",
+  "prior": "research/popularity_interest_audit_20261022_v1/*/DEV_LOCK.json",
+  "architecture": {
+    "global_weights": "softmax learned K constants, initialized log mean Train weights",
+    "conditional": "softmax(original frozen logits + Linear128to32-GELU-Linear32to1 shared over heads); inputs [LayerNorm(Vk), frozen history mean+last context]; final layer zero",
+    "user_mlp": "u + Linear64to32(no bias)-GELU-Linear32to64; input LayerNorm(u); final layer zero; both 4160 parameters"
+  }
+}
