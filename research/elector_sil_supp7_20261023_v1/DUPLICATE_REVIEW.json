@@ -1,0 +1,48 @@
+{
+  "checked": 29,
+  "exact_target_matches": 0,
+  "tasks": [
+    {
+      "dataset": "beauty",
+      "K": 3,
+      "seed": 42,
+      "arm": "SS-B0"
+    },
+    {
+      "dataset": "beauty",
+      "K": 3,
+      "seed": 42,
+      "arm": "SS-C0"
+    },
+    {
+      "dataset": "beauty",
+      "K": 8,
+      "seed": 42,
+      "arm": "SS-C1"
+    },
+    {
+      "dataset": "beauty",
+      "K": 4,
+      "seed": 42,
+      "arm": "SS-A1"
+    },
+    {
+      "dataset": "beauty",
+      "K": 4,
+      "seed": 42,
+      "arm": "SS-A2"
+    },
+    {
+      "dataset": "ml-1m",
+      "K": 2,
+      "seed": 42,
+      "arm": "SS-A1"
+    },
+    {
+      "dataset": "ml-1m",
+      "K": 2,
+      "seed": 42,
+      "arm": "SS-A2"
+    }
+  ]
+}

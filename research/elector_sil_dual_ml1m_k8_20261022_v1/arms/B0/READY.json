@@ -1,0 +1,10 @@
+{
+  "pid": 2383761,
+  "arm": "B0",
+  "GPU": "1",
+  "device": "Quadro RTX 5000",
+  "Train_rows": 982089,
+  "Dev_rows": 6040,
+  "parameters": 406410,
+  "initial_sha256": "03b728972ffc0ef23a13543882b99c823d40d748e48022574d7bfd237468497f"
+}

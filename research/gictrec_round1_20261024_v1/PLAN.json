@@ -1,0 +1,57 @@
+{
+  "root": "/home/yyx/hzgcode/pom2.0",
+  "output": "/home/yyx/hzgcode/pom2.0/research/gictrec_round1_20261024_v1",
+  "head": "771b4c3826f07a8cc7fb9038fb8659161e9f8189",
+  "datasets": {
+    "beauty": {
+      "config": "/home/yyx/hzgcode/pom2.0/research/elector_sil_formal_20261023_v1/runs/beauty_k2_s42_SS-C1/config.json",
+      "checkpoint": "/home/yyx/hzgcode/pom2.0/research/elector_sil_formal_20261023_v1/runs/beauty_k2_s42_SS-C1/best.pt",
+      "checkpoint_sha256": "5390789b0732c6e1c8ea20a3053f7722574232de04d21952629b5f0f3c07eb91",
+      "config_sha256": "35685b6b757f3a338fa8e517c5a864e7b4914401c09cd91afa763407c898524d",
+      "bank": "/home/yyx/hzgcode/pom2.0/research/gictrec_round1_20261024_v1/banks/beauty.pt"
+    },
+    "ml-1m": {
+      "config": "/home/yyx/hzgcode/pom2.0/research/elector_sil_k3_20261023_v1/runs/ml-1m_k3_s42_SS-C1/config.json",
+      "checkpoint": "/home/yyx/hzgcode/pom2.0/research/elector_sil_k3_20261023_v1/runs/ml-1m_k3_s42_SS-C1/best.pt",
+      "checkpoint_sha256": "08861748f09cd6483e1cd903fdb788d7423bfcb4f41cb9bfa683e22da4b52caf",
+      "config_sha256": "107bc7b2cc286a3ae236647c485e222dcd0b33208b37e8a8f8a0d94f9745aa67",
+      "bank": "/home/yyx/hzgcode/pom2.0/research/gictrec_round1_20261024_v1/banks/ml-1m.pt"
+    }
+  },
+  "variants": [
+    "G0",
+    "G1",
+    "G2",
+    "G3"
+  ],
+  "new_complete_runs": 8,
+  "seed": 42,
+  "anchors": 32,
+  "neighbors": 8,
+  "temperature": 0.1,
+  "reliability_constants": [
+    2,
+    2
+  ],
+  "epoch0_in_selection": true,
+  "epoch0_note": "All arms execute the same real continuation; initial C1 anchor is also eligible to protect against continuation degradation.",
+  "continuation": "inherit each C1 configuration: Beauty lr .004 / ML A1 lr .001, constant; fresh Adam, 200 epochs maximum, original early stopping; epoch0 eligible; identical four arms per dataset",
+  "Toys": {
+    "BPR_pid": 2888790,
+    "old_dispatcher_pid": 2889459,
+    "old_root": "/home/yyx/hzgcode/pom2.0/research/elector_sil_toys_full_20261024_v1",
+    "repair_root": "/home/yyx/hzgcode/pom2.0/research/elector_sil_toys_evalfix_20261024_v1",
+    "only_remaining": [
+      "SS-B0",
+      "SS-C0",
+      "SS-C1"
+    ]
+  },
+  "archives": {
+    "/home/yyx/hzgcode/pom2.0/research/THESIS_CH4_FROZEN_20261024.md": "baeb3289a93afa194cfe1003e68e5ee26721218ed7483ca600fdc11d8e74dc60",
+    "/home/yyx/hzgcode/pom2.0/research/THESIS_CH4_FROZEN_20261024.index.json": "212f249cff6f0a9ea5319f1afab62def7f0dc9875405aa6b5fd316c3016bb389"
+  },
+  "archive_backup": "untracked; external backup unverified; no Git mutation",
+  "full_training_authorized": true,
+  "Test_authorized": true
+}

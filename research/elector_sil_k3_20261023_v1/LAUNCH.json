@@ -1,0 +1,13 @@
+{
+  "pid": 2557780,
+  "log": "/home/yyx/hzgcode/pom2.0/research/elector_sil_k3_20261023_v1/queue.log",
+  "max_new_tasks": 2,
+  "GPUs": [
+    0,
+    1
+  ],
+  "order": [
+    "beauty_k3_s42_SS-C1",
+    "ml-1m_k3_s42_SS-C1"
+  ]
+}

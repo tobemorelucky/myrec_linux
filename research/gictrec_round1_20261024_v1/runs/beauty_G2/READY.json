@@ -1,0 +1,12 @@
+{
+  "pid": 2938911,
+  "GPU": "1",
+  "dataset": "beauty",
+  "variant": "G2",
+  "K": 2,
+  "Train_rows": 131413,
+  "Dev_rows": 22363,
+  "cache_bytes": 27865648,
+  "common_initial_sha256": "03e97591c4a2c772a7c5ae1a877cbac788bd8a3745685ecc383f9b11e66886bc",
+  "parameters": 984516
+}

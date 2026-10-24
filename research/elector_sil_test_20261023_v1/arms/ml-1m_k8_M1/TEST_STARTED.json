@@ -1,0 +1,11 @@
+{
+  "id": "ml-1m_k8_M1",
+  "checkpoint_sha256": "436d4eff925c9e301594bdf9171179c8a93a1b6e1d801eb70ed3c2e11758b8e2",
+  "best_epoch": 81,
+  "test_pass_budget": 1,
+  "scores": [
+    "raw",
+    "locked_prior"
+  ],
+  "lambda_pop": 0.3
+}

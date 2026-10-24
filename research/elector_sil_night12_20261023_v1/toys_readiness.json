@@ -1,0 +1,108 @@
+{
+  "seconds": 3.9626010339707136,
+  "dataset_name": "toys",
+  "raw_source": "Amazon2018 Toys_and_Games_5",
+  "users": 207988,
+  "items": 78771,
+  "train_rows": 1343463,
+  "Train_users": 207988,
+  "Train_items": 78540,
+  "Train_max_item": 78771,
+  "item_map_contiguous": true,
+  "history_max": 20,
+  "Train_usable_prefixes": 1135475,
+  "Train_history_histogram": {
+    "1": 206256,
+    "2": 194516,
+    "3": 135538,
+    "4": 99263,
+    "5": 75358,
+    "6": 58495,
+    "7": 46513,
+    "8": 37696,
+    "9": 31025,
+    "10": 25847,
+    "11": 21859,
+    "12": 18491,
+    "13": 15869,
+    "14": 13805,
+    "15": 11999,
+    "16": 10595,
+    "17": 9344,
+    "18": 8252,
+    "19": 7397,
+    "20": 107357
+  },
+  "Train_history_le3_fraction": 0.4723221559259341,
+  "Dev_history_quantiles": {
+    "0": 1.0,
+    "0.25": 3.0,
+    "0.5": 4.0,
+    "0.75": 7.0,
+    "0.9": 12.0,
+    "1": 20.0
+  },
+  "Dev_history_le3_fraction": 0.34833740408100466,
+  "Dev_history_le4_fraction": 0.522746504606035,
+  "sampled_evaluation": {
+    "dev": {
+      "sampled_rows": 64,
+      "negative_lengths": [
+        1000
+      ],
+      "duplicate_negative_rows": 64,
+      "target_appears_in_neg": 0,
+      "IDs_in_range": true,
+      "train_prefix_chronological": true
+    },
+    "test": {
+      "sampled_rows": 64,
+      "negative_lengths": [
+        1000
+      ],
+      "duplicate_negative_rows": 64,
+      "target_appears_in_neg": 0,
+      "IDs_in_range": true,
+      "train_prefix_chronological": true
+    }
+  },
+  "text": {
+    "rows": 78771,
+    "coverage": 1.0,
+    "item_to_ASIN_mismatches": 0,
+    "average_rating_present": 78771,
+    "source": "/home/yyx/hzgcode/pom2.0/data/toys/item_str_minimal_clean.jsonline",
+    "provenance_risk": "Builder averages ratings from full original reviews; Train-only boundary unproven",
+    "LoRA_checkpoint_identity": "unverified; no embedding manifest found"
+  },
+  "embedding": {
+    "path": "/home/yyx/hzgcode/pom2.0/data/toys/handled/llm_table_pca1536.pkl",
+    "file_bytes": 483975334,
+    "shape": [
+      78772,
+      1536
+    ],
+    "dtype": "float32",
+    "all_finite": true,
+    "zero_rows": 1,
+    "expected_n_items": 78772,
+    "shape_valid": true,
+    "loader_will_prepend_padding": false,
+    "mapped_item_coverage": null
+  },
+  "raw_llm_table": {
+    "file_bytes": 1290600614,
+    "prefix_integer_metadata": [
+      0,
+      1,
+      78772,
+      4096,
+      3,
+      -1,
+      -1,
+      0
+    ]
+  },
+  "large_SeqReader_loaded": false,
+  "large_eval_CSV_fully_read": false
+}

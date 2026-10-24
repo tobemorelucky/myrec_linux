@@ -1,0 +1,5 @@
+{
+  "reason": "Use the exact established NumPy-float64 log1p then float32 prior conversion, avoiding a different GPU/CPU log1p rounding path.",
+  "before": "4b22412feaefb75f97380b9854aed305dc1543d6b44605f039b0b3b869b4147c",
+  "after": "96a37e78a3d71a6f436caa6fbf039ac3f11cdb0bd7bc70e99f528cede7f7a04f"
+}

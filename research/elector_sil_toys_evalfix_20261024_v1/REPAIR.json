@@ -1,0 +1,16 @@
+{
+  "schema": "toys_eval_numpy_repair_v1",
+  "original": "/home/yyx/hzgcode/pom2.0/research/elector_sil_toys_parallel_20261024_v1",
+  "output": "/home/yyx/hzgcode/pom2.0/research/elector_sil_toys_evalfix_20261024_v1",
+  "changes": "Only Tensor -> detach().cpu().numpy() at evaluator/calibration conversion sites; no data/scoring/ranking changes",
+  "original_common_sha256": "1d928478665a225c0ac2a7c2ff6803b17d9a8660f2102cb7c6d62d11d7ade94b",
+  "new_common_sha256": "4ce7e9b0b814b024789ac3a14b30b1887d1b026f8edba5a25fbb695630dd5ac4",
+  "BPR_running_files_untouched": true,
+  "failed_SS_output_preserved": true,
+  "authorized_arms": [
+    "SS-B0",
+    "SS-C0",
+    "SS-C1"
+  ],
+  "gate": "Do not dispatch until original BPR exited AND accepted result/Test complete and old scheduler exited. Otherwise BLOCKED; never kill/restart BPR."
+}

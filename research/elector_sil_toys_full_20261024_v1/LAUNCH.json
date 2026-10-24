@@ -1,0 +1,13 @@
+{
+  "queue_pid": 2888682,
+  "log": "/home/yyx/hzgcode/pom2.0/research/elector_sil_toys_full_20261024_v1/queue.log",
+  "order": [
+    "BPR-B0",
+    "SS-B0",
+    "SS-C0",
+    "SS-C1"
+  ],
+  "max_new_full_runs": 4,
+  "serial": true,
+  "time_utc": "2026-10-24T02:35:46Z"
+}

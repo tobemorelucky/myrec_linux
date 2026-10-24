@@ -1,0 +1,10 @@
+{
+  "pid": 2934620,
+  "GPU": "0",
+  "arm": "SS-C0",
+  "Train_rows": 1135475,
+  "Dev_rows": 207988,
+  "parameters": 5247558,
+  "GPU_allocated_MiB": 2437.09375,
+  "common_initial_sha256": "740128c15df71bf1cd7f5fca3630a6c25e0a85d319f3eae2e1388092f7ff10c2"
+}

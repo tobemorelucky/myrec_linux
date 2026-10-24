@@ -1,0 +1,10 @@
+{
+  "seconds": 52.34931549895555,
+  "datasets": [
+    "beauty",
+    "ml-1m"
+  ],
+  "Test_evaluations": 0,
+  "checkpoints_written": 0,
+  "old_sources_and_assets_unchanged": true
+}

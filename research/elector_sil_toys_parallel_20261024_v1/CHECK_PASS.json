@@ -1,0 +1,31 @@
+{
+  "passed": true,
+  "CPU_finalization_seconds": 31.433213434182107,
+  "common_initial_sha256": "740128c15df71bf1cd7f5fca3630a6c25e0a85d319f3eae2e1388092f7ff10c2",
+  "parameters": {
+    "BPR-B0": 5210054,
+    "SS-B0": 5210054,
+    "SS-C0": 5247558,
+    "SS-C1": 5247558
+  },
+  "GPU_peak_MiB": {
+    "BPR-B0": 734.5302734375,
+    "SS-B0": 2714.1376953125,
+    "SS-C0": 2779.64990234375,
+    "SS-C1": 4468.380859375
+  },
+  "real_model_checks": "/home/yyx/hzgcode/pom2.0/research/elector_sil_toys_full_20261024_v1/REAL_MODEL_CHECK_OBSERVED.json",
+  "short_history_padding_causality": true,
+  "zero_initial_identity": true,
+  "K": [
+    1,
+    2,
+    3,
+    4,
+    8
+  ],
+  "Train_CSV_cache_frame_equivalent": true,
+  "NumPy_duplicate_tie_protocol_equivalent": true,
+  "no_Test": true,
+  "no_full_training": true
+}

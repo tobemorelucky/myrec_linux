@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "CPU_exact": true,
+  "synthetic_only": true,
+  "original_files_untouched": true,
+  "six_metrics_exact": true,
+  "input_hash_exact": true,
+  "tied_order_and_duplicate_slots_preserved": true,
+  "GPU_exact": true,
+  "physical_GPU": 1,
+  "frequency_and_rank_export_exercised": true,
+  "seconds": 0.5306871803477407
+}

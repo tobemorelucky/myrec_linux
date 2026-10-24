@@ -1,0 +1,11 @@
+{
+  "queue_pid": 2305144,
+  "GPU": 1,
+  "order": [
+    "B0",
+    "C1",
+    "M1"
+  ],
+  "queue_log": "/home/yyx/hzgcode/pom2.0/research/elector_sil_dual_beauty_20261022_v1/queue.log",
+  "launched_utc": "2026-10-22T12:19:19Z"
+}

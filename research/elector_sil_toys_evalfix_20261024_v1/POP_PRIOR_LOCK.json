@@ -1,0 +1,44 @@
+{
+  "lambda_normalized": 0.3,
+  "scale_factor": 2.0843257779445614,
+  "raw_lambda": 0.6252977333833684,
+  "base_centered_RMS": 1.8834757239274182,
+  "frequency_centered_RMS": 0.9036378784245477,
+  "fit_source": "Train only; full user-fold exclusion from counts; user_id%3",
+  "reference": "Frozen existing completed-epoch BPR best-Dev snapshot at parallel handoff; not the final BPR checkpoint",
+  "reference_snapshot": {
+    "source": "/home/yyx/hzgcode/pom2.0/research/elector_sil_toys_full_20261024_v1/arms/BPR-B0/best.pt",
+    "source_metadata": {
+      "epoch": 3,
+      "metrics": {
+        "HR@5": 0.2106948477796796,
+        "NDCG@5": 0.14562545939426544,
+        "HR@10": 0.29530069042444756,
+        "NDCG@10": 0.1728947442561846,
+        "HR@20": 0.3948785506856165,
+        "NDCG@20": 0.19804195110378175
+      },
+      "raw": {
+        "HR@5": 0.2106948477796796,
+        "NDCG@5": 0.14562545939426544,
+        "HR@10": 0.29530069042444756,
+        "NDCG@10": 0.1728947442561846,
+        "HR@20": 0.3948785506856165,
+        "NDCG@20": 0.19804195110378175
+      },
+      "locked_prior": null,
+      "selection": "raw Dev NDCG@5",
+      "checkpoint": "best.pt"
+    },
+    "reference_sha256": "e7e2d686a89938b9258f1eaffdfbd92207edc376aba5888f6ca7593c1b9fd658",
+    "rule": "First stable existing best-Dev snapshot observed for handoff; one fixed reference, no candidate search",
+    "final_BPR_training_continues": true,
+    "no_Test_used": true
+  },
+  "reference_checkpoint_sha256": "e7e2d686a89938b9258f1eaffdfbd92207edc376aba5888f6ca7593c1b9fd658",
+  "users": 1024,
+  "candidates_per_user": 1001,
+  "Train_csv_sha256": "981d7dcbfe2cd161d51afa99f4a38c307900c57f024cde1470cb901903320e2e",
+  "probe_inputs_sha256": "7390b0efc3e7f14889de9fcac4f583c1b8367eeb427b0b4fee19206b281a2c50:7caacbf998ae99d3294efa7fa331d339633a16837c310c03d21ee4e44bbff278",
+  "no_Dev_Test_statistics": true
+}

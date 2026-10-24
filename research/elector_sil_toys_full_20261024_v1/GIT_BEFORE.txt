@@ -1,0 +1,21 @@
+## main...origin/main
+ M main.py
+?? models/sequential/LLMMIRecASPCFAdaptiveSIL.py
+?? research/elector_sil_adaptive_20261022_v1/
+?? research/elector_sil_dual_beauty_20261022_v1/
+?? research/elector_sil_dual_ml1m_20261022_v1/
+?? research/elector_sil_dual_ml1m_k2_20261022_v1/
+?? research/elector_sil_dual_ml1m_k8_20261022_v1/
+?? research/elector_sil_formal_20261023_v1/
+?? research/elector_sil_k3_20261023_v1/
+?? research/elector_sil_night12_20261023_v1/
+?? research/elector_sil_objective_full_20261023_v1/
+?? research/elector_sil_objective_full_20261023_v2/
+?? research/elector_sil_softguide_20261023_v1/
+?? research/elector_sil_supp7_20261023_v1/
+?? research/elector_sil_test_20261023_v1/
+?? research/elector_sil_toys_full_20261024_v1/
+?? research/gpu_resource_scheduler_20261022_v1/
+?? research/multiscale_interest_recompose_20261022_v1/
+?? research/pair_advantage_roles_20261022_v1/
+?? research/pop_bucket_interest_screen_20261022_v1/

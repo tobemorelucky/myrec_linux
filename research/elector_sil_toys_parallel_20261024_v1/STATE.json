@@ -1,0 +1,18 @@
+{
+  "state": "FAILED",
+  "pid": 2889459,
+  "adopted_BPR": {
+    "pid": 2888790,
+    "GPU": 0,
+    "completed": true,
+    "original_root": "/home/yyx/hzgcode/pom2.0/research/elector_sil_toys_full_20261024_v1"
+  },
+  "running": {},
+  "pending": [
+    "SS-C0",
+    "SS-C1"
+  ],
+  "completed": [],
+  "halted": true,
+  "time_utc": "2026-10-24T05:15:20Z"
+}

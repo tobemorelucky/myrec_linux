@@ -1,0 +1,5 @@
+{
+  "error": "FileNotFoundError(2, 'No such file or directory')",
+  "no_retry": true,
+  "following_tasks_halted": true
+}

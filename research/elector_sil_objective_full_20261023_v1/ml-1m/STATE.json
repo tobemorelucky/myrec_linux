@@ -1,0 +1,8 @@
+{
+  "state": "FAILED",
+  "pid": 2403308,
+  "dataset": "ml-1m",
+  "time_utc": "2026-10-23T03:11:10Z",
+  "error": "RuntimeError('Task failed BPR-B0 exit=1')",
+  "GPU": 0
+}

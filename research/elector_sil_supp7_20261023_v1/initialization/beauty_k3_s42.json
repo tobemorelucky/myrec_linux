@@ -1,0 +1,8 @@
+{
+  "common_initial_sha256": "a462d8537dc6af6ae121f4ba1babdc510c25184c3197792baf156f218fcd2b0c",
+  "K": 3,
+  "seed": 42,
+  "source": "CPU initialization-only C1/B0 equivalence",
+  "source_path": "/home/yyx/hzgcode/pom2.0/research/elector_sil_k3_20261023_v1/initialization/beauty_k3_s42.json",
+  "source_sha256": "9bfd43cd7ed088ed3d0f28b492eb668235f95af2debbfad94d4214d04c2e8110"
+}

@@ -1,0 +1,58 @@
+{
+  "status": "PROPOSAL_ONLY_AWAITING_USER_AUTHORIZATION",
+  "arms": [
+    "B0",
+    "C0",
+    "C1",
+    "M2"
+  ],
+  "algorithm": "Same fixed-segment/recent-memory M2 class in every dataset; no dataset-name module switches; frozen A1 full1536, no online LLM/new auxiliary loss",
+  "shared": {
+    "seed": 42,
+    "initialization": "fresh common ASPCF initialization within dataset; same C0/C1/M2 shared tensors; do not warmstart full training from short-screen weights",
+    "H": 20,
+    "D": 64,
+    "batch_size": 1024,
+    "eval_batch_size": 256,
+    "optimizer": "Adam original bias no-decay grouping",
+    "lr_by_dataset": {
+      "beauty": 0.004,
+      "ml-1m": 0.001
+    },
+    "l2": 1e-06,
+    "dropout": 0.1,
+    "epoch_max": 200,
+    "early_stop": 10,
+    "loss": "original filtered Batch Softmax tau1 + relation .01",
+    "lambda_pop": 0.3,
+    "original_Train_RMS_unchanged": true,
+    "fixed_fragment_length": 4,
+    "recent_memory": 3,
+    "alpha_initial": 0.1,
+    "alpha_max": 1.0,
+    "K_configurable": true
+  },
+  "K_first_run": {
+    "beauty": 4,
+    "ml1m": 2,
+    "source": "previous Dev selection; K remains hyperparameter, no Test-based reselection"
+  },
+  "parameters": {
+    "beauty_K4": {
+      "B0": 943174,
+      "C0": 980678,
+      "C1": 980678,
+      "M2": 980682
+    },
+    "ml1m_K2": {
+      "B0": 405636,
+      "C0": 443140,
+      "C1": 443140,
+      "M2": 443142
+    }
+  },
+  "reuse": "Reuse completed B0/C1 results only after confirming exact initialization/configuration/source-function equivalence; no repeat Test for same trusted checkpoint. Train C0/M2 into new independent directories.",
+  "acceptance": "Dev NDCG@5 locks best, then one Test six-metric raw/locked-prior comparison with archived B0/C1, historical strong baselines and SOTA evaluated under exactly same protocol. All further adaptation is exploratory after observed Test.",
+  "operation": "After explicit authorization, nohup queues with shared GPU/job locks; protect other users. Confirm startup and stop operations, wait for user inspection. Failure records and halts subsequent arms; no retries/config changes.",
+  "interpretation": "Engineering conditional Go only; 16-step warmstart Dev does not establish performance. Prioritize C0 vs C1 for attribution; M2 is candidate, primitive semantic attention overlap acknowledged."
+}

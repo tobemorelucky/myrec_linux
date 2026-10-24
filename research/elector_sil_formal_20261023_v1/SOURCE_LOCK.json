@@ -1,0 +1,13 @@
+{
+  "base_snapshot.py": "27e2fbea40fec6f065a02fb03d6edf5e83d614b28f120693175abbb1b269c1e6",
+  "softguide_snapshot.py": "4c38adc776f0206972faa93bf6e4f6fa55ff1a5ab3e6332003d09a215788a188",
+  "objective_model.py": "014ed00749c2a61e2c348cbff59b11b3471be945dd5d5a94fdf49aac595733c8",
+  "plan.py": "0d7889383810f5aa1a32d540fcd31f0931991ae31e4485e8d0c878793ecff914",
+  "train_task.py": "f6e06700d5e8ddccd692d2109f4b80f128b316092775e03aee8445753da04c45",
+  "scheduler.py": "c260e2e1038a4bc08d555d42c23708acb8ac8d7b66afa4bf0eeddd2ba98755f2",
+  "preflight.py": "9d034c77a45f67d9de2f90ed4a9e6ad8ffed492780cb56a24847dff1f346dc2d",
+  "MANIFEST.json": "783fbc44c2fdc00b4729bdb423348d3d04961f7c9022f1aed39cb73aa1b61dcd",
+  "REUSED.json": "bb74bf82c6d158d05920a7053156353c684c1c5584b5f52885b7e841ff13729b",
+  "REUSE_INVENTORY.json": "8beba3a03ea825801d3f4b919eb18a00e73d3e50dee007c805cd73ef3225d038",
+  "CHECK_PASS.json": "3c5f75a736acb124cf5c05a486c48d53bf7103768feeede28726920214f1757c"
+}

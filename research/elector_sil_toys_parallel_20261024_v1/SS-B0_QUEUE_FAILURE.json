@@ -1,0 +1,5 @@
+{
+  "error": "AssertionError('exit=1')",
+  "no_retry": true,
+  "following_tasks_halted": true
+}

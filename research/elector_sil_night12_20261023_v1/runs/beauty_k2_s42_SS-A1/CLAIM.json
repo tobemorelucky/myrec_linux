@@ -1,0 +1,11 @@
+{
+  "scheduler_pid": 2731016,
+  "GPU": 0,
+  "task": {
+    "dataset": "beauty",
+    "K": 2,
+    "seed": 42,
+    "arm": "SS-A1",
+    "priority": 0
+  }
+}

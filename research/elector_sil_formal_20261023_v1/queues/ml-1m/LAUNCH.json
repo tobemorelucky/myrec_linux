@@ -1,0 +1,9 @@
+{
+  "pid": 2510473,
+  "dataset": "ml-1m",
+  "queue_log": "/home/yyx/hzgcode/pom2.0/research/elector_sil_formal_20261023_v1/queues/ml-1m/queue.log",
+  "GPUs": [
+    0,
+    1
+  ]
+}

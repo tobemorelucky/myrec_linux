@@ -1,0 +1,28 @@
+{
+  "passed": true,
+  "seconds": 23.850058526732028,
+  "parameters_Beauty_K4": {
+    "B0": 943174,
+    "C0": 980678,
+    "C1": 980678,
+    "M2": 980682
+  },
+  "configurable_K": [
+    1,
+    2,
+    4,
+    7
+  ],
+  "C1_exact_original": true,
+  "C0_C1_parameters_match": true,
+  "semantic_zero_recovers_C1": true,
+  "identical_semantics_neutral": true,
+  "padding_and_short_history": true,
+  "local_causality": true,
+  "target_invariant_interests": true,
+  "semantic_profile_gradient": true,
+  "frozen_LLM_no_gradient": true,
+  "exact_zero_initial_scores_loss_query_gradient_and_RNG": true,
+  "full_model_finite_backward": true,
+  "no_Test": true
+}

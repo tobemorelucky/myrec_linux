@@ -1,0 +1,15 @@
+{
+  "pid": 2415567,
+  "log": "/home/yyx/hzgcode/pom2.0/research/elector_sil_objective_full_20261023_v2/parallel_dispatch_20261023_v1/queue.log",
+  "adopted_training_pid": 2414357,
+  "priority": [
+    "SS-C0",
+    "SS-M2"
+  ],
+  "GPU_preference": [
+    1,
+    0
+  ],
+  "model_config_unchanged": true,
+  "time_utc": "2026-10-23T04:50:21Z"
+}

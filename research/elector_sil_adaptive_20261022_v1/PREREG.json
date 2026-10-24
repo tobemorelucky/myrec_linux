@@ -1,0 +1,28 @@
+{
+  "config": {
+    "seed": 42,
+    "threshold_quantile": 0.65,
+    "semantic_dimension": 1536,
+    "history_max": 20,
+    "min_segment_length": 2,
+    "max_segment_length": 6,
+    "fixed_segment_length": 4,
+    "recent": 3,
+    "heads": 2,
+    "steps": 16,
+    "batch_size": 1024,
+    "lr": 0.0001,
+    "optimizer": "Adam",
+    "weight_decay": 1e-06,
+    "lambda_pop": 0.3,
+    "threshold_selection": "one prespecified Train-only adjacent-gap quantile; no Dev search",
+    "loss": "unchanged original raw filtered batch Softmax + relation .01",
+    "prior": "original locked Train-RMS .30, applied only to exported scoring as previously",
+    "screen": "same existing best-Dev initialization, all original parameters unfrozen except LLM buffer",
+    "formal_training": "not authorized; paired fresh initialization required for structure attribution",
+    "no_Test": true,
+    "no_full_training": true
+  },
+  "model_sha256": "4b22412feaefb75f97380b9854aed305dc1543d6b44605f039b0b3b869b4147c",
+  "prepare_sha256": "40da6b20454b747736c0017f80b0d565912c7041bd6e9d0ec9012d6f67943885"
+}

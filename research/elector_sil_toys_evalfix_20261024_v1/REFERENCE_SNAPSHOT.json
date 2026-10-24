@@ -1,0 +1,29 @@
+{
+  "source": "/home/yyx/hzgcode/pom2.0/research/elector_sil_toys_full_20261024_v1/arms/BPR-B0/best.pt",
+  "source_metadata": {
+    "epoch": 3,
+    "metrics": {
+      "HR@5": 0.2106948477796796,
+      "NDCG@5": 0.14562545939426544,
+      "HR@10": 0.29530069042444756,
+      "NDCG@10": 0.1728947442561846,
+      "HR@20": 0.3948785506856165,
+      "NDCG@20": 0.19804195110378175
+    },
+    "raw": {
+      "HR@5": 0.2106948477796796,
+      "NDCG@5": 0.14562545939426544,
+      "HR@10": 0.29530069042444756,
+      "NDCG@10": 0.1728947442561846,
+      "HR@20": 0.3948785506856165,
+      "NDCG@20": 0.19804195110378175
+    },
+    "locked_prior": null,
+    "selection": "raw Dev NDCG@5",
+    "checkpoint": "best.pt"
+  },
+  "reference_sha256": "e7e2d686a89938b9258f1eaffdfbd92207edc376aba5888f6ca7593c1b9fd658",
+  "rule": "First stable existing best-Dev snapshot observed for handoff; one fixed reference, no candidate search",
+  "final_BPR_training_continues": true,
+  "no_Test_used": true
+}

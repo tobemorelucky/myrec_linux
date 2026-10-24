@@ -1,0 +1,18 @@
+{
+  "pid": 2557780,
+  "new_tasks": [
+    {
+      "dataset": "beauty",
+      "K": 3,
+      "seed": 42,
+      "arm": "SS-C1"
+    },
+    {
+      "dataset": "ml-1m",
+      "K": 3,
+      "seed": 42,
+      "arm": "SS-C1"
+    }
+  ],
+  "old_queues_cancelled": true
+}

@@ -1,0 +1,12 @@
+{
+  "pid": 2558966,
+  "GPU": "0",
+  "model": "SS-C1",
+  "dataset": "ml-1m",
+  "K": 3,
+  "seed": 42,
+  "Train_rows": 982089,
+  "Dev_rows": 6040,
+  "parameters": 443269,
+  "common_initial_sha256": "4192efdf30aeb02b6c88fb73d6ead0878715bc16f9112dab8fc93c1a470a9c47"
+}

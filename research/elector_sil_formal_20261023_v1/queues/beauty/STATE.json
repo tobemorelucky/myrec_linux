@@ -1,0 +1,13 @@
+{
+  "state": "RUNNING",
+  "pid": 2510472,
+  "dataset": "beauty",
+  "phase": "K_search",
+  "current_task": "beauty_k8_s42_SS-C0",
+  "train_pid": 2552005,
+  "completed_new_tasks": 4,
+  "pending_known_tasks": 2,
+  "time_utc": "2026-10-23T08:09:23Z",
+  "GPU": 0,
+  "log": "/home/yyx/hzgcode/pom2.0/research/elector_sil_formal_20261023_v1/runs/beauty_k8_s42_SS-C0/train.log"
+}

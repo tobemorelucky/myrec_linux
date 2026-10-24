@@ -1,0 +1,13 @@
+{
+  "state": "COMPLETED",
+  "pid": 2574072,
+  "dataset": "beauty",
+  "phase": "supplement",
+  "current_task": "beauty_k4_s42_SS-A2",
+  "train_pid": null,
+  "completed_new_tasks": 5,
+  "pending_known_tasks": 0,
+  "time_utc": "2026-10-23T10:42:42Z",
+  "ready_for_user_requested_summary": true,
+  "no_automatic_cross_model_summary": true
+}

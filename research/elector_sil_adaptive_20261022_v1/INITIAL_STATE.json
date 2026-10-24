@@ -1,0 +1,69 @@
+{
+  "head": "771b4c3826f07a8cc7fb9038fb8659161e9f8189",
+  "status": "## main...origin/main\n?? research/multiscale_interest_recompose_20261022_v1/\n?? research/pair_advantage_roles_20261022_v1/\n?? research/pop_bucket_interest_screen_20261022_v1/\n",
+  "source_sha256": {
+    "main.py": "6bfbd7caedf7fb336ea03686295529d07cff041d828f21340e0008bffe86bc2f",
+    "models/sequential/LLMMIRecASPCF.py": "08dfe95d6fa60773f5d34aafef422e29b7254ce7c1ca9963da956118a490ffe8",
+    "models/sequential/LLMMIRecASPCFSampledSoftmax.py": "a74f27deac0e15ab189345d57179ca1e80050a4acb68788d2ae335e9218669df",
+    "models/sequential/llmmi_components.py": "d71903c5a54391416630f00fa8e1aef1e6ca6b414f7dd3d064b67c8beb8c93f6",
+    "helpers/BaseRunner.py": "b0417f18bd4793c079555fe237a787474237597e1042de6f4d429b50aae93fbc",
+    "helpers/SeqReader.py": "74ed2b2e5aec81bdbb6f8c3acdcfa233d86499faa90e455504b7739fd0e5176e",
+    "models/BaseModel.py": "57c1fa6ceb582a75d006ed6765d79a3593e58e097317063e92f687e5e4a73150",
+    "research/frozen_readout_softmax_20261022_v1/probe.py": "fae7c3155477448075e58d94212ad637bc420d26449b3137bbcc953336e4c81d",
+    "research/transition_dev_probe_20261022_v1/probe.py": "a08e68fe8270bc3c39760ce672ace772cf0cdfb7d215ff96b17161b9d0a3c58e"
+  },
+  "inputs": {
+    "beauty": {
+      "train": {
+        "path": "/home/yyx/hzgcode/pom2.0/data/beauty/train.csv",
+        "sha256": "37e80f5cf976292b1d9cb43a131d624f6479cdf265850b06e885365c08e7d00e"
+      },
+      "dev": {
+        "path": "/home/yyx/hzgcode/pom2.0/data/beauty/dev.csv",
+        "sha256": "7e856e762759467f2f047f827c6489eaccd2bd9e4141924316eb0036644943f9"
+      },
+      "cache": {
+        "path": "/home/yyx/hzgcode/pom2.0/data/beauty/SeqReader.pkl",
+        "sha256": "f930e3e4054d064c9bed7342ea1408d98f2c0683d7e7b6ff6e3bcb1fdfbb552f"
+      },
+      "lock": {
+        "path": "/home/yyx/hzgcode/pom2.0/research/popularity_interest_audit_20261022_v1/beauty/DEV_LOCK.json",
+        "sha256": "33fc32b17d2155787a0a6502659093db86dbdd44a627f21f87a1e90cd8f539af"
+      },
+      "embedding": {
+        "path": "/home/yyx/hzgcode/pom2.0/data/beauty/handled/llm_table_pca1536.pkl",
+        "sha256": "bc282725f08c2bb7fbb524739d1711cee44810ab402f18119aa838d9e5ed859f"
+      },
+      "checkpoint": {
+        "path": "/home/yyx/hzgcode/pom2.0/new_model/aspcf_sampled_softmax/beauty/k4_tau1_seed42_20261010T112637Z_round1/best.pt",
+        "sha256": "0ee64e02c64bcf96ef8f88c220c8ac6683dc4bab69ff814cbca11bb3f9970f1d"
+      }
+    },
+    "ml-1m": {
+      "train": {
+        "path": "/home/yyx/hzgcode/pom2.0/data/ml-1m/train.csv",
+        "sha256": "d4d11c18c2984da301842ad117e00bbedb477058a52314aebc0d1fefd26b85ff"
+      },
+      "dev": {
+        "path": "/home/yyx/hzgcode/pom2.0/data/ml-1m/dev.csv",
+        "sha256": "cb0c538f4331a2cf68b7a54968421fed7f43ac693f962985fa1350e28dd626b5"
+      },
+      "cache": {
+        "path": "/home/yyx/hzgcode/pom2.0/data/ml-1m/SeqReader.pkl",
+        "sha256": "66b51d76455a0a80acb05655c5ecae43b0536e63a3d6e6d0af2edda43eb13ec3"
+      },
+      "lock": {
+        "path": "/home/yyx/hzgcode/pom2.0/research/popularity_interest_audit_20261022_v1/ml-1m/DEV_LOCK.json",
+        "sha256": "6fb4bb3650b4088e8a52913ca0c6a95e2f7d9f5843bfaeb7d122731f24ba7603"
+      },
+      "embedding": {
+        "path": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/cross_v3_20261021/p920/incoming/A1_oldlora_rich512/rich_pca.pkl",
+        "sha256": "03cf9649844da2c172487a0f552a49a4d331d8262135e3b70e48d6e772ad7905"
+      },
+      "checkpoint": {
+        "path": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/cross_v3_20261021/p920/aspcf_A1_k4_seed42_20261021_cross/best.pt",
+        "sha256": "65343d00f84bcfb4e8deb4fce47149f55da08cdfdd98c54ec77b0bcd1f26409b"
+      }
+    }
+  }
+}

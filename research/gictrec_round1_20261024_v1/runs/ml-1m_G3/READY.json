@@ -1,0 +1,12 @@
+{
+  "pid": 2943659,
+  "GPU": "1",
+  "dataset": "ml-1m",
+  "variant": "G3",
+  "K": 3,
+  "Train_rows": 982089,
+  "Dev_rows": 6040,
+  "cache_bytes": 10069344,
+  "common_initial_sha256": "28b9937def831fff488ee2fc57a3aee227a7ce0ce11b5d8f73e57c914d2345fa",
+  "parameters": 447365
+}

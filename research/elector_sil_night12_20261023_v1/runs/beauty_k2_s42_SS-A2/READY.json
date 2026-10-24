@@ -1,0 +1,12 @@
+{
+  "pid": 2738673,
+  "GPU": "0",
+  "model": "SS-A2",
+  "dataset": "beauty",
+  "K": 2,
+  "seed": 42,
+  "Train_rows": 131413,
+  "Dev_rows": 22363,
+  "parameters": 980420,
+  "common_initial_sha256": "76a603896fb5a2beba954c953bdc07d22f07512fd4c71d266b24a078febcc405"
+}

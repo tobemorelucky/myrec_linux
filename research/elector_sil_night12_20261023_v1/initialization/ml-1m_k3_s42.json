@@ -1,0 +1,8 @@
+{
+  "common_initial_sha256": "4192efdf30aeb02b6c88fb73d6ead0878715bc16f9112dab8fc93c1a470a9c47",
+  "K": 3,
+  "seed": 42,
+  "source": "CPU initialization-only C1/B0 equivalence",
+  "source_path": "/home/yyx/hzgcode/pom2.0/research/elector_sil_k3_20261023_v1/initialization/ml-1m_k3_s42.json",
+  "source_sha256": "ed1156e4b043fd9f6f2c6f7463cd691f5792ccd635754594394426592c3b93d8"
+}

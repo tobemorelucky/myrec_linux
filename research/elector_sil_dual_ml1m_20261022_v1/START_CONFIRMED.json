@@ -1,0 +1,39 @@
+{
+  "ML1M": {
+    "state": {
+      "state": "RUNNING",
+      "scheduler_pid": 2311416,
+      "time_utc": "2026-10-22T12:34:35Z",
+      "dataset": "ml-1m",
+      "GPU": 0,
+      "GPU_uuid": "GPU-5d1b4b83-6d28-014d-51b3-9f262308b849",
+      "current_arm": "B0",
+      "train_pid": 2311462,
+      "train_log": "/home/yyx/hzgcode/pom2.0/research/elector_sil_dual_ml1m_20261022_v1/arms/B0/train.log",
+      "stdout_log": "/home/yyx/hzgcode/pom2.0/research/elector_sil_dual_ml1m_20261022_v1/arms/B0/stdout.log"
+    },
+    "ready": {
+      "pid": 2311462,
+      "arm": "B0",
+      "GPU": "0",
+      "device": "Quadro RTX 5000",
+      "Train_rows": 982089,
+      "Dev_rows": 6040,
+      "parameters": 405894,
+      "initial_sha256": "06a4a6ba49230f2ecb57b349416ed25852ad99e6c9c7608a5819d6c9e00b867f"
+    },
+    "log_written": true,
+    "GPU_compute_processes": "2311462, GPU-5d1b4b83-6d28-014d-51b3-9f262308b849, 160 MiB\n2310061, GPU-aae229cf-ddb1-1b36-5734-ffc82ea7e8ac, 2668 MiB"
+  },
+  "Beauty": {
+    "queue_pid": 2305144,
+    "alive": true,
+    "GPU": 1,
+    "queue_log": "/home/yyx/hzgcode/pom2.0/research/elector_sil_dual_beauty_20261022_v1/queue.log",
+    "current_arm": "M1",
+    "train_pid": 2310061
+  },
+  "resource_locks": "/home/yyx/hzgcode/pom2.0/research/gpu_resource_scheduler_20261022_v1",
+  "stopped_after_start_confirmation": true,
+  "no_Test": true
+}

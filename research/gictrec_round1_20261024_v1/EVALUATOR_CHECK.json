@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "synthetic_rows": 513,
+  "candidates": 1001,
+  "ties_and_duplicate_slots": true,
+  "exact_numpy_six_metrics": true,
+  "rank_export": true,
+  "real_Test": false
+}

@@ -1,0 +1,37 @@
+{
+  "combined_dataset_body_seconds": 50.44077780097723,
+  "resume_body_seconds": 16.779235900379717,
+  "math_preparation_seconds_upper_bound": 10,
+  "config": {
+    "seed": 42,
+    "batch_size": 1024,
+    "steps": 16,
+    "role_weight": 0.1,
+    "role_alpha": 0.5,
+    "role_temperature": 1.0,
+    "learning_rate": 0.0001,
+    "optimizer": "Adam",
+    "weight_decay": 1e-06,
+    "init": "same existing best-Dev checkpoint for all three arms; diagnostic warm-start, NOT a full-training result",
+    "arms": [
+      "SS_continue",
+      "uniform_pair",
+      "pair_roles"
+    ],
+    "Dev": "full original 1001 duplicate slots; before and after once, both raw and fixed pop .30",
+    "training": "original filtered in-batch Softmax + original relation .01, same paired dropout/relation RNG, pair aux same legal negatives",
+    "Test_allowed": false,
+    "full_training_allowed": false,
+    "global_seconds_limit": 170
+  },
+  "datasets": [
+    "beauty",
+    "ml-1m"
+  ],
+  "Test_evaluations": 0,
+  "full_training_started": false,
+  "module_sha256": "01c31dd7d0851fa1b2e18153d7960c04720e8aa88d54b5107247c7919e61b4f6",
+  "runner_sha256": "7dce9a53372640b562d0008416d92252471ae6893422e9158411cc86b7ef9ca9",
+  "resume_sha256": "7762d42656df83b22864f2628d4d40e7d59264f2bc0718c5a94b627d5e4e4490",
+  "Beauty_reused_not_repeated": true
+}

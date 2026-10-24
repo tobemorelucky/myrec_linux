@@ -1,0 +1,24 @@
+{
+  "head": "771b4c3826f07a8cc7fb9038fb8659161e9f8189",
+  "status": "## main...origin/main\n M main.py\n?? models/sequential/LLMMIRecASPCFAdaptiveSIL.py\n?? research/elector_sil_adaptive_20261022_v1/\n?? research/elector_sil_dual_beauty_20261022_v1/\n?? research/multiscale_interest_recompose_20261022_v1/\n?? research/pair_advantage_roles_20261022_v1/\n?? research/pop_bucket_interest_screen_20261022_v1/\n",
+  "protected_sha256": {
+    "main.py": "26efeb7ac83ff00f02ea66c1c03c410f43a946d18849d86b0db5988d8e86e124",
+    "models/sequential/LLMMIRecASPCF.py": "08dfe95d6fa60773f5d34aafef422e29b7254ce7c1ca9963da956118a490ffe8",
+    "models/sequential/LLMMIRecASPCFSampledSoftmax.py": "a74f27deac0e15ab189345d57179ca1e80050a4acb68788d2ae335e9218669df",
+    "models/sequential/LLMMIRecASPCFAdaptiveSIL.py": "27e2fbea40fec6f065a02fb03d6edf5e83d614b28f120693175abbb1b269c1e6",
+    "models/sequential/llmmi_components.py": "d71903c5a54391416630f00fa8e1aef1e6ca6b414f7dd3d064b67c8beb8c93f6",
+    "models/BaseModel.py": "57c1fa6ceb582a75d006ed6765d79a3593e58e097317063e92f687e5e4a73150",
+    "helpers/BaseRunner.py": "b0417f18bd4793c079555fe237a787474237597e1042de6f4d429b50aae93fbc",
+    "helpers/SeqReader.py": "74ed2b2e5aec81bdbb6f8c3acdcfa233d86499faa90e455504b7739fd0e5176e",
+    "research/frozen_readout_softmax_20261022_v1/probe.py": "fae7c3155477448075e58d94212ad637bc420d26449b3137bbcc953336e4c81d",
+    "research/transition_dev_probe_20261022_v1/probe.py": "a08e68fe8270bc3c39760ce672ace772cf0cdfb7d215ff96b17161b9d0a3c58e",
+    "research/elector_sil_dual_beauty_20261022_v1/train_arm.py": "0f93187e0f6dffe6a003c717e0dfc29198a3231439fcdd5baede8f228c86df11",
+    "research/elector_sil_dual_beauty_20261022_v1/model_snapshot.py": "27e2fbea40fec6f065a02fb03d6edf5e83d614b28f120693175abbb1b269c1e6",
+    "research/elector_sil_dual_beauty_20261022_v1/queue.sh": "982942ae96b6302604b398ad9af634255f6543d301cae3383d38622bad1e83ff",
+    "data/ml-1m/train.csv": "d4d11c18c2984da301842ad117e00bbedb477058a52314aebc0d1fefd26b85ff",
+    "data/ml-1m/dev.csv": "cb0c538f4331a2cf68b7a54968421fed7f43ac693f962985fa1350e28dd626b5",
+    "data/ml-1m/SeqReader.pkl": "66b51d76455a0a80acb05655c5ecae43b0536e63a3d6e6d0af2edda43eb13ec3",
+    "research/elector_sil_adaptive_20261022_v1/prep_v2/ml-1m_train_asset.json": "0fce5beb58a52274f0b586c3b0859ba0f1ffdc982a565822341fb0866b7122e8",
+    "research/ml1m_embedding_v2_20261020/runs/cross_v3_20261021/p920/incoming/A1_oldlora_rich512/rich_pca.pkl": "03cf9649844da2c172487a0f552a49a4d331d8262135e3b70e48d6e772ad7905"
+  }
+}

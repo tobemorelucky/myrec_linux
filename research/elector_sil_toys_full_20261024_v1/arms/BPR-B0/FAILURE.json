@@ -1,0 +1,5 @@
+{
+  "error": "TypeError(\"can't convert cuda:0 device type tensor to numpy. Use Tensor.cpu() to copy the tensor to host memory first.\")",
+  "traceback": "Traceback (most recent call last):\n  File \"/home/yyx/hzgcode/pom2.0/research/elector_sil_toys_full_20261024_v1/train_task.py\", line 63, in <module>\n    run(arm)\n  File \"/home/yyx/hzgcode/pom2.0/research/elector_sil_toys_full_20261024_v1/train_task.py\", line 47, in run\n    t=time.perf_counter();got=score_views(td,p/'test_user_ranks.csv');Test_seconds=time.perf_counter()-t\n  File \"/home/yyx/hzgcode/pom2.0/research/elector_sil_toys_full_20261024_v1/common.py\", line 84, in score_views\n    freq=np.log1p(counts[batch['item_id'].numpy()]).astype(np.float32).astype(np.float64)\nTypeError: can't convert cuda:0 device type tensor to numpy. Use Tensor.cpu() to copy the tensor to host memory first.\n",
+  "no_retry": true
+}

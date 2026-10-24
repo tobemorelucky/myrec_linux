@@ -1,0 +1,23 @@
+{
+  "startup_confirmed": true,
+  "dispatcher_pid": 2415567,
+  "original_BPR_C1_pid": 2414357,
+  "new_SS_C0_pid": 2415623,
+  "ready": {
+    "pid": 2415623,
+    "GPU": "1",
+    "model": "SS-C0",
+    "dataset": "ml-1m",
+    "Train_rows": 982089,
+    "Dev_rows": 6040,
+    "parameters": 443140,
+    "common_initial_sha256": "d0b093cd8e1c7d6cfbe944d9acafb4a77d5601d800fbfbab76736778108012cc"
+  },
+  "GPU_processes": "GPU-5d1b4b83-6d28-014d-51b3-9f262308b849, 2414357, 554 MiB\nGPU-aae229cf-ddb1-1b36-5734-ffc82ea7e8ac, 2415623, 546 MiB\n",
+  "locks": {
+    "0": "held",
+    "1": "held"
+  },
+  "queue_log": "/home/yyx/hzgcode/pom2.0/research/elector_sil_objective_full_20261023_v2/parallel_dispatch_20261023_v1/queue.log",
+  "train_log": "/home/yyx/hzgcode/pom2.0/research/elector_sil_objective_full_20261023_v2/ml-1m/arms/SS-C0/train.log"
+}

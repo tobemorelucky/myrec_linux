@@ -1,0 +1,33 @@
+{
+  "state": {
+    "state": "RUNNING",
+    "pid": 2889459,
+    "adopted_BPR": {
+      "pid": 2888790,
+      "GPU": 0,
+      "completed": false,
+      "original_root": "/home/yyx/hzgcode/pom2.0/research/elector_sil_toys_full_20261024_v1"
+    },
+    "running": {
+      "SS-B0": {
+        "pid": 2889477,
+        "GPU": 1
+      }
+    },
+    "pending": [
+      "SS-C0",
+      "SS-C1"
+    ],
+    "completed": [],
+    "halted": false,
+    "time_utc": "2026-10-24T02:48:43Z"
+  },
+  "locks": {
+    "gpu0.lock": "HELD",
+    "gpu1.lock": "HELD",
+    "elector_toys_parallel_20261024_v1.lock": "HELD"
+  },
+  "SS_B0_ready": true,
+  "logs_writable": true,
+  "stop_after_confirmation": true
+}

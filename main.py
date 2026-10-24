@@ -57,6 +57,7 @@ import models.sequential.LLMMIRecASPCFAuxNeg as LLMMIRecASPCFAuxNeg
 import models.sequential.LLMMIRecASPCFSAIT as LLMMIRecASPCFSAIT
 import models.sequential.LLMMIRecASPCFCICL as LLMMIRecASPCFCICL
 import models.sequential.LLMMIRecASPCFSampledSoftmax as LLMMIRecASPCFSampledSoftmax
+import models.sequential.LLMMIRecASPCFAdaptiveSIL as LLMMIRecASPCFAdaptiveSIL
 import models.sequential.LLMMIRecASPCFBatchBPR as LLMMIRecASPCFBatchBPR
 import models.sequential.LLMMIRecASPCFSemanticCandidate as LLMMIRecASPCFSemanticCandidate
 import models.sequential.LLMMIRecASPCFCIGR as LLMMIRecASPCFCIGR

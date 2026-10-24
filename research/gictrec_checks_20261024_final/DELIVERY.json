@@ -1,0 +1,39 @@
+{
+  "passed": true,
+  "checks": "checks.json",
+  "sources": {
+    "models/sequential/gict_components.py": "92556fc36a4b17d98bac30bfd4ec0ed29625a439919bc0bacd2233f0fe793044",
+    "models/sequential/GICTRec.py": "371e39d6b93112b9cf2b1f359b3dac3a0975286bb61b63f80fcdaa425fad73e9",
+    "tools/gict_data.py": "0defddf988b240d746a5176e87abc1577b23bdc3a186c6b2d7f6b5207b03c77c",
+    "tools/build_gict_bank.py": "6a4a3441d09d939597a378590197e31469316164f34ab8c067461bca74e545d6",
+    "tools/run_gictrec.py": "423b165d03dd29efb6c8c63d10f03d5d6a5d449192f8699e9f6da02df987a1c6",
+    "tools/test_gictrec.py": "9275dfa80c20232a54dc434d317327a39904101960b54b9ecaa24e2f9888546c",
+    "new_bash/run_gictrec.sh": "97c61a1cffa82a9416c867f1df29884b5bf1e57deabfdf40d182ae7cd0c47bb1"
+  },
+  "frozen_sources_unchanged": 60,
+  "archives": {
+    "THESIS_CH4_FROZEN_20261024.md": "baeb3289a93afa194cfe1003e68e5ee26721218ed7483ca600fdc11d8e74dc60",
+    "THESIS_CH4_FROZEN_20261024.index.json": "212f249cff6f0a9ea5319f1afab62def7f0dc9875405aa6b5fd316c3016bb389"
+  },
+  "no_full_training": true,
+  "no_Test": true,
+  "Toys": {
+    "state": "PREPARED_NOT_DISPATCHED",
+    "reason": "Original BPR still running; its live common.py also has the two unsafe conversion sites. Do not modify it or start SS until BPR and evaluation finish successfully. If BPR fails evaluation, a separate safe acceptance repair is required; do not silently rerun Test or training.",
+    "preserved_BPR_pid": 2888790,
+    "check": "EVAL_FIX_CHECK_FINAL.json",
+    "prepared_scheduler": "scheduler.py",
+    "scheduler_started": false,
+    "authorized_existing_tasks_only": [
+      "SS-B0",
+      "SS-C0",
+      "SS-C1"
+    ],
+    "no_new_Toys_experiments": true
+  },
+  "known_limits": [
+    "Teacher library currently sampled128; full Train bank not built this turn",
+    "Timings are 8-row inference and sample bank, not full epoch throughput",
+    "Original BPR live evaluator cannot be modified; SS not dispatched"
+  ]
+}

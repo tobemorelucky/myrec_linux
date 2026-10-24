@@ -1,0 +1,110 @@
+{
+  "dataset": "ml-1m",
+  "order": [
+    "B0",
+    "C1",
+    "M1"
+  ],
+  "preferred_GPU": 1,
+  "fallback_GPU": 0,
+  "resource_check": "all users compute PID empty; >=10240 MiB free; <=10% utilization; physical GPU lease",
+  "poll_seconds": 60,
+  "job_lock": "ml1m_A1_dual_seed42_k8.lock",
+  "adopt_Beauty": "hardlink GPU1 lock to existing queue-held inode; no existing file changes",
+  "seed": 42,
+  "K": 8,
+  "K_final_not_fixed": true,
+  "batch_size": 1024,
+  "lr": 0.001,
+  "l2": 1e-06,
+  "optimizer": "Adam, original bias/no-decay groups",
+  "epoch_max": 200,
+  "early_stop_parameter": 10,
+  "fresh_initialization": true,
+  "checkpoint_input_load": false,
+  "Dev": "NDCG@5 selects best; save six metrics each epoch; same 1001 candidates with duplicates",
+  "locked_frequency_prior": 0.3,
+  "Test": false,
+  "failure": "record nonzero/exception and stop all subsequent arms; no retries or reconfiguration",
+  "history_timing": {
+    "beauty_current": {
+      "path": "/home/yyx/hzgcode/pom2.0/research/elector_sil_dual_beauty_20261022_v1/arms/B0/train.log",
+      "config": {},
+      "epochs_logged": 28,
+      "historical_best_epoch": null,
+      "median_train_seconds": 6.5,
+      "median_Dev_seconds": 5.3
+    },
+    "beauty_history": {
+      "path": "/home/yyx/hzgcode/pom2.0/new_log/aspcf_sampled_softmax/beauty/k4_tau1_seed42_20261010T112637Z_round1/train.log",
+      "config": {
+        "K": "4",
+        "batch_size": "1024",
+        "dropout": "0.1",
+        "early_stop": "10",
+        "epoch": "200",
+        "eval_batch_size": "256",
+        "history_max": "20",
+        "l2": "1e-06",
+        "lr": "0.004",
+        "num_neg": "1",
+        "optimizer": "Adam"
+      },
+      "epochs_logged": 30,
+      "historical_best_epoch": 10,
+      "median_train_seconds": 5.8,
+      "median_Dev_seconds": 5
+    },
+    "ml1m_A1_history": {
+      "path": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/cross_v3_20261021/p920/aspcf_A1_k4_seed42_20261021_cross/train.log",
+      "config": {
+        "K": "4",
+        "batch_size": "1024",
+        "dropout": "0.1",
+        "early_stop": "10",
+        "epoch": "200",
+        "eval_batch_size": "256",
+        "history_max": "20",
+        "l2": "1e-06",
+        "lr": "0.001",
+        "num_neg": "1",
+        "optimizer": "Adam"
+      },
+      "epochs_logged": 96,
+      "historical_best_epoch": 76,
+      "median_train_seconds": 37.3,
+      "median_Dev_seconds": 1.8
+    }
+  },
+  "estimated_hours": {
+    "Beauty_remaining_typical": [
+      0.25,
+      0.67
+    ],
+    "ML_total_typical": [
+      4,
+      6
+    ],
+    "ML_full_200epoch_budget_approx": [
+      9,
+      10
+    ]
+  },
+  "estimate_limit": "heuristic from historical96-epoch ML A1, measured37.3s Train +1.8s Dev; C1/M1 short-screen ~1.6x training; early stopping and concurrent load affect runtime",
+  "source_sha256": {
+    "train_arm.py": "f1b7e6618d487dab2fa787447f79dc8ea150d94ad5d4997e4c89f452030eb7c2",
+    "preflight.py": "2c0f7078247e11dee04e42187b92e9f39819015d7748b2fcd3bb807a2e5ac161",
+    "scheduler.py": "45fc42142957a9ec8d5112674982baf8114a4b80496225bbb3e56f589b0fa587",
+    "model_snapshot.py": "27e2fbea40fec6f065a02fb03d6edf5e83d614b28f120693175abbb1b269c1e6",
+    "launch.sh": "791f270cdef6d01c6cb27324c013adee78f1c1973a4aff4468d85e74570e5179",
+    "scheduler_fallback_v2.py": "b257bcb6311ceadb190f06276ff97bc14ebd5259b5f733e75efe0db2b81f5b6b",
+    "launch_fallback_v2.sh": "9852fd504b3b805a99c81538a856e3678cc63df029db5325f8458cd9f75fde7c"
+  },
+  "dependency": "K2 all three successful",
+  "gpu_preference": [
+    1,
+    0
+  ],
+  "authorized_change": "GPU0 allowed when idle; only idle scheduler managers replaced; resume completed arms",
+  "lease": "Per training arm; all-user occupancy and shared GPU flock required"
+}

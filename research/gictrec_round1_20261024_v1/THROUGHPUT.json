@@ -1,0 +1,47 @@
+{
+  "ml-1m": {
+    "G0": {
+      "batch": 1024,
+      "step_seconds": 0.049974325423439346,
+      "rows_per_second": 20490.5217093679,
+      "Train_rows": 982089,
+      "estimated_train_seconds_per_epoch": 47.97535240650177,
+      "peak_MiB": 393.63623046875,
+      "note": "3 warmed synthetic fixed-Train batches, excludes data loading/Dev; estimate only"
+    },
+    "G3": {
+      "batch": 1024,
+      "step_seconds": 0.08467900690933068,
+      "rows_per_second": 12092.725663356436,
+      "Train_rows": 982089,
+      "estimated_train_seconds_per_epoch": 81.29184663295746,
+      "peak_MiB": 458.03515625,
+      "note": "3 warmed synthetic fixed-Train batches, excludes data loading/Dev; estimate only"
+    }
+  },
+  "beauty": {
+    "G0": {
+      "batch": 1024,
+      "step_seconds": 0.04930312714229027,
+      "rows_per_second": 20769.4736490995,
+      "Train_rows": 131413,
+      "estimated_train_seconds_per_epoch": 6.360103401355445,
+      "peak_MiB": 493.708984375,
+      "note": "3 warmed synthetic fixed-Train batches, excludes data loading/Dev; estimate only"
+    },
+    "G3": {
+      "batch": 1024,
+      "step_seconds": 0.14644475591679415,
+      "rows_per_second": 6992.397874470892,
+      "Train_rows": 131413,
+      "estimated_train_seconds_per_epoch": 18.891373513266444,
+      "peak_MiB": 525.12255859375,
+      "note": "3 warmed synthetic fixed-Train batches, excludes data loading/Dev; estimate only"
+    }
+  },
+  "seconds": 51.37788348272443,
+  "physical_GPU": 1,
+  "passed": true,
+  "formal_training": false,
+  "Test": false
+}

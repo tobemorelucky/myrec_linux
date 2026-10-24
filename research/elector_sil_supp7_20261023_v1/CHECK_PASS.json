@@ -1,0 +1,48 @@
+{
+  "passed": true,
+  "seconds": 33.58392411004752,
+  "tasks": {
+    "beauty_k3_s42_SS-B0": {
+      "parameters": 943045,
+      "inactive_local_parameters": 0,
+      "core_initial_sha256": "a462d8537dc6af6ae121f4ba1babdc510c25184c3197792baf156f218fcd2b0c"
+    },
+    "beauty_k3_s42_SS-C0": {
+      "parameters": 980549,
+      "inactive_local_parameters": 0,
+      "core_initial_sha256": "a462d8537dc6af6ae121f4ba1babdc510c25184c3197792baf156f218fcd2b0c"
+    },
+    "beauty_k8_s42_SS-C1": {
+      "parameters": 981194,
+      "inactive_local_parameters": 0,
+      "core_initial_sha256": "694c894dd044a79952dabd82870f2aed8bc5f15752488867f50e3dfece9de2b2"
+    },
+    "beauty_k4_s42_SS-A1": {
+      "parameters": 980678,
+      "inactive_local_parameters": 16640,
+      "core_initial_sha256": "initial ledger verified before CPU-only updates"
+    },
+    "beauty_k4_s42_SS-A2": {
+      "parameters": 980678,
+      "inactive_local_parameters": 0,
+      "core_initial_sha256": "initial ledger verified before CPU-only updates"
+    },
+    "ml-1m_k2_s42_SS-A1": {
+      "parameters": 443140,
+      "inactive_local_parameters": 16640,
+      "core_initial_sha256": "initial ledger verified before CPU-only updates"
+    },
+    "ml-1m_k2_s42_SS-A2": {
+      "parameters": 443140,
+      "inactive_local_parameters": 0,
+      "core_initial_sha256": "initial ledger verified before CPU-only updates"
+    }
+  },
+  "exact_model_sources_reused": true,
+  "original_evaluation_AST_exact": true,
+  "padding_local_causality_finite_gradients": true,
+  "A2_singletons_restored": true,
+  "no_Dev_performance_gate": true,
+  "no_Test": true,
+  "no_checkpoints_saved": true
+}

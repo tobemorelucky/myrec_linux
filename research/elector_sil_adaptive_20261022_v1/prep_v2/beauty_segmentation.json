@@ -1,0 +1,71 @@
+{
+  "dataset": "beauty",
+  "threshold": 0.9929737448692322,
+  "adjacent_gap_quantiles": [
+    0.5953121542930604,
+    0.9558796286582947,
+    0.9929737448692322,
+    1.0511878252029419
+  ],
+  "distribution": {
+    "Train": {
+      "rows": 131413,
+      "length_mean": 6.701551596873977,
+      "length_quantiles": [
+        1.0,
+        2.0,
+        4.0,
+        9.0,
+        20.0
+      ],
+      "length_under4": 0.45602033284378257,
+      "segments": {
+        "fixed": {
+          "mean_segments": 2.069087533196868,
+          "two_or_more": 0.4604262896364895,
+          "two_non_singleton": 0.3972666326771324,
+          "singleton_segment_share": 0.13749287434949706,
+          "two_non_singleton_given_length4plus": 0.730296841339563
+        },
+        "semantic": {
+          "mean_segments": 2.3474237708598085,
+          "two_or_more": 0.5119660916347698,
+          "two_non_singleton": 0.4343177615608806,
+          "singleton_segment_share": 0.15048203784985834,
+          "two_non_singleton_given_length4plus": 0.7984080799037574
+        }
+      }
+    },
+    "Dev": {
+      "rows": 22363,
+      "length_mean": 6.19872110181997,
+      "length_quantiles": [
+        3.0,
+        3.0,
+        4.0,
+        7.0,
+        20.0
+      ],
+      "length_under4": 0.3202611456423557,
+      "segments": {
+        "fixed": {
+          "mean_segments": 1.8396458435809149,
+          "two_or_more": 0.49098958100433754,
+          "two_non_singleton": 0.3711487725260475,
+          "singleton_segment_share": 0.09127369956246961,
+          "two_non_singleton_given_length4plus": 0.5460167094270114
+        },
+        "semantic": {
+          "mean_segments": 2.189867191342843,
+          "two_or_more": 0.639493806734338,
+          "two_non_singleton": 0.45628940660913114,
+          "singleton_segment_share": 0.13023768684146042,
+          "two_non_singleton_given_length4plus": 0.6712716268666535
+        }
+      }
+    }
+  },
+  "seconds": 8.45962231978774,
+  "short_history_design": "segment all observed items; parallel overlapping recent3; no forced fake split",
+  "semantic_boundary_validity": "content-distance heuristic, not proven behavioral intent boundaries"
+}

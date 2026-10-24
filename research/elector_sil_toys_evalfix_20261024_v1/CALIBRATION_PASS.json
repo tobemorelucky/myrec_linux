@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "seconds": 5.890139719471335,
+  "GPU": 1,
+  "reference_epoch": 3,
+  "scale_factor": 2.0843257779445614,
+  "lambda_normalized": 0.3,
+  "GPU_peak_MiB": 2503.7880859375,
+  "Train_only": true,
+  "no_Test": true,
+  "no_optimizer": true
+}

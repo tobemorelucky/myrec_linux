@@ -1,0 +1,4 @@
+{
+  "initial_check": "C1 sil_mode compared to B0 baseline template; stopped before any training/asset writes",
+  "correction": "validate expected sil_mode per structural arm; no experiment setting changed"
+}

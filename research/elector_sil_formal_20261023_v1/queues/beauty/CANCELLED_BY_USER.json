@@ -1,0 +1,17 @@
+{
+  "old_scheduler_pid": 2510472,
+  "no_more_dispatch": true,
+  "active_training_retained": [
+    {
+      "pid": 2552005,
+      "state": "S",
+      "ppid": 2510472,
+      "start": "598188378",
+      "cmd": "/home/yyx/anaconda3/envs/hzg_py10/bin/python -u -B /home/yyx/hzgcode/pom2.0/research/elector_sil_formal_20261023_v1/train_task.py --dataset beauty --arm SS-C0 --K 8 --seed 42",
+      "dataset": "beauty",
+      "task": "beauty_k8_s42_SS-C0",
+      "GPU": 0
+    }
+  ],
+  "new_control_root": "/home/yyx/hzgcode/pom2.0/research/elector_sil_k3_20261023_v1"
+}

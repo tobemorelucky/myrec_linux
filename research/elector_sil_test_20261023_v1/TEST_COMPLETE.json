@@ -1,0 +1,8 @@
+{
+  "Test_accepted": true,
+  "checkpoints": 12,
+  "scores_per_checkpoint": 2,
+  "summary_sha256": "89bb8089f61e5abe15020f6c05e71c334f660892d84c88e4e85c93e5a4fc58fc",
+  "protected_files_unchanged": true,
+  "seconds": 112.34379374422133
+}

@@ -1,0 +1,60 @@
+{
+  "config": {
+    "seed": 42,
+    "batch_size": 1024,
+    "steps": 16,
+    "role_weight": 0.1,
+    "role_alpha": 0.5,
+    "role_temperature": 1.0,
+    "learning_rate": 0.0001,
+    "optimizer": "Adam",
+    "weight_decay": 1e-06,
+    "init": "same existing best-Dev checkpoint for all three arms; diagnostic warm-start, NOT a full-training result",
+    "arms": [
+      "SS_continue",
+      "uniform_pair",
+      "pair_roles"
+    ],
+    "Dev": "full original 1001 duplicate slots; before and after once, both raw and fixed pop .30",
+    "training": "original filtered in-batch Softmax + original relation .01, same paired dropout/relation RNG, pair aux same legal negatives",
+    "Test_allowed": false,
+    "full_training_allowed": false,
+    "global_seconds_limit": 170
+  },
+  "math_tests": {
+    "1": {
+      "finite": true,
+      "gradcheck": true,
+      "analytic_responsibility": true,
+      "all_invalid_zero": true
+    },
+    "2": {
+      "finite": true,
+      "gradcheck": true,
+      "analytic_responsibility": true,
+      "all_invalid_zero": true
+    },
+    "4": {
+      "finite": true,
+      "gradcheck": true,
+      "analytic_responsibility": true,
+      "all_invalid_zero": true
+    },
+    "7": {
+      "finite": true,
+      "gradcheck": true,
+      "analytic_responsibility": true,
+      "all_invalid_zero": true
+    },
+    "symmetric_interests": "uniform responsibilities; cannot guarantee symmetry breaking"
+  },
+  "head": "771b4c3826f07a8cc7fb9038fb8659161e9f8189",
+  "initial_status": "## main...origin/main\n?? research/pair_advantage_roles_20261022_v1/\n?? research/pop_bucket_interest_screen_20261022_v1/\n",
+  "module_sha256": "01c31dd7d0851fa1b2e18153d7960c04720e8aa88d54b5107247c7919e61b4f6",
+  "runner_sha256": "7dce9a53372640b562d0008416d92252471ae6893422e9158411cc86b7ef9ca9",
+  "extra_source_sha256": {
+    "models/sequential/LLMMIRecASPCFCIGR.py": "3c85ca967cbb11ddba176764d594be55f7ddec423503d0ec9d444fdcb16af1f7",
+    "models/sequential/LLMMIRecCAISD.py": "d779f78dd73167f4410b6b30443764d911ff44d119d0efc08187881adc694cc2",
+    "models/sequential/LLMMIRecASPCFMultiPositive.py": "1e48956b360657f4da45cb190c56198da2b73cb0b75f4af392fc24fdb72295a5"
+  }
+}

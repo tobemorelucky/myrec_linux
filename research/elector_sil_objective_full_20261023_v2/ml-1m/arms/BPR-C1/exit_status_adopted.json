@@ -1,0 +1,8 @@
+{
+  "pid": 2414357,
+  "actual_exit_code": null,
+  "acceptance_verified": true,
+  "reason": "Parent scheduler deliberately replaced; result hashes verified",
+  "result_sha256": "a9fde369ae3df57e31f8e98d4cdc72449db5d4f1a234ebbd1b63ada4771f0db3",
+  "checkpoint_sha256": "ad44ac6c1c4eb4dd4ee7b084ce5d9510f9da6095a76e381786502d654fe25c9b"
+}

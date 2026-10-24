@@ -1,0 +1,11 @@
+{
+  "id": "ml-1m_k4_B0",
+  "checkpoint_sha256": "3ce4a2e8d50ee0dc503bf4759b7fb484a4dc2419124272c6e72ae38f259ef51b",
+  "best_epoch": 54,
+  "test_pass_budget": 1,
+  "scores": [
+    "raw",
+    "locked_prior"
+  ],
+  "lambda_pop": 0.3
+}

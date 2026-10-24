@@ -1,0 +1,8 @@
+{
+  "pid": 2889459,
+  "adopted_BPR_pid": 2888790,
+  "new_tasks": 3,
+  "total_full_runs": 4,
+  "max_GPUs": 2,
+  "poll_seconds": 30
+}

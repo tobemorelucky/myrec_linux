@@ -1,0 +1,9 @@
+{
+  "queue_pid": 2305144,
+  "proc_start_ticks": "591047954",
+  "GPU": 1,
+  "lock_alias": "/home/yyx/hzgcode/pom2.0/research/gpu_resource_scheduler_20261022_v1/gpu1.lock",
+  "existing_lock": "/home/yyx/hzgcode/pom2.0/research/elector_sil_dual_beauty_20261022_v1/gpu1_queue.lock",
+  "existing_files_modified": false,
+  "queue_log": "/home/yyx/hzgcode/pom2.0/research/elector_sil_dual_beauty_20261022_v1/queue.log"
+}

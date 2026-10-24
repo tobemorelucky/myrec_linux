@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "resource_tests": [
+    "idle_gpu1",
+    "shared_lock_contention",
+    "became_busy_after_lock",
+    "idle_gpu0_fallback"
+  ],
+  "original_source_locks_verified": true,
+  "adopted_child_session_and_inherited_locks_verified": true,
+  "preflight_command": "python -B scheduler_parallel.py --check"
+}

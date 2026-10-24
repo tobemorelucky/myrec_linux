@@ -1,0 +1,6 @@
+{
+  "common_initial_sha256": "4192efdf30aeb02b6c88fb73d6ead0878715bc16f9112dab8fc93c1a470a9c47",
+  "K": 3,
+  "seed": 42,
+  "source": "CPU initialization-only C1/B0 equivalence"
+}

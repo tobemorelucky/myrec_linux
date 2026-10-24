@@ -1,0 +1,12 @@
+{
+  "state": "WAITING_GPU",
+  "pid": 2510473,
+  "dataset": "ml-1m",
+  "phase": "six_seed",
+  "current_task": "ml-1m_k2_s0_SS-B0",
+  "train_pid": null,
+  "completed_new_tasks": 0,
+  "pending_known_tasks": 17,
+  "time_utc": "2026-10-23T07:17:22Z",
+  "poll_seconds": 15
+}

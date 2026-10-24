@@ -1,0 +1,49 @@
+{
+  "pid": 2510472,
+  "dataset": "beauty",
+  "first_tasks": [
+    [
+      2,
+      42,
+      "SS-B0",
+      "K_search"
+    ],
+    [
+      2,
+      42,
+      "SS-C0",
+      "K_search"
+    ],
+    [
+      2,
+      42,
+      "SS-C1",
+      "K_search"
+    ],
+    [
+      8,
+      42,
+      "SS-B0",
+      "K_search"
+    ],
+    [
+      8,
+      42,
+      "SS-C0",
+      "K_search"
+    ],
+    [
+      8,
+      42,
+      "SS-C1",
+      "K_search"
+    ]
+  ],
+  "fail_fast": true,
+  "no_preemption": true,
+  "GPUs": [
+    0,
+    1
+  ],
+  "Beauty_K_only_Dev": true
+}

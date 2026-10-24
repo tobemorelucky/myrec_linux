@@ -1,0 +1,10 @@
+{
+  "pid": 2317127,
+  "time_utc": "2026-10-22T12:44:40Z",
+  "job_lock": true,
+  "gpu_preference": [
+    1
+  ],
+  "poll_seconds": 60,
+  "fail_fast": true
+}

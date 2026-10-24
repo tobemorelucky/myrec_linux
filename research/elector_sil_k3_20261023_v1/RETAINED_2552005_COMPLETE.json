@@ -1,0 +1,8 @@
+{
+  "pid": 2552005,
+  "actual_exit_code": null,
+  "acceptance_verified": true,
+  "result_path": "/home/yyx/hzgcode/pom2.0/research/elector_sil_formal_20261023_v1/runs/beauty_k8_s42_SS-C0/result.json",
+  "best_epoch": 9,
+  "checkpoint_sha256": "135e52d461ae09934703bae84ff8cc0f01f15b4057a5d4a0fc4d489a9b0e1c0e"
+}

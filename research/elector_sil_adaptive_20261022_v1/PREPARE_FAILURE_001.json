@@ -1,0 +1,7 @@
+{
+  "stage": "asset serialization after synthetic math pass",
+  "reason": "numpy corpus.n_items int64 not JSON serializable",
+  "failed_asset_preserved": true,
+  "retry_output": "prep_v2",
+  "no_training_was_run": true
+}

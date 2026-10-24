@@ -1,0 +1,118 @@
+{
+  "startup_confirmed": true,
+  "state": {
+    "state": "RUNNING",
+    "pid": 2731016,
+    "pending": [
+      {
+        "dataset": "beauty",
+        "K": 2,
+        "seed": 42,
+        "arm": "SS-A2",
+        "priority": 0
+      },
+      {
+        "dataset": "ml-1m",
+        "K": 3,
+        "seed": 42,
+        "arm": "SS-B0",
+        "priority": 0
+      },
+      {
+        "dataset": "ml-1m",
+        "K": 3,
+        "seed": 42,
+        "arm": "SS-C0",
+        "priority": 0
+      },
+      {
+        "dataset": "ml-1m",
+        "K": 3,
+        "seed": 42,
+        "arm": "SS-A1",
+        "priority": 1
+      },
+      {
+        "dataset": "ml-1m",
+        "K": 3,
+        "seed": 42,
+        "arm": "SS-A2",
+        "priority": 1
+      },
+      {
+        "dataset": "beauty",
+        "K": 2,
+        "seed": 0,
+        "arm": "SS-B0",
+        "priority": 2
+      },
+      {
+        "dataset": "beauty",
+        "K": 2,
+        "seed": 0,
+        "arm": "SS-C0",
+        "priority": 2
+      },
+      {
+        "dataset": "beauty",
+        "K": 2,
+        "seed": 0,
+        "arm": "SS-C1",
+        "priority": 2
+      },
+      {
+        "dataset": "ml-1m",
+        "K": 3,
+        "seed": 0,
+        "arm": "SS-B0",
+        "priority": 2
+      },
+      {
+        "dataset": "ml-1m",
+        "K": 3,
+        "seed": 0,
+        "arm": "SS-C0",
+        "priority": 2
+      },
+      {
+        "dataset": "ml-1m",
+        "K": 3,
+        "seed": 0,
+        "arm": "SS-C1",
+        "priority": 2
+      }
+    ],
+    "completed": [],
+    "failed_datasets": {},
+    "halted_tasks": [],
+    "running": {
+      "beauty_k2_s42_SS-A1": {
+        "pid": 2731263,
+        "GPU": 0,
+        "task": {
+          "dataset": "beauty",
+          "K": 2,
+          "seed": 42,
+          "arm": "SS-A1",
+          "priority": 0
+        }
+      }
+    },
+    "time_utc": "2026-10-23T13:31:30Z"
+  },
+  "ready": {
+    "beauty_k2_s42_SS-A1": {
+      "pid": 2731263,
+      "GPU": "0",
+      "model": "SS-A1",
+      "dataset": "beauty",
+      "K": 2,
+      "seed": 42,
+      "Train_rows": 131413,
+      "Dev_rows": 22363,
+      "parameters": 980420,
+      "common_initial_sha256": "76a603896fb5a2beba954c953bdc07d22f07512fd4c71d266b24a078febcc405"
+    }
+  },
+  "GPU_processes": "GPU-5d1b4b83-6d28-014d-51b3-9f262308b849, 2731263, /home/yyx/anaconda3/envs/hzg_py10/bin/python, 608 MiB\nGPU-aae229cf-ddb1-1b36-5734-ffc82ea7e8ac, 2688733, python, 2620 MiB\n"
+}

@@ -1,0 +1,24 @@
+{
+  "record_source": "Observed preflight stdout; each FULL_MODEL_CHECK printed only after forward/backward and gradient assertions passed",
+  "bounded_process_finalization": "175-second deadline reached after all four GPU checks; remaining CPU checks completed separately; no training retry",
+  "parameters": {
+    "BPR-B0": 5210054,
+    "SS-B0": 5210054,
+    "SS-C0": 5247558,
+    "SS-C1": 5247558
+  },
+  "GPU_peak_MiB": {
+    "BPR-B0": 734.5302734375,
+    "SS-B0": 2714.1376953125,
+    "SS-C0": 2779.64990234375,
+    "SS-C1": 4468.380859375
+  },
+  "checks": [
+    "real Train batch1024",
+    "finite loss/backward",
+    "all active new groups nonzero gradients",
+    "C0/C1 zero-output identity",
+    "C1 real Dev batch256 x1001 candidates"
+  ],
+  "no_Test": true
+}

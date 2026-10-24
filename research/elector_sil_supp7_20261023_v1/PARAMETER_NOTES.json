@@ -1,0 +1,6 @@
+{
+  "registered_parameter_count_change": 0,
+  "A1_disabled_local_parameters": 16640,
+  "A1": "Bypass only local segment encoder, keep segment pooling, recent query and behavior memory. Disabled local params stay registered but have no gradients/Adam decay; effective capacity and FLOPs decrease.",
+  "A2": "Remove fine behavior memory only; retain local encoder/recent query, restore singleton segment validity; no parameter removal."
+}

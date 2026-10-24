@@ -1,0 +1,21 @@
+{
+  "seconds": 7.631189749576151,
+  "checks_passed": true,
+  "CPU_only": true,
+  "common_initial_parameter_sha256": "d0b093cd8e1c7d6cfbe944d9acafb4a77d5601d800fbfbab76736778108012cc",
+  "parameters": {
+    "B0": 405636,
+    "C1": 443140,
+    "M1": 443140
+  },
+  "A1_embedding_verified": true,
+  "locked_lambda_pop": 0.3,
+  "frequency_scale_unchanged": true,
+  "zero_initial_score_loss_query_gradient_equal": true,
+  "finite_backward": true,
+  "Train_rows": 982089,
+  "Dev_rows": 6040,
+  "no_Test": true,
+  "no_full_training_started_by_check": true,
+  "checkpoint_input_load": false
+}

@@ -1,0 +1,153 @@
+{
+  "train_complete": true,
+  "Dev_best_selected": true,
+  "Test_accepted": false,
+  "best": {
+    "epoch": 7,
+    "metrics": {
+      "HR@5": 0.3279275727445814,
+      "NDCG@5": 0.2587340211002806,
+      "HR@10": 0.3999221108910129,
+      "NDCG@10": 0.2819748240272041,
+      "HR@20": 0.47874396599803837,
+      "NDCG@20": 0.3018799362338943
+    },
+    "raw": {
+      "HR@5": 0.26775583206723463,
+      "NDCG@5": 0.2107664792848379,
+      "HR@10": 0.32687462738234896,
+      "NDCG@10": 0.22985601532733393,
+      "HR@20": 0.39244091005250303,
+      "NDCG@20": 0.24639883687511957
+    },
+    "locked_prior": {
+      "HR@5": 0.3279275727445814,
+      "NDCG@5": 0.2587340211002806,
+      "HR@10": 0.3999221108910129,
+      "NDCG@10": 0.2819748240272041,
+      "HR@20": 0.47874396599803837,
+      "NDCG@20": 0.3018799362338943
+    },
+    "selection": "locked_prior Dev NDCG@5",
+    "checkpoint": "best.pt"
+  },
+  "checkpoint_sha256": "d6e9578a998d6b56198fb54b950285bf9e35c65ba0fe5ddd9392e3aa92d1cf59",
+  "training_seconds": 3815.989349525422,
+  "config": {
+    "dataset": "toys",
+    "arm": "SS-C0",
+    "K": 4,
+    "seed": 42,
+    "args": {
+      "emb_size": 64,
+      "attn_size": 64,
+      "K": 4,
+      "item_encoder": "aspcf",
+      "llm_emb_path": "/home/yyx/hzgcode/pom2.0/data/toys/handled/llm_table_pca1536.pkl",
+      "adapter_hidden": 256,
+      "adapter_activation": "gelu",
+      "adapter_use_ln": 0,
+      "gamma_init": 0.1,
+      "gamma_trainable": 0,
+      "semantic_rank": 512,
+      "semantic_dim": 32,
+      "semantic_hidden": 128,
+      "complement_dim": 32,
+      "tail_hidden": 64,
+      "complement_hidden": 64,
+      "gate_hidden": 64,
+      "aspcf_gate_mode": "basic",
+      "lambda_relation": 0.01,
+      "relation_sample_size": 128,
+      "relation_teacher_temp": 0.1,
+      "relation_student_temp": 0.1,
+      "history_max": 20,
+      "num_neg": 1,
+      "dropout": 0.1,
+      "test_all": 0,
+      "buffer": 0,
+      "sampled_softmax_temperature": 1.0,
+      "epoch": 200,
+      "check_epoch": 0,
+      "test_epoch": -1,
+      "early_stop": 10,
+      "lr": 0.001,
+      "l2": 1e-06,
+      "batch_size": 1024,
+      "eval_batch_size": 256,
+      "optimizer": "Adam",
+      "grad_clip": 0.0,
+      "num_workers": 0,
+      "pin_memory": 0,
+      "topk": "5,10,20",
+      "metric": "NDCG,HR",
+      "align_warmup": 5,
+      "align_ramp": 15,
+      "dataset": "toys",
+      "path": "/home/yyx/hzgcode/pom2.0/data",
+      "sil_mode": "fixed",
+      "sil_asset_path": "/home/yyx/hzgcode/pom2.0/research/elector_sil_toys_evalfix_20261024_v1/TRAIN_ASSET.json",
+      "sil_heads": 2,
+      "sil_recent": 3,
+      "sil_use_recent": 1,
+      "sil_use_local": 1,
+      "random_seed": 42,
+      "dev_only": 1,
+      "regenerate": 0,
+      "load": 0,
+      "objective": "SS",
+      "sil_variant": "C0",
+      "sil_use_behavior": 1,
+      "sil_alpha_initial": 0.1,
+      "device": "cuda:0",
+      "model_path": "/home/yyx/hzgcode/pom2.0/research/elector_sil_toys_evalfix_20261024_v1/arms/SS-C0/best.pt"
+    },
+    "head": "771b4c3826f07a8cc7fb9038fb8659161e9f8189",
+    "parameters": 5247558,
+    "common_initial_parameter_sha256": "740128c15df71bf1cd7f5fca3630a6c25e0a85d319f3eae2e1388092f7ff10c2",
+    "physical_GPU": "0",
+    "initialization": "fresh seed42 common ASPCF core; no checkpoint initialization",
+    "selection": "locked-prior Dev NDCG@5",
+    "lambda_pop": 0.3,
+    "assets": {
+      "/home/yyx/hzgcode/pom2.0/data/toys/train.csv": {
+        "size": 32607020,
+        "mtime_ns": 1770450332000000000,
+        "sha256": "981d7dcbfe2cd161d51afa99f4a38c307900c57f024cde1470cb901903320e2e"
+      },
+      "/home/yyx/hzgcode/pom2.0/data/toys/dev.csv": {
+        "size": 1431858987,
+        "mtime_ns": 1770450358000000000,
+        "sha256": "ec97288e72811604f6e91ec88dadc8d24191286de686f14cf9316ad9b24f8c81"
+      },
+      "/home/yyx/hzgcode/pom2.0/data/toys/test.csv": {
+        "size": 1431862882,
+        "mtime_ns": 1770450386000000000,
+        "sha256": "68a88d6e70760e02d4a24f8914ecdd0487fdedf6f5ea1f14d72792d16ac80590"
+      },
+      "/home/yyx/hzgcode/pom2.0/data/toys/SeqReader.pkl": {
+        "size": 1529895667,
+        "mtime_ns": 1770452523519903216,
+        "sha256": "6e23a81f795b1e4f8c87e12f993bb0b1e74241965e280115903626aaef83f887"
+      },
+      "/home/yyx/hzgcode/pom2.0/data/toys/item2id.json": {
+        "size": 1879401,
+        "mtime_ns": 1770450248000000000,
+        "sha256": "09e14aa3cfa1949750fae8bc36b38d63ae9b390818455c8971b4c1e2f5e60ef1"
+      },
+      "/home/yyx/hzgcode/pom2.0/data/toys/handled/llm_table_pca1536.pkl": {
+        "size": 483975334,
+        "mtime_ns": 1771002786000000000,
+        "sha256": "977f04cba3dc45cbe7319992bc285a5117ec9510457d8ef99c48a1b7cde89490"
+      }
+    },
+    "source_sha256": {
+      "objective_model.py": "014ed00749c2a61e2c348cbff59b11b3471be945dd5d5a94fdf49aac595733c8",
+      "scheduler.py": "8bd94fe549cd0e4dc6b0cda6be8805b004b173bcd3f96a792cea9a4aa4ce53fc",
+      "softguide_snapshot.py": "4c38adc776f0206972faa93bf6e4f6fa55ff1a5ab3e6332003d09a215788a188",
+      "common.py": "511a3725a6c3a9e42551c6013c89b2e6bd2685ab2b06ccd06759496e936b0cea",
+      "base_snapshot.py": "27e2fbea40fec6f065a02fb03d6edf5e83d614b28f120693175abbb1b269c1e6",
+      "train_task.py": "86c1c420ffe0998db3fbe98ccac25120c1596f71020620b25a2b3d365d564a34"
+    }
+  }
+}

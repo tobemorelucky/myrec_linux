@@ -1,0 +1,13 @@
+{
+  "checkpoint_sha256": "48b995d2a4d153e4bb7f2ea4b6d61a9a2f7c352c2580144302f3f9a74e4b0756",
+  "best_epoch": 48,
+  "original_failed_attempt": {
+    "best_epoch": 48,
+    "checkpoint_sha256": "48b995d2a4d153e4bb7f2ea4b6d61a9a2f7c352c2580144302f3f9a74e4b0756",
+    "passes": 1,
+    "lambda_pop": 0.3,
+    "prior_sha256": "03438acfe2fc426d0c20bd6245cb330dd90d20e8ddad3146e771d00fdc7d51df"
+  },
+  "repair": "Only known GPU-to-CPU conversion; no training/selection/prior changes",
+  "prior_sha256": "03438acfe2fc426d0c20bd6245cb330dd90d20e8ddad3146e771d00fdc7d51df"
+}

@@ -1,0 +1,12 @@
+{
+  "pid": 2644168,
+  "GPU": "0",
+  "model": "SS-C1",
+  "dataset": "beauty",
+  "K": 8,
+  "seed": 42,
+  "Train_rows": 131413,
+  "Dev_rows": 22363,
+  "parameters": 981194,
+  "common_initial_sha256": "694c894dd044a79952dabd82870f2aed8bc5f15752488867f50e3dfece9de2b2"
+}

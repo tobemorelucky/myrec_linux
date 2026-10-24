@@ -1,0 +1,10 @@
+{
+  "state": "COMPLETED",
+  "pid": 2415567,
+  "time_utc": "2026-10-23T07:35:16Z",
+  "adopted_BPR_pid": 2414357,
+  "adopted_status": "COMPLETED",
+  "active_tasks": {},
+  "pending": [],
+  "failures": []
+}

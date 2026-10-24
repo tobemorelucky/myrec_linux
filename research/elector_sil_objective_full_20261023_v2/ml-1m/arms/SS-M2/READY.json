@@ -1,0 +1,10 @@
+{
+  "pid": 2483821,
+  "GPU": "0",
+  "model": "SS-M2",
+  "dataset": "ml-1m",
+  "Train_rows": 982089,
+  "Dev_rows": 6040,
+  "parameters": 443142,
+  "common_initial_sha256": "d0b093cd8e1c7d6cfbe944d9acafb4a77d5601d800fbfbab76736778108012cc"
+}

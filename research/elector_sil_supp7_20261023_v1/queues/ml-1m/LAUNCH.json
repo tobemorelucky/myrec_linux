@@ -1,0 +1,6 @@
+{
+  "pid": 2574073,
+  "dataset": "ml-1m",
+  "queue_log": "/home/yyx/hzgcode/pom2.0/research/elector_sil_supp7_20261023_v1/queues/ml-1m/queue.log",
+  "allowed_tasks": 2
+}

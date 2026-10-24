@@ -1,0 +1,9 @@
+{
+  "dataset": "ml-1m",
+  "K": 2,
+  "seed": 42,
+  "common_initial_sha256": "d0b093cd8e1c7d6cfbe944d9acafb4a77d5601d800fbfbab76736778108012cc",
+  "source": "verified archived seed42 initialization",
+  "source_path": "/home/yyx/hzgcode/pom2.0/research/elector_sil_formal_20261023_v1/initialization/ml-1m_k2_s42.json",
+  "source_sha256": "8a45b994781976e957fcaae644185f1cedc1de21f9dae8c7a278d85cd094190c"
+}

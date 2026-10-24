@@ -1,0 +1,102 @@
+{
+  "dataset": "ml-1m",
+  "order": [
+    "B0",
+    "C1",
+    "M1"
+  ],
+  "preferred_GPU": 1,
+  "fallback_GPU": null,
+  "resource_check": "all users compute PID empty; >=10240 MiB free; <=10% utilization; physical GPU lease",
+  "poll_seconds": 60,
+  "job_lock": "ml1m_A1_dual_seed42_k2.lock",
+  "adopt_Beauty": "hardlink GPU1 lock to existing queue-held inode; no existing file changes",
+  "seed": 42,
+  "K": 2,
+  "K_final_not_fixed": true,
+  "batch_size": 1024,
+  "lr": 0.001,
+  "l2": 1e-06,
+  "optimizer": "Adam, original bias/no-decay groups",
+  "epoch_max": 200,
+  "early_stop_parameter": 10,
+  "fresh_initialization": true,
+  "checkpoint_input_load": false,
+  "Dev": "NDCG@5 selects best; save six metrics each epoch; same 1001 candidates with duplicates",
+  "locked_frequency_prior": 0.3,
+  "Test": false,
+  "failure": "record nonzero/exception and stop all subsequent arms; no retries or reconfiguration",
+  "history_timing": {
+    "beauty_current": {
+      "path": "/home/yyx/hzgcode/pom2.0/research/elector_sil_dual_beauty_20261022_v1/arms/B0/train.log",
+      "config": {},
+      "epochs_logged": 28,
+      "historical_best_epoch": null,
+      "median_train_seconds": 6.5,
+      "median_Dev_seconds": 5.3
+    },
+    "beauty_history": {
+      "path": "/home/yyx/hzgcode/pom2.0/new_log/aspcf_sampled_softmax/beauty/k4_tau1_seed42_20261010T112637Z_round1/train.log",
+      "config": {
+        "K": "4",
+        "batch_size": "1024",
+        "dropout": "0.1",
+        "early_stop": "10",
+        "epoch": "200",
+        "eval_batch_size": "256",
+        "history_max": "20",
+        "l2": "1e-06",
+        "lr": "0.004",
+        "num_neg": "1",
+        "optimizer": "Adam"
+      },
+      "epochs_logged": 30,
+      "historical_best_epoch": 10,
+      "median_train_seconds": 5.8,
+      "median_Dev_seconds": 5
+    },
+    "ml1m_A1_history": {
+      "path": "/home/yyx/hzgcode/pom2.0/research/ml1m_embedding_v2_20261020/runs/cross_v3_20261021/p920/aspcf_A1_k4_seed42_20261021_cross/train.log",
+      "config": {
+        "K": "4",
+        "batch_size": "1024",
+        "dropout": "0.1",
+        "early_stop": "10",
+        "epoch": "200",
+        "eval_batch_size": "256",
+        "history_max": "20",
+        "l2": "1e-06",
+        "lr": "0.001",
+        "num_neg": "1",
+        "optimizer": "Adam"
+      },
+      "epochs_logged": 96,
+      "historical_best_epoch": 76,
+      "median_train_seconds": 37.3,
+      "median_Dev_seconds": 1.8
+    }
+  },
+  "estimated_hours": {
+    "Beauty_remaining_typical": [
+      0.25,
+      0.67
+    ],
+    "ML_total_typical": [
+      4,
+      6
+    ],
+    "ML_full_200epoch_budget_approx": [
+      9,
+      10
+    ]
+  },
+  "estimate_limit": "heuristic from historical96-epoch ML A1, measured37.3s Train +1.8s Dev; C1/M1 short-screen ~1.6x training; early stopping and concurrent load affect runtime",
+  "source_sha256": {
+    "train_arm.py": "269d889cb11164f3fea5cd8d1c15ae86d978eb53751f76a99e22605b9e130f21",
+    "preflight.py": "f04f601969b4d37d29ca5f5835de51bb14ffe3d864a81f68553b375187a9306f",
+    "scheduler.py": "2ec8397d29d6baf0c7ff48d0bc90748527f6b6f86ef44cdbdba031c612891d5f",
+    "model_snapshot.py": "27e2fbea40fec6f065a02fb03d6edf5e83d614b28f120693175abbb1b269c1e6",
+    "launch.sh": "5ad19091b9944dcbc4103c8b0644975987a8dc783a25677847457b7f27dc59bf"
+  },
+  "dependency": "Beauty and descendants complete"
+}

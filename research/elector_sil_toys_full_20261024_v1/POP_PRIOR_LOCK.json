@@ -1,0 +1,15 @@
+{
+  "lambda_normalized": 0.3,
+  "scale_factor": 3.4096511065670896,
+  "raw_lambda": 1.0228953319701268,
+  "base_centered_RMS": 3.081089892106196,
+  "frequency_centered_RMS": 0.9036378784245477,
+  "fit_source": "Train only; full user-fold exclusion from counts; user_id%3",
+  "reference": "BPR-B0 best raw-Dev checkpoint; frozen before first Test",
+  "reference_checkpoint_sha256": "48b995d2a4d153e4bb7f2ea4b6d61a9a2f7c352c2580144302f3f9a74e4b0756",
+  "users": 1024,
+  "candidates_per_user": 1001,
+  "Train_csv_sha256": "981d7dcbfe2cd161d51afa99f4a38c307900c57f024cde1470cb901903320e2e",
+  "probe_inputs_sha256": "7390b0efc3e7f14889de9fcac4f583c1b8367eeb427b0b4fee19206b281a2c50:7caacbf998ae99d3294efa7fa331d339633a16837c310c03d21ee4e44bbff278",
+  "no_Dev_Test_statistics": true
+}

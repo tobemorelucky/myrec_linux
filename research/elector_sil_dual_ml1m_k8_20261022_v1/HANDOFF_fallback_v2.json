@@ -1,0 +1,17 @@
+{
+  "old_pid": 2317127,
+  "old_proc_start_ticks": "591199899",
+  "old_state": {
+    "state": "WAITING_K2",
+    "scheduler_pid": 2317127,
+    "time_utc": "2026-10-22T14:46:48Z",
+    "dataset": "ml-1m",
+    "GPU": 1,
+    "dependency_pid": 2317126,
+    "dependency_state": "WAITING_GPU",
+    "poll_seconds": 60
+  },
+  "reason": "User authorized GPU0 fallback; idle scheduler replacement only",
+  "no_training_child": true,
+  "time_utc": "2026-10-22T14:46:50Z"
+}

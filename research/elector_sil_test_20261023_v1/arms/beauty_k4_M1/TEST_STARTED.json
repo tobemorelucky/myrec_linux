@@ -1,0 +1,11 @@
+{
+  "id": "beauty_k4_M1",
+  "checkpoint_sha256": "6b23e2cfe2144ebb5c258a7fea66552d9e62da73444d846a2c2b51b458190f32",
+  "best_epoch": 10,
+  "test_pass_budget": 1,
+  "scores": [
+    "raw",
+    "locked_prior"
+  ],
+  "lambda_pop": 0.3
+}

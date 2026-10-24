@@ -1,0 +1,1 @@
+{"dataset": "ml-1m", "authorized_tasks": [{"dataset": "ml-1m", "K": 2, "seed": 42, "arm": "SS-A1"}, {"dataset": "ml-1m", "K": 2, "seed": 42, "arm": "SS-A2"}]}

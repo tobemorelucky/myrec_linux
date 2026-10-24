@@ -1,0 +1,8 @@
+{
+  "CHIR": "Prototype top-K external query seeds and history log-prior; M2 retains learned queries and adjusts segment/recent memory read, no prototypes.",
+  "CAISD": "A.detach @ prototype assignments creates training KL teacher. M2 reuses attention pooling idea, raw frozen1536 semantics, differentiable A, inference-time memory attention bias, no KL.",
+  "HSDIR": "Training pairwise routing comembership/coherence/separation and optional aggregation calibration. M2 changes read weights and keeps original aggregation/objective.",
+  "RelativeSemantic": "High primitive overlap: if memory consists of items and normalization/relative centering omitted, (A Z) Z^T = A (Z Z^T), the existing propagation operator. M2 is an adaptation within dual-granularity memory; do not claim a new basic operator. Segment pooling/normalization/both memory types make full architectures different.",
+  "PrefixEvidence": "Causal recurrent item-to-interest assignment with semantic kernel evidence. M2 one joint read after original extractor, no recurrent state.",
+  "control": "C0 same 37504 parameter tensors as C1; full-history causal attention then learned-interest read over encoded positions, with same recent query guidance; no fragment pooling or separate fine-memory branch."
+}

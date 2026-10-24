@@ -1,0 +1,10 @@
+{
+  "pid": 2408104,
+  "GPU": "1",
+  "model": "BPR-C1",
+  "dataset": "beauty",
+  "Train_rows": 131413,
+  "Dev_rows": 22363,
+  "parameters": 980678,
+  "common_initial_sha256": "055f20effb596b52a2d513b58759e3b6e38fd3b953bbecf51a6cd17d6933b0db"
+}

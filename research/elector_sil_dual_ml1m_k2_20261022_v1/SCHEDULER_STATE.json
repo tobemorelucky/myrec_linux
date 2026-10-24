@@ -1,0 +1,8 @@
+{
+  "state": "COMPLETED",
+  "scheduler_pid": 2370457,
+  "time_utc": "2026-10-22T17:21:11Z",
+  "dataset": "ml-1m",
+  "GPU": 1,
+  "Test_evaluations": 0
+}

@@ -1,0 +1,7 @@
+{
+  "pid": 2897589,
+  "new_GICT_runs": 8,
+  "Toys_original_BPR_pid": 2888790,
+  "poll_seconds": 30,
+  "fail_stop": "per-dataset queue; no retry/parameter change"
+}

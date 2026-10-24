@@ -1,0 +1,11 @@
+{
+  "body_seconds": 45.50668917503208,
+  "datasets": [
+    "beauty",
+    "ml-1m"
+  ],
+  "no_Test": true,
+  "no_full_training": true,
+  "module_sha256": "b684112f1c5118dc5c048fe043478e27066f438cb4142b856bd8da4874ce6ecc",
+  "runner_sha256": "9dffda84239694a635bb4cbd08444e98df93de355c940b505ec6dc152780207d"
+}

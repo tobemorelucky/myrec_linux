@@ -1,0 +1,14 @@
+{
+  "state": "PREPARED_NOT_DISPATCHED",
+  "reason": "Original BPR still running; its live common.py also has the two unsafe conversion sites. Do not modify it or start SS until BPR and evaluation finish successfully. If BPR fails evaluation, a separate safe acceptance repair is required; do not silently rerun Test or training.",
+  "preserved_BPR_pid": 2888790,
+  "check": "EVAL_FIX_CHECK_FINAL.json",
+  "prepared_scheduler": "scheduler.py",
+  "scheduler_started": false,
+  "authorized_existing_tasks_only": [
+    "SS-B0",
+    "SS-C0",
+    "SS-C1"
+  ],
+  "no_new_Toys_experiments": true
+}

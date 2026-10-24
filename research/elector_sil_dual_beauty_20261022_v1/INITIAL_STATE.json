@@ -1,0 +1,19 @@
+{
+  "head": "771b4c3826f07a8cc7fb9038fb8659161e9f8189",
+  "status": "## main...origin/main\n M main.py\n?? models/sequential/LLMMIRecASPCFAdaptiveSIL.py\n?? research/elector_sil_adaptive_20261022_v1/\n?? research/multiscale_interest_recompose_20261022_v1/\n?? research/pair_advantage_roles_20261022_v1/\n?? research/pop_bucket_interest_screen_20261022_v1/\n",
+  "source_before_sha256": "96a37e78a3d71a6f436caa6fbf039ac3f11cdb0bd7bc70e99f528cede7f7a04f",
+  "protected_sha256": {
+    "main.py": "26efeb7ac83ff00f02ea66c1c03c410f43a946d18849d86b0db5988d8e86e124",
+    "models/sequential/LLMMIRecASPCF.py": "08dfe95d6fa60773f5d34aafef422e29b7254ce7c1ca9963da956118a490ffe8",
+    "models/sequential/LLMMIRecASPCFSampledSoftmax.py": "a74f27deac0e15ab189345d57179ca1e80050a4acb68788d2ae335e9218669df",
+    "models/sequential/llmmi_components.py": "d71903c5a54391416630f00fa8e1aef1e6ca6b414f7dd3d064b67c8beb8c93f6",
+    "models/BaseModel.py": "57c1fa6ceb582a75d006ed6765d79a3593e58e097317063e92f687e5e4a73150",
+    "helpers/BaseRunner.py": "b0417f18bd4793c079555fe237a787474237597e1042de6f4d429b50aae93fbc",
+    "helpers/SeqReader.py": "74ed2b2e5aec81bdbb6f8c3acdcfa233d86499faa90e455504b7739fd0e5176e",
+    "data/beauty/train.csv": "37e80f5cf976292b1d9cb43a131d624f6479cdf265850b06e885365c08e7d00e",
+    "data/beauty/dev.csv": "7e856e762759467f2f047f827c6489eaccd2bd9e4141924316eb0036644943f9",
+    "data/beauty/SeqReader.pkl": "f930e3e4054d064c9bed7342ea1408d98f2c0683d7e7b6ff6e3bcb1fdfbb552f",
+    "data/beauty/handled/llm_table_pca1536.pkl": "bc282725f08c2bb7fbb524739d1711cee44810ab402f18119aa838d9e5ed859f",
+    "research/elector_sil_adaptive_20261022_v1/prep_v2/beauty_train_asset.json": "fc2cad4db1058b48f56e0fd41b600f01a3abd9e3845672e052b52b141c6efd3a"
+  }
+}

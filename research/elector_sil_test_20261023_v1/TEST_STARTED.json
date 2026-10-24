@@ -1,0 +1,8 @@
+{
+  "pid": 2400795,
+  "GPU": 0,
+  "GPU_uuid": "GPU-5d1b4b83-6d28-014d-51b3-9f262308b849",
+  "manifest_sha256": "4d8b456310b54233bdb1b6946eedd026516bb27e19d3bc0bfa371f9f77ddc1d6",
+  "script_sha256": "6f67c4e042b9dd735a6cc97f6df92178fe4865a8d591eeb6bad67f0d65e93672",
+  "exploratory": true
+}

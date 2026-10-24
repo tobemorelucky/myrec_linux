@@ -1,0 +1,12 @@
+{
+  "pid": 2888682,
+  "order": [
+    "BPR-B0",
+    "SS-B0",
+    "SS-C0",
+    "SS-C1"
+  ],
+  "max_tasks": 4,
+  "serial": true,
+  "poll_seconds": 60
+}

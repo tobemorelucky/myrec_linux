@@ -1,0 +1,18 @@
+--- research/elector_sil_toys_parallel_20261024_v1/common.py
++++ research/elector_sil_toys_evalfix_20261024_v1/common.py
+@@ -81,13 +81,13 @@
+     assert raw.shape[1]==1001 and np.isfinite(raw).all()
+     scores={'raw':raw}
+     if lock:
+-     freq=np.log1p(counts[batch['item_id'].numpy()]).astype(np.float32).astype(np.float64)
++     freq=np.log1p(counts[batch['item_id'].detach().cpu().numpy()]).astype(np.float32).astype(np.float64)
+      scores['locked_prior']=raw+coeff*(freq-freq.mean(1,keepdims=True))
+     ranks={}
+     for scheme,s in scores.items():
+      rr=np.argwhere((-s).argsort(axis=1)==0)[:,1]+1;ranks[scheme]=rr
+      totals[scheme]+=np.array([metrics_from_ranks(rr)[k] for k in KEYS])*len(rr)
+-    if writer:writer.writerows(zip(batch['user_id'].numpy(),ranks['raw'],ranks['locked_prior']))
++    if writer:writer.writerows(zip(batch['user_id'].detach().cpu().numpy(),ranks['raw'],ranks['locked_prior']))
+     total+=len(raw)
+   assert total==len(dataset)
+   return dict(metrics={s:dict(zip(KEYS,(v/total).tolist())) for s,v in totals.items()},input_hash=inputhash.hexdigest(),rows=total)

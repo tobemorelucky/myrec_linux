@@ -1,0 +1,82 @@
+{
+  "reason": "User reduced 40-task experiment plan; cancel all not-yet-started jobs",
+  "parents": [
+    {
+      "dataset": "beauty",
+      "process": {
+        "pid": 2510472,
+        "state": "S",
+        "ppid": 1,
+        "start": "597875926",
+        "cmd": "/home/yyx/anaconda3/envs/hzg_py10/bin/python -u -B /home/yyx/hzgcode/pom2.0/research/elector_sil_formal_20261023_v1/scheduler.py --dataset beauty"
+      },
+      "state": {
+        "state": "RUNNING",
+        "pid": 2510472,
+        "dataset": "beauty",
+        "phase": "K_search",
+        "current_task": "beauty_k8_s42_SS-C0",
+        "train_pid": 2552005,
+        "completed_new_tasks": 4,
+        "pending_known_tasks": 2,
+        "time_utc": "2026-10-23T08:09:23Z",
+        "GPU": 0,
+        "log": "/home/yyx/hzgcode/pom2.0/research/elector_sil_formal_20261023_v1/runs/beauty_k8_s42_SS-C0/train.log"
+      }
+    },
+    {
+      "dataset": "ml-1m",
+      "process": {
+        "pid": 2510473,
+        "state": "S",
+        "ppid": 1,
+        "start": "597875926",
+        "cmd": "/home/yyx/anaconda3/envs/hzg_py10/bin/python -u -B /home/yyx/hzgcode/pom2.0/research/elector_sil_formal_20261023_v1/scheduler.py --dataset ml-1m"
+      },
+      "state": {
+        "state": "WAITING_GPU",
+        "pid": 2510473,
+        "dataset": "ml-1m",
+        "phase": "six_seed",
+        "current_task": "ml-1m_k2_s0_SS-B0",
+        "train_pid": null,
+        "completed_new_tasks": 0,
+        "pending_known_tasks": 17,
+        "time_utc": "2026-10-23T07:17:22Z",
+        "poll_seconds": 15
+      }
+    }
+  ],
+  "adopted": [
+    {
+      "pid": 2552005,
+      "state": "S",
+      "ppid": 2510472,
+      "start": "598188378",
+      "cmd": "/home/yyx/anaconda3/envs/hzg_py10/bin/python -u -B /home/yyx/hzgcode/pom2.0/research/elector_sil_formal_20261023_v1/train_task.py --dataset beauty --arm SS-C0 --K 8 --seed 42",
+      "dataset": "beauty",
+      "task": "beauty_k8_s42_SS-C0",
+      "GPU": 0
+    }
+  ],
+  "completed": [
+    "beauty_k2_s42_SS-C0",
+    "beauty_k8_s42_SS-B0",
+    "beauty_k2_s42_SS-C1",
+    "beauty_k2_s42_SS-B0"
+  ],
+  "started": [
+    "beauty_k8_s42_SS-C0",
+    "beauty_k2_s42_SS-C0",
+    "beauty_k8_s42_SS-B0",
+    "beauty_k2_s42_SS-C1",
+    "beauty_k2_s42_SS-B0"
+  ],
+  "cancelled_not_started_count": 35,
+  "cancel_scope": [
+    "remaining Beauty K8",
+    "all missing seeds",
+    "all A1/A2 ablations"
+  ],
+  "original_code_and_assets_unchanged": true
+}

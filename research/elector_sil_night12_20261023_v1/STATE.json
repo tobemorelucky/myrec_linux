@@ -1,0 +1,23 @@
+{
+  "state": "COMPLETED",
+  "pid": 2731016,
+  "pending": [],
+  "completed": [
+    "beauty_k2_s42_SS-A1",
+    "beauty_k2_s42_SS-A2",
+    "ml-1m_k3_s42_SS-C0",
+    "ml-1m_k3_s42_SS-B0",
+    "ml-1m_k3_s42_SS-A1",
+    "ml-1m_k3_s42_SS-A2",
+    "beauty_k2_s0_SS-B0",
+    "beauty_k2_s0_SS-C0",
+    "beauty_k2_s0_SS-C1",
+    "ml-1m_k3_s0_SS-B0",
+    "ml-1m_k3_s0_SS-C0",
+    "ml-1m_k3_s0_SS-C1"
+  ],
+  "failed_datasets": {},
+  "halted_tasks": [],
+  "running": {},
+  "time_utc": "2026-10-23T19:21:21Z"
+}

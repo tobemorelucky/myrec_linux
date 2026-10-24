@@ -1,0 +1,11 @@
+{
+  "state": "RUNNING",
+  "pid": 2403913,
+  "dataset": "ml-1m",
+  "time_utc": "2026-10-23T04:36:47Z",
+  "GPU": 0,
+  "GPU_uuid": "GPU-5d1b4b83-6d28-014d-51b3-9f262308b849",
+  "current_arm": "BPR-C1",
+  "train_pid": 2414357,
+  "log": "/home/yyx/hzgcode/pom2.0/research/elector_sil_objective_full_20261023_v2/ml-1m/arms/BPR-C1/train.log"
+}

@@ -1,0 +1,15 @@
+{
+  "K": 2,
+  "passed": true,
+  "GPU1_preferred": true,
+  "GPU0_fallback": true,
+  "all_user_compute_blocks": true,
+  "lock_conflict_waits": true,
+  "completed_arms_skip": [
+    true,
+    false,
+    false
+  ],
+  "no_training": true,
+  "no_Test": true
+}

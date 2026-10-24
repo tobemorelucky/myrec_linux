@@ -1,0 +1,43 @@
+{
+  "pid": 2574072,
+  "dataset": "beauty",
+  "first_tasks": [
+    [
+      3,
+      42,
+      "SS-B0",
+      "supplement"
+    ],
+    [
+      3,
+      42,
+      "SS-C0",
+      "supplement"
+    ],
+    [
+      8,
+      42,
+      "SS-C1",
+      "supplement"
+    ],
+    [
+      4,
+      42,
+      "SS-A1",
+      "supplement"
+    ],
+    [
+      4,
+      42,
+      "SS-A2",
+      "supplement"
+    ]
+  ],
+  "fail_fast": true,
+  "no_preemption": true,
+  "GPUs": [
+    0,
+    1
+  ],
+  "max_total_new_tasks": 7
+}

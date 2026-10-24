@@ -1,0 +1,1 @@
+{"dataset": "beauty", "authorized_tasks": [{"dataset": "beauty", "K": 3, "seed": 42, "arm": "SS-B0"}, {"dataset": "beauty", "K": 3, "seed": 42, "arm": "SS-C0"}, {"dataset": "beauty", "K": 8, "seed": 42, "arm": "SS-C1"}, {"dataset": "beauty", "K": 4, "seed": 42, "arm": "SS-A1"}, {"dataset": "beauty", "K": 4, "seed": 42, "arm": "SS-A2"}]}

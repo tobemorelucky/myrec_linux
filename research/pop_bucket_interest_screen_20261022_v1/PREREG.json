@@ -1,0 +1,71 @@
+{
+  "config": {
+    "seed": 42,
+    "Train_subset_max": 131072,
+    "epochs": 4,
+    "Dev_epochs": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "batch_size": 1024,
+    "negative_count": 64,
+    "negative_sampling": "uniform replacement on catalog 1..N-1 conditional on excluding user's Train clicked; regenerate each epoch; duplicates retained",
+    "optimizer": "Adam",
+    "lr": 0.01,
+    "weight_decay": 1e-06,
+    "temperature": 1.0,
+    "loss": "CE over positive+64 shared uniform negatives, same fixed prior in both fitted schemes",
+    "frequency_lambda": 0.3,
+    "buckets": "Train count=0 plus five positive-count catalog quantiles; tied frequencies never split",
+    "C1": "B0+a[bucket]*raw_ASPCF_score+b[bucket]",
+    "M1": "B0+sum_k(w_k*theta[k,bucket]*(m_k-m_mean))",
+    "selection": "per-arm best Dev NDCG@5 at 0/1/2/4, earliest tie; epoch0 included",
+    "go": "M1 must exceed BOTH B0 and C1 on BOTH domains; tiny gains only exploratory; no automatic full train",
+    "no_Test": true,
+    "no_full_model_training": true,
+    "no_sweep": true,
+    "run_seconds_limit": 170
+  },
+  "unit_tests": [
+    {
+      "K": 1,
+      "zero_init_exact": true,
+      "equal_interest_predictions_exact_zero": true,
+      "K1_exact_zero": true,
+      "direct_formula_float64_max_error": 0.0
+    },
+    {
+      "K": 2,
+      "zero_init_exact": true,
+      "equal_interest_predictions_exact_zero": true,
+      "K1_exact_zero": false,
+      "direct_formula_float64_max_error": 1.0547118733938987e-15
+    },
+    {
+      "K": 4,
+      "zero_init_exact": true,
+      "equal_interest_predictions_exact_zero": true,
+      "K1_exact_zero": false,
+      "direct_formula_float64_max_error": 2.220446049250313e-16
+    },
+    {
+      "K": 7,
+      "zero_init_exact": true,
+      "equal_interest_predictions_exact_zero": true,
+      "K1_exact_zero": false,
+      "direct_formula_float64_max_error": 2.220446049250313e-16
+    }
+  ],
+  "head": "771b4c3826f07a8cc7fb9038fb8659161e9f8189",
+  "initial_git_status": "## main...origin/main\n?? research/pop_bucket_interest_screen_20261022_v1/\n",
+  "script_sha256": "f1026bcf6e2b5e6b6ba2cdf803ae988d79a1ce0d54060d4910306f0119961217",
+  "old_score_sources_sha256": {
+    "models/sequential/LLMMIRecPPCIM.py": "262d61bb1fde71581906cbf3740b7c25f925b91616f689a91d00a6fb31e949e8",
+    "models/sequential/LLMMIRecASPCFInterestMetric.py": "af6a811bbecc8c2b6b47d65c8948680ea76aa07b3e1accd9f130f301392dc521",
+    "models/sequential/LLMMIRecASPCFCIGR.py": "3c85ca967cbb11ddba176764d594be55f7ddec423503d0ec9d444fdcb16af1f7"
+  },
+  "reuse_feature_script_sha256": "fae7c3155477448075e58d94212ad637bc420d26449b3137bbcc953336e4c81d",
+  "overlap": "M1 is InterestMetric I-C scalar covariance conditioned on Train popularity bucket; within a bucket it is a single corrected user vector. Not a new fundamental scoring operator."
+}

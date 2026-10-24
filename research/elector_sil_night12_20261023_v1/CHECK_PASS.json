@@ -1,0 +1,73 @@
+{
+  "passed": true,
+  "seconds": 39.607630766928196,
+  "tasks": {
+    "beauty_k2_s42_SS-A1": {
+      "parameters": 980420,
+      "inactive_local_parameters": 16640,
+      "core_initial_sha256": "initial ledger verified before CPU-only updates"
+    },
+    "beauty_k2_s42_SS-A2": {
+      "parameters": 980420,
+      "inactive_local_parameters": 0,
+      "core_initial_sha256": "initial ledger verified before CPU-only updates"
+    },
+    "beauty_k2_s0_SS-B0": {
+      "parameters": 942916,
+      "inactive_local_parameters": 0,
+      "core_initial_sha256": "b7ec7eac2496f325fd73256fc392613be627a8e3773b3bc471fd609273a3fbe5"
+    },
+    "beauty_k2_s0_SS-C0": {
+      "parameters": 980420,
+      "inactive_local_parameters": 0,
+      "core_initial_sha256": "b7ec7eac2496f325fd73256fc392613be627a8e3773b3bc471fd609273a3fbe5"
+    },
+    "beauty_k2_s0_SS-C1": {
+      "parameters": 980420,
+      "inactive_local_parameters": 0,
+      "core_initial_sha256": "b7ec7eac2496f325fd73256fc392613be627a8e3773b3bc471fd609273a3fbe5"
+    },
+    "ml-1m_k3_s42_SS-B0": {
+      "parameters": 405765,
+      "inactive_local_parameters": 0,
+      "core_initial_sha256": "4192efdf30aeb02b6c88fb73d6ead0878715bc16f9112dab8fc93c1a470a9c47"
+    },
+    "ml-1m_k3_s42_SS-C0": {
+      "parameters": 443269,
+      "inactive_local_parameters": 0,
+      "core_initial_sha256": "4192efdf30aeb02b6c88fb73d6ead0878715bc16f9112dab8fc93c1a470a9c47"
+    },
+    "ml-1m_k3_s42_SS-A1": {
+      "parameters": 443269,
+      "inactive_local_parameters": 16640,
+      "core_initial_sha256": "initial ledger verified before CPU-only updates"
+    },
+    "ml-1m_k3_s42_SS-A2": {
+      "parameters": 443269,
+      "inactive_local_parameters": 0,
+      "core_initial_sha256": "initial ledger verified before CPU-only updates"
+    },
+    "ml-1m_k3_s0_SS-B0": {
+      "parameters": 405765,
+      "inactive_local_parameters": 0,
+      "core_initial_sha256": "9189ef8306e43f6ef2a0c56137be024bbd76f6294e7d865a111c984242d98143"
+    },
+    "ml-1m_k3_s0_SS-C0": {
+      "parameters": 443269,
+      "inactive_local_parameters": 0,
+      "core_initial_sha256": "9189ef8306e43f6ef2a0c56137be024bbd76f6294e7d865a111c984242d98143"
+    },
+    "ml-1m_k3_s0_SS-C1": {
+      "parameters": 443269,
+      "inactive_local_parameters": 0,
+      "core_initial_sha256": "9189ef8306e43f6ef2a0c56137be024bbd76f6294e7d865a111c984242d98143"
+    }
+  },
+  "exact_model_sources_reused": true,
+  "original_evaluation_AST_exact": true,
+  "padding_local_causality_finite_gradients": true,
+  "A2_singletons_restored": true,
+  "no_Dev_performance_gate": true,
+  "no_Test": true,
+  "no_checkpoints_saved": true
+}

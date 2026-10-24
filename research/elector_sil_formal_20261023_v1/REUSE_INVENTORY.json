@@ -1,0 +1,178 @@
+[
+  {
+    "path": "research/elector_sil_objective_full_20261023_v1/ml-1m/arms/BPR-B0/config.json",
+    "seed": 42,
+    "K": 2,
+    "dataset": "ml-1m",
+    "arm": "BPR-B0",
+    "has_result": false
+  },
+  {
+    "path": "research/elector_sil_objective_full_20261023_v1/beauty/arms/BPR-B0/config.json",
+    "seed": 42,
+    "K": 4,
+    "dataset": "beauty",
+    "arm": "BPR-B0",
+    "has_result": false
+  },
+  {
+    "path": "research/elector_sil_dual_beauty_20261022_v1/arms/C1/config.json",
+    "seed": 42,
+    "K": 4,
+    "dataset": "beauty",
+    "arm": "C1",
+    "has_result": true
+  },
+  {
+    "path": "research/elector_sil_dual_beauty_20261022_v1/arms/B0/config.json",
+    "seed": 42,
+    "K": 4,
+    "dataset": "beauty",
+    "arm": "B0",
+    "has_result": true
+  },
+  {
+    "path": "research/elector_sil_dual_beauty_20261022_v1/arms/M1/config.json",
+    "seed": 42,
+    "K": 4,
+    "dataset": "beauty",
+    "arm": "M1",
+    "has_result": true
+  },
+  {
+    "path": "research/elector_sil_objective_full_20261023_v2/ml-1m/arms/SS-C0/config.json",
+    "seed": 42,
+    "K": 2,
+    "dataset": "ml-1m",
+    "arm": "SS-C0",
+    "has_result": true
+  },
+  {
+    "path": "research/elector_sil_objective_full_20261023_v2/ml-1m/arms/BPR-C1/config.json",
+    "seed": 42,
+    "K": 2,
+    "dataset": "ml-1m",
+    "arm": "BPR-C1",
+    "has_result": true
+  },
+  {
+    "path": "research/elector_sil_objective_full_20261023_v2/ml-1m/arms/SS-M2/config.json",
+    "seed": 42,
+    "K": 2,
+    "dataset": "ml-1m",
+    "arm": "SS-M2",
+    "has_result": false
+  },
+  {
+    "path": "research/elector_sil_objective_full_20261023_v2/ml-1m/arms/BPR-B0/config.json",
+    "seed": 42,
+    "K": 2,
+    "dataset": "ml-1m",
+    "arm": "BPR-B0",
+    "has_result": true
+  },
+  {
+    "path": "research/elector_sil_objective_full_20261023_v2/beauty/arms/SS-C0/config.json",
+    "seed": 42,
+    "K": 4,
+    "dataset": "beauty",
+    "arm": "SS-C0",
+    "has_result": true
+  },
+  {
+    "path": "research/elector_sil_objective_full_20261023_v2/beauty/arms/BPR-C1/config.json",
+    "seed": 42,
+    "K": 4,
+    "dataset": "beauty",
+    "arm": "BPR-C1",
+    "has_result": true
+  },
+  {
+    "path": "research/elector_sil_objective_full_20261023_v2/beauty/arms/SS-M2/config.json",
+    "seed": 42,
+    "K": 4,
+    "dataset": "beauty",
+    "arm": "SS-M2",
+    "has_result": true
+  },
+  {
+    "path": "research/elector_sil_objective_full_20261023_v2/beauty/arms/BPR-B0/config.json",
+    "seed": 42,
+    "K": 4,
+    "dataset": "beauty",
+    "arm": "BPR-B0",
+    "has_result": true
+  },
+  {
+    "path": "research/elector_sil_dual_ml1m_20261022_v1/arms/C1/config.json",
+    "seed": 42,
+    "K": 4,
+    "dataset": "ml-1m",
+    "arm": "C1",
+    "has_result": true
+  },
+  {
+    "path": "research/elector_sil_dual_ml1m_20261022_v1/arms/B0/config.json",
+    "seed": 42,
+    "K": 4,
+    "dataset": "ml-1m",
+    "arm": "B0",
+    "has_result": true
+  },
+  {
+    "path": "research/elector_sil_dual_ml1m_20261022_v1/arms/M1/config.json",
+    "seed": 42,
+    "K": 4,
+    "dataset": "ml-1m",
+    "arm": "M1",
+    "has_result": true
+  },
+  {
+    "path": "research/elector_sil_dual_ml1m_k8_20261022_v1/arms/C1/config.json",
+    "seed": 42,
+    "K": 8,
+    "dataset": "ml-1m",
+    "arm": "C1",
+    "has_result": true
+  },
+  {
+    "path": "research/elector_sil_dual_ml1m_k8_20261022_v1/arms/B0/config.json",
+    "seed": 42,
+    "K": 8,
+    "dataset": "ml-1m",
+    "arm": "B0",
+    "has_result": true
+  },
+  {
+    "path": "research/elector_sil_dual_ml1m_k8_20261022_v1/arms/M1/config.json",
+    "seed": 42,
+    "K": 8,
+    "dataset": "ml-1m",
+    "arm": "M1",
+    "has_result": true
+  },
+  {
+    "path": "research/elector_sil_dual_ml1m_k2_20261022_v1/arms/C1/config.json",
+    "seed": 42,
+    "K": 2,
+    "dataset": "ml-1m",
+    "arm": "C1",
+    "has_result": true
+  },
+  {
+    "path": "research/elector_sil_dual_ml1m_k2_20261022_v1/arms/B0/config.json",
+    "seed": 42,
+    "K": 2,
+    "dataset": "ml-1m",
+    "arm": "B0",
+    "has_result": true
+  },
+  {
+    "path": "research/elector_sil_dual_ml1m_k2_20261022_v1/arms/M1/config.json",
+    "seed": 42,
+    "K": 2,
+    "dataset": "ml-1m",
+    "arm": "M1",
+    "has_result": true
+  }
+]

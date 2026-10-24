@@ -1,0 +1,67 @@
+{
+  "config": {
+    "seed": 42,
+    "batch_size": 1024,
+    "steps": 16,
+    "lr": 0.0001,
+    "optimizer": "Adam",
+    "weight_decay": 1e-06,
+    "modes": [
+      "baseline",
+      "local",
+      "interest"
+    ],
+    "dilations": [
+      1,
+      3
+    ],
+    "kernel": 3,
+    "loss": "unchanged filtered Softmax tau1 + original relation .01; NO auxiliary loss",
+    "init": "same fixed existing checkpoint for this implementation screen only; full experiment must use paired fresh original ASPCF initialization",
+    "Dev": "full original 1001 duplicate candidate slots before/after, raw and fixed pop lambda=.30; no selection",
+    "K": "configurable; existing checkpoints K4; synthetic K1/2/4/7",
+    "no_Test": true,
+    "no_full_training": true,
+    "global_audit_seconds": 170
+  },
+  "math_tests": [
+    {
+      "mode": "local",
+      "parameters": 16960,
+      "zero_output_identity": true,
+      "padding_invariant": true,
+      "causal_suffix_and_prefix_extension": true,
+      "future_bank_gradient_exact_zero": true,
+      "head_permutation_equivariant": true,
+      "conditioning_effect_max_abs": 0.0
+    },
+    {
+      "mode": "interest",
+      "parameters": 16960,
+      "zero_output_identity": true,
+      "padding_invariant": true,
+      "causal_suffix_and_prefix_extension": true,
+      "future_bank_gradient_exact_zero": true,
+      "head_permutation_equivariant": true,
+      "conditioning_effect_max_abs": 0.008864100571330368
+    }
+  ],
+  "head": "771b4c3826f07a8cc7fb9038fb8659161e9f8189",
+  "initial_status": "## main...origin/main\n?? research/multiscale_interest_recompose_20261022_v1/\n?? research/pair_advantage_roles_20261022_v1/\n?? research/pop_bucket_interest_screen_20261022_v1/\n",
+  "source_sha256": {
+    "models/sequential/LLMMIRecASPCF.py": "08dfe95d6fa60773f5d34aafef422e29b7254ce7c1ca9963da956118a490ffe8",
+    "models/sequential/LLMMIRecASPCFSampledSoftmax.py": "a74f27deac0e15ab189345d57179ca1e80050a4acb68788d2ae335e9218669df",
+    "models/sequential/llmmi_components.py": "d71903c5a54391416630f00fa8e1aef1e6ca6b414f7dd3d064b67c8beb8c93f6",
+    "models/BaseModel.py": "57c1fa6ceb582a75d006ed6765d79a3593e58e097317063e92f687e5e4a73150",
+    "helpers/BaseRunner.py": "b0417f18bd4793c079555fe237a787474237597e1042de6f4d429b50aae93fbc",
+    "helpers/SeqReader.py": "74ed2b2e5aec81bdbb6f8c3acdcfa233d86499faa90e455504b7739fd0e5176e",
+    "models/sequential/LLMMIRecASPCFTIA.py": "d03ce535f9e527401d45ccbb02d1988c9d48a8188652257bba134ec196d61874",
+    "models/sequential/LLMMIRecASPCFSAIT.py": "78fac2a029557e17397718c11964e3ed324b82a12734e7911b29cbc0d0c57631",
+    "models/sequential/sait_components.py": "ac258cd417993e6edf0575983a429d892884e0484d1da76f9408948d44c49468",
+    "models/sequential/LLMMIRecASPCFPrefixEvidence.py": "164f46f8ba9b5bda2224294f2ab44bec1f6436857860eeee66b62a80d308f36a",
+    "models/sequential/LLMMIRecContextControl.py": "1010c2a0ddb0905ecfac5175bcf8d3a9274068764f884bcf467eb704d572d8af",
+    "models/sequential/LLMMIRecHSDIR.py": "07f4aa7437f50e898ce18621d03fc672df48ee7cf45290a56aeb01527fe4be72"
+  },
+  "module_sha256": "b684112f1c5118dc5c048fe043478e27066f438cb4142b856bd8da4874ce6ecc",
+  "runner_sha256": "9dffda84239694a635bb4cbd08444e98df93de355c940b505ec6dc152780207d"
+}

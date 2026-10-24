@@ -1,0 +1,71 @@
+{
+  "dataset": "ml-1m",
+  "threshold": 0.9910284280776978,
+  "adjacent_gap_quantiles": [
+    0.6616473197937012,
+    0.9134567379951477,
+    0.9910284280776978,
+    1.1848602294921875
+  ],
+  "distribution": {
+    "Train": {
+      "rows": 982089,
+      "length_mean": 18.831825832485652,
+      "length_quantiles": [
+        1.0,
+        20.0,
+        20.0,
+        20.0,
+        20.0
+      ],
+      "length_under4": 0.01845046630193394,
+      "segments": {
+        "fixed": {
+          "mean_segments": 4.7539937826408805,
+          "two_or_more": 0.9753993782640881,
+          "two_non_singleton": 0.9692492228301101,
+          "singleton_segment_share": 0.006468409210414996,
+          "two_non_singleton_given_length4plus": 0.9874684766833788
+        },
+        "semantic": {
+          "mean_segments": 5.708232145966404,
+          "two_or_more": 0.979623028055502,
+          "two_non_singleton": 0.9734728726215242,
+          "singleton_segment_share": 0.04742282900153978,
+          "two_non_singleton_given_length4plus": 0.9917715196235564
+        }
+      }
+    },
+    "Dev": {
+      "rows": 6040,
+      "length_mean": 19.956456953642384,
+      "length_quantiles": [
+        18.0,
+        20.0,
+        20.0,
+        20.0,
+        20.0
+      ],
+      "length_under4": 0.0,
+      "segments": {
+        "fixed": {
+          "mean_segments": 5.0,
+          "two_or_more": 1.0,
+          "two_non_singleton": 1.0,
+          "singleton_segment_share": 0.0,
+          "two_non_singleton_given_length4plus": 1.0
+        },
+        "semantic": {
+          "mean_segments": 6.027980132450331,
+          "two_or_more": 1.0,
+          "two_non_singleton": 1.0,
+          "singleton_segment_share": 0.04537339668763218,
+          "two_non_singleton_given_length4plus": 1.0
+        }
+      }
+    }
+  },
+  "seconds": 4.911009164527059,
+  "short_history_design": "segment all observed items; parallel overlapping recent3; no forced fake split",
+  "semantic_boundary_validity": "content-distance heuristic, not proven behavioral intent boundaries"
+}

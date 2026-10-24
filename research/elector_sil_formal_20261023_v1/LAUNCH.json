@@ -1,0 +1,20 @@
+{
+  "beauty": {
+    "pid": 2510472,
+    "dataset": "beauty",
+    "queue_log": "/home/yyx/hzgcode/pom2.0/research/elector_sil_formal_20261023_v1/queues/beauty/queue.log",
+    "GPUs": [
+      0,
+      1
+    ]
+  },
+  "ml-1m": {
+    "pid": 2510473,
+    "dataset": "ml-1m",
+    "queue_log": "/home/yyx/hzgcode/pom2.0/research/elector_sil_formal_20261023_v1/queues/ml-1m/queue.log",
+    "GPUs": [
+      0,
+      1
+    ]
+  }
+}

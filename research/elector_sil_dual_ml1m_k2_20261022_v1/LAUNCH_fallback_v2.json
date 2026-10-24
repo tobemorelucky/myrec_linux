@@ -1,0 +1,11 @@
+{
+  "K": 2,
+  "pid": 2370457,
+  "proc_start_ticks": "591933161",
+  "old_pid": 2317126,
+  "gpu_preference": [
+    1,
+    0
+  ],
+  "log": "/home/yyx/hzgcode/pom2.0/research/elector_sil_dual_ml1m_k2_20261022_v1/queue_fallback_v2.log"
+}

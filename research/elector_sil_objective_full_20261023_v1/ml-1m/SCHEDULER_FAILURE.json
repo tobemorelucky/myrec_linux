@@ -1,0 +1,7 @@
+{
+  "error": "RuntimeError('Task failed BPR-B0 exit=1')",
+  "traceback": "Traceback (most recent call last):\n  File \"/home/yyx/hzgcode/pom2.0/research/elector_sil_objective_full_20261023_v1/scheduler.py\", line 75, in main\n    if code!=0:raise RuntimeError('Task failed '+arm+' exit='+str(code))\nRuntimeError: Task failed BPR-B0 exit=1\n",
+  "current_train_pid": 2403335,
+  "no_retry": true,
+  "following_tasks_halted": true
+}

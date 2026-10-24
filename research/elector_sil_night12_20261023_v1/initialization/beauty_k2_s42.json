@@ -1,0 +1,8 @@
+{
+  "dataset": "beauty",
+  "K": 2,
+  "seed": 42,
+  "common_initial_sha256": "76a603896fb5a2beba954c953bdc07d22f07512fd4c71d266b24a078febcc405",
+  "source_path": "/home/yyx/hzgcode/pom2.0/research/elector_sil_formal_20261023_v1/initialization/beauty_k2_s42.json",
+  "source_sha256": "4c4ca8f30342adce2a4ee49fe809cea526d0c0b33b33dede61d680d84042a3f0"
+}

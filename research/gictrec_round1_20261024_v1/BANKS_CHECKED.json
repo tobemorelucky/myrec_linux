@@ -1,0 +1,72 @@
+{
+  "beauty": {
+    "users": 22363,
+    "K": 2,
+    "tensor_bytes": 27865648,
+    "file_bytes": 27870285,
+    "build_seconds": 11.06650080345571,
+    "bank_sha256": "c40ac4a550ce2a1a74fd46204117a337f86b540e9aa04bf4eeb8e18774cf80c9",
+    "metadata": {
+      "schema": "gict_train_bank_v1",
+      "scope": "full_train",
+      "dataset": "beauty",
+      "K": 2,
+      "history_max": 20,
+      "anchors": 32,
+      "neighbors": 8,
+      "teacher_checkpoint": "/home/yyx/hzgcode/pom2.0/research/elector_sil_formal_20261023_v1/runs/beauty_k2_s42_SS-C1/best.pt",
+      "teacher_checkpoint_sha256": "5390789b0732c6e1c8ea20a3053f7722574232de04d21952629b5f0f3c07eb91",
+      "embedding_sha256": "bc282725f08c2bb7fbb524739d1711cee44810ab402f18119aa838d9e5ed859f",
+      "train_frame_sha256": "e1ca64e68faafe06ef029bf7f3125f5609169a571c4dfacd7b60475984aadbff",
+      "train_csv_sha256": "37e80f5cf976292b1d9cb43a131d624f6479cdf265850b06e885365c08e7d00e",
+      "users": 22363,
+      "teacher_frozen": true,
+      "source": "train.csv only; final Train prefixes; target-free dummy candidate0",
+      "self_exclusion": "all cache rows with query user_id are excluded, including own later Train events",
+      "sources": {
+        "/home/yyx/hzgcode/pom2.0/tools/build_gict_bank.py": "6a4a3441d09d939597a378590197e31469316164f34ab8c067461bca74e545d6",
+        "/home/yyx/hzgcode/pom2.0/models/sequential/LLMMIRecASPCFAdaptiveSIL.py": "27e2fbea40fec6f065a02fb03d6edf5e83d614b28f120693175abbb1b269c1e6",
+        "/home/yyx/hzgcode/pom2.0/models/sequential/gict_components.py": "92556fc36a4b17d98bac30bfd4ec0ed29625a439919bc0bacd2233f0fe793044",
+        "/home/yyx/hzgcode/pom2.0/tools/gict_data.py": "0defddf988b240d746a5176e87abc1577b23bdc3a186c6b2d7f6b5207b03c77c"
+      },
+      "tensor_bytes": 27865648,
+      "build_seconds": 11.06650080345571
+    },
+    "nonempty_user_profiles": 22363
+  },
+  "ml-1m": {
+    "users": 6040,
+    "K": 3,
+    "tensor_bytes": 10069344,
+    "file_bytes": 10073933,
+    "build_seconds": 3.7482477156445384,
+    "bank_sha256": "0a9aa7bb8cdc3788aca6aec5a73a2c28eb324a0ccc102b55337fc0b10ad3bdee",
+    "metadata": {
+      "schema": "gict_train_bank_v1",
+      "scope": "full_train",
+      "dataset": "ml-1m",
+      "K": 3,
+      "history_max": 20,
+      "anchors": 32,
+      "neighbors": 8,
+      "teacher_checkpoint": "/home/yyx/hzgcode/pom2.0/research/elector_sil_k3_20261023_v1/runs/ml-1m_k3_s42_SS-C1/best.pt",
+      "teacher_checkpoint_sha256": "08861748f09cd6483e1cd903fdb788d7423bfcb4f41cb9bfa683e22da4b52caf",
+      "embedding_sha256": "03cf9649844da2c172487a0f552a49a4d331d8262135e3b70e48d6e772ad7905",
+      "train_frame_sha256": "6e3511fc65d0399bc714804f1098ceaa2a35a7fbf38bb2d0a120e772b6443fc5",
+      "train_csv_sha256": "d4d11c18c2984da301842ad117e00bbedb477058a52314aebc0d1fefd26b85ff",
+      "users": 6040,
+      "teacher_frozen": true,
+      "source": "train.csv only; final Train prefixes; target-free dummy candidate0",
+      "self_exclusion": "all cache rows with query user_id are excluded, including own later Train events",
+      "sources": {
+        "/home/yyx/hzgcode/pom2.0/tools/build_gict_bank.py": "6a4a3441d09d939597a378590197e31469316164f34ab8c067461bca74e545d6",
+        "/home/yyx/hzgcode/pom2.0/models/sequential/LLMMIRecASPCFAdaptiveSIL.py": "27e2fbea40fec6f065a02fb03d6edf5e83d614b28f120693175abbb1b269c1e6",
+        "/home/yyx/hzgcode/pom2.0/models/sequential/gict_components.py": "92556fc36a4b17d98bac30bfd4ec0ed29625a439919bc0bacd2233f0fe793044",
+        "/home/yyx/hzgcode/pom2.0/tools/gict_data.py": "0defddf988b240d746a5176e87abc1577b23bdc3a186c6b2d7f6b5207b03c77c"
+      },
+      "tensor_bytes": 10069344,
+      "build_seconds": 3.7482477156445384
+    },
+    "nonempty_user_profiles": 6040
+  }
+}

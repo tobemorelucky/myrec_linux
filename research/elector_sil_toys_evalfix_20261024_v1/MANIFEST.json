@@ -1,0 +1,59 @@
+{
+  "source_sha256": {
+    "main.py": "26efeb7ac83ff00f02ea66c1c03c410f43a946d18849d86b0db5988d8e86e124",
+    "models/BaseModel.py": "57c1fa6ceb582a75d006ed6765d79a3593e58e097317063e92f687e5e4a73150",
+    "models/sequential/LLMMIRecASPCF.py": "08dfe95d6fa60773f5d34aafef422e29b7254ce7c1ca9963da956118a490ffe8",
+    "models/sequential/LLMMIRecASPCFSampledSoftmax.py": "a74f27deac0e15ab189345d57179ca1e80050a4acb68788d2ae335e9218669df",
+    "models/sequential/llmmi_components.py": "d71903c5a54391416630f00fa8e1aef1e6ca6b414f7dd3d064b67c8beb8c93f6",
+    "models/sequential/llmmi_utils.py": "ae33b3e4e5a76146f666b91fdc58a7b3675b15b13297d9df96352e643225c96c",
+    "helpers/BaseReader.py": "934cc0786d392b5490412f707a84780cbf6b61377f9dc8b149bb188458dfcca3",
+    "helpers/SeqReader.py": "74ed2b2e5aec81bdbb6f8c3acdcfa233d86499faa90e455504b7739fd0e5176e",
+    "helpers/BaseRunner.py": "b0417f18bd4793c079555fe237a787474237597e1042de6f4d429b50aae93fbc",
+    "utils/utils.py": "873337f50841e34ca24fd5b683b5bee3a8789660b4dfe1832b3ddca58f6b7d54",
+    "research/elector_sil_objective_full_20261023_v2/scheduler.py": "c8d011a4d7533c3b8ca1a294958b50f4fa8099d4fc804292d8deda8b03d1d9a5"
+  },
+  "assets": {
+    "/home/yyx/hzgcode/pom2.0/data/toys/train.csv": {
+      "size": 32607020,
+      "mtime_ns": 1770450332000000000,
+      "sha256": "981d7dcbfe2cd161d51afa99f4a38c307900c57f024cde1470cb901903320e2e"
+    },
+    "/home/yyx/hzgcode/pom2.0/data/toys/dev.csv": {
+      "size": 1431858987,
+      "mtime_ns": 1770450358000000000,
+      "sha256": "ec97288e72811604f6e91ec88dadc8d24191286de686f14cf9316ad9b24f8c81"
+    },
+    "/home/yyx/hzgcode/pom2.0/data/toys/test.csv": {
+      "size": 1431862882,
+      "mtime_ns": 1770450386000000000,
+      "sha256": "68a88d6e70760e02d4a24f8914ecdd0487fdedf6f5ea1f14d72792d16ac80590"
+    },
+    "/home/yyx/hzgcode/pom2.0/data/toys/SeqReader.pkl": {
+      "size": 1529895667,
+      "mtime_ns": 1770452523519903216,
+      "sha256": "6e23a81f795b1e4f8c87e12f993bb0b1e74241965e280115903626aaef83f887"
+    },
+    "/home/yyx/hzgcode/pom2.0/data/toys/item2id.json": {
+      "size": 1879401,
+      "mtime_ns": 1770450248000000000,
+      "sha256": "09e14aa3cfa1949750fae8bc36b38d63ae9b390818455c8971b4c1e2f5e60ef1"
+    },
+    "/home/yyx/hzgcode/pom2.0/data/toys/handled/llm_table_pca1536.pkl": {
+      "size": 483975334,
+      "mtime_ns": 1771002786000000000,
+      "sha256": "977f04cba3dc45cbe7319992bc285a5117ec9510457d8ef99c48a1b7cde89490"
+    }
+  },
+  "order": [
+    "BPR-B0",
+    "SS-B0",
+    "SS-C0",
+    "SS-C1"
+  ],
+  "parameters": {
+    "BPR-B0": 5210054,
+    "SS-B0": 5210054,
+    "SS-C0": 5247558,
+    "SS-C1": 5247558
+  }
+}

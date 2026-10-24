@@ -1,0 +1,45 @@
+{
+  "math_tests": [
+    {
+      "mode": "fixed",
+      "added_parameters": 37504,
+      "K": [
+        1,
+        2,
+        4,
+        7
+      ],
+      "zero_output_identity": true,
+      "padding_and_empty_safe": true,
+      "short_length0or1_exact_identity": true,
+      "prefix_boundary_invariance": true,
+      "local_future_gradient_exact_zero": true,
+      "no_cross_segment_read": true,
+      "head_permutation_equivariance": true,
+      "all_new_parameters_active": true
+    },
+    {
+      "mode": "semantic",
+      "added_parameters": 37504,
+      "K": [
+        1,
+        2,
+        4,
+        7
+      ],
+      "zero_output_identity": true,
+      "padding_and_empty_safe": true,
+      "short_length0or1_exact_identity": true,
+      "prefix_boundary_invariance": true,
+      "local_future_gradient_exact_zero": true,
+      "no_cross_segment_read": true,
+      "head_permutation_equivariance": true,
+      "all_new_parameters_active": true
+    }
+  ],
+  "datasets": [
+    "beauty",
+    "ml-1m"
+  ],
+  "seconds": 14.250557850115001
+}

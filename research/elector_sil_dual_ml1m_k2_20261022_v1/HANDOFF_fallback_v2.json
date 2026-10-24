@@ -1,0 +1,36 @@
+{
+  "old_pid": 2317126,
+  "old_proc_start_ticks": "591199898",
+  "old_state": {
+    "state": "WAITING_GPU",
+    "scheduler_pid": 2317126,
+    "time_utc": "2026-10-22T14:45:53Z",
+    "dataset": "ml-1m",
+    "GPU": 1,
+    "current_arm": "C1",
+    "poll_seconds": 60,
+    "inventory": {
+      "0": {
+        "index": 0,
+        "uuid": "GPU-5d1b4b83-6d28-014d-51b3-9f262308b849",
+        "free_MiB": 13431,
+        "utilization": 84,
+        "compute_pids": [
+          2359045
+        ]
+      },
+      "1": {
+        "index": 1,
+        "uuid": "GPU-aae229cf-ddb1-1b36-5734-ffc82ea7e8ac",
+        "free_MiB": 13394,
+        "utilization": 47,
+        "compute_pids": [
+          2318389
+        ]
+      }
+    }
+  },
+  "reason": "User authorized GPU0 fallback; idle scheduler replacement only",
+  "no_training_child": true,
+  "time_utc": "2026-10-22T14:46:50Z"
+}

@@ -1,0 +1,92 @@
+{
+  "pid": 2731016,
+  "tasks": [
+    {
+      "dataset": "beauty",
+      "K": 2,
+      "seed": 42,
+      "arm": "SS-A1",
+      "priority": 0
+    },
+    {
+      "dataset": "beauty",
+      "K": 2,
+      "seed": 42,
+      "arm": "SS-A2",
+      "priority": 0
+    },
+    {
+      "dataset": "ml-1m",
+      "K": 3,
+      "seed": 42,
+      "arm": "SS-B0",
+      "priority": 0
+    },
+    {
+      "dataset": "ml-1m",
+      "K": 3,
+      "seed": 42,
+      "arm": "SS-C0",
+      "priority": 0
+    },
+    {
+      "dataset": "ml-1m",
+      "K": 3,
+      "seed": 42,
+      "arm": "SS-A1",
+      "priority": 1
+    },
+    {
+      "dataset": "ml-1m",
+      "K": 3,
+      "seed": 42,
+      "arm": "SS-A2",
+      "priority": 1
+    },
+    {
+      "dataset": "beauty",
+      "K": 2,
+      "seed": 0,
+      "arm": "SS-B0",
+      "priority": 2
+    },
+    {
+      "dataset": "beauty",
+      "K": 2,
+      "seed": 0,
+      "arm": "SS-C0",
+      "priority": 2
+    },
+    {
+      "dataset": "beauty",
+      "K": 2,
+      "seed": 0,
+      "arm": "SS-C1",
+      "priority": 2
+    },
+    {
+      "dataset": "ml-1m",
+      "K": 3,
+      "seed": 0,
+      "arm": "SS-B0",
+      "priority": 2
+    },
+    {
+      "dataset": "ml-1m",
+      "K": 3,
+      "seed": 0,
+      "arm": "SS-C0",
+      "priority": 2
+    },
+    {
+      "dataset": "ml-1m",
+      "K": 3,
+      "seed": 0,
+      "arm": "SS-C1",
+      "priority": 2
+    }
+  ],
+  "no_preemption": true,
+  "max_tasks": 12,
+  "poll_seconds": 30
+}

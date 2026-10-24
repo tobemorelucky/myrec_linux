@@ -1,0 +1,8 @@
+{
+  "reason": "missing csvwrite alias after Beauty JSON had been written; no numerical/model code change",
+  "original_runner_sha256": "7dce9a53372640b562d0008416d92252471ae6893422e9158411cc86b7ef9ca9",
+  "resume_sha256": "7762d42656df83b22864f2628d4d40e7d59264f2bc0718c5a94b627d5e4e4490",
+  "reused_beauty_result_sha256": "4e0a1fad459876c78d86d1140f34b98a774b19294fa3f4c96745c9ea2b6a6f17",
+  "reused_beauty_total_seconds": 33.88925520982593,
+  "no_Beauty_retraining_or_Dev_repeat": true
+}

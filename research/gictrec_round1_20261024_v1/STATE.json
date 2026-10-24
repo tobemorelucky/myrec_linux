@@ -1,0 +1,32 @@
+{
+  "pid": 2897589,
+  "running": {
+    "Toys_SS-C1": {
+      "pid": 2953447,
+      "GPU": 0,
+      "kind": "toys_ss",
+      "log": "/home/yyx/hzgcode/pom2.0/research/elector_sil_toys_evalfix_20261024_v1/arms/SS-C1/stdout.log"
+    }
+  },
+  "pending_GICT": [],
+  "paused_GICT_datasets": [],
+  "completed": [
+    "beauty_G0",
+    "ml-1m_G0",
+    "Toys_BPR_acceptance",
+    "ml-1m_G1",
+    "Toys_SS-B0",
+    "beauty_G1",
+    "ml-1m_G2",
+    "beauty_G2",
+    "Toys_SS-C0",
+    "ml-1m_G3",
+    "beauty_G3"
+  ],
+  "Toys": {
+    "phase": "SS_READY",
+    "halted": false,
+    "pending": [],
+    "BPR_alive": false
+  }
+}

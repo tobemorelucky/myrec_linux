@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "seconds": 23.132445501163602,
+  "datasets": {
+    "beauty": {
+      "parameters": 980549,
+      "common_initial_sha256": "a462d8537dc6af6ae121f4ba1babdc510c25184c3197792baf156f218fcd2b0c",
+      "zero_initial_loss_score_gradient_RNG_exact": true,
+      "finite_backward": true
+    },
+    "ml-1m": {
+      "parameters": 443269,
+      "common_initial_sha256": "4192efdf30aeb02b6c88fb73d6ead0878715bc16f9112dab8fc93c1a470a9c47",
+      "zero_initial_loss_score_gradient_RNG_exact": true,
+      "finite_backward": true
+    }
+  },
+  "no_Test": true,
+  "no_Dev_performance_gate": true
+}

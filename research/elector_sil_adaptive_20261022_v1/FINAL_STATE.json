@@ -1,0 +1,16 @@
+{
+  "head": "771b4c3826f07a8cc7fb9038fb8659161e9f8189",
+  "status_after": "## main...origin/main\n M main.py\n?? models/sequential/LLMMIRecASPCFAdaptiveSIL.py\n?? research/elector_sil_adaptive_20261022_v1/\n?? research/multiscale_interest_recompose_20261022_v1/\n?? research/pair_advantage_roles_20261022_v1/\n?? research/pop_bucket_interest_screen_20261022_v1/\n",
+  "source_sha256": {
+    "main.py": "26efeb7ac83ff00f02ea66c1c03c410f43a946d18849d86b0db5988d8e86e124",
+    "models/sequential/LLMMIRecASPCFAdaptiveSIL.py": "96a37e78a3d71a6f436caa6fbf039ac3f11cdb0bd7bc70e99f528cede7f7a04f",
+    "research/elector_sil_adaptive_20261022_v1/audit.py": "ed3f0068c47d2a372d43ca70cb7442cdae422d72044c886dfdfd16827fd059a5",
+    "research/elector_sil_adaptive_20261022_v1/prepare_v2.py": "52bcde83fed39e8f9584b5529075ddd1c8b4d0573535a0ec282b635ac37fdf78",
+    "research/elector_sil_adaptive_20261022_v1/prep_v2/beauty_train_asset.json": "fc2cad4db1058b48f56e0fd41b600f01a3abd9e3845672e052b52b141c6efd3a",
+    "research/elector_sil_adaptive_20261022_v1/prep_v2/ml-1m_train_asset.json": "0fce5beb58a52274f0b586c3b0859ba0f1ffdc982a565822341fb0866b7122e8"
+  },
+  "old_ASPCF_and_assets_unchanged": true,
+  "CLI_K7_parse_passed": true,
+  "no_Test": true,
+  "no_full_training": true
+}

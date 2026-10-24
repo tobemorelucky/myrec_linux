@@ -1,0 +1,16 @@
+{
+  "old_scheduler_pid": 2888682,
+  "preserved_BPR_pid": 2888790,
+  "preserved_GPU": 0,
+  "action": "SIGTERM only verified scheduler PID; never process group or training PID",
+  "new_tasks": [
+    "SS-B0",
+    "SS-C0",
+    "SS-C1"
+  ],
+  "total_full_runs": 4,
+  "reference_epoch": 3,
+  "fixed_scale": 2.0843257779445614,
+  "lambda_pop": 0.3,
+  "time_utc": "2026-10-24T02:48:38Z"
+}

@@ -1,0 +1,11 @@
+{
+  "base_snapshot.py": "27e2fbea40fec6f065a02fb03d6edf5e83d614b28f120693175abbb1b269c1e6",
+  "softguide_snapshot.py": "4c38adc776f0206972faa93bf6e4f6fa55ff1a5ab3e6332003d09a215788a188",
+  "objective_model.py": "014ed00749c2a61e2c348cbff59b11b3471be945dd5d5a94fdf49aac595733c8",
+  "plan.py": "b9662c9cd3cba7d3de7749eed7233fdaafa3318842760b83f8be4084f415a0b8",
+  "train_task.py": "803e8cebe395fbcbe0b2cc710466188c2656ae97e503798fbffebe85a582c0ab",
+  "scheduler.py": "660385f2ab95babd6b1cad307573ec9cfdfc32b3887467490b77b9ead6d32a75",
+  "preflight.py": "076f5c1c46507ca7baab0641de3f7c8c390e72337feea208fec5c5b1fe972b5f",
+  "MANIFEST.json": "0af742a9ad47896cb878433645d73138c75e5ec0901fc82fa82ff8b824847314",
+  "CHECK_PASS.json": "dcde682f29683ba6d9690ad90d94548eb8f1698f52becc97f00f0b2b3d719d31"
+}

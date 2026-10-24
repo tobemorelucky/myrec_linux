@@ -1,0 +1,15 @@
+{
+  "protected_ch4_sources_unchanged": 60,
+  "main_py_unchanged": true,
+  "focus_results": 16,
+  "source_sha256": {
+    "models/sequential/gict_components.py": "92556fc36a4b17d98bac30bfd4ec0ed29625a439919bc0bacd2233f0fe793044",
+    "models/sequential/GICTRec.py": "371e39d6b93112b9cf2b1f359b3dac3a0975286bb61b63f80fcdaa425fad73e9",
+    "tools/gict_data.py": "0defddf988b240d746a5176e87abc1577b23bdc3a186c6b2d7f6b5207b03c77c",
+    "tools/build_gict_bank.py": "6a4a3441d09d939597a378590197e31469316164f34ab8c067461bca74e545d6",
+    "tools/run_gictrec.py": "e90e8bf6ee65f8def911c55551ec0c9a7a2ff7d8d23a626ce896cbca3fdc5d6f",
+    "tools/test_gictrec.py": "c2aeb078ab70ef752f0a37c7b1fe90ae1220cdf617ebfae2ef1e81ef0be50361"
+  },
+  "archive_sha256": "bb17a6a9b69cf603dd7e29112730faeeea9806878b4b88240dd3d076bb516bf4",
+  "index_sha256": "c5f27cf75dc37546b107568b5bcee6d77d06e09fe8bb0c6ed5bf863989120403"
+}

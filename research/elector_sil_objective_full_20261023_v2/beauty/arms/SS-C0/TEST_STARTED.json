@@ -1,0 +1,7 @@
+{
+  "checkpoint_sha256": "091809920d68c4493694bfcbf156d1dc5680a4baf085eb0518fa6610f9b8105e",
+  "best_epoch": 10,
+  "passes": 1,
+  "lambda_pop": 0.3,
+  "exploratory": true
+}

@@ -1,0 +1,240 @@
+{
+  "seconds": 21.324294737540185,
+  "short_history_tests": [
+    {
+      "mode": "fixed",
+      "length": 0,
+      "multi": false,
+      "valid_behavior_slots": 0,
+      "pass_checks": true
+    },
+    {
+      "mode": "fixed",
+      "length": 0,
+      "multi": true,
+      "valid_behavior_slots": 0,
+      "pass_checks": true
+    },
+    {
+      "mode": "fixed",
+      "length": 1,
+      "multi": false,
+      "valid_behavior_slots": 1,
+      "pass_checks": true
+    },
+    {
+      "mode": "fixed",
+      "length": 1,
+      "multi": true,
+      "valid_behavior_slots": 1,
+      "pass_checks": true
+    },
+    {
+      "mode": "fixed",
+      "length": 2,
+      "multi": false,
+      "valid_behavior_slots": 2,
+      "pass_checks": true
+    },
+    {
+      "mode": "fixed",
+      "length": 2,
+      "multi": true,
+      "valid_behavior_slots": 2,
+      "pass_checks": true
+    },
+    {
+      "mode": "fixed",
+      "length": 3,
+      "multi": false,
+      "valid_behavior_slots": 3,
+      "pass_checks": true
+    },
+    {
+      "mode": "fixed",
+      "length": 3,
+      "multi": true,
+      "valid_behavior_slots": 3,
+      "pass_checks": true
+    },
+    {
+      "mode": "fixed",
+      "length": 4,
+      "multi": false,
+      "valid_behavior_slots": 3,
+      "pass_checks": true
+    },
+    {
+      "mode": "fixed",
+      "length": 4,
+      "multi": true,
+      "valid_behavior_slots": 3,
+      "pass_checks": true
+    },
+    {
+      "mode": "fixed",
+      "length": 8,
+      "multi": false,
+      "valid_behavior_slots": 3,
+      "pass_checks": true
+    },
+    {
+      "mode": "fixed",
+      "length": 8,
+      "multi": true,
+      "valid_behavior_slots": 3,
+      "pass_checks": true
+    },
+    {
+      "mode": "semantic",
+      "length": 0,
+      "multi": false,
+      "valid_behavior_slots": 0,
+      "pass_checks": true
+    },
+    {
+      "mode": "semantic",
+      "length": 0,
+      "multi": true,
+      "valid_behavior_slots": 0,
+      "pass_checks": true
+    },
+    {
+      "mode": "semantic",
+      "length": 1,
+      "multi": false,
+      "valid_behavior_slots": 1,
+      "pass_checks": true
+    },
+    {
+      "mode": "semantic",
+      "length": 1,
+      "multi": true,
+      "valid_behavior_slots": 1,
+      "pass_checks": true
+    },
+    {
+      "mode": "semantic",
+      "length": 2,
+      "multi": false,
+      "valid_behavior_slots": 2,
+      "pass_checks": true
+    },
+    {
+      "mode": "semantic",
+      "length": 2,
+      "multi": true,
+      "valid_behavior_slots": 2,
+      "pass_checks": true
+    },
+    {
+      "mode": "semantic",
+      "length": 3,
+      "multi": false,
+      "valid_behavior_slots": 3,
+      "pass_checks": true
+    },
+    {
+      "mode": "semantic",
+      "length": 3,
+      "multi": true,
+      "valid_behavior_slots": 3,
+      "pass_checks": true
+    },
+    {
+      "mode": "semantic",
+      "length": 4,
+      "multi": false,
+      "valid_behavior_slots": 3,
+      "pass_checks": true
+    },
+    {
+      "mode": "semantic",
+      "length": 4,
+      "multi": true,
+      "valid_behavior_slots": 3,
+      "pass_checks": true
+    },
+    {
+      "mode": "semantic",
+      "length": 8,
+      "multi": false,
+      "valid_behavior_slots": 3,
+      "pass_checks": true
+    },
+    {
+      "mode": "semantic",
+      "length": 8,
+      "multi": true,
+      "valid_behavior_slots": 3,
+      "pass_checks": true
+    }
+  ],
+  "causal_and_K_tests": [
+    {
+      "mode": "fixed",
+      "added_parameters": 37504,
+      "K": [
+        1,
+        2,
+        4,
+        7
+      ],
+      "zero_output_identity": true,
+      "padding_and_empty_safe": true,
+      "short_length0or1_exact_identity": true,
+      "prefix_boundary_invariance": true,
+      "local_future_gradient_exact_zero": true,
+      "no_cross_segment_read": true,
+      "head_permutation_equivariance": true,
+      "all_new_parameters_active": true
+    },
+    {
+      "mode": "semantic",
+      "added_parameters": 37504,
+      "K": [
+        1,
+        2,
+        4,
+        7
+      ],
+      "zero_output_identity": true,
+      "padding_and_empty_safe": true,
+      "short_length0or1_exact_identity": true,
+      "prefix_boundary_invariance": true,
+      "local_future_gradient_exact_zero": true,
+      "no_cross_segment_read": true,
+      "head_permutation_equivariance": true,
+      "all_new_parameters_active": true
+    }
+  ],
+  "real_short_history_tests": [
+    {
+      "length": 1,
+      "zero_score_loss_gradient_exact": true
+    },
+    {
+      "length": 2,
+      "zero_score_loss_gradient_exact": true
+    },
+    {
+      "length": 3,
+      "zero_score_loss_gradient_exact": true
+    },
+    {
+      "length": 4,
+      "zero_score_loss_gradient_exact": true
+    }
+  ],
+  "common_initial_parameter_sha256": "055f20effb596b52a2d513b58759e3b6e38fd3b953bbecf51a6cd17d6933b0db",
+  "parameters": {
+    "B0": 943174,
+    "C1": 980678,
+    "M1": 980678
+  },
+  "added_parameters": 37504,
+  "source_sha256": "27e2fbea40fec6f065a02fb03d6edf5e83d614b28f120693175abbb1b269c1e6",
+  "no_Test": true,
+  "no_full_training_started_by_check": true,
+  "checks_passed": true
+}

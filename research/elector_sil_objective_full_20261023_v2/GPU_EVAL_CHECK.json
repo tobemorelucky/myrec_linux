@@ -1,0 +1,34 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "dataset": "beauty",
+      "arm": "BPR-B0",
+      "GPU_user_id_recording": true,
+      "rows": 8,
+      "no_Test": true
+    },
+    {
+      "dataset": "beauty",
+      "arm": "SS-M2",
+      "GPU_user_id_recording": true,
+      "rows": 8,
+      "no_Test": true
+    },
+    {
+      "dataset": "ml-1m",
+      "arm": "BPR-B0",
+      "GPU_user_id_recording": true,
+      "rows": 8,
+      "no_Test": true
+    },
+    {
+      "dataset": "ml-1m",
+      "arm": "SS-M2",
+      "GPU_user_id_recording": true,
+      "rows": 8,
+      "no_Test": true
+    }
+  ],
+  "configuration_unchanged": true
+}

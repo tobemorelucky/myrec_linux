@@ -1,0 +1,7 @@
+{
+  "input_hash": "e352ea8c050482616006bb8be872cf1f5b3b3e84c6058e3c11dc614cecdb8fce",
+  "rows": 22363,
+  "candidates": 1001,
+  "duplicate_slots_preserved": true,
+  "evaluator": "NumPy row-wise (-scores).argsort; six metrics"
+}

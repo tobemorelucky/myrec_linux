@@ -1,0 +1,27 @@
+{
+  "state": "COMPLETED",
+  "pid": 2557780,
+  "pending": [],
+  "running": {},
+  "completed": [
+    "beauty_k3_s42_SS-C1",
+    "ml-1m_k3_s42_SS-C1"
+  ],
+  "retained_training": [
+    {
+      "pid": 2552005,
+      "state": "S",
+      "ppid": 2510472,
+      "start": "598188378",
+      "cmd": "/home/yyx/anaconda3/envs/hzg_py10/bin/python -u -B /home/yyx/hzgcode/pom2.0/research/elector_sil_formal_20261023_v1/train_task.py --dataset beauty --arm SS-C0 --K 8 --seed 42",
+      "dataset": "beauty",
+      "task": "beauty_k8_s42_SS-C0",
+      "GPU": 0
+    }
+  ],
+  "retained_status": {
+    "2552005": "COMPLETED"
+  },
+  "errors": [],
+  "time_utc": "2026-10-23T10:02:33Z"
+}

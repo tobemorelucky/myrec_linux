@@ -1,0 +1,4 @@
+{
+  "reason": "Removed incorrect preparation-only .001 assertion; preserve true Beauty .004 / ML .001 historical config. No formal training had started; no model or data change.",
+  "failed_preflight_log": "preflight.stdout.log"
+}
