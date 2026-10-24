@@ -1,0 +1,17 @@
+{
+  "dataset": "beauty",
+  "device": "cuda:0",
+  "batch": 256,
+  "candidates": 1001,
+  "seconds_per_forward": 1.3112284699454904,
+  "peak_MiB": 2141.4970703125,
+  "Train_only_synthetic_candidates": true,
+  "Dev": false,
+  "Test": false,
+  "encoding_cost": {
+    "unique_neighbor_items": 6916,
+    "newly_encoded_items": 0
+  },
+  "passed": true,
+  "seconds": 16.839394117705524
+}

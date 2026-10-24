@@ -1,0 +1,18 @@
+{
+  "completed": [
+    "beauty_G0",
+    "ml-1m_G0",
+    "Toys_BPR_acceptance",
+    "ml-1m_G1",
+    "Toys_SS-B0",
+    "beauty_G1",
+    "ml-1m_G2",
+    "beauty_G2",
+    "Toys_SS-C0",
+    "ml-1m_G3",
+    "beauty_G3",
+    "Toys_SS-C1"
+  ],
+  "paused_datasets": [],
+  "Toys": "SS_READY"
+}

@@ -1,0 +1,23 @@
+{
+  "teacher_users": 1024,
+  "float64_teacher_intra_JS": {
+    "min": 3.083914547688336e-11,
+    "median": 3.370056876568405e-08,
+    "max": 5.166136039354977e-07,
+    "mean": 4.154361677916949e-08
+  },
+  "semantic_L1_difference": {
+    "min": 1.0049960110336542e-05,
+    "median": 0.00039103743620216846,
+    "max": 0.001509975758381188,
+    "mean": 0.00035877159066899367
+  },
+  "teacher_vector_cosine": {
+    "min": 0.9999971813353241,
+    "median": 0.9999999628622055,
+    "max": 0.9999999999834439,
+    "mean": 0.9999999265231895
+  },
+  "interpretation": "Semantic interest profiles nearly coincide; this does not by itself mean the64D C1 interest vectors are identical.",
+  "no_training": true
+}

@@ -1,0 +1,379 @@
+{
+  "HEAD": "ef76d17864a0348ebe851d88aac4126ed9b42ae4",
+  "protected_files": 65,
+  "protected_unchanged": true,
+  "sources": {
+    "/home/yyx/hzgcode/pom2.0/models/sequential/SGITRec.py": "90b3253a1cab1a6383eafe6a175644e16160cdf82715682e85aa604bd3cf643f",
+    "/home/yyx/hzgcode/pom2.0/models/sequential/sgit_components.py": "869405eda4bea57503aa64e2e05bb239412f3c289ac13fd2f94bea1218b97bf6",
+    "/home/yyx/hzgcode/pom2.0/tools/sgit_graph.py": "a8fd2595102be2bbdf3f66624ed69414f4cfaa0f28eec58af69626fa724295ab",
+    "/home/yyx/hzgcode/pom2.0/tools/build_sgit_graph.py": "317142be8494cd9fdf06d758b672de85430d03a98e5cf7906653ae8d78f8ec11",
+    "/home/yyx/hzgcode/pom2.0/tools/run_sgitrec.py": "d0be1bf7bf72f0364481fb3c9d29640e4d9ce6d53b92693ddd1e12cfcddc8d3c",
+    "/home/yyx/hzgcode/pom2.0/tools/test_sgitrec.py": "d4a0349fe1b55a67c6ddc0c187b8f5cb4a02141c325f4c5e6479ce83d2d2d861",
+    "/home/yyx/hzgcode/pom2.0/new_bash/run_sgitrec.sh": "e80e10acbd00db3227092d3400810cab7fb84872a71a7d319872a49030ffd4be"
+  },
+  "checks": {
+    "synthetic_cpu": {
+      "K": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "gradients": true,
+      "zero_init": true,
+      "no_neighbors": true,
+      "no_semantic": true,
+      "padding": true,
+      "directed_counts": true,
+      "distinct_user_support": true,
+      "leave_whole_user_fold_out": true,
+      "own_future_mutation_invariant": true,
+      "K1_G1_G2_equivalent": true,
+      "passed": true,
+      "seconds": 0.2183525850996375
+    },
+    "beauty_gpu": {
+      "dataset": "beauty",
+      "K": 2,
+      "device": "cuda:0",
+      "parameters": {
+        "B0": 980420,
+        "G1": 996932,
+        "G2": 996932,
+        "G3": 997066
+      },
+      "initial_C1_exact": true,
+      "shared_fresh_initialization": true,
+      "initial_loss_exact": true,
+      "initial_C1_gradients_close": true,
+      "graph_off_exact": true,
+      "no_neighbors_exact": true,
+      "short_history": true,
+      "padding": true,
+      "local_causality": true,
+      "candidate_independent": true,
+      "original_C1_and_graph_gradients": true,
+      "cache_bytes": 10456128,
+      "encoding_cost": {
+        "unique_neighbor_items": 10896,
+        "newly_encoded_items": 7212
+      },
+      "throughput": {
+        "C1": {
+          "batch": 1024,
+          "step_seconds": 0.048444606674214206,
+          "rows_per_second": 21137.54389392222,
+          "peak_MiB": 632.9404296875
+        },
+        "G3": {
+          "batch": 1024,
+          "step_seconds": 0.18792515931030115,
+          "rows_per_second": 5448.97768749088,
+          "peak_MiB": 1133.84033203125
+        }
+      },
+      "sampled_steps_only": true,
+      "Dev": false,
+      "Test": false,
+      "passed": true,
+      "seconds": 28.80593318399042
+    },
+    "ml-1m_gpu": {
+      "dataset": "ml-1m",
+      "K": 3,
+      "device": "cuda:0",
+      "parameters": {
+        "B0": 443269,
+        "G1": 459781,
+        "G2": 459781,
+        "G3": 459915
+      },
+      "initial_C1_exact": true,
+      "shared_fresh_initialization": true,
+      "initial_loss_exact": true,
+      "initial_C1_gradients_close": true,
+      "graph_off_exact": true,
+      "no_neighbors_exact": true,
+      "short_history": true,
+      "padding": true,
+      "local_causality": true,
+      "candidate_independent": true,
+      "original_C1_and_graph_gradients": true,
+      "cache_bytes": 3202848,
+      "encoding_cost": {
+        "unique_neighbor_items": 3570,
+        "newly_encoded_items": 1098
+      },
+      "throughput": {
+        "C1": {
+          "batch": 1024,
+          "step_seconds": 0.05080544203519821,
+          "rows_per_second": 20155.321142380155,
+          "peak_MiB": 454.47802734375
+        },
+        "G3": {
+          "batch": 1024,
+          "step_seconds": 0.07018402715524037,
+          "rows_per_second": 14590.214347988463,
+          "peak_MiB": 905.57470703125
+        }
+      },
+      "sampled_steps_only": true,
+      "Dev": false,
+      "Test": false,
+      "passed": true,
+      "seconds": 16.639069058932364
+    },
+    "ml-1m_cpu": {
+      "dataset": "ml-1m",
+      "K": 3,
+      "device": "cpu",
+      "parameters": {
+        "B0": 443269,
+        "G1": 459781,
+        "G2": 459781,
+        "G3": 459915
+      },
+      "initial_C1_exact": true,
+      "shared_fresh_initialization": true,
+      "initial_loss_exact": true,
+      "initial_C1_gradients_close": true,
+      "graph_off_exact": true,
+      "no_neighbors_exact": true,
+      "short_history": true,
+      "padding": true,
+      "local_causality": true,
+      "candidate_independent": true,
+      "original_C1_and_graph_gradients": true,
+      "cache_bytes": 3202848,
+      "encoding_cost": {
+        "unique_neighbor_items": 2038,
+        "newly_encoded_items": 1711
+      },
+      "throughput": {
+        "C1": {
+          "batch": 32,
+          "step_seconds": 0.05898562353104353,
+          "rows_per_second": 542.5050730057762,
+          "peak_MiB": null
+        },
+        "G3": {
+          "batch": 32,
+          "step_seconds": 0.11606960215916236,
+          "rows_per_second": 275.6966458463386,
+          "peak_MiB": null
+        }
+      },
+      "sampled_steps_only": true,
+      "Dev": false,
+      "Test": false,
+      "passed": true,
+      "seconds": 15.055329297669232
+    },
+    "beauty_candidate_gpu": {
+      "dataset": "beauty",
+      "device": "cuda:0",
+      "batch": 256,
+      "candidates": 1001,
+      "seconds_per_forward": 1.3112284699454904,
+      "peak_MiB": 2141.4970703125,
+      "Train_only_synthetic_candidates": true,
+      "Dev": false,
+      "Test": false,
+      "encoding_cost": {
+        "unique_neighbor_items": 6916,
+        "newly_encoded_items": 0
+      },
+      "passed": true,
+      "seconds": 16.839394117705524
+    },
+    "ml-1m_candidate_gpu": {
+      "dataset": "ml-1m",
+      "device": "cuda:0",
+      "batch": 256,
+      "candidates": 1001,
+      "seconds_per_forward": 1.261705401353538,
+      "peak_MiB": 2053.77978515625,
+      "Train_only_synthetic_candidates": true,
+      "Dev": false,
+      "Test": false,
+      "encoding_cost": {
+        "unique_neighbor_items": 3269,
+        "newly_encoded_items": 0
+      },
+      "passed": true,
+      "seconds": 9.1055214619264
+    },
+    "full_K_cpu": {
+      "dataset": "ml-1m",
+      "device": "cpu",
+      "additional_real_K": [
+        1,
+        4
+      ],
+      "zero_equivalence": true,
+      "output_gradient": true,
+      "Dev": false,
+      "Test": false,
+      "passed": true,
+      "seconds": 10.358695670031011
+    }
+  },
+  "graphs": {
+    "beauty": {
+      "nodes_including_padding": 12102,
+      "Train_nodes": 12068,
+      "users": 22363,
+      "Train_rows": 153776,
+      "R": 8,
+      "folds": 3,
+      "transition_edges_per_fold": [
+        51202,
+        51899,
+        52053
+      ],
+      "semantic_edges_per_fold": [
+        96808,
+        96808,
+        96808
+      ],
+      "transition_occurrence_coverage": [
+        0.9836602566572893,
+        0.9843796459650722,
+        0.9855534599755011
+      ],
+      "semantic_occurrence_coverage": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "distinct_users_per_edge_quantiles": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        2.0,
+        40.0
+      ],
+      "single_user_edge_fraction": 0.9215553402900696,
+      "build_seconds": 22.47480361443013,
+      "tensor_bytes": 10456128,
+      "file_bytes": 10460753,
+      "sha256": "58344c3fc93fcb11ca92c0df160810a1169c3b3e23d637a71da8c247e015678a",
+      "finite": true
+    },
+    "ml-1m": {
+      "nodes_including_padding": 3707,
+      "Train_nodes": 3704,
+      "users": 6040,
+      "Train_rows": 988129,
+      "R": 8,
+      "folds": 3,
+      "transition_edges_per_fold": [
+        27120,
+        26985,
+        26979
+      ],
+      "semantic_edges_per_fold": [
+        29648,
+        29648,
+        29648
+      ],
+      "transition_occurrence_coverage": [
+        0.9997669921715422,
+        0.9998193761251363,
+        0.9998402389042846
+      ],
+      "semantic_occurrence_coverage": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "distinct_users_per_edge_quantiles": [
+        1.0,
+        1.0,
+        2.0,
+        6.0,
+        19.0,
+        414.0
+      ],
+      "single_user_edge_fraction": 0.33859947323799133,
+      "build_seconds": 4.165770161896944,
+      "tensor_bytes": 3202848,
+      "file_bytes": 3207569,
+      "sha256": "a9135afd81e946894b2c819be60dd96c1efc5bfa5644ef5aee296f42b0c320c4",
+      "finite": true
+    }
+  },
+  "cost_estimate": {
+    "beauty": {
+      "steps_per_epoch": 129,
+      "training_only_epoch_seconds": 24.242345551028848,
+      "training_only_200_epoch_GPU_hours": 1.3467969750571582,
+      "excludes": "Dev 1001-candidate scoring, data loading, startup, Test; early-stop epoch unknown"
+    },
+    "ml-1m": {
+      "steps_per_epoch": 960,
+      "training_only_epoch_seconds": 67.37666606903076,
+      "training_only_200_epoch_GPU_hours": 3.7431481149461536,
+      "excludes": "Dev 1001-candidate scoring, data loading, startup, Test; early-stop epoch unknown"
+    }
+  },
+  "literature_and_history": {
+    "SAGE": {
+      "paper": "https://doi.org/10.1145/3774904.3792456",
+      "code": "https://github.com/Applied-Machine-Learning-Lab/WWW2026_SAGE-LLM",
+      "inspected": [
+        "models/LLMESR.py",
+        "models/utils.py"
+      ],
+      "verified": "fuzzy semantic item prototype loss; detached mean neighbor-user sequence representations for user alignment; not item-transition memory"
+    },
+    "RaSR": {
+      "paper": "https://ojs.aaai.org/index.php/AAAI/article/download/38540/42502",
+      "official_repo": "https://github.com/JY1230/RaSR",
+      "verified": "paper adjacent C and decayed T plus semantic S for sequence reconstruction; generator aggregates item relation features",
+      "limitation": "official repository checked but no runnable Python implementation found; source-level replication not claimed"
+    },
+    "TADA": {
+      "paper": "https://arxiv.org/abs/2601.10933",
+      "code": "https://github.com/KingGugu/TADA",
+      "inspected": [
+        "src/LIS.py",
+        "src/datasets.py"
+      ],
+      "verified": "X-transpose-X inverse association learner and T-Substitute/T-Insert sequence augmentation; not directed per-interest online memory"
+    },
+    "local_overlap": {
+      "RASRF": "existing item-specific consistency/neighborhood-prior gate; SGIT fusion uses a related weighting idea, not standalone novelty",
+      "SHNC": "offline semantic nearest neighbors for auxiliary semantic-hard-negative loss; not sequential graph readout",
+      "SAIT": "prototype-state transition prediction and auxiliary loss",
+      "TIA": "within-prefix adjacent differential GLU",
+      "RelationAttention": "within-prefix semantic/complement relation adjusts original attention",
+      "historical_probe": "record102 prototype32 frozen last-item score correction No-Go; distinct from current end-to-end typed item graph, does not establish current effectiveness"
+    }
+  },
+  "no_formal_training_started": true,
+  "no_Dev_or_Test_evaluation_executed": true,
+  "implemented_equations": {
+    "memory": "m[k,t]=sum_l A[k,l] sum_j softmax_j(q(V[k]) dot key(e_j)/sqrt(D)+log P_t(i_l,j)) value(e_j)",
+    "fusion": "alpha[k]=masked_softmax(F([LN(V[k]),log(1+support[k]),cos(m[k,C],m[k,S])])) ; Vprime[k]=V[k]+Wout*sum_t alpha[k,t]*m[k,t]",
+    "initialization": "Wout=0; identical C1 parameters from same fresh seed; all original C1 parameters remain trainable"
+  },
+  "leakage_scope": "All graph/count/support/semantic candidate catalog contributors from other two user folds Train only; no query user contribution. Query prefix only; frozen item semantics transductive; no global timestamp slicing of other users Train.",
+  "fixed_settings": {
+    "R": 8,
+    "user_folds": 3,
+    "lambda_pop": 0.3,
+    "auxiliary_loss_added": false
+  },
+  "known_risks": [
+    "Beauty single-user transfer edges 92.16%; graph coverage does not imply useful signal",
+    "Graph attention, semantic KNN and consistency weighting are mature computations; contribution unverified",
+    "User-fold exclusion deliberately uses 2/3 of Train users for each query; support reduction is the cost of leakage protection"
+  ],
+  "fixes": [
+    "Empty semantic mask moved after temperature division; all cache tensors finite. Failed v1 caches preserved and rejected by loader. Production caches are *_v2.pt.",
+    "SGIT-only input sanitization zeroes padded IDs before inherited ASPCF position lookup; original C1 untouched."
+  ]
+}

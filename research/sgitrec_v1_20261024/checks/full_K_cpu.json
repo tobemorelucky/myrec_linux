@@ -1,0 +1,14 @@
+{
+  "dataset": "ml-1m",
+  "device": "cpu",
+  "additional_real_K": [
+    1,
+    4
+  ],
+  "zero_equivalence": true,
+  "output_gradient": true,
+  "Dev": false,
+  "Test": false,
+  "passed": true,
+  "seconds": 10.358695670031011
+}

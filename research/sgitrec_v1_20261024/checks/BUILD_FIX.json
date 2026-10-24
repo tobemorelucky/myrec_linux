@@ -1,0 +1,16 @@
+{
+  "issue": "Empty semantic rows masked before temperature division overflowed to -inf; softmax NaN. Mask after division; finite-cache assertion added.",
+  "preserved_failed_v1_caches": {
+    "beauty": {
+      "transition_prob": 0,
+      "semantic_sims": 0,
+      "semantic_prob": 24
+    },
+    "ml-1m": {
+      "transition_prob": 0,
+      "semantic_sims": 0,
+      "semantic_prob": 24
+    }
+  },
+  "corrected_version": "v2"
+}

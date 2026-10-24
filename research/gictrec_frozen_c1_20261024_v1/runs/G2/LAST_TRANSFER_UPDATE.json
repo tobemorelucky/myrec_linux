@@ -1,0 +1,17 @@
+{
+  "epoch": 20,
+  "optimizer_steps": 19200,
+  "first_batch": {
+    "projection_norm": 2.4618914127349854,
+    "gradient_norm": 0.30614006519317627,
+    "residual_ratio_mean": 0.08902185410261154,
+    "residual_ratio_max": 0.21524955332279205
+  },
+  "last_batch": {
+    "projection_norm": 2.5083723068237305,
+    "gradient_norm": 1.0583564043045044,
+    "residual_ratio_mean": 0.09228067845106125,
+    "residual_ratio_max": 0.19271816313266754
+  },
+  "mean_relation_loss": 0.676294816719989
+}

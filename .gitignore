@@ -1,7 +1,6 @@
 datastart_claude.local.sh
 start_claude.sh
 
-
 *.env
 *.key
 *.pem
@@ -30,28 +29,15 @@ __pycache__/
 .idea/
 *.swp
 
-
-
-
 # Claude / local scripts
-datastart_claude.local.sh
-start_claude.sh
 .claude/
 
 # secrets
-*.env
-*.key
-*.pem
-config.ini
-secret.py
 
 # data / embeddings / model weights
 data/
-model/
 models_saved/
 new_model/
-weights/
-checkpoints/
 *.pt
 *.pth
 *.ckpt
@@ -60,30 +46,18 @@ checkpoints/
 *.npz
 
 # logs / outputs
-log/
 logs/
 new_log/
-tmp/
 outputs/
 results/
-*.out
-*.err
 *.log
 
 # Python cache
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
 
 # IDE
-.vscode/
-.idea/
-*.swp
 
 # OS
 .DS_Store
-
 
 # speed test local generated files
 speed_test/myrec_speed/data/
@@ -114,6 +88,27 @@ speed_test/myrec_speed/*.npz
 speed_test/myrec_speed/__pycache__/
 speed_test/myrec_speed/**/*.pyc
 speed_test/myrec_speed/**/*.pyo
-speed_test/myrec_speed/**/*.pydanalysis_figures/
+speed_test/myrec_speed/**/*.pyd
 /research/2026_baselines/FAERec_repro/upstream/
 /research/2026_baselines/FAERec_repro/runs/
+
+# Scoped generated experiment files; keep source/config/result/metrics/archives.
+/research/gictrec_*/runs/*/dev_metrics.jsonl
+/research/gictrec_*/runs/*/transfer_updates.jsonl
+/research/gictrec_*/**/test_user_ranks.csv
+/research/elector_sil_*/**/dev_metrics.jsonl
+/research/elector_sil_*/**/test_user_ranks.csv
+/research/gictrec_*/synthetic*_ranks*.csv
+/research/elector_sil_toys_evalfix_*/synthetic*_ranks*.csv
+/research/**/cuda_cache*/
+/research/**/torch_cache*/
+/research/gpu_resource_scheduler_20261022_v1/*.lock
+/research/gictrec_*/*.guard
+/research/elector_sil_*/*.guard
+/research/gictrec_*/STATE.tmp
+/research/elector_sil_*/STATE.tmp
+/research/**/.STATE.tmp
+/research/elector_sil_*/*.pid
+/research/elector_sil_*/arms/*/*.pid
+/research/ml1m_embedding_v2_20261020/checks/*/*/movies.dat
+/research/ml1m_embedding_v2_20261020/checks/*/*/adapter_model.bin

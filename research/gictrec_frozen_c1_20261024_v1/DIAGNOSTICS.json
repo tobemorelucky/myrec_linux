@@ -1,0 +1,164 @@
+{
+  "passed": true,
+  "seconds": 29.66572680324316,
+  "physical_GPU": 1,
+  "cpu": {
+    "initial_C1_exact": true,
+    "deterministic_frozen_dropout": true,
+    "frozen_parameters_unchanged": true,
+    "only4096_trainable": true,
+    "projection_update_norm": 0.5087777972221375,
+    "gradient_norm": 0.1682383120059967,
+    "residual_ratio": {
+      "min": 0.0,
+      "median": 0.01169668696820736,
+      "p90": 0.0396769680082798,
+      "max": 0.101008340716362,
+      "mean": 0.017962051555514336,
+      "std": 0.015553301200270653
+    },
+    "no_candidate_query_leak": true,
+    "teacher_detached": true,
+    "steps": 8
+  },
+  "gpu": {
+    "G1": {
+      "initial_C1_exact": true,
+      "deterministic_frozen_dropout": true,
+      "frozen_parameters_unchanged": true,
+      "only4096_trainable": true,
+      "projection_update_norm": 0.4907177686691284,
+      "gradient_norm": 0.8034952878952026,
+      "residual_ratio": {
+        "min": 0.0,
+        "median": 0.11499270796775818,
+        "p90": 0.1953200250864029,
+        "max": 0.3130321800708771,
+        "mean": 0.12840604782104492,
+        "std": 0.04919866845011711
+      },
+      "no_candidate_query_leak": true,
+      "teacher_detached": true,
+      "steps": 8
+    },
+    "G2": {
+      "initial_C1_exact": true,
+      "deterministic_frozen_dropout": true,
+      "frozen_parameters_unchanged": true,
+      "only4096_trainable": true,
+      "projection_update_norm": 0.49083957076072693,
+      "gradient_norm": 0.808506965637207,
+      "residual_ratio": {
+        "min": 0.0,
+        "median": 0.11473371088504791,
+        "p90": 0.1922953724861145,
+        "max": 0.31825152039527893,
+        "mean": 0.1278771311044693,
+        "std": 0.04923396185040474
+      },
+      "no_candidate_query_leak": true,
+      "teacher_detached": true,
+      "steps": 8
+    },
+    "G3": {
+      "initial_C1_exact": true,
+      "deterministic_frozen_dropout": true,
+      "frozen_parameters_unchanged": true,
+      "only4096_trainable": true,
+      "projection_update_norm": 0.5087777972221375,
+      "gradient_norm": 0.1682383418083191,
+      "residual_ratio": {
+        "min": 0.0,
+        "median": 0.011696690693497658,
+        "p90": 0.0396769717335701,
+        "max": 0.10100839287042618,
+        "mean": 0.017962051555514336,
+        "std": 0.015553302131593227
+      },
+      "no_candidate_query_leak": true,
+      "teacher_detached": true,
+      "steps": 8
+    }
+  },
+  "distribution_diagnostics": {
+    "sampled_Train_prefixes": 128,
+    "teacher_sample_users": 1024,
+    "intra_user_interest_JS": {
+      "min": -4.966386768501252e-08,
+      "median": 4.220146365696564e-08,
+      "p90": 1.71519786817953e-07,
+      "max": 8.166171028278768e-07,
+      "mean": 6.740584979070263e-08,
+      "std": 9.720451998873614e-08
+    },
+    "intra_user_JS_below_1e_minus4": 1.0,
+    "teacher_intra_interest_JS": {
+      "min": -7.698076842643786e-08,
+      "median": 3.474997356534004e-08,
+      "p90": 1.0373390324502907e-07,
+      "max": 5.043402779847383e-07,
+      "mean": 4.1512006276889224e-08,
+      "std": 5.131058955498702e-08
+    },
+    "match_top1_top2_probability_gap": {
+      "min": 3.725290298461914e-09,
+      "median": 1.039355993270874e-06,
+      "p90": 1.3757497072219849e-05,
+      "max": 3.1460076570510864e-05,
+      "mean": 4.3369809645810165e-06,
+      "std": 6.437483534682542e-06
+    },
+    "match_top1_probability": {
+      "min": 0.043438252061605453,
+      "median": 0.04662928730249405,
+      "p90": 0.051603544503450394,
+      "max": 0.07719497382640839,
+      "mean": 0.047643519937992096,
+      "std": 0.004115461837500334
+    },
+    "same_neighbor_all_K_fraction": 1.0,
+    "same_neighbor_interest_pair_fraction": 1.0,
+    "same_exact_teacher_interest_pair_fraction": 1.0,
+    "matching_JS": {
+      "min": 0.01409088633954525,
+      "median": 0.04339413344860077,
+      "p90": 0.09264688193798065,
+      "max": 0.20984163880348206,
+      "mean": 0.0517941489815712,
+      "std": 0.029106680303812027
+    },
+    "reliability": {
+      "min": 0.045509155839681625,
+      "median": 0.10638489574193954,
+      "p90": 0.2033388465642929,
+      "max": 0.4028857350349426,
+      "mean": 0.12463429570198059,
+      "std": 0.061109788715839386
+    },
+    "reliability_below_1e_minus3": 0.0,
+    "reliability_above_099": 0.0
+  },
+  "full_Dev_anchor_exact": true,
+  "Dev": {
+    "raw": {
+      "HR@5": 0.39155629139072845,
+      "NDCG@5": 0.28475903749518316,
+      "HR@10": 0.4903973509933775,
+      "NDCG@10": 0.3167296874536942,
+      "HR@20": 0.598841059602649,
+      "NDCG@20": 0.34431844599807554
+    },
+    "locked_prior": {
+      "HR@5": 0.41771523178807946,
+      "NDCG@5": 0.31057309839476394,
+      "HR@10": 0.5256622516556292,
+      "NDCG@10": 0.3454549288481562,
+      "HR@20": 0.6359271523178808,
+      "NDCG@20": 0.37335141771535524
+    }
+  },
+  "GPU_peak_MiB": 2234.15283203125,
+  "formal_training": false,
+  "Test": false,
+  "interpretation": "JS gaps/same-neighbor fractions describe sampled frozen interests; optimizer causality remains unproven."
+}

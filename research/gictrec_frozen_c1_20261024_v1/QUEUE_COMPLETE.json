@@ -1,0 +1,11 @@
+{
+  "pid": 2977252,
+  "running": {},
+  "pending": [],
+  "completed": [
+    "G1",
+    "G2",
+    "G3"
+  ],
+  "failed": false
+}

@@ -1,0 +1,86 @@
+{
+  "beauty": {
+    "nodes_including_padding": 12102,
+    "Train_nodes": 12068,
+    "users": 22363,
+    "Train_rows": 153776,
+    "R": 8,
+    "folds": 3,
+    "transition_edges_per_fold": [
+      51202,
+      51899,
+      52053
+    ],
+    "semantic_edges_per_fold": [
+      96808,
+      96808,
+      96808
+    ],
+    "transition_occurrence_coverage": [
+      0.9836602566572893,
+      0.9843796459650722,
+      0.9855534599755011
+    ],
+    "semantic_occurrence_coverage": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "distinct_users_per_edge_quantiles": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      2.0,
+      40.0
+    ],
+    "single_user_edge_fraction": 0.9215553402900696,
+    "build_seconds": 22.47480361443013,
+    "tensor_bytes": 10456128,
+    "file_bytes": 10460753,
+    "sha256": "58344c3fc93fcb11ca92c0df160810a1169c3b3e23d637a71da8c247e015678a",
+    "finite": true
+  },
+  "ml-1m": {
+    "nodes_including_padding": 3707,
+    "Train_nodes": 3704,
+    "users": 6040,
+    "Train_rows": 988129,
+    "R": 8,
+    "folds": 3,
+    "transition_edges_per_fold": [
+      27120,
+      26985,
+      26979
+    ],
+    "semantic_edges_per_fold": [
+      29648,
+      29648,
+      29648
+    ],
+    "transition_occurrence_coverage": [
+      0.9997669921715422,
+      0.9998193761251363,
+      0.9998402389042846
+    ],
+    "semantic_occurrence_coverage": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "distinct_users_per_edge_quantiles": [
+      1.0,
+      1.0,
+      2.0,
+      6.0,
+      19.0,
+      414.0
+    ],
+    "single_user_edge_fraction": 0.33859947323799133,
+    "build_seconds": 4.165770161896944,
+    "tensor_bytes": 3202848,
+    "file_bytes": 3207569,
+    "sha256": "a9135afd81e946894b2c819be60dd96c1efc5bfa5644ef5aee296f42b0c320c4",
+    "finite": true
+  }
+}

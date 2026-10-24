@@ -1,0 +1,46 @@
+{
+  "dataset": "beauty",
+  "K": 2,
+  "device": "cuda:0",
+  "parameters": {
+    "B0": 980420,
+    "G1": 996932,
+    "G2": 996932,
+    "G3": 997066
+  },
+  "initial_C1_exact": true,
+  "shared_fresh_initialization": true,
+  "initial_loss_exact": true,
+  "initial_C1_gradients_close": true,
+  "graph_off_exact": true,
+  "no_neighbors_exact": true,
+  "short_history": true,
+  "padding": true,
+  "local_causality": true,
+  "candidate_independent": true,
+  "original_C1_and_graph_gradients": true,
+  "cache_bytes": 10456128,
+  "encoding_cost": {
+    "unique_neighbor_items": 10896,
+    "newly_encoded_items": 7212
+  },
+  "throughput": {
+    "C1": {
+      "batch": 1024,
+      "step_seconds": 0.048444606674214206,
+      "rows_per_second": 21137.54389392222,
+      "peak_MiB": 632.9404296875
+    },
+    "G3": {
+      "batch": 1024,
+      "step_seconds": 0.18792515931030115,
+      "rows_per_second": 5448.97768749088,
+      "peak_MiB": 1133.84033203125
+    }
+  },
+  "sampled_steps_only": true,
+  "Dev": false,
+  "Test": false,
+  "passed": true,
+  "seconds": 28.80593318399042
+}

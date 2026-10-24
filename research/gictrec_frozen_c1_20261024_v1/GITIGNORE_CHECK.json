@@ -1,0 +1,87 @@
+{
+  "before_sha256": "549d9e530c78fabd8c530fecb109e86a28915ef7d41ead321e7c33af654e9fd3",
+  "after_sha256": "119574506c8d35c82c4e23f7727e47101c0a696dff05ee3b34752d2a83474b87",
+  "removed_duplicate_rules": [
+    "datastart_claude.local.sh",
+    "start_claude.sh",
+    "*.env",
+    "*.key",
+    "*.pem",
+    "config.ini",
+    "secret.py",
+    "model/",
+    "weights/",
+    "checkpoints/",
+    "log/",
+    "tmp/",
+    "*.out",
+    "*.err",
+    "__pycache__/",
+    "*.pyc",
+    "*.pyo",
+    "*.pyd",
+    ".vscode/",
+    ".idea/",
+    "*.swp"
+  ],
+  "fixed_malformed_rule": "split accidental pydanalysis_figures token by preserving only valid scoped pyd rule; no analysis_figures blanket ignore",
+  "added_rules": [
+    "/research/gictrec_*/runs/*/dev_metrics.jsonl",
+    "/research/gictrec_*/runs/*/transfer_updates.jsonl",
+    "/research/gictrec_*/**/test_user_ranks.csv",
+    "/research/elector_sil_*/**/dev_metrics.jsonl",
+    "/research/elector_sil_*/**/test_user_ranks.csv",
+    "/research/gictrec_*/synthetic*_ranks*.csv",
+    "/research/elector_sil_toys_evalfix_*/synthetic*_ranks*.csv",
+    "/research/**/cuda_cache*/",
+    "/research/**/torch_cache*/",
+    "/research/gpu_resource_scheduler_20261022_v1/*.lock",
+    "/research/gictrec_*/*.guard",
+    "/research/elector_sil_*/*.guard",
+    "/research/gictrec_*/STATE.tmp",
+    "/research/elector_sil_*/STATE.tmp",
+    "/research/**/.STATE.tmp",
+    "/research/elector_sil_*/*.pid",
+    "/research/elector_sil_*/arms/*/*.pid",
+    "/research/ml1m_embedding_v2_20261020/checks/*/*/movies.dat",
+    "/research/ml1m_embedding_v2_20261020/checks/*/*/adapter_model.bin"
+  ],
+  "important_paths_trackable": [
+    "models/sequential/GICTRec.py",
+    "models/sequential/GICTRecFrozen.py",
+    "tools/test_gictrec.py",
+    "tools/test_gictrec_frozen_c1.py",
+    "tools/run_gictrec_frozen_c1.py",
+    "new_bash/run_gictrec.sh",
+    "new_bash/run_gictrec_frozen_c1.sh",
+    "research/THESIS_CH4_FROZEN_20261024.md",
+    "research/THESIS_CH4_FROZEN_20261024.index.json",
+    "research/gictrec_round1_20261024_v1/runs/ml-1m_G3/result.json",
+    "research/gictrec_frozen_c1_20261024_v1/runs/G3/test_metrics.csv",
+    "research/gictrec_frozen_c1_20261024_v1/runs/G3/best_nonzero_metadata.json",
+    "research/gictrec_frozen_c1_20261024_v1/DIAGNOSTICS.json"
+  ],
+  "generated_paths_ignored": [
+    "research/gictrec_frozen_c1_20261024_v1/runs/G1/best.pt",
+    "research/gictrec_frozen_c1_20261024_v1/runs/G1/train.log",
+    "research/gictrec_frozen_c1_20261024_v1/runs/G1/dev_metrics.jsonl",
+    "research/gictrec_frozen_c1_20261024_v1/runs/G1/transfer_updates.jsonl",
+    "research/gictrec_frozen_c1_20261024_v1/runs/G1/test_user_ranks.csv",
+    "research/gictrec_frozen_c1_20261024_v1/cuda_cache_gpu1/foo",
+    "research/gpu_resource_scheduler_20261022_v1/gpu1.lock"
+  ],
+  "no_untracking": true,
+  "no_deletion_or_move": true,
+  "no_commit_or_push": true,
+  "tracked_large_files_over10MiB": [
+    [
+      "research/ml1m_embedding_v2_20261020/inputs/enhance_zenodo_20261020/text_ml1m.tsv",
+      23.19
+    ],
+    [
+      "Fonts/simsun.ttc",
+      17.47
+    ]
+  ],
+  "existing_tracked_runtime_warning": "Toys SS-C1 dev_metrics.jsonl remains tracked and modified; ignore does not untrack it."
+}

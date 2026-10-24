@@ -1,0 +1,22 @@
+{
+  "head": "ef76d17864a0348ebe851d88aac4126ed9b42ae4",
+  "dataset": "ml-1m",
+  "K": 3,
+  "seed": 42,
+  "variants": [
+    "G1",
+    "G2",
+    "G3"
+  ],
+  "branch_lr": 0.001,
+  "branch_weight_decay": 1e-06,
+  "all_C1_frozen": true,
+  "Dropout": "frozen eval; backbone no_grad; original ranking+relation loss",
+  "epoch0_eligible": true,
+  "best_nonzero_recorded": true,
+  "full_training_authorized": true,
+  "Test_authorized": true,
+  "extra_rounds_authorized": false,
+  "diagnostic_risk": "Frozen semantic interest profiles nearly coincide (JS~1e-8), same top1 neighbor for all K in sampled prefixes; exactly3 authorized controls only, no further LR/loss/architecture search.",
+  "optimizer_explanation": "First round optimized all trainable C1 parameters with fresh Adam at original lr, no scheduler; current mode freezes C1 eval/no_grad and updates4096 parameters with branch lr .001."
+}

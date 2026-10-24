@@ -1,0 +1,20 @@
+{
+  "K": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "gradients": true,
+  "zero_init": true,
+  "no_neighbors": true,
+  "no_semantic": true,
+  "padding": true,
+  "directed_counts": true,
+  "distinct_user_support": true,
+  "leave_whole_user_fold_out": true,
+  "own_future_mutation_invariant": true,
+  "K1_G1_G2_equivalent": true,
+  "passed": true,
+  "seconds": 0.2183525850996375
+}

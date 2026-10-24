@@ -1,0 +1,46 @@
+{
+  "dataset": "ml-1m",
+  "K": 3,
+  "device": "cuda:0",
+  "parameters": {
+    "B0": 443269,
+    "G1": 459781,
+    "G2": 459781,
+    "G3": 459915
+  },
+  "initial_C1_exact": true,
+  "shared_fresh_initialization": true,
+  "initial_loss_exact": true,
+  "initial_C1_gradients_close": true,
+  "graph_off_exact": true,
+  "no_neighbors_exact": true,
+  "short_history": true,
+  "padding": true,
+  "local_causality": true,
+  "candidate_independent": true,
+  "original_C1_and_graph_gradients": true,
+  "cache_bytes": 3202848,
+  "encoding_cost": {
+    "unique_neighbor_items": 3570,
+    "newly_encoded_items": 1098
+  },
+  "throughput": {
+    "C1": {
+      "batch": 1024,
+      "step_seconds": 0.05080544203519821,
+      "rows_per_second": 20155.321142380155,
+      "peak_MiB": 454.47802734375
+    },
+    "G3": {
+      "batch": 1024,
+      "step_seconds": 0.07018402715524037,
+      "rows_per_second": 14590.214347988463,
+      "peak_MiB": 905.57470703125
+    }
+  },
+  "sampled_steps_only": true,
+  "Dev": false,
+  "Test": false,
+  "passed": true,
+  "seconds": 16.639069058932364
+}

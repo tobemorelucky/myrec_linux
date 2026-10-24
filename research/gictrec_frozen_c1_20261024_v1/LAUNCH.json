@@ -1,0 +1,10 @@
+{
+  "queue_pid": 2977252,
+  "tasks": [
+    "G1",
+    "G2",
+    "G3"
+  ],
+  "log": "/home/yyx/hzgcode/pom2.0/research/gictrec_frozen_c1_20261024_v1/queue.log",
+  "date": "2026-10-24T08:57:55Z"
+}

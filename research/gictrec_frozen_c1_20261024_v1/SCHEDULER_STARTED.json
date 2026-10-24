@@ -1,0 +1,10 @@
+{
+  "pid": 2977252,
+  "tasks": [
+    "G1",
+    "G2",
+    "G3"
+  ],
+  "full_training_runs": 3,
+  "poll_seconds": 30
+}

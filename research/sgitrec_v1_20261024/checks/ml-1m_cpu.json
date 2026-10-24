@@ -1,0 +1,46 @@
+{
+  "dataset": "ml-1m",
+  "K": 3,
+  "device": "cpu",
+  "parameters": {
+    "B0": 443269,
+    "G1": 459781,
+    "G2": 459781,
+    "G3": 459915
+  },
+  "initial_C1_exact": true,
+  "shared_fresh_initialization": true,
+  "initial_loss_exact": true,
+  "initial_C1_gradients_close": true,
+  "graph_off_exact": true,
+  "no_neighbors_exact": true,
+  "short_history": true,
+  "padding": true,
+  "local_causality": true,
+  "candidate_independent": true,
+  "original_C1_and_graph_gradients": true,
+  "cache_bytes": 3202848,
+  "encoding_cost": {
+    "unique_neighbor_items": 2038,
+    "newly_encoded_items": 1711
+  },
+  "throughput": {
+    "C1": {
+      "batch": 32,
+      "step_seconds": 0.05898562353104353,
+      "rows_per_second": 542.5050730057762,
+      "peak_MiB": null
+    },
+    "G3": {
+      "batch": 32,
+      "step_seconds": 0.11606960215916236,
+      "rows_per_second": 275.6966458463386,
+      "peak_MiB": null
+    }
+  },
+  "sampled_steps_only": true,
+  "Dev": false,
+  "Test": false,
+  "passed": true,
+  "seconds": 15.055329297669232
+}
