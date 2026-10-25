@@ -1,0 +1,14 @@
+{
+  "shared_dispatcher": "/home/yyx/hzgcode/pom2.0/research/sgitrec_round1_20261024_v1/shared_dispatch_20261024_v1",
+  "state": "HANDED_OFF_TO_SHARED_POOL",
+  "dispatcher_pid": 3049348,
+  "shared_state": "/home/yyx/hzgcode/pom2.0/research/sgitrec_round1_20261024_v1/shared_dispatch_20261024_v1/STATE.json",
+  "old_queue_pid": 3017385,
+  "adopted_training_pid": 3017405,
+  "original_training_untouched": true,
+  "pending": [
+    "G3",
+    "G2",
+    "G1"
+  ]
+}

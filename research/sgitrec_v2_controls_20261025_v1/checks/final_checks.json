@@ -1,0 +1,25 @@
+{
+  "passed": true,
+  "datasets": {
+    "ml-1m": {
+      "seed0_full_and_V1_initial_C1_exact": true,
+      "C1_initial_sha256": "3997dbdfe5d5083940f184d891be8d40d8263cf3fb37d1813859103a84bb79af",
+      "rng_after_init_same": true,
+      "all_three_folds_direct_exact": true,
+      "semantic_candidates_only_other_fold_Train": true
+    },
+    "beauty": {
+      "seed0_full_and_V1_initial_C1_exact": true,
+      "C1_initial_sha256": "ef9bebae7ef9f06f0ee998d9766b2ef1d7b79dbd897f5c49b67fce56d3ca167a",
+      "rng_after_init_same": true,
+      "all_three_folds_direct_exact": true,
+      "semantic_candidates_only_other_fold_Train": true
+    }
+  },
+  "excluded_own_fold_future_mutation_invariant": true,
+  "protected_files": 153,
+  "protected_SHA_unchanged": true,
+  "Dev": false,
+  "Test": false,
+  "seconds": 29.862684504128993
+}

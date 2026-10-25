@@ -1,0 +1,7 @@
+{
+  "passed": true,
+  "inherited_fd_valid": true,
+  "duplicate_lease_rejected": true,
+  "lock_released_normally": true,
+  "no_GPU_compute": true
+}

@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "dataset": "ml-1m",
+  "parameters": {
+    "V2-R": 467973,
+    "V2-B": 464006,
+    "V2-NoS": 472198,
+    "V2-Full": 472198,
+    "V2-Direct": 459781
+  },
+  "C1_common_init_hash": "c285c1e62cc0e63f313fa1b9419445b20729793d8a267b4dfd3e37604468c688",
+  "factor_shared_initial_rng_exact": true,
+  "original_Full_train_eval_loss_rng_exact": true,
+  "old_direct_graph_all_tensors_equal": true,
+  "old_relation_function_same": true,
+  "no_bridge_file_or_lookup_or_parameters_in_R": true,
+  "graph_off_C1_exact": true,
+  "padding": true,
+  "candidate_independent": true,
+  "historical_V1_caveat": "V1 graph RNG seed20261024 vs V2 seed20261025; V1 candidate reuse vs V2 history/direct-only reuse. Cross-version deltas are not single-factor ablations.",
+  "seconds": 25.968670745380223,
+  "Dev": false,
+  "Test": false
+}

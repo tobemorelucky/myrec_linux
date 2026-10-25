@@ -1,0 +1,19 @@
+{
+  "pid": 3049348,
+  "state": "COMPLETED",
+  "utc": "2026-10-24T14:43:37Z",
+  "running": {},
+  "pending": [],
+  "completed": [
+    "beauty_B0",
+    "beauty_G3",
+    "ml-1m_B0",
+    "ml-1m_G3",
+    "ml-1m_G2",
+    "ml-1m_G1"
+  ],
+  "halted": false,
+  "failures": [],
+  "poll_seconds": 20,
+  "scheduling": "longest estimated pending task first; either physical GPU, one task per GPU"
+}

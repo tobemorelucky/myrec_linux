@@ -1,0 +1,62 @@
+{
+  "authorized_original_total": 6,
+  "no_new_experiments": true,
+  "completed": [
+    "beauty_B0",
+    "beauty_G3"
+  ],
+  "pending": [
+    "G3",
+    "G2",
+    "G1"
+  ],
+  "old_queue_pid": 3017385,
+  "old_queue_start_tick": "607682491",
+  "adopted_pid": 3017405,
+  "adopted_start_tick": "607682538",
+  "original_PLAN_sha256": "b2d45d0c413018d9dc3cb397214579d76c1bd57987144dd867096f0e145a2cec",
+  "original_scheduler_sha256": "256987dbc04ff66db53f02529a309099b39cf339860f48fe8bc6c527d84b146b",
+  "dispatcher_sha256": "875ead47f75d26b73fba023cd1957795006f8e1ca3124b1b36ee989b9af549d2",
+  "old_state": {
+    "dataset": "ml-1m",
+    "state": "RUNNING",
+    "queue_pid": 3017385,
+    "utc": "2026-10-24T10:31:44Z",
+    "GPU": 0,
+    "GPU_uuid": "GPU-5d1b4b83-6d28-014d-51b3-9f262308b849",
+    "train_pid": 3017405,
+    "current": "B0",
+    "completed": [],
+    "pending": [
+      "G1",
+      "G2",
+      "G3"
+    ],
+    "run": "/home/yyx/hzgcode/pom2.0/research/sgitrec_round1_20261024_v1/runs/ml-1m_k3_s42_B0",
+    "log": "/home/yyx/hzgcode/pom2.0/research/sgitrec_round1_20261024_v1/runs/ml-1m_k3_s42_B0/train.log"
+  },
+  "training_inherited_locks": [
+    "/home/yyx/hzgcode/pom2.0/research/gpu_resource_scheduler_20261022_v1/gpu0.lock",
+    "/home/yyx/hzgcode/pom2.0/research/gpu_resource_scheduler_20261022_v1/sgitrec_round1_20261024_v1_ml-1m.lock",
+    "/home/yyx/hzgcode/pom2.0/research/gpu_resource_scheduler_20261022_v1/sgitrec_round1_20261024_v1_ml-1m_k3_s42_B0.lock"
+  ],
+  "resource_policy": "Any idle GPU; physical compute PIDs checked incl other users; shared GPU and per-task leases; no training interrupted.",
+  "estimate": {
+    "ML_B0_current_epoch": 85,
+    "ML_B0_best_epoch": 80,
+    "observed_epoch_seconds": 56.546106768772006,
+    "B0_if_no_more_improvement_seconds": 904.7377083003521,
+    "B0_to_200_epoch_cap_seconds": 6502.802278408781,
+    "pending_epoch_seconds_estimate": {
+      "G3": 75.14954848401248,
+      "G2": 65.84782762639225,
+      "G1": 64.91765554063022
+    },
+    "pending_200_epoch_cap_hours": {
+      "G3": 4.1749749157784715,
+      "G2": 3.6582126459106803,
+      "G1": 3.606536418923901
+    },
+    "uncertainty": "Predictions only; actual epoch count determined by unchanged Dev early stopping. Longest predicted job first."
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "dispatcher": 3264357,
+  "task": {
+    "name": "ml-1m_k3_s0_V2-Full",
+    "dataset": "ml-1m",
+    "seed": 0,
+    "variant": "V2-Full",
+    "graph_key": "bridge",
+    "estimated_minutes": 110
+  },
+  "GPU": 1
+}

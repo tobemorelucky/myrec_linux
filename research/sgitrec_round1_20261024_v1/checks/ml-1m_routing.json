@@ -1,0 +1,128 @@
+{
+  "dataset": "ml-1m",
+  "K": 3,
+  "samples": 128,
+  "history_lengths": {
+    "mean": 18.0625,
+    "min": 3.0,
+    "median": 20.0,
+    "p90": 20.0,
+    "max": 20.0
+  },
+  "C1_shared_initialization": {
+    "B0": {
+      "C1_sha256": "c285c1e62cc0e63f313fa1b9419445b20729793d8a267b4dfd3e37604468c688",
+      "trainable_parameters": 443269
+    },
+    "G1": {
+      "C1_sha256": "c285c1e62cc0e63f313fa1b9419445b20729793d8a267b4dfd3e37604468c688",
+      "trainable_parameters": 459781
+    },
+    "G2": {
+      "C1_sha256": "c285c1e62cc0e63f313fa1b9419445b20729793d8a267b4dfd3e37604468c688",
+      "trainable_parameters": 459781
+    },
+    "G3": {
+      "C1_sha256": "c285c1e62cc0e63f313fa1b9419445b20729793d8a267b4dfd3e37604468c688",
+      "trainable_parameters": 459915
+    }
+  },
+  "zero_output_projection_exact_C1": true,
+  "formal_projection_restored_zero": true,
+  "collab_routing": {
+    "pair_top1_same": 1.0,
+    "pair_top3_Jaccard": 1.0,
+    "pair_JS": {
+      "mean": 6.057060034687001e-14,
+      "min": 1.3168877475935539e-14,
+      "median": 6.097673256039701e-14,
+      "p90": 8.691947503275778e-14,
+      "max": 1.3366432554688122e-13
+    },
+    "pair_max_abs_mass_difference": 1.1175870895385742e-07,
+    "entropy": {
+      "mean": 4.438685444091779,
+      "min": 2.995954067334454,
+      "median": 4.514287981729107,
+      "p90": 4.791831909295188,
+      "max": 4.880167839221823
+    }
+  },
+  "semantic_routing": {
+    "pair_top1_same": 1.0,
+    "pair_top3_Jaccard": 1.0,
+    "pair_JS": {
+      "mean": 7.171163230639389e-14,
+      "min": 2.8304896555942433e-14,
+      "median": 7.255423714910836e-14,
+      "p90": 1.0095693266159693e-13,
+      "max": 1.503041088575003e-13
+    },
+    "pair_max_abs_mass_difference": 1.7881393432617188e-07,
+    "entropy": {
+      "mean": 4.656931494911521,
+      "min": 3.084458684561344,
+      "median": 4.787309677657502,
+      "p90": 4.923140452748173,
+      "max": 4.992065550415225
+    }
+  },
+  "pair_collab_memory_l2_difference": {
+    "mean": 5.965301155819169e-09,
+    "min": 3.5807841136659135e-09,
+    "median": 5.784876133674288e-09,
+    "p90": 7.61990293085546e-09,
+    "max": 1.1290598678215247e-08
+  },
+  "G1_G2_max_interest_difference": 0.00351826474070549,
+  "G1_G2_max_raw_score_difference": 6.114301504567266e-05,
+  "collab_semantic_memory_cosine": {
+    "mean": 0.9845609576441348,
+    "min": 0.8862977027893066,
+    "median": 0.9877455830574036,
+    "p90": 0.9943289160728455,
+    "max": 0.9983132481575012
+  },
+  "interest_history_attention_pair_difference": {
+    "mean": 3.1836680136621e-08,
+    "min": 0.0,
+    "median": 2.60770320892334e-08,
+    "p90": 6.705522537231445e-08,
+    "max": 3.8743019104003906e-07
+  },
+  "relation_weights": {
+    "mean": 0.5000000049670538,
+    "min": 0.4572109878063202,
+    "median": 0.4893474280834198,
+    "p90": 0.5309500694274902,
+    "max": 0.5427890419960022
+  },
+  "graph_fold_zero_exact_rebuild": true,
+  "semantic_catalog_other_fold_Train_only": true,
+  "query_fold_rule": "original user_id % 3",
+  "heldout_ID_mapping": {
+    "dev": {
+      "users": 6040,
+      "fold_counts": [
+        2013,
+        2014,
+        2013
+      ],
+      "mapping": "unchanged integer user_id % 3, identical to Train; cached graph never rebuilt"
+    },
+    "test": {
+      "users": 6040,
+      "fold_counts": [
+        2013,
+        2014,
+        2013
+      ],
+      "mapping": "unchanged integer user_id % 3, identical to Train; cached graph never rebuilt"
+    }
+  },
+  "no_Dev_Test_items_or_labels_read": true,
+  "own_entire_user_fold_excluded": true,
+  "candidate_independent": true,
+  "seconds": 12.823704017326236,
+  "passed": true
+}

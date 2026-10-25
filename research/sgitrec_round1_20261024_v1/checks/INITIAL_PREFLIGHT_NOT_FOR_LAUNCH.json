@@ -1,0 +1,4 @@
+{
+  "ignored": "ml-1m_routing.json",
+  "reason": "First diagnostic compared G3 against G1 under G2 label; corrected to explicitly select G2. Use *_routing_v2.json only."
+}

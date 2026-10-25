@@ -1,0 +1,40 @@
+{
+  "checkpoint_sha256": "03f3d70f44c543507cbac30166704a7793516b8b874e87c32a9dd354e88b664c",
+  "seconds": 616.9152793008834,
+  "best": {
+    "epoch": 6,
+    "training_cost": {
+      "epoch": 6,
+      "training_seconds": 14.922679278999567,
+      "peak_allocated_MiB": 726.048828125,
+      "batches": 129,
+      "unique_neighbors": 1004067,
+      "newly_encoded_items": 634662,
+      "maximum_unique_neighbors": 8057,
+      "history_slots_queried": 2628260,
+      "neighbor_slots_read": 21026080,
+      "mean_unique_neighbors": 7783.46511627907,
+      "mean_newly_encoded_items": 4919.860465116279
+    },
+    "metrics": {
+      "raw": {
+        "HR@5": 0.20256673970397532,
+        "NDCG@5": 0.1469253675012226,
+        "HR@10": 0.2676295666949873,
+        "NDCG@10": 0.16788517282955343,
+        "HR@20": 0.3368510486070742,
+        "NDCG@20": 0.18537189545604152
+      },
+      "locked_prior": {
+        "HR@5": 0.25510888521218084,
+        "NDCG@5": 0.18772712549371298,
+        "HR@10": 0.32804185484952825,
+        "NDCG@10": 0.21132306558104108,
+        "HR@20": 0.4037472611009256,
+        "NDCG@20": 0.23042561469564268
+      }
+    },
+    "input_hash": "e352ea8c050482616006bb8be872cf1f5b3b3e84c6058e3c11dc614cecdb8fce",
+    "rows": 22363
+  }
+}

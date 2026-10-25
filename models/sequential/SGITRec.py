@@ -46,6 +46,7 @@ class SGITRec(C1):
             ids=torch.cat([collab['ids'],sem['ids']],-1) if sem is not None else collab['ids']
             vectors,cost=cached_neighbor_vectors(self.item_encoder,ids,history,out['history_vectors'],
                 feed_dict['item_id'],out['candidate_vectors'])
+            self.last_graph_encoding_cost=dict(cost,history_slots=history.numel(),neighbor_slots=ids.numel())  # Counts only.
             R=collab['ids'].shape[-1];cvec=vectors[:,:,:R]
             svec=vectors[:,:,R:] if sem is not None else None
             baseline=out['interest_vectors']

@@ -1,0 +1,66 @@
+{
+  "dataset": "beauty",
+  "Train_graph": {
+    "Train_nodes": 12068,
+    "folds": [
+      {
+        "fold": 0,
+        "edges": 96808,
+        "source_nodes": 12101,
+        "extra_edges_vs_direct": 95552,
+        "overlap_fraction": 0.012974134369060409
+      },
+      {
+        "fold": 1,
+        "edges": 96808,
+        "source_nodes": 12101,
+        "extra_edges_vs_direct": 95523,
+        "overlap_fraction": 0.013273696388728204
+      },
+      {
+        "fold": 2,
+        "edges": 96808,
+        "source_nodes": 12101,
+        "extra_edges_vs_direct": 95509,
+        "overlap_fraction": 0.013418312536154036
+      }
+    ],
+    "base_tensor_bytes": 10456128,
+    "V2_tensor_bytes": 18588672,
+    "graph_sha256": "2a5a20d7e0061cf94ea251297520196af13272aa0a379327e848b31cab3ebc52",
+    "path": "/home/yyx/hzgcode/pom2.0/research/sgitrec_v2_20261025_v1/graphs/beauty_bridge_v2.pt"
+  },
+  "Dev_coverage": {
+    "n": 2048,
+    "direct": 0.1064453125,
+    "bridge": 0.076171875,
+    "union": 0.1484375,
+    "extra": 0.0419921875,
+    "extra_users": 86,
+    "last_direct": 0.064453125,
+    "last_extra": 0.017578125,
+    "support_buckets": {
+      "low_le1": {
+        "n": 1351,
+        "direct": 0.05995558947324753,
+        "extra": 0.03923020139336586,
+        "last_source_extra": 0.01776461862027645
+      },
+      "mid_2to4": {
+        "n": 510,
+        "direct": 0.15490196645259857,
+        "extra": 0.05098039284348488,
+        "last_source_extra": 0.01764705963432789
+      },
+      "high_ge5": {
+        "n": 187,
+        "direct": 0.31016042828559875,
+        "extra": 0.03743315488100052,
+        "last_source_extra": 0.01604278013110161
+      }
+    }
+  },
+  "coverage_only_not_ranking": true,
+  "Test": false,
+  "seconds": 21.43959830980748
+}

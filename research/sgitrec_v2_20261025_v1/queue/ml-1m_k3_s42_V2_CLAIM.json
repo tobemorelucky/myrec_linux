@@ -1,0 +1,10 @@
+{
+  "dispatcher": 3257370,
+  "task": {
+    "name": "ml-1m_k3_s42_V2",
+    "dataset": "ml-1m",
+    "variant": "V2",
+    "estimated_minutes": 130
+  },
+  "GPU": 0
+}

@@ -1,0 +1,24 @@
+{
+  "queues": {
+    "ml-1m": {
+      "queue_pid": 3017385,
+      "order": [
+        "B0",
+        "G1",
+        "G2",
+        "G3"
+      ],
+      "log": "/home/yyx/hzgcode/pom2.0/research/sgitrec_round1_20261024_v1/queues/ml-1m/queue.log"
+    },
+    "beauty": {
+      "queue_pid": 3017386,
+      "order": [
+        "B0",
+        "G3"
+      ],
+      "log": "/home/yyx/hzgcode/pom2.0/research/sgitrec_round1_20261024_v1/queues/beauty/queue.log"
+    }
+  },
+  "authorized_tasks": 6,
+  "utc": "2026-10-24T10:31:44Z"
+}

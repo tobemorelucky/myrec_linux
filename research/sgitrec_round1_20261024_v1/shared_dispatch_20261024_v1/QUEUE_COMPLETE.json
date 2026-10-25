@@ -1,0 +1,13 @@
+{
+  "completed": [
+    "beauty_B0",
+    "beauty_G3",
+    "ml-1m_B0",
+    "ml-1m_G3",
+    "ml-1m_G2",
+    "ml-1m_G1"
+  ],
+  "pending": [],
+  "failures": [],
+  "no_more_tasks": true
+}

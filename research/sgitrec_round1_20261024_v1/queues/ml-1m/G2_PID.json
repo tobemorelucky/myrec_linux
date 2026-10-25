@@ -1,0 +1,28 @@
+{
+  "pid": 3059461,
+  "GPU": 0,
+  "GPU_uuid": "GPU-5d1b4b83-6d28-014d-51b3-9f262308b849",
+  "command": [
+    "nohup",
+    "/home/yyx/anaconda3/envs/hzg_py10/bin/python",
+    "-u",
+    "-B",
+    "/home/yyx/hzgcode/pom2.0/tools/run_sgitrec.py",
+    "--config",
+    "/home/yyx/hzgcode/pom2.0/research/elector_sil_k3_20261023_v1/runs/ml-1m_k3_s42_SS-C1/config.json",
+    "--graph",
+    "/home/yyx/hzgcode/pom2.0/research/sgitrec_v1_20261024/graphs/ml-1m_v2.pt",
+    "--variant",
+    "G2",
+    "--output-dir",
+    "/home/yyx/hzgcode/pom2.0/research/sgitrec_round1_20261024_v1/runs/ml-1m_k3_s42_G2",
+    "--gpu",
+    "0",
+    "--gpu-lease-fd",
+    "6",
+    "--manifest",
+    "/home/yyx/hzgcode/pom2.0/research/sgitrec_round1_20261024_v1/PLAN.json"
+  ],
+  "stdout": "/home/yyx/hzgcode/pom2.0/research/sgitrec_round1_20261024_v1/shared_dispatch_20261024_v1/tasks/ml-1m_G2.stdout.log",
+  "dispatcher": 3049348
+}

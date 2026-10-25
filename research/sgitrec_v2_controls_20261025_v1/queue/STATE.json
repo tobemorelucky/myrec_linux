@@ -1,0 +1,33 @@
+{
+  "pid": 3264357,
+  "utc": "2026-10-25T08:33:34Z",
+  "state": "RUNNING",
+  "running": {
+    "ml-1m_k3_s0_V1G2": {
+      "pid": 3308868,
+      "GPU": 0,
+      "run": "/home/yyx/hzgcode/pom2.0/research/sgitrec_v2_controls_20261025_v1/runs/ml-1m_k3_s0_V1G2",
+      "log": "/home/yyx/hzgcode/pom2.0/research/sgitrec_v2_controls_20261025_v1/runs/ml-1m_k3_s0_V1G2/train.log"
+    },
+    "ml-1m_k3_s0_V2-Full": {
+      "pid": 3312709,
+      "GPU": 1,
+      "run": "/home/yyx/hzgcode/pom2.0/research/sgitrec_v2_controls_20261025_v1/runs/ml-1m_k3_s0_V2-Full",
+      "log": "/home/yyx/hzgcode/pom2.0/research/sgitrec_v2_controls_20261025_v1/runs/ml-1m_k3_s0_V2-Full/train.log"
+    }
+  },
+  "pending": [],
+  "completed": [
+    "beauty_k2_s42_V2-R",
+    "beauty_k2_s42_V2-B",
+    "beauty_k2_s42_V2-NoS",
+    "beauty_k2_s0_V1G2",
+    "beauty_k2_s0_V2-Full",
+    "ml-1m_k3_s42_V2-R",
+    "ml-1m_k3_s42_V2-NoS",
+    "ml-1m_k3_s42_V2-B"
+  ],
+  "failures": [],
+  "poll_seconds": 20,
+  "policy": "GPU1 Beauty-first/GPU0 ML-first with work stealing; both GPUs interchangeable; one task per GPU; fail stops pending"
+}

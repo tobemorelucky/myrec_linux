@@ -1,0 +1,40 @@
+{
+  "passed": true,
+  "math": [
+    {
+      "K": 1,
+      "all_factors_gradients": true,
+      "NoS_changes_only_beta_denominator": true,
+      "matched_direct_equals_G2_memory": true,
+      "disabled_bridge_unread": true,
+      "zero_and_empty_exact": true
+    },
+    {
+      "K": 2,
+      "all_factors_gradients": true,
+      "NoS_changes_only_beta_denominator": true,
+      "matched_direct_equals_G2_memory": true,
+      "disabled_bridge_unread": true,
+      "zero_and_empty_exact": true
+    },
+    {
+      "K": 3,
+      "all_factors_gradients": true,
+      "NoS_changes_only_beta_denominator": true,
+      "matched_direct_equals_G2_memory": true,
+      "disabled_bridge_unread": true,
+      "zero_and_empty_exact": true
+    },
+    {
+      "K": 4,
+      "all_factors_gradients": true,
+      "NoS_changes_only_beta_denominator": true,
+      "matched_direct_equals_G2_memory": true,
+      "disabled_bridge_unread": true,
+      "zero_and_empty_exact": true
+    }
+  ],
+  "seconds": 3.154517726972699,
+  "Dev": false,
+  "Test": false
+}

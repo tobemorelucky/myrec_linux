@@ -1,0 +1,24 @@
+{
+  "pid": 3257370,
+  "authorized": 3,
+  "tasks": [
+    {
+      "name": "ml-1m_k3_s42_V2",
+      "dataset": "ml-1m",
+      "variant": "V2",
+      "estimated_minutes": 130
+    },
+    {
+      "name": "beauty_k2_s42_V2",
+      "dataset": "beauty",
+      "variant": "V2",
+      "estimated_minutes": 22
+    },
+    {
+      "name": "beauty_k2_s42_V1G2",
+      "dataset": "beauty",
+      "variant": "V1G2",
+      "estimated_minutes": 15
+    }
+  ]
+}

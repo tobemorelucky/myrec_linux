@@ -1,0 +1,5 @@
+{
+  "test_fixture": "length1 mass must agree across interests; divergence test uses length5",
+  "model_fix": "direct and bridge unique encoding separated so bridge removal preserves direct numerical output; bridge reuses direct vectors",
+  "no_old_files_modified": true
+}

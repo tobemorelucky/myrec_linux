@@ -1,0 +1,27 @@
+{
+  "pid": 3017404,
+  "GPU": 1,
+  "GPU_uuid": "GPU-aae229cf-ddb1-1b36-5734-ffc82ea7e8ac",
+  "command": [
+    "nohup",
+    "/home/yyx/anaconda3/envs/hzg_py10/bin/python",
+    "-u",
+    "-B",
+    "/home/yyx/hzgcode/pom2.0/tools/run_sgitrec.py",
+    "--config",
+    "/home/yyx/hzgcode/pom2.0/research/elector_sil_formal_20261023_v1/runs/beauty_k2_s42_SS-C1/config.json",
+    "--graph",
+    "/home/yyx/hzgcode/pom2.0/research/sgitrec_v1_20261024/graphs/beauty_v2.pt",
+    "--variant",
+    "B0",
+    "--output-dir",
+    "/home/yyx/hzgcode/pom2.0/research/sgitrec_round1_20261024_v1/runs/beauty_k2_s42_B0",
+    "--gpu",
+    "1",
+    "--gpu-lease-fd",
+    "5",
+    "--manifest",
+    "/home/yyx/hzgcode/pom2.0/research/sgitrec_round1_20261024_v1/PLAN.json"
+  ],
+  "stdout": "/home/yyx/hzgcode/pom2.0/research/sgitrec_round1_20261024_v1/queues/beauty/B0.stdout.log"
+}

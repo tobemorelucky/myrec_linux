@@ -1,0 +1,1 @@
+{"epoch": 1, "training_seconds": 2.0528999445959926, "peak_allocated_MiB": 0.0, "batches": 2, "unique_neighbors": 204, "newly_encoded_items": 200, "maximum_unique_neighbors": 115, "history_slots_queried": 56, "neighbor_slots_read": 896, "mean_unique_neighbors": 102.0, "mean_newly_encoded_items": 100.0}

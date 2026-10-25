@@ -1,0 +1,74 @@
+{
+  "ml-1m": {
+    "K": 3,
+    "configs": {
+      "0": {
+        "path": "/home/yyx/hzgcode/pom2.0/research/sgitrec_v2_controls_20261025_v1/configs/ml-1m_s0.json",
+        "sha256": "c2e0a44c74221fe95b79e63c5cc36da300677cdb25a43a3c27afbfa56e008f18",
+        "source": "/home/yyx/hzgcode/pom2.0/research/elector_sil_night12_20261023_v1/runs/ml-1m_k3_s0_SS-C1/config.json",
+        "source_sha256": "fc62578d20789f81184da7c52aef441cdea4bdca27b67e4d985edff40b268be1"
+      },
+      "42": {
+        "path": "/home/yyx/hzgcode/pom2.0/research/sgitrec_v2_controls_20261025_v1/configs/ml-1m_s42.json",
+        "sha256": "819ad1f89acde611f7ad9e6219334710574d986fab6f939bfc71bf76c98afff0",
+        "source": "/home/yyx/hzgcode/pom2.0/research/elector_sil_k3_20261023_v1/runs/ml-1m_k3_s42_SS-C1/config.json",
+        "source_sha256": "107bc7b2cc286a3ae236647c485e222dcd0b33208b37e8a8f8a0d94f9745aa67"
+      }
+    },
+    "graphs": {
+      "direct": {
+        "path": "/home/yyx/hzgcode/pom2.0/research/sgitrec_v1_20261024/graphs/ml-1m_v2.pt",
+        "sha256": "a9135afd81e946894b2c819be60dd96c1efc5bfa5644ef5aee296f42b0c320c4"
+      },
+      "bridge": {
+        "path": "/home/yyx/hzgcode/pom2.0/research/sgitrec_v2_20261025_v1/graphs/ml-1m_bridge_v2.pt",
+        "sha256": "caee1ad1e0b018b2cd82077f289dfa77e4423c34c92f261e9962b3c61b8b7459"
+      }
+    },
+    "initial_sha256": {
+      "0": "3997dbdfe5d5083940f184d891be8d40d8263cf3fb37d1813859103a84bb79af",
+      "42": "c285c1e62cc0e63f313fa1b9419445b20729793d8a267b4dfd3e37604468c688"
+    },
+    "lr": 0.001,
+    "batch_size": 1024,
+    "max_epochs": 200,
+    "early_stop": 10,
+    "lambda_pop": 0.3
+  },
+  "beauty": {
+    "K": 2,
+    "configs": {
+      "0": {
+        "path": "/home/yyx/hzgcode/pom2.0/research/sgitrec_v2_controls_20261025_v1/configs/beauty_s0.json",
+        "sha256": "b2be4fccb0b25f373963502cde16992103c752f9b81c984433db0a5285f148e4",
+        "source": "/home/yyx/hzgcode/pom2.0/research/elector_sil_night12_20261023_v1/runs/beauty_k2_s0_SS-C1/config.json",
+        "source_sha256": "fd1538c0146f7ccf2fdda4122d97e1adfb448271973cb3d3f1746cf8b737b29d"
+      },
+      "42": {
+        "path": "/home/yyx/hzgcode/pom2.0/research/sgitrec_v2_controls_20261025_v1/configs/beauty_s42.json",
+        "sha256": "9f4a529a719788aa094ae0946c41d70b12885763a28daf040b87137f7227fc09",
+        "source": "/home/yyx/hzgcode/pom2.0/research/elector_sil_formal_20261023_v1/runs/beauty_k2_s42_SS-C1/config.json",
+        "source_sha256": "35685b6b757f3a338fa8e517c5a864e7b4914401c09cd91afa763407c898524d"
+      }
+    },
+    "graphs": {
+      "direct": {
+        "path": "/home/yyx/hzgcode/pom2.0/research/sgitrec_v1_20261024/graphs/beauty_v2.pt",
+        "sha256": "58344c3fc93fcb11ca92c0df160810a1169c3b3e23d637a71da8c247e015678a"
+      },
+      "bridge": {
+        "path": "/home/yyx/hzgcode/pom2.0/research/sgitrec_v2_20261025_v1/graphs/beauty_bridge_v2.pt",
+        "sha256": "2a5a20d7e0061cf94ea251297520196af13272aa0a379327e848b31cab3ebc52"
+      }
+    },
+    "initial_sha256": {
+      "0": "ef9bebae7ef9f06f0ee998d9766b2ef1d7b79dbd897f5c49b67fce56d3ca167a",
+      "42": "24c5eb78e3ffd98fc79376dadc36ea6884fe3c34fcee6e388ca7306c1abcf4d9"
+    },
+    "lr": 0.004,
+    "batch_size": 1024,
+    "max_epochs": 200,
+    "early_stop": 10,
+    "lambda_pop": 0.3
+  }
+}

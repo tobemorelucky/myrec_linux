@@ -1,0 +1,10 @@
+{
+  "dispatcher": 3257370,
+  "task": {
+    "name": "beauty_k2_s42_V1G2",
+    "dataset": "beauty",
+    "variant": "V1G2",
+    "estimated_minutes": 15
+  },
+  "GPU": 1
+}

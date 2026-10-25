@@ -1,0 +1,35 @@
+{
+  "dataset": "ml-1m",
+  "passed": true,
+  "actual_K": 3,
+  "parameters_by_K": {
+    "1": 471940,
+    "2": 472069,
+    "3": 472198,
+    "4": 472327
+  },
+  "initial_C1_outputs_loss_base_gradients_exact": true,
+  "Train_graph_matches_V1_all_folds": true,
+  "bridge_witness_768_edges_valid": true,
+  "short_history_padding_empty": true,
+  "local_causality": true,
+  "joint_base_and_bridge_gradients": true,
+  "graph_off_exact": true,
+  "empty_bridge_direct_exact": true,
+  "candidate_independent": true,
+  "projection_T_norm": 0.4754481017589569,
+  "projection_B_norm": 0.3811691105365753,
+  "step_seconds": 0.07589781905213992,
+  "batch": 1024,
+  "rows_per_second": 13491.823780819543,
+  "gpu_peak_allocated_MiB": 887.6181640625,
+  "graph_gpu_buffer_bytes": 4270464,
+  "graph_file_bytes": 5700671,
+  "neighbor_encoding": {
+    "unique_neighbor_items": 2923,
+    "newly_encoded_items": 669
+  },
+  "Dev": false,
+  "Test": false,
+  "seconds": 22.649666351266205
+}

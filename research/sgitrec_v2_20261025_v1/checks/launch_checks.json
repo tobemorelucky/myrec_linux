@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "datasets": {
+    "ml-1m": {
+      "V2_parameters": 472198,
+      "C1_initial_sha256": "c285c1e62cc0e63f313fa1b9419445b20729793d8a267b4dfd3e37604468c688",
+      "graph_sha256": "caee1ad1e0b018b2cd82077f289dfa77e4423c34c92f261e9962b3c61b8b7459",
+      "all_base_parameters_jointly_trainable": true
+    },
+    "beauty": {
+      "V2_parameters": 1009349,
+      "C1_initial_sha256": "24c5eb78e3ffd98fc79376dadc36ea6884fe3c34fcee6e388ca7306c1abcf4d9",
+      "graph_sha256": "2a5a20d7e0061cf94ea251297520196af13272aa0a379327e848b31cab3ebc52",
+      "all_base_parameters_jointly_trainable": true,
+      "V1G2_parameters": 996932
+    }
+  },
+  "protected_files": 112,
+  "protected_SHA_unchanged": true,
+  "Runner_identical_AST": true,
+  "original_score_views_dependency_unchanged": true,
+  "selected_prior_lambda": 0.3,
+  "Test": false,
+  "Dev": false,
+  "seconds": 24.483913059346378
+}

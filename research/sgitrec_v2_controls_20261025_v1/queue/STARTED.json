@@ -1,0 +1,86 @@
+{
+  "pid": 3264357,
+  "authorized": 10,
+  "tasks": [
+    {
+      "name": "beauty_k2_s42_V2-R",
+      "dataset": "beauty",
+      "seed": 42,
+      "variant": "V2-R",
+      "graph_key": "direct",
+      "estimated_minutes": 18
+    },
+    {
+      "name": "beauty_k2_s42_V2-B",
+      "dataset": "beauty",
+      "seed": 42,
+      "variant": "V2-B",
+      "graph_key": "bridge",
+      "estimated_minutes": 18
+    },
+    {
+      "name": "beauty_k2_s42_V2-NoS",
+      "dataset": "beauty",
+      "seed": 42,
+      "variant": "V2-NoS",
+      "graph_key": "bridge",
+      "estimated_minutes": 18
+    },
+    {
+      "name": "ml-1m_k3_s42_V2-R",
+      "dataset": "ml-1m",
+      "seed": 42,
+      "variant": "V2-R",
+      "graph_key": "direct",
+      "estimated_minutes": 100
+    },
+    {
+      "name": "ml-1m_k3_s42_V2-B",
+      "dataset": "ml-1m",
+      "seed": 42,
+      "variant": "V2-B",
+      "graph_key": "bridge",
+      "estimated_minutes": 100
+    },
+    {
+      "name": "ml-1m_k3_s42_V2-NoS",
+      "dataset": "ml-1m",
+      "seed": 42,
+      "variant": "V2-NoS",
+      "graph_key": "bridge",
+      "estimated_minutes": 100
+    },
+    {
+      "name": "beauty_k2_s0_V1G2",
+      "dataset": "beauty",
+      "seed": 0,
+      "variant": "V1G2",
+      "graph_key": "direct",
+      "estimated_minutes": 18
+    },
+    {
+      "name": "beauty_k2_s0_V2-Full",
+      "dataset": "beauty",
+      "seed": 0,
+      "variant": "V2-Full",
+      "graph_key": "bridge",
+      "estimated_minutes": 18
+    },
+    {
+      "name": "ml-1m_k3_s0_V1G2",
+      "dataset": "ml-1m",
+      "seed": 0,
+      "variant": "V1G2",
+      "graph_key": "direct",
+      "estimated_minutes": 110
+    },
+    {
+      "name": "ml-1m_k3_s0_V2-Full",
+      "dataset": "ml-1m",
+      "seed": 0,
+      "variant": "V2-Full",
+      "graph_key": "bridge",
+      "estimated_minutes": 110
+    }
+  ]
+}

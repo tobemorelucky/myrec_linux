@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "dataset": "ml-1m",
+  "seeds": {
+    "0": {
+      "C1_initial_sha256": "3997dbdfe5d5083940f184d891be8d40d8263cf3fb37d1813859103a84bb79af",
+      "source_config": "/home/yyx/hzgcode/pom2.0/research/elector_sil_night12_20261023_v1/runs/ml-1m_k3_s0_SS-C1/config.json",
+      "config_sha256": "fc62578d20789f81184da7c52aef441cdea4bdca27b67e4d985edff40b268be1",
+      "historical_C1_verified": true
+    },
+    "42": {
+      "C1_initial_sha256": "c285c1e62cc0e63f313fa1b9419445b20729793d8a267b4dfd3e37604468c688",
+      "source_config": "/home/yyx/hzgcode/pom2.0/research/elector_sil_k3_20261023_v1/runs/ml-1m_k3_s42_SS-C1/config.json",
+      "config_sha256": "107bc7b2cc286a3ae236647c485e222dcd0b33208b37e8a8f8a0d94f9745aa67",
+      "historical_C1_verified": true
+    }
+  },
+  "seconds": 14.822306196205318,
+  "Dev": false,
+  "Test": false
+}

@@ -1,0 +1,26 @@
+{
+  "old_queue": {
+    "dataset": "ml-1m",
+    "state": "RUNNING",
+    "queue_pid": 3017385,
+    "utc": "2026-10-24T10:31:44Z",
+    "GPU": 0,
+    "GPU_uuid": "GPU-5d1b4b83-6d28-014d-51b3-9f262308b849",
+    "train_pid": 3017405,
+    "current": "B0",
+    "completed": [],
+    "pending": [
+      "G1",
+      "G2",
+      "G3"
+    ],
+    "run": "/home/yyx/hzgcode/pom2.0/research/sgitrec_round1_20261024_v1/runs/ml-1m_k3_s42_B0",
+    "log": "/home/yyx/hzgcode/pom2.0/research/sgitrec_round1_20261024_v1/runs/ml-1m_k3_s42_B0/train.log"
+  },
+  "old_queue_start_tick": "607682491",
+  "training_start_tick": "607682538",
+  "parent_command": "/home/yyx/anaconda3/envs/hzg_py10/bin/python -u -B /home/yyx/hzgcode/pom2.0/research/sgitrec_round1_20261024_v1/scheduler.py --dataset ml-1m ",
+  "training_command": "/home/yyx/anaconda3/envs/hzg_py10/bin/python -u -B /home/yyx/hzgcode/pom2.0/tools/run_sgitrec.py --config /home/yyx/hzgcode/pom2.0/research/elector_sil_k3_20261023_v1/runs/ml-1m_k3_s42_SS-C1/config.json --graph /home/yyx/hzgcode/pom2.0/research/sgitrec_v1_20261024/graphs/ml-1m_v2.pt --variant B0 --output-dir /home/yyx/hzgcode/pom2.0/research/sgitrec_round1_20261024_v1/runs/ml-1m_k3_s42_B0 --gpu 0 --gpu-lease-fd 5 --manifest /home/yyx/hzgcode/pom2.0/research/sgitrec_round1_20261024_v1/PLAN.json ",
+  "original_PLAN_sha256": "b2d45d0c413018d9dc3cb397214579d76c1bd57987144dd867096f0e145a2cec",
+  "original_scheduler_sha256": "256987dbc04ff66db53f02529a309099b39cf339860f48fe8bc6c527d84b146b"
+}

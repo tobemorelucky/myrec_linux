@@ -1,0 +1,48 @@
+{
+  "math": [
+    {
+      "K": 1,
+      "gradients": true,
+      "zero_exact": true,
+      "empty": true,
+      "short_history": true,
+      "support_monotone": true,
+      "bridge_off_direct_exact": true,
+      "calibration_toggle": true
+    },
+    {
+      "K": 2,
+      "gradients": true,
+      "zero_exact": true,
+      "empty": true,
+      "short_history": true,
+      "support_monotone": true,
+      "bridge_off_direct_exact": true,
+      "calibration_toggle": true
+    },
+    {
+      "K": 3,
+      "gradients": true,
+      "zero_exact": true,
+      "empty": true,
+      "short_history": true,
+      "support_monotone": true,
+      "bridge_off_direct_exact": true,
+      "calibration_toggle": true
+    },
+    {
+      "K": 4,
+      "gradients": true,
+      "zero_exact": true,
+      "empty": true,
+      "short_history": true,
+      "support_monotone": true,
+      "bridge_off_direct_exact": true,
+      "calibration_toggle": true
+    }
+  ],
+  "excluded_user_future_invariant": true,
+  "bridge_direction_and_provenance": true,
+  "seconds": 2.2514815060421824,
+  "passed": true
+}

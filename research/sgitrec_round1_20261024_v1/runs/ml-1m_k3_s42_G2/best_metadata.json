@@ -1,0 +1,36 @@
+{
+  "epoch": 59,
+  "training_cost": {
+    "epoch": 59,
+    "training_seconds": 64.94427665974945,
+    "peak_allocated_MiB": 584.8408203125,
+    "batches": 960,
+    "unique_neighbors": 2533016,
+    "newly_encoded_items": 220807,
+    "maximum_unique_neighbors": 2699,
+    "history_slots_queried": 19641780,
+    "neighbor_slots_read": 157134240,
+    "mean_unique_neighbors": 2638.5583333333334,
+    "mean_newly_encoded_items": 230.00729166666667
+  },
+  "metrics": {
+    "raw": {
+      "HR@5": 0.3748344370860927,
+      "NDCG@5": 0.28119703576846405,
+      "HR@10": 0.4912251655629139,
+      "NDCG@10": 0.3188297140381287,
+      "HR@20": 0.589569536423841,
+      "NDCG@20": 0.34379480832359083
+    },
+    "locked_prior": {
+      "HR@5": 0.4140728476821192,
+      "NDCG@5": 0.3088313629842314,
+      "HR@10": 0.5266556291390728,
+      "NDCG@10": 0.34518946274176243,
+      "HR@20": 0.633112582781457,
+      "NDCG@20": 0.37217131046407015
+    }
+  },
+  "input_hash": "50861352da5378964d8597462bfb58f23356058007baf9397609889314fa62e2",
+  "rows": 6040
+}

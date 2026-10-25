@@ -1,0 +1,12 @@
+{
+  "pid": 3257370,
+  "command": [
+    "nohup",
+    "/home/yyx/anaconda3/envs/hzg_py10/bin/python",
+    "-u",
+    "-B",
+    "/home/yyx/hzgcode/pom2.0/research/sgitrec_v2_20261025_v1/dispatcher.py"
+  ],
+  "log": "/home/yyx/hzgcode/pom2.0/research/sgitrec_v2_20261025_v1/queue/queue.log",
+  "authorized_tasks": 3
+}

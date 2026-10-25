@@ -1,0 +1,15 @@
+{
+  "pid": 3257370,
+  "utc": "2026-10-25T04:50:19Z",
+  "state": "COMPLETED",
+  "running": {},
+  "pending": [],
+  "completed": [
+    "beauty_k2_s42_V2",
+    "beauty_k2_s42_V1G2",
+    "ml-1m_k3_s42_V2"
+  ],
+  "failures": [],
+  "poll_seconds": 20,
+  "policy": "both physical GPUs interchangeable; longest expected task first; one task per GPU; fail stops pending"
+}

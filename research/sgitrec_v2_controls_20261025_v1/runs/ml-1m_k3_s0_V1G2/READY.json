@@ -1,0 +1,11 @@
+{
+  "pid": 3308868,
+  "physical_GPU": 0,
+  "GPU_uuid": "GPU-5d1b4b83-6d28-014d-51b3-9f262308b849",
+  "variant": "V1G2",
+  "dataset": "ml-1m",
+  "parameters": 459781,
+  "C1_initial_sha256": "3997dbdfe5d5083940f184d891be8d40d8263cf3fb37d1813859103a84bb79af",
+  "train_rows": 982089,
+  "Dev_rows": 6040
+}

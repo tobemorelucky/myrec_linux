@@ -1,0 +1,6 @@
+{
+  "task": "ml-1m_G3",
+  "dispatcher": 3049348,
+  "run": "/home/yyx/hzgcode/pom2.0/research/sgitrec_round1_20261024_v1/runs/ml-1m_k3_s42_G3",
+  "handoff": "/home/yyx/hzgcode/pom2.0/research/sgitrec_round1_20261024_v1/shared_dispatch_20261024_v1"
+}

@@ -1,0 +1,10 @@
+{
+  "pid": 3049348,
+  "adopted": 3017405,
+  "pending": [
+    "G3",
+    "G2",
+    "G1"
+  ],
+  "no_new_experiments": true
+}

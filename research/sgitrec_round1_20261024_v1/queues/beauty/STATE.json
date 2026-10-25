@@ -1,0 +1,12 @@
+{
+  "dataset": "beauty",
+  "state": "COMPLETED",
+  "queue_pid": 3017386,
+  "utc": "2026-10-24T11:02:09Z",
+  "completed": [
+    "B0",
+    "G3"
+  ],
+  "pending": [],
+  "new_tasks": 2
+}

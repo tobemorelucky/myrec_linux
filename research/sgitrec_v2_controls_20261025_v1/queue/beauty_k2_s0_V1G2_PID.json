@@ -1,0 +1,28 @@
+{
+  "pid": 3267741,
+  "GPU": 1,
+  "command": [
+    "nohup",
+    "/home/yyx/anaconda3/envs/hzg_py10/bin/python",
+    "-u",
+    "-B",
+    "/home/yyx/hzgcode/pom2.0/tools/run_sgitrec_v2_controls.py",
+    "--config",
+    "/home/yyx/hzgcode/pom2.0/research/sgitrec_v2_controls_20261025_v1/configs/beauty_s0.json",
+    "--graph",
+    "/home/yyx/hzgcode/pom2.0/research/sgitrec_v1_20261024/graphs/beauty_v2.pt",
+    "--variant",
+    "V1G2",
+    "--seed",
+    "0",
+    "--output-dir",
+    "/home/yyx/hzgcode/pom2.0/research/sgitrec_v2_controls_20261025_v1/runs/beauty_k2_s0_V1G2",
+    "--gpu",
+    "1",
+    "--gpu-lease-fd",
+    "6",
+    "--manifest",
+    "/home/yyx/hzgcode/pom2.0/research/sgitrec_v2_controls_20261025_v1/PLAN.json"
+  ],
+  "stdout": "/home/yyx/hzgcode/pom2.0/research/sgitrec_v2_controls_20261025_v1/queue/beauty_k2_s0_V1G2.stdout.log"
+}

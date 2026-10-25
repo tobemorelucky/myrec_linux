@@ -1,0 +1,45 @@
+{
+  "passed": true,
+  "dataset": "beauty",
+  "variants": {
+    "V2-R": {
+      "parameters": 1005124,
+      "step_seconds": 0.12093288591131568,
+      "batch": 1024,
+      "peak_allocated_MiB": 783.09619140625,
+      "graph_buffer_bytes": 5808960,
+      "real_gradients_nonzero": true,
+      "training_candidates_independent": true
+    },
+    "V2-B": {
+      "parameters": 1001157,
+      "step_seconds": 0.18883073329925537,
+      "batch": 1024,
+      "peak_allocated_MiB": 1048.693359375,
+      "graph_buffer_bytes": 13941504,
+      "real_gradients_nonzero": true,
+      "training_candidates_independent": true
+    },
+    "V2-NoS": {
+      "parameters": 1009349,
+      "step_seconds": 0.1871156571432948,
+      "batch": 1024,
+      "peak_allocated_MiB": 1057.2587890625,
+      "graph_buffer_bytes": 13941504,
+      "real_gradients_nonzero": true,
+      "training_candidates_independent": true
+    },
+    "V2-Full": {
+      "parameters": 1009349,
+      "step_seconds": 0.18804483534768224,
+      "batch": 1024,
+      "peak_allocated_MiB": 1058.35498046875,
+      "graph_buffer_bytes": 13941504,
+      "real_gradients_nonzero": true,
+      "training_candidates_independent": true
+    }
+  },
+  "seconds": 29.28131792228669,
+  "Dev": false,
+  "Test": false
+}

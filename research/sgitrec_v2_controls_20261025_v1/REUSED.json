@@ -1,0 +1,86 @@
+{
+  "ml-1m": {
+    "C1_s0": {
+      "path": "/home/yyx/hzgcode/pom2.0/research/elector_sil_night12_20261023_v1/runs/ml-1m_k3_s0_SS-C1",
+      "result_sha256": "43b1726a4f93a049c83ca5063c6b6a729ecf1c9c80c6ab75607da55b873f7286",
+      "checkpoint_sha256": "d52c0eea84e89ec9cd7fdd6d6f816ed774e0ec19826d3b68a639058420857a88",
+      "config_sha256": "fc62578d20789f81184da7c52aef441cdea4bdca27b67e4d985edff40b268be1",
+      "Test_input_hash": "0f73390d259ad47b43441bb1154ec6659c064a84750828a0e6ff73fa1b28bd48",
+      "Dev_best_epoch": 52,
+      "original_result_reused": true,
+      "initial_base_verified": "seed0 current vs historical full parameter tensors; seed42 previous C1 exact B0 checkpoint reproduction"
+    },
+    "C1_s42": {
+      "path": "/home/yyx/hzgcode/pom2.0/research/sgitrec_round1_20261024_v1/runs/ml-1m_k3_s42_B0",
+      "result_sha256": "666690c8c19ff742546509428790b0cfd67a4e34f4f84e2455a7b1836cedd39b",
+      "checkpoint_sha256": "08861748f09cd6483e1cd903fdb788d7423bfcb4f41cb9bfa683e22da4b52caf",
+      "config_sha256": "4442ee69ada75712d34fc68e76b201724817d8c641d87324b4689a846235a53e",
+      "Test_input_hash": "0f73390d259ad47b43441bb1154ec6659c064a84750828a0e6ff73fa1b28bd48",
+      "Dev_best_epoch": 92,
+      "original_result_reused": true,
+      "initial_base_verified": "seed0 current vs historical full parameter tensors; seed42 previous C1 exact B0 checkpoint reproduction"
+    },
+    "V2Full_s42": {
+      "path": "/home/yyx/hzgcode/pom2.0/research/sgitrec_v2_20261025_v1/runs/ml-1m_k3_s42_V2",
+      "result_sha256": "4e4580f54b91b4c55e0d226c37b6ad09fd62dac5bad4d210b5b184db7bd55840",
+      "checkpoint_sha256": "ac1f63bd883528e032182f2cd03d643f15d57dc5d1f7d2295c7094a4c9cdd5d0",
+      "config_sha256": "a2c700272cf801dc6783942d19a53da7c1b550367359bc324ef17d13d57c9b8d",
+      "Test_input_hash": "0f73390d259ad47b43441bb1154ec6659c064a84750828a0e6ff73fa1b28bd48",
+      "Dev_best_epoch": 48,
+      "original_result_reused": true,
+      "initial_base_verified": "seed0 current vs historical full parameter tensors; seed42 previous C1 exact B0 checkpoint reproduction"
+    },
+    "V1G2_s42": {
+      "path": "/home/yyx/hzgcode/pom2.0/research/sgitrec_round1_20261024_v1/runs/ml-1m_k3_s42_G2",
+      "result_sha256": "c7e5fd713f11c3cfd3c6f6b9be5cb7d003cc553a345be5c16655d38b69037b5f",
+      "checkpoint_sha256": "a9006c034231313d2a8131b7df87e643ae3322f9b32f611af3a11228fd03b3c7",
+      "config_sha256": "5aa840a32f88b0af654b7868a5e8a45b76b31985d6b00fe04de92e0cef976aae",
+      "Test_input_hash": "0f73390d259ad47b43441bb1154ec6659c064a84750828a0e6ff73fa1b28bd48",
+      "Dev_best_epoch": 59,
+      "original_result_reused": true,
+      "initial_base_verified": "seed0 current vs historical full parameter tensors; seed42 previous C1 exact B0 checkpoint reproduction"
+    }
+  },
+  "beauty": {
+    "C1_s0": {
+      "path": "/home/yyx/hzgcode/pom2.0/research/elector_sil_night12_20261023_v1/runs/beauty_k2_s0_SS-C1",
+      "result_sha256": "724a68a006d9a5dc559977a1a240bcc274d2e8ff100cd48243209b13eacddce4",
+      "checkpoint_sha256": "dc3518518d76952ca2267e08899257e8e655d9ef787f925f39e7728dd01f8bea",
+      "config_sha256": "fd1538c0146f7ccf2fdda4122d97e1adfb448271973cb3d3f1746cf8b737b29d",
+      "Test_input_hash": "2e888c2b1a9f4496669e5dbcdd51942270c1a208558529619c74098c099790cf",
+      "Dev_best_epoch": 8,
+      "original_result_reused": true,
+      "initial_base_verified": "seed0 current vs historical full parameter tensors; seed42 previous C1 exact B0 checkpoint reproduction"
+    },
+    "C1_s42": {
+      "path": "/home/yyx/hzgcode/pom2.0/research/sgitrec_round1_20261024_v1/runs/beauty_k2_s42_B0",
+      "result_sha256": "dcd714b5c5bf9bd660c3b1c22c88ba230a112aba4539acefe74e4147d0c3a580",
+      "checkpoint_sha256": "5390789b0732c6e1c8ea20a3053f7722574232de04d21952629b5f0f3c07eb91",
+      "config_sha256": "9d70be53c8466996d6a294b63fe83a5c02602fb036c2114d8b35d686e4112603",
+      "Test_input_hash": "2e888c2b1a9f4496669e5dbcdd51942270c1a208558529619c74098c099790cf",
+      "Dev_best_epoch": 11,
+      "original_result_reused": true,
+      "initial_base_verified": "seed0 current vs historical full parameter tensors; seed42 previous C1 exact B0 checkpoint reproduction"
+    },
+    "V2Full_s42": {
+      "path": "/home/yyx/hzgcode/pom2.0/research/sgitrec_v2_20261025_v1/runs/beauty_k2_s42_V2",
+      "result_sha256": "ba4d14c2d9e36d3344b6ea4c5198842e2ab3e3c08d42f465be9fbd9312e8508b",
+      "checkpoint_sha256": "8ccbd82b3eb5d00e42aee4558bf65320c16cb8cfa2050fd072bdffe6c04202b9",
+      "config_sha256": "5ef2893c688f4c5de2f9b26e85a37289f58eb4500e966c6dc2aaf0591ad6aa8c",
+      "Test_input_hash": "2e888c2b1a9f4496669e5dbcdd51942270c1a208558529619c74098c099790cf",
+      "Dev_best_epoch": 6,
+      "original_result_reused": true,
+      "initial_base_verified": "seed0 current vs historical full parameter tensors; seed42 previous C1 exact B0 checkpoint reproduction"
+    },
+    "V1G2_s42": {
+      "path": "/home/yyx/hzgcode/pom2.0/research/sgitrec_v2_20261025_v1/runs/beauty_k2_s42_V1G2",
+      "result_sha256": "901be6f5613cb088189afe590cff4f67d56d84c6adeecddc5ba1e3bfd90f86b7",
+      "checkpoint_sha256": "218212f445dcecc0a9d1904126fd7869efecd2ffe436dabfac19cd744ea059bb",
+      "config_sha256": "cfb81c1286bc5c1d2142196f9c624ef221587ff457a9b41fba68ef3fd376cfd2",
+      "Test_input_hash": "2e888c2b1a9f4496669e5dbcdd51942270c1a208558529619c74098c099790cf",
+      "Dev_best_epoch": 6,
+      "original_result_reused": true,
+      "initial_base_verified": "seed0 current vs historical full parameter tensors; seed42 previous C1 exact B0 checkpoint reproduction"
+    }
+  }
+}

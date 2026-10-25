@@ -1,0 +1,72 @@
+{
+  "queue_pid": 3264357,
+  "state": "RUNNING",
+  "running": {
+    "ml-1m_k3_s42_V2-R": {
+      "pid": 3264372,
+      "GPU": 0,
+      "READY": {
+        "pid": 3264372,
+        "physical_GPU": 0,
+        "GPU_uuid": "GPU-5d1b4b83-6d28-014d-51b3-9f262308b849",
+        "variant": "V2-R",
+        "dataset": "ml-1m",
+        "parameters": 467973,
+        "C1_initial_sha256": "c285c1e62cc0e63f313fa1b9419445b20729793d8a267b4dfd3e37604468c688",
+        "train_rows": 982089,
+        "Dev_rows": 6040
+      },
+      "TRAIN_START": true,
+      "log": "/home/yyx/hzgcode/pom2.0/research/sgitrec_v2_controls_20261025_v1/runs/ml-1m_k3_s42_V2-R/train.log",
+      "last_lines": [
+        "2026-10-25 13:07:50,245 INFO Optimizer: Adam",
+        "2026-10-25 13:07:50,245 INFO Grad Clip: disabled",
+        "2026-10-25 13:07:55,879 INFO [ASPCF] First-batch NaN/Inf check passed."
+      ]
+    },
+    "beauty_k2_s42_V2-R": {
+      "pid": 3264375,
+      "GPU": 1,
+      "READY": {
+        "pid": 3264375,
+        "physical_GPU": 1,
+        "GPU_uuid": "GPU-aae229cf-ddb1-1b36-5734-ffc82ea7e8ac",
+        "variant": "V2-R",
+        "dataset": "beauty",
+        "parameters": 1005124,
+        "C1_initial_sha256": "24c5eb78e3ffd98fc79376dadc36ea6884fe3c34fcee6e388ca7306c1abcf4d9",
+        "train_rows": 131413,
+        "Dev_rows": 22363
+      },
+      "TRAIN_START": true,
+      "log": "/home/yyx/hzgcode/pom2.0/research/sgitrec_v2_controls_20261025_v1/runs/beauty_k2_s42_V2-R/train.log",
+      "last_lines": [
+        "2026-10-25 13:08:30,621 INFO TRAIN_START beauty V2-R K2 seed42 lr=0.004 epoch_limit=200 early_stop=10 prior=.30",
+        "2026-10-25 13:08:31,044 INFO Optimizer: Adam",
+        "2026-10-25 13:08:31,044 INFO Grad Clip: disabled"
+      ]
+    }
+  },
+  "pending": [
+    "beauty_k2_s42_V2-B",
+    "beauty_k2_s42_V2-NoS",
+    "ml-1m_k3_s42_V2-B",
+    "ml-1m_k3_s42_V2-NoS",
+    "beauty_k2_s0_V1G2",
+    "beauty_k2_s0_V2-Full",
+    "ml-1m_k3_s0_V1G2",
+    "ml-1m_k3_s0_V2-Full"
+  ],
+  "locks": {
+    "pool": true,
+    "gpu0": true,
+    "gpu1": true,
+    "task_ml-1m_k3_s42_V2-R": true,
+    "task_beauty_k2_s42_V2-R": true
+  },
+  "gpu_inventory": "0, 879 MiB, 39 %\n1, 252 MiB, 0 %\n",
+  "compute_processes": "GPU-5d1b4b83-6d28-014d-51b3-9f262308b849, 3264372, /home/yyx/anaconda3/envs/hzg_py10/bin/python, 804 MiB\nGPU-aae229cf-ddb1-1b36-5734-ffc82ea7e8ac, 3264375, /home/yyx/anaconda3/envs/hzg_py10/bin/python, 244 MiB\n",
+  "old153_SHA_unchanged": true,
+  "startup_complete": true,
+  "stop_queries_after_startup": true
+}
