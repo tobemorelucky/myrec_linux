@@ -1,0 +1,16 @@
+{
+  "pid": 3533890,
+  "physical_GPU": 1,
+  "GPU_uuid": "GPU-aae229cf-ddb1-1b36-5734-ffc82ea7e8ac",
+  "variant": "DualPath",
+  "dataset": "ml-1m",
+  "parameters": 451464,
+  "initial_scales": {
+    "bridge": 0.0,
+    "smooth": 0.0,
+    "transition": 0.0
+  },
+  "C1_initial_sha256": "c285c1e62cc0e63f313fa1b9419445b20729793d8a267b4dfd3e37604468c688",
+  "train_rows": 982089,
+  "Dev_rows": 6040
+}

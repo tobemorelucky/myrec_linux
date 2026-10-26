@@ -1,0 +1,54 @@
+{
+  "pid": 3567300,
+  "authorized": 6,
+  "tasks": [
+    {
+      "name": "beauty_k2_s0_V3-A",
+      "dataset": "beauty",
+      "seed": 0,
+      "variant": "V3-A",
+      "graph_key": "predictions",
+      "estimated_minutes": 10
+    },
+    {
+      "name": "beauty_k2_s0_V3-B",
+      "dataset": "beauty",
+      "seed": 0,
+      "variant": "V3-B",
+      "graph_key": "predictions",
+      "estimated_minutes": 10
+    },
+    {
+      "name": "ml-1m_k3_s0_V3-A",
+      "dataset": "ml-1m",
+      "seed": 0,
+      "variant": "V3-A",
+      "graph_key": "predictions",
+      "estimated_minutes": 100
+    },
+    {
+      "name": "ml-1m_k3_s0_V3-B",
+      "dataset": "ml-1m",
+      "seed": 0,
+      "variant": "V3-B",
+      "graph_key": "predictions",
+      "estimated_minutes": 90
+    },
+    {
+      "name": "ml-1m_k3_s42_CITERRec-V1",
+      "dataset": "ml-1m",
+      "seed": 42,
+      "variant": "CITERRec-V1",
+      "graph_key": "predictions",
+      "estimated_minutes": 120
+    },
+    {
+      "name": "beauty_k2_s42_CITERRec-V1",
+      "dataset": "beauty",
+      "seed": 42,
+      "variant": "CITERRec-V1",
+      "graph_key": "predictions",
+      "estimated_minutes": 15
+    }
+  ]
+}

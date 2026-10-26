@@ -1,0 +1,19 @@
+{
+  "pid": 3570508,
+  "physical_GPU": 1,
+  "GPU_uuid": "GPU-aae229cf-ddb1-1b36-5734-ffc82ea7e8ac",
+  "variant": "V3-B",
+  "dataset": "ml-1m",
+  "dev_only": true,
+  "data_phases": [
+    "train",
+    "dev"
+  ],
+  "parameters": 443270,
+  "initial_scales": {
+    "transition": 0.0
+  },
+  "C1_initial_sha256": "3997dbdfe5d5083940f184d891be8d40d8263cf3fb37d1813859103a84bb79af",
+  "train_rows": 982089,
+  "Dev_rows": 6040
+}

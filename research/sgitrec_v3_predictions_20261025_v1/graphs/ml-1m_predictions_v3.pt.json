@@ -1,0 +1,54 @@
+{
+  "passed": true,
+  "dataset": "ml-1m",
+  "path": "/home/yyx/hzgcode/pom2.0/research/sgitrec_v3_predictions_20261025_v1/graphs/ml-1m_predictions_v3.pt",
+  "sha256": "317a581f5c0e0e4773c08c666307852821b8b70ba63fe50ab25e7e5d5576d840",
+  "bytes": 6505005,
+  "tensor_bytes": 6494700,
+  "seconds": 10.760268434882164,
+  "TS": [
+    {
+      "fold": 0,
+      "edges": 29128,
+      "sources": 3641,
+      "extra_vs_direct": 28546,
+      "extra_vs_ST": 28586
+    },
+    {
+      "fold": 1,
+      "edges": 29264,
+      "sources": 3658,
+      "extra_vs_direct": 28716,
+      "extra_vs_ST": 28715
+    },
+    {
+      "fold": 2,
+      "edges": 29320,
+      "sources": 3665,
+      "extra_vs_direct": 28754,
+      "extra_vs_ST": 28814
+    }
+  ],
+  "calibration": [
+    {
+      "fold": 0,
+      "RMS": 5.286707292806429,
+      "Train_weighted_RMS": 0.9999999999999999
+    },
+    {
+      "fold": 1,
+      "RMS": 5.286359104653552,
+      "Train_weighted_RMS": 0.9999999999999999
+    },
+    {
+      "fold": 2,
+      "RMS": 5.274800350632682,
+      "Train_weighted_RMS": 1.0
+    }
+  ],
+  "fold_Train_catalog_verified": true,
+  "direction_witnesses_verified": true,
+  "ST_direct_unchanged": true,
+  "Dev": false,
+  "Test": false
+}

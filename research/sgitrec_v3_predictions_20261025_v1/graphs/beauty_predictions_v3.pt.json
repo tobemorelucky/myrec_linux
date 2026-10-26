@@ -1,0 +1,54 @@
+{
+  "passed": true,
+  "dataset": "beauty",
+  "path": "/home/yyx/hzgcode/pom2.0/research/sgitrec_v3_predictions_20261025_v1/graphs/beauty_predictions_v3.pt",
+  "sha256": "6be4ca6b9ab5be4bcf0e0e0f010a7539bdb81c7f25e2f2a22c41bb2f7ddad6a0",
+  "bytes": 21213037,
+  "tensor_bytes": 21202740,
+  "seconds": 27.499427884817123,
+  "TS": [
+    {
+      "fold": 0,
+      "edges": 93416,
+      "sources": 11677,
+      "extra_vs_direct": 92493,
+      "extra_vs_ST": 91713
+    },
+    {
+      "fold": 1,
+      "edges": 93504,
+      "sources": 11688,
+      "extra_vs_direct": 92546,
+      "extra_vs_ST": 91862
+    },
+    {
+      "fold": 2,
+      "edges": 93584,
+      "sources": 11698,
+      "extra_vs_direct": 92599,
+      "extra_vs_ST": 91779
+    }
+  ],
+  "calibration": [
+    {
+      "fold": 0,
+      "RMS": 6.583762017816451,
+      "Train_weighted_RMS": 1.0000000000000002
+    },
+    {
+      "fold": 1,
+      "RMS": 6.577510651357975,
+      "Train_weighted_RMS": 1.0
+    },
+    {
+      "fold": 2,
+      "RMS": 6.579200491331844,
+      "Train_weighted_RMS": 1.0
+    }
+  ],
+  "fold_Train_catalog_verified": true,
+  "direction_witnesses_verified": true,
+  "ST_direct_unchanged": true,
+  "Dev": false,
+  "Test": false
+}

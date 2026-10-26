@@ -1,0 +1,93 @@
+{
+  "passed": true,
+  "seconds": 38.17868176475167,
+  "actual_training_matrix_proof": {
+    "ml-1m": {
+      "TargetInterest": {
+        "all_pairs_same_scorer": true,
+        "off_diagonal_branch_nonzero": true,
+        "actual_ranking_loss_uses_matrix": true,
+        "prior_excluded_from_training": true
+      },
+      "Direct-Fixed": {
+        "all_pairs_same_scorer": true,
+        "off_diagonal_branch_nonzero": true,
+        "actual_ranking_loss_uses_matrix": true,
+        "prior_excluded_from_training": true
+      },
+      "Direct-Target": {
+        "all_pairs_same_scorer": true,
+        "off_diagonal_branch_nonzero": true,
+        "actual_ranking_loss_uses_matrix": true,
+        "prior_excluded_from_training": true
+      },
+      "Bridge-ST": {
+        "all_pairs_same_scorer": true,
+        "off_diagonal_branch_nonzero": true,
+        "actual_ranking_loss_uses_matrix": true,
+        "prior_excluded_from_training": true
+      },
+      "Smooth-TS": {
+        "all_pairs_same_scorer": true,
+        "off_diagonal_branch_nonzero": true,
+        "actual_ranking_loss_uses_matrix": true,
+        "prior_excluded_from_training": true
+      },
+      "DualPath": {
+        "all_pairs_same_scorer": true,
+        "off_diagonal_branch_nonzero": true,
+        "actual_ranking_loss_uses_matrix": true,
+        "prior_excluded_from_training": true
+      }
+    },
+    "beauty": {
+      "TargetInterest": {
+        "all_pairs_same_scorer": true,
+        "off_diagonal_branch_nonzero": true,
+        "actual_ranking_loss_uses_matrix": true,
+        "prior_excluded_from_training": true
+      },
+      "Direct-Fixed": {
+        "all_pairs_same_scorer": true,
+        "off_diagonal_branch_nonzero": true,
+        "actual_ranking_loss_uses_matrix": true,
+        "prior_excluded_from_training": true
+      },
+      "Direct-Target": {
+        "all_pairs_same_scorer": true,
+        "off_diagonal_branch_nonzero": true,
+        "actual_ranking_loss_uses_matrix": true,
+        "prior_excluded_from_training": true
+      },
+      "Bridge-ST": {
+        "all_pairs_same_scorer": true,
+        "off_diagonal_branch_nonzero": true,
+        "actual_ranking_loss_uses_matrix": true,
+        "prior_excluded_from_training": true
+      },
+      "Smooth-TS": {
+        "all_pairs_same_scorer": true,
+        "off_diagonal_branch_nonzero": true,
+        "actual_ranking_loss_uses_matrix": true,
+        "prior_excluded_from_training": true
+      },
+      "DualPath": {
+        "all_pairs_same_scorer": true,
+        "off_diagonal_branch_nonzero": true,
+        "actual_ranking_loss_uses_matrix": true,
+        "prior_excluded_from_training": true
+      }
+    }
+  },
+  "protected_assets_unchanged": 200,
+  "source_sha256": {
+    "/home/yyx/hzgcode/pom2.0/models/sequential/SGITRecV3Controlled.py": "57e2f8ee7cc02652c88e7ff4d326d112ee120da0c12d34124a7cafdfc2a5933b",
+    "/home/yyx/hzgcode/pom2.0/models/sequential/sgit_v3_control_components.py": "a8416ff8a7f79fe28545fd6ae632535c01918bc0e5b7d89c71e75ce48b511d98",
+    "/home/yyx/hzgcode/pom2.0/tools/build_sgit_v3_control_index.py": "ccd1d860552f003a59fd8a578ee419f29662d3ea785c06c579ac08d72844aab2",
+    "/home/yyx/hzgcode/pom2.0/tools/run_sgitrec_v3_controls.py": "d35a80dff93c62f392e5f3edc658e4d8f426a477c6b7ec8b1216e3c057b0dd31",
+    "/home/yyx/hzgcode/pom2.0/tools/test_sgit_v3_controls.py": "fdb19a3966378f55ecda1239fad076fa98c4d8fd338c7eb067f44ce6bc7ca5fe",
+    "/home/yyx/hzgcode/pom2.0/research/sgitrec_v3_predictions_20261025_v1/dispatcher.py": "5a1a5987dbd73f074a56198915aa172b0a4c9750927af01bb2ab033ebad25fde"
+  },
+  "init_routing_gradient_note": "Q/K ranking gradients are nonzero but initially small (about 1e-11 in graph arms); no threshold/performance filter. Per-epoch parameter update norms are logged.",
+  "no_Test_or_Dev_evaluation": true
+}

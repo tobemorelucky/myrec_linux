@@ -1,0 +1,12 @@
+{
+  "dispatcher": 3363792,
+  "task": {
+    "name": "ml-1m_k3_s42_Smooth-TS",
+    "dataset": "ml-1m",
+    "seed": 42,
+    "variant": "Smooth-TS",
+    "graph_key": "predictions",
+    "estimated_minutes": 95
+  },
+  "GPU": 0
+}

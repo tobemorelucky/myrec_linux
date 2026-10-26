@@ -1,0 +1,180 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "K": 1,
+      "variant": "TargetInterest",
+      "dense_reference": true,
+      "duplicate_slots": true,
+      "ranking_gradients": true
+    },
+    {
+      "K": 1,
+      "variant": "Direct-Fixed",
+      "dense_reference": true,
+      "duplicate_slots": true,
+      "ranking_gradients": true
+    },
+    {
+      "K": 1,
+      "variant": "Direct-Target",
+      "dense_reference": true,
+      "duplicate_slots": true,
+      "ranking_gradients": true
+    },
+    {
+      "K": 1,
+      "variant": "Bridge-ST",
+      "dense_reference": true,
+      "duplicate_slots": true,
+      "ranking_gradients": true
+    },
+    {
+      "K": 1,
+      "variant": "Smooth-TS",
+      "dense_reference": true,
+      "duplicate_slots": true,
+      "ranking_gradients": true
+    },
+    {
+      "K": 1,
+      "variant": "DualPath",
+      "dense_reference": true,
+      "duplicate_slots": true,
+      "ranking_gradients": true
+    },
+    {
+      "K": 2,
+      "variant": "TargetInterest",
+      "dense_reference": true,
+      "duplicate_slots": true,
+      "ranking_gradients": true
+    },
+    {
+      "K": 2,
+      "variant": "Direct-Fixed",
+      "dense_reference": true,
+      "duplicate_slots": true,
+      "ranking_gradients": true
+    },
+    {
+      "K": 2,
+      "variant": "Direct-Target",
+      "dense_reference": true,
+      "duplicate_slots": true,
+      "ranking_gradients": true
+    },
+    {
+      "K": 2,
+      "variant": "Bridge-ST",
+      "dense_reference": true,
+      "duplicate_slots": true,
+      "ranking_gradients": true
+    },
+    {
+      "K": 2,
+      "variant": "Smooth-TS",
+      "dense_reference": true,
+      "duplicate_slots": true,
+      "ranking_gradients": true
+    },
+    {
+      "K": 2,
+      "variant": "DualPath",
+      "dense_reference": true,
+      "duplicate_slots": true,
+      "ranking_gradients": true
+    },
+    {
+      "K": 3,
+      "variant": "TargetInterest",
+      "dense_reference": true,
+      "duplicate_slots": true,
+      "ranking_gradients": true
+    },
+    {
+      "K": 3,
+      "variant": "Direct-Fixed",
+      "dense_reference": true,
+      "duplicate_slots": true,
+      "ranking_gradients": true
+    },
+    {
+      "K": 3,
+      "variant": "Direct-Target",
+      "dense_reference": true,
+      "duplicate_slots": true,
+      "ranking_gradients": true
+    },
+    {
+      "K": 3,
+      "variant": "Bridge-ST",
+      "dense_reference": true,
+      "duplicate_slots": true,
+      "ranking_gradients": true
+    },
+    {
+      "K": 3,
+      "variant": "Smooth-TS",
+      "dense_reference": true,
+      "duplicate_slots": true,
+      "ranking_gradients": true
+    },
+    {
+      "K": 3,
+      "variant": "DualPath",
+      "dense_reference": true,
+      "duplicate_slots": true,
+      "ranking_gradients": true
+    },
+    {
+      "K": 4,
+      "variant": "TargetInterest",
+      "dense_reference": true,
+      "duplicate_slots": true,
+      "ranking_gradients": true
+    },
+    {
+      "K": 4,
+      "variant": "Direct-Fixed",
+      "dense_reference": true,
+      "duplicate_slots": true,
+      "ranking_gradients": true
+    },
+    {
+      "K": 4,
+      "variant": "Direct-Target",
+      "dense_reference": true,
+      "duplicate_slots": true,
+      "ranking_gradients": true
+    },
+    {
+      "K": 4,
+      "variant": "Bridge-ST",
+      "dense_reference": true,
+      "duplicate_slots": true,
+      "ranking_gradients": true
+    },
+    {
+      "K": 4,
+      "variant": "Smooth-TS",
+      "dense_reference": true,
+      "duplicate_slots": true,
+      "ranking_gradients": true
+    },
+    {
+      "K": 4,
+      "variant": "DualPath",
+      "dense_reference": true,
+      "duplicate_slots": true,
+      "ranking_gradients": true
+    }
+  ],
+  "fold_future_invariance_TS_ST_and_calibration": true,
+  "candidate_specific_interests": true,
+  "B_C_same_when_condition_removed": true,
+  "K1_target_exactly_zero": true,
+  "Dev": false,
+  "Test": false,
+  "seconds": 2.6148714907467365
+}

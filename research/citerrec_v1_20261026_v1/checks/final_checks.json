@@ -1,0 +1,29 @@
+{
+  "passed": true,
+  "protected_SHA_unchanged": 235,
+  "fresh_initial_seed0_seed42_exact": true,
+  "exact_legacy_AB_reused_for_replications": true,
+  "existing_duplicate_seed0_AB": [],
+  "dev_only_entry_has_no_Test_reader": true,
+  "Dev_guard_regression_passed": true,
+  "complementarity_gate_passed_both_samples": true,
+  "historical_single_branch_note": "Reliability disabled gives exact A/B; enabled gates define new controlled experts and are not claimed identical to historical A/B.",
+  "engineering_fix": "GPU fixed-expert reduction aligned with old B candidate chunk order; resolved max3.7e-9 numerical difference before any formal training.",
+  "risks": [
+    "Interest gate ranking gradients initially tiny; record every epoch, no automatic learning-rate or loss searches.",
+    "Sample strata are exploratory and contain independently trained backbone confounding."
+  ],
+  "source_sha256": {
+    "/home/yyx/hzgcode/pom2.0/models/sequential/CITERRec.py": "9b253cc0c34d94b6842730c04d81afebfe2a3373551a160e86eba9a02c4db669",
+    "/home/yyx/hzgcode/pom2.0/models/sequential/citer_components.py": "b8368815b6e7bbab43f79f47aa9c1e745269e74ed2a170fc08c08c486ef3a924",
+    "/home/yyx/hzgcode/pom2.0/tools/citer_dev_protocol.py": "3221a84daf81f36929eb27840750a6d5120ed44f60775c8a29b22f9c6ad6c77f",
+    "/home/yyx/hzgcode/pom2.0/tools/diagnose_citer_dev.py": "c28ea809799912345836a4c876f4fa134d70b6eb66eb19d0d1590f4f0514fa9d",
+    "/home/yyx/hzgcode/pom2.0/tools/run_citerrec_dev.py": "bc7c50071f9c55b489d6619b138579e415d8f3b28a7948ec75247f571a7ac103",
+    "/home/yyx/hzgcode/pom2.0/tools/test_citerrec.py": "68a72ba5869aaa4a4426f426b5405d03c707736455f544d6a575edc1f9d7d7db",
+    "/home/yyx/hzgcode/pom2.0/new_bash/run_citerrec_dev.sh": "71f5008c351f6ec1d9b772563d9af2dabad866292e41f471d4d69d79b640f46a",
+    "/home/yyx/hzgcode/pom2.0/research/citerrec_v1_20261026_v1/dispatcher.py": "2df37490eebaf2766405f9f16a9f5a91ce04af6259893b7c1e354b7d0ea623bf",
+    "/home/yyx/hzgcode/pom2.0/research/citerrec_v1_20261026_v1/runtime_smoke.py": "e54cd16797f76e102658a3eb7b5834cdcae156826c3c147663ccaf15c794017f",
+    "/home/yyx/hzgcode/pom2.0/research/citerrec_v1_20261026_v1/final_checks.py": "fc1088cf0634262e8bd61d896d4c48699ddfe8cf10c4135175123113f09671d8"
+  },
+  "seconds": 1.4605694320052862
+}

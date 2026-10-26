@@ -1,0 +1,39 @@
+{
+  "dataset": "ml-1m",
+  "device": "cpu",
+  "parameters": {
+    "1": 451205,
+    "2": 451334,
+    "3": 451463,
+    "4": 451592
+  },
+  "K": 3,
+  "initial_C1_score_Loss_gradients_exact": true,
+  "all_graph_off_C1_exact": true,
+  "no_path_nonpadding_exact": true,
+  "real_score_branch_and_C1_gradients": true,
+  "scale_values": [
+    0.00892961397767067,
+    0.008892747573554516
+  ],
+  "history_independent_of_candidates": true,
+  "padding_empty_short": true,
+  "causality": true,
+  "duplicate_1001_slots_exact": true,
+  "filtered_mask_unchanged": true,
+  "sparse_join": "B*K*(C+L*R); no B*N or B*C*L*R intermediates",
+  "train_batch": 1024,
+  "train_step_seconds": 0.9659083127044141,
+  "train_peak_GPU_MiB": null,
+  "evaluation_batch": 16,
+  "evaluation_candidates": 1001,
+  "evaluation_seconds": 0.19076643511652946,
+  "evaluation_peak_GPU_MiB": null,
+  "peak_process_RSS_MiB": 1589.5625,
+  "graph_device_bytes": 2135232,
+  "graph_file_bytes": 3655234,
+  "Dev": false,
+  "Test": false,
+  "passed": true,
+  "seconds": 23.02387887239456
+}

@@ -1,0 +1,12 @@
+{
+  "dispatcher": 3363792,
+  "task": {
+    "name": "ml-1m_k3_s42_DualPath",
+    "dataset": "ml-1m",
+    "seed": 42,
+    "variant": "DualPath",
+    "graph_key": "predictions",
+    "estimated_minutes": 100
+  },
+  "GPU": 1
+}

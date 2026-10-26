@@ -1,0 +1,12 @@
+{
+  "dispatcher": 3363792,
+  "task": {
+    "name": "beauty_k2_s42_Direct-Fixed",
+    "dataset": "beauty",
+    "seed": 42,
+    "variant": "Direct-Fixed",
+    "graph_key": "predictions",
+    "estimated_minutes": 12
+  },
+  "GPU": 1
+}

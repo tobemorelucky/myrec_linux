@@ -1,0 +1,27 @@
+{
+  "pid": 3363792,
+  "command": [
+    "nohup",
+    "/home/yyx/anaconda3/envs/hzg_py10/bin/python",
+    "-u",
+    "-B",
+    "/home/yyx/hzgcode/pom2.0/research/sgitrec_v3_predictions_20261025_v1/dispatcher.py"
+  ],
+  "tasks": 12,
+  "inventory": {
+    "0": {
+      "uuid": "GPU-5d1b4b83-6d28-014d-51b3-9f262308b849",
+      "free": 15437,
+      "util": 38,
+      "pids": [
+        3334932
+      ]
+    },
+    "1": {
+      "uuid": "GPU-aae229cf-ddb1-1b36-5734-ffc82ea7e8ac",
+      "free": 16108,
+      "util": 0,
+      "pids": []
+    }
+  }
+}

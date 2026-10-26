@@ -1,0 +1,50 @@
+{
+  "checkpoint_sha256": "5c120cd5dd447ab5d191c02fc9ef856b68683add868e21e54dc01d56993f8603",
+  "seconds": 5505.009775787592,
+  "best": {
+    "epoch": 45,
+    "training_cost": {
+      "epoch": 45,
+      "training_seconds": 81.53038188442588,
+      "peak_allocated_MiB": 554.67626953125,
+      "batches": 960,
+      "unique_neighbors": 0,
+      "newly_encoded_items": 0,
+      "maximum_unique_neighbors": 0,
+      "history_slots_queried": 19641780,
+      "neighbor_slots_read": 314268480,
+      "mean_unique_neighbors": 0.0,
+      "mean_newly_encoded_items": 0.0
+    },
+    "branch_scales": {
+      "smooth": 0.36704593896865845,
+      "transition": 2.5326738357543945
+    },
+    "branch_update_norms": {
+      "query.weight": 11.153535842895508,
+      "key.weight": 11.008139610290527,
+      "scales.smooth": 0.36704593896865845,
+      "scales.transition": 2.5326738357543945
+    },
+    "metrics": {
+      "raw": {
+        "HR@5": 0.3758278145695364,
+        "NDCG@5": 0.27865866590949057,
+        "HR@10": 0.4859271523178808,
+        "NDCG@10": 0.3141922130371652,
+        "HR@20": 0.5985099337748344,
+        "NDCG@20": 0.3427059883772051
+      },
+      "locked_prior": {
+        "HR@5": 0.4117549668874172,
+        "NDCG@5": 0.3064261247578682,
+        "HR@10": 0.5245033112582781,
+        "NDCG@10": 0.34286260871455454,
+        "HR@20": 0.6357615894039735,
+        "NDCG@20": 0.3710050844019782
+      }
+    },
+    "input_hash": "50861352da5378964d8597462bfb58f23356058007baf9397609889314fa62e2",
+    "rows": 6040
+  }
+}

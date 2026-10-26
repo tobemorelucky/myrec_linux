@@ -1,0 +1,28 @@
+{
+  "pid": 3366183,
+  "GPU": 1,
+  "command": [
+    "nohup",
+    "/home/yyx/anaconda3/envs/hzg_py10/bin/python",
+    "-u",
+    "-B",
+    "/home/yyx/hzgcode/pom2.0/tools/run_sgitrec_v3_controls.py",
+    "--config",
+    "/home/yyx/hzgcode/pom2.0/research/sgitrec_v3_predictions_20261025_v1/configs/beauty_s42.json",
+    "--graph",
+    "/home/yyx/hzgcode/pom2.0/research/sgitrec_v3_predictions_20261025_v1/graphs/beauty_predictions_v3.pt",
+    "--variant",
+    "Direct-Fixed",
+    "--seed",
+    "42",
+    "--output-dir",
+    "/home/yyx/hzgcode/pom2.0/research/sgitrec_v3_predictions_20261025_v1/runs/beauty_k2_s42_Direct-Fixed",
+    "--gpu",
+    "1",
+    "--gpu-lease-fd",
+    "4",
+    "--manifest",
+    "/home/yyx/hzgcode/pom2.0/research/sgitrec_v3_predictions_20261025_v1/PLAN.json"
+  ],
+  "stdout": "/home/yyx/hzgcode/pom2.0/research/sgitrec_v3_predictions_20261025_v1/queue/beauty_k2_s42_Direct-Fixed.stdout.log"
+}

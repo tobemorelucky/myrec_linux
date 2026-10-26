@@ -1,0 +1,42 @@
+{
+  "epoch": 9,
+  "training_cost": {
+    "epoch": 9,
+    "training_seconds": 8.766851083375514,
+    "peak_allocated_MiB": 532.58447265625,
+    "batches": 129,
+    "unique_neighbors": 0,
+    "newly_encoded_items": 0,
+    "maximum_unique_neighbors": 0,
+    "history_slots_queried": 2628260,
+    "neighbor_slots_read": 21026080,
+    "mean_unique_neighbors": 0.0,
+    "mean_newly_encoded_items": 0.0
+  },
+  "branch_scales": {
+    "transition": 2.0562405586242676
+  },
+  "branch_update_norms": {
+    "scales.transition": 2.0562405586242676
+  },
+  "metrics": {
+    "raw": {
+      "HR@5": 0.2067253946250503,
+      "NDCG@5": 0.1516547497460558,
+      "HR@10": 0.27335330680141307,
+      "NDCG@10": 0.17314893001848447,
+      "HR@20": 0.342082904798104,
+      "NDCG@20": 0.19048508957832383
+    },
+    "locked_prior": {
+      "HR@5": 0.25622680320171715,
+      "NDCG@5": 0.18994198560666534,
+      "HR@10": 0.33005410723069356,
+      "NDCG@10": 0.21382675367362053,
+      "HR@20": 0.4049098958100434,
+      "NDCG@20": 0.2327510639902
+    }
+  },
+  "input_hash": "e352ea8c050482616006bb8be872cf1f5b3b3e84c6058e3c11dc614cecdb8fce",
+  "rows": 22363
+}

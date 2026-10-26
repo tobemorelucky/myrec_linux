@@ -1,0 +1,24 @@
+{
+  "pid": 3363792,
+  "utc": "2026-10-25T19:44:33Z",
+  "state": "COMPLETED",
+  "running": {},
+  "pending": [],
+  "completed": [
+    "beauty_k2_s42_TargetInterest",
+    "beauty_k2_s42_Direct-Fixed",
+    "beauty_k2_s42_Direct-Target",
+    "beauty_k2_s42_Bridge-ST",
+    "beauty_k2_s42_Smooth-TS",
+    "beauty_k2_s42_DualPath",
+    "ml-1m_k3_s42_TargetInterest",
+    "ml-1m_k3_s42_Direct-Fixed",
+    "ml-1m_k3_s42_Direct-Target",
+    "ml-1m_k3_s42_Bridge-ST",
+    "ml-1m_k3_s42_Smooth-TS",
+    "ml-1m_k3_s42_DualPath"
+  ],
+  "failures": [],
+  "poll_seconds": 20,
+  "policy": "GPU1 Beauty-first/GPU0 ML-first with work stealing; both GPUs interchangeable; one task per GPU; fail stops pending"
+}

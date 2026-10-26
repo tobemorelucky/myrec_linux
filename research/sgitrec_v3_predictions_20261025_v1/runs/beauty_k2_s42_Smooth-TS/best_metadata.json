@@ -1,0 +1,46 @@
+{
+  "epoch": 6,
+  "training_cost": {
+    "epoch": 6,
+    "training_seconds": 11.034458726644516,
+    "peak_allocated_MiB": 603.306640625,
+    "batches": 129,
+    "unique_neighbors": 0,
+    "newly_encoded_items": 0,
+    "maximum_unique_neighbors": 0,
+    "history_slots_queried": 2628260,
+    "neighbor_slots_read": 42052160,
+    "mean_unique_neighbors": 0.0,
+    "mean_newly_encoded_items": 0.0
+  },
+  "branch_scales": {
+    "smooth": 0.9979532361030579,
+    "transition": 1.8466577529907227
+  },
+  "branch_update_norms": {
+    "query.weight": 9.827160835266113,
+    "key.weight": 7.954818248748779,
+    "scales.smooth": 0.9979532361030579,
+    "scales.transition": 1.8466577529907227
+  },
+  "metrics": {
+    "raw": {
+      "HR@5": 0.20466842552430353,
+      "NDCG@5": 0.15065552152912218,
+      "HR@10": 0.26968653579573404,
+      "NDCG@10": 0.1716116035822999,
+      "HR@20": 0.3443187407771766,
+      "NDCG@20": 0.1905062991928207
+    },
+    "locked_prior": {
+      "HR@5": 0.25519831865134374,
+      "NDCG@5": 0.18935548368267272,
+      "HR@10": 0.3307248580244153,
+      "NDCG@10": 0.2137519733315733,
+      "HR@20": 0.40853195009614096,
+      "NDCG@20": 0.23341177450042105
+    }
+  },
+  "input_hash": "e352ea8c050482616006bb8be872cf1f5b3b3e84c6058e3c11dc614cecdb8fce",
+  "rows": 22363
+}

@@ -1,0 +1,12 @@
+{
+  "dispatcher": 3567300,
+  "task": {
+    "name": "ml-1m_k3_s0_V3-B",
+    "dataset": "ml-1m",
+    "seed": 0,
+    "variant": "V3-B",
+    "graph_key": "predictions",
+    "estimated_minutes": 90
+  },
+  "GPU": 1
+}

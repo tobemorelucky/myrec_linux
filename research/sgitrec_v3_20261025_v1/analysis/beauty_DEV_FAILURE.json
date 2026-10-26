@@ -1,0 +1,9 @@
+{
+  "dataset": "beauty",
+  "once_attempted": true,
+  "error": "variable padded history widths across Dev batches caused concatenation failure after scoring; no usable arrays saved",
+  "new_diagnostic_bug_fixed": true,
+  "repeated_Dev_inference": false,
+  "Test": false,
+  "limitation": "Beauty per-user ranking/score diagnosis unavailable in this turn; only existing aggregate results and ML Dev diagnosis support discussion"
+}

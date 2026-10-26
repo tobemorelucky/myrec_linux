@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "two_actual_Train_batches": true,
+  "original_Runner_hook": true,
+  "evaluate_update_logger": true,
+  "evaluator_and_input_hash_exact_original": true,
+  "synthetic_1001_duplicate_slots": true,
+  "no_checkpoint_saved": true,
+  "real_Dev": false,
+  "Test": false
+}

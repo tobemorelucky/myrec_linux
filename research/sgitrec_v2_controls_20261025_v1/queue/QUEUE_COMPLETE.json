@@ -1,0 +1,17 @@
+{
+  "completed": [
+    "beauty_k2_s42_V2-R",
+    "beauty_k2_s42_V2-B",
+    "beauty_k2_s42_V2-NoS",
+    "beauty_k2_s0_V1G2",
+    "beauty_k2_s0_V2-Full",
+    "ml-1m_k3_s42_V2-R",
+    "ml-1m_k3_s42_V2-NoS",
+    "ml-1m_k3_s42_V2-B",
+    "ml-1m_k3_s0_V1G2",
+    "ml-1m_k3_s0_V2-Full"
+  ],
+  "pending": [],
+  "failures": [],
+  "no_more_tasks": true
+}

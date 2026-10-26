@@ -1,0 +1,42 @@
+{
+  "math": [
+    {
+      "K": 1,
+      "sparse_equals_dense": true,
+      "duplicate_slots": true,
+      "no_path_zero": true,
+      "zero_init": true,
+      "finite_gradients": true
+    },
+    {
+      "K": 2,
+      "sparse_equals_dense": true,
+      "duplicate_slots": true,
+      "no_path_zero": true,
+      "zero_init": true,
+      "finite_gradients": true
+    },
+    {
+      "K": 3,
+      "sparse_equals_dense": true,
+      "duplicate_slots": true,
+      "no_path_zero": true,
+      "zero_init": true,
+      "finite_gradients": true
+    },
+    {
+      "K": 4,
+      "sparse_equals_dense": true,
+      "duplicate_slots": true,
+      "no_path_zero": true,
+      "zero_init": true,
+      "finite_gradients": true
+    }
+  ],
+  "candidate_interest_selection_different": true,
+  "fold_future_invariance_including_calibration": true,
+  "graph_ids_prob_unchanged": true,
+  "shared_batch_candidate_and_duplicate_mapping": true,
+  "passed": true,
+  "seconds": 2.9467503866180778
+}

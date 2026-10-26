@@ -1,0 +1,28 @@
+{
+  "pid": 3570382,
+  "GPU": 0,
+  "command": [
+    "nohup",
+    "/home/yyx/anaconda3/envs/hzg_py10/bin/python",
+    "-u",
+    "-B",
+    "/home/yyx/hzgcode/pom2.0/tools/run_citerrec_dev.py",
+    "--config",
+    "/home/yyx/hzgcode/pom2.0/research/citerrec_v1_20261026_v1/configs/ml-1m_s0.json",
+    "--graph",
+    "/home/yyx/hzgcode/pom2.0/research/sgitrec_v3_predictions_20261025_v1/graphs/ml-1m_predictions_v3.pt",
+    "--variant",
+    "V3-A",
+    "--seed",
+    "0",
+    "--output-dir",
+    "/home/yyx/hzgcode/pom2.0/research/citerrec_v1_20261026_v1/runs/ml-1m_k3_s0_V3-A",
+    "--gpu",
+    "0",
+    "--gpu-lease-fd",
+    "6",
+    "--manifest",
+    "/home/yyx/hzgcode/pom2.0/research/citerrec_v1_20261026_v1/PLAN.json"
+  ],
+  "stdout": "/home/yyx/hzgcode/pom2.0/research/citerrec_v1_20261026_v1/queue/ml-1m_k3_s0_V3-A.stdout.log"
+}

@@ -1,0 +1,34 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "K": 1,
+      "single_expert_matches_legacy_without_gates": true,
+      "no_path_graph_zero": true,
+      "finite_grads_and_gates_update": true
+    },
+    {
+      "K": 2,
+      "single_expert_matches_legacy_without_gates": true,
+      "no_path_graph_zero": true,
+      "finite_grads_and_gates_update": true
+    },
+    {
+      "K": 3,
+      "single_expert_matches_legacy_without_gates": true,
+      "no_path_graph_zero": true,
+      "finite_grads_and_gates_update": true
+    },
+    {
+      "K": 4,
+      "single_expert_matches_legacy_without_gates": true,
+      "no_path_graph_zero": true,
+      "finite_grads_and_gates_update": true
+    }
+  ],
+  "Test_read_write_guard": true,
+  "independent_user_support_max_not_sum": true,
+  "Test": false,
+  "Dev": false,
+  "seconds": 2.278217090293765
+}

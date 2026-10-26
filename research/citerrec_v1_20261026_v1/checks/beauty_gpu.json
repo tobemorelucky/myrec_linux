@@ -1,0 +1,41 @@
+{
+  "passed": true,
+  "dataset": "beauty",
+  "parameters": 988622,
+  "graph_bytes": 4647168,
+  "initial_C1_hash": {
+    "0": "ef9bebae7ef9f06f0ee998d9766b2ef1d7b79dbd897f5c49b67fce56d3ca167a",
+    "42": "24c5eb78e3ffd98fc79376dadc36ea6884fe3c34fcee6e388ca7306c1abcf4d9"
+  },
+  "zero_init_C1_score_loss_grad_exact": true,
+  "single_branches_ungated_exact_legacy_AB": true,
+  "gated_single_branch_differs_from_historical_AB": true,
+  "ranking_gradients": {
+    "query.weight": 2.6463290225819946e-08,
+    "key.weight": 2.965438206103954e-08,
+    "scales.target": 1.0746523457783042e-06,
+    "scales.transition": 0.020311323925852776,
+    "interest_gate.weight": 1.7393772533402796e-10,
+    "interest_gate.bias": 1.8463759410281e-09,
+    "transition_gate.weight": 0.00013931936700828373,
+    "transition_gate.bias": 0.00014934693172108382
+  },
+  "all_scorer_parameters_updated": true,
+  "full_BxB_uses_same_scorer": true,
+  "mask_duplicates_prior_once": true,
+  "empty_short_padding_causality": true,
+  "scales": {
+    "target": -0.0099216029047966,
+    "transition": 0.03596651926636696
+  },
+  "costs": {
+    "batch": 1024,
+    "step_seconds": 0.11585262138396502,
+    "peak_train_MiB": 857.97216796875,
+    "eval128x1001_seconds": 0.04411132074892521,
+    "peak_eval_MiB": 1328.94189453125
+  },
+  "Dev": false,
+  "Test": false,
+  "seconds": 32.49704533908516
+}

@@ -1,0 +1,12 @@
+{
+  "dispatcher": 3363792,
+  "task": {
+    "name": "ml-1m_k3_s42_Direct-Target",
+    "dataset": "ml-1m",
+    "seed": 42,
+    "variant": "Direct-Target",
+    "graph_key": "predictions",
+    "estimated_minutes": 90
+  },
+  "GPU": 1
+}

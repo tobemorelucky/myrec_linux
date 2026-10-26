@@ -1,0 +1,35 @@
+{
+  "passed": true,
+  "dataset": "beauty",
+  "parameters": 988622,
+  "graph_bytes": 4647168,
+  "initial_C1_hash": {
+    "0": "ef9bebae7ef9f06f0ee998d9766b2ef1d7b79dbd897f5c49b67fce56d3ca167a",
+    "42": "24c5eb78e3ffd98fc79376dadc36ea6884fe3c34fcee6e388ca7306c1abcf4d9"
+  },
+  "zero_init_C1_score_loss_grad_exact": true,
+  "single_branches_ungated_exact_legacy_AB": true,
+  "gated_single_branch_differs_from_historical_AB": true,
+  "ranking_gradients": {
+    "query.weight": 6.291593734886192e-08,
+    "key.weight": 6.393374007984676e-08,
+    "scales.target": 1.803112127163331e-06,
+    "scales.transition": 0.02028874307870865,
+    "interest_gate.weight": 5.400372371511253e-10,
+    "interest_gate.bias": 3.8583967132410635e-09,
+    "transition_gate.weight": 0.00013921484060119838,
+    "transition_gate.bias": 0.00014921792899258435
+  },
+  "all_scorer_parameters_updated": true,
+  "full_BxB_uses_same_scorer": true,
+  "mask_duplicates_prior_once": true,
+  "empty_short_padding_causality": true,
+  "scales": {
+    "target": 0.006042122840881348,
+    "transition": 0.0240030474960804
+  },
+  "costs": {},
+  "Dev": false,
+  "Test": false,
+  "seconds": 30.516983394511044
+}

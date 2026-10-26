@@ -1,0 +1,90 @@
+{
+  "dataset": "beauty",
+  "path": "/home/yyx/hzgcode/pom2.0/research/sgitrec_v3_20261025_v1/graphs/beauty_candidate_v3.pt",
+  "sha256": "8c371a27bd8e7f5a7145ee7b249ff94689e1bc86ba96a6dc752cc7a4dbb92c92",
+  "tensor_bytes": 11908392,
+  "per_fold": [
+    {
+      "fold": 0,
+      "relations": {
+        "transition": {
+          "edges": 51202,
+          "prob_mean": 0.21018878637172336,
+          "probability_median": 0.1666666716337204,
+          "RMS": 6.187624509585314,
+          "Train_weighted_normalized_RMS": 1.0,
+          "value_mean": 1.1504689455032349,
+          "corr_probability_target_pop": -0.08572618441615254,
+          "corr_value_target_pop": -0.6832712483174701
+        },
+        "bridge": {
+          "edges": 96808,
+          "prob_mean": 0.07637111305819975,
+          "probability_median": 0.057841651141643524,
+          "RMS": 6.180708160322957,
+          "Train_weighted_normalized_RMS": 1.0,
+          "value_mean": 1.0096269845962524,
+          "corr_probability_target_pop": -0.01082312019157353,
+          "corr_value_target_pop": -0.6815996484883673
+        }
+      },
+      "target_events": 86969
+    },
+    {
+      "fold": 1,
+      "relations": {
+        "transition": {
+          "edges": 51899,
+          "prob_mean": 0.20702122045244567,
+          "probability_median": 0.1666666716337204,
+          "RMS": 6.186424298367812,
+          "Train_weighted_normalized_RMS": 1.0,
+          "value_mean": 1.149522066116333,
+          "corr_probability_target_pop": -0.09955372552340351,
+          "corr_value_target_pop": -0.6964550163494517
+        },
+        "bridge": {
+          "edges": 96808,
+          "prob_mean": 0.0761101436995651,
+          "probability_median": 0.05724123865365982,
+          "RMS": 6.169564110434197,
+          "Train_weighted_normalized_RMS": 1.0,
+          "value_mean": 1.009261965751648,
+          "corr_probability_target_pop": -0.02115600581688898,
+          "corr_value_target_pop": -0.6866646812759261
+        }
+      },
+      "target_events": 88421
+    },
+    {
+      "fold": 2,
+      "relations": {
+        "transition": {
+          "edges": 52053,
+          "prob_mean": 0.20684618493744789,
+          "probability_median": 0.1666666716337204,
+          "RMS": 6.207889157352389,
+          "Train_weighted_normalized_RMS": 0.9999999999999999,
+          "value_mean": 1.1466373205184937,
+          "corr_probability_target_pop": -0.09858090631818972,
+          "corr_value_target_pop": -0.69350105406597
+        },
+        "bridge": {
+          "edges": 96808,
+          "prob_mean": 0.07551201172262245,
+          "probability_median": 0.05709821730852127,
+          "RMS": 6.18138110819422,
+          "Train_weighted_normalized_RMS": 1.0,
+          "value_mean": 1.0082073211669922,
+          "corr_probability_target_pop": -0.023637840773732495,
+          "corr_value_target_pop": -0.6856177579011175
+        }
+      },
+      "target_events": 87436
+    }
+  ],
+  "seconds": 17.530002281069756,
+  "Train_only": true,
+  "Dev": false,
+  "Test": false
+}

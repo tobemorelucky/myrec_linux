@@ -1,0 +1,39 @@
+{
+  "dataset": "beauty",
+  "device": "cpu",
+  "parameters": {
+    "1": 988485,
+    "2": 988614,
+    "3": 988743,
+    "4": 988872
+  },
+  "K": 2,
+  "initial_C1_score_Loss_gradients_exact": true,
+  "all_graph_off_C1_exact": true,
+  "no_path_nonpadding_exact": true,
+  "real_score_branch_and_C1_gradients": true,
+  "scale_values": [
+    0.036168284714221954,
+    0.03606746718287468
+  ],
+  "history_independent_of_candidates": true,
+  "padding_empty_short": true,
+  "causality": true,
+  "duplicate_1001_slots_exact": true,
+  "filtered_mask_unchanged": true,
+  "sparse_join": "B*K*(C+L*R); no B*N or B*C*L*R intermediates",
+  "train_batch": 1024,
+  "train_step_seconds": 0.7585558965802193,
+  "train_peak_GPU_MiB": null,
+  "evaluation_batch": 16,
+  "evaluation_candidates": 1001,
+  "evaluation_seconds": 0.16790208127349615,
+  "evaluation_peak_GPU_MiB": null,
+  "peak_process_RSS_MiB": 1510.62109375,
+  "graph_device_bytes": 6970752,
+  "graph_file_bytes": 11915778,
+  "Dev": false,
+  "Test": false,
+  "passed": true,
+  "seconds": 36.52568360418081
+}

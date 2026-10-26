@@ -1,0 +1,90 @@
+{
+  "dataset": "ml-1m",
+  "path": "/home/yyx/hzgcode/pom2.0/research/sgitrec_v3_20261025_v1/graphs/ml-1m_candidate_v3.pt",
+  "sha256": "67dad0a15c709da87206bcf50e7fecd2ffe3af48734723bbe348bb4c187e3d61",
+  "tensor_bytes": 3647712,
+  "per_fold": [
+    {
+      "fold": 0,
+      "relations": {
+        "transition": {
+          "edges": 27120,
+          "prob_mean": 0.05025038018344989,
+          "probability_median": 0.028169013559818268,
+          "RMS": 3.54703063757624,
+          "Train_weighted_normalized_RMS": 1.0,
+          "value_mean": 1.2044003009796143,
+          "corr_probability_target_pop": -0.09943528798535368,
+          "corr_value_target_pop": -0.686520421924059
+        },
+        "bridge": {
+          "edges": 29648,
+          "prob_mean": 0.058323230961799075,
+          "probability_median": 0.04194499924778938,
+          "RMS": 4.8144528866785175,
+          "Train_weighted_normalized_RMS": 0.9999999999999999,
+          "value_mean": 1.0243386030197144,
+          "corr_probability_target_pop": -0.08182853004578651,
+          "corr_value_target_pop": -0.7206855523246485
+        }
+      },
+      "target_events": 653641
+    },
+    {
+      "fold": 1,
+      "relations": {
+        "transition": {
+          "edges": 26985,
+          "prob_mean": 0.05194317421836032,
+          "probability_median": 0.02812499925494194,
+          "RMS": 3.5373842225991483,
+          "Train_weighted_normalized_RMS": 1.0,
+          "value_mean": 1.2060651779174805,
+          "corr_probability_target_pop": -0.08601152072308837,
+          "corr_value_target_pop": -0.6832548051464027
+        },
+        "bridge": {
+          "edges": 29648,
+          "prob_mean": 0.058393760461706884,
+          "probability_median": 0.04242107644677162,
+          "RMS": 4.796922060691175,
+          "Train_weighted_normalized_RMS": 1.0,
+          "value_mean": 1.0207208395004272,
+          "corr_probability_target_pop": -0.06094475330215272,
+          "corr_value_target_pop": -0.7221834989990009
+        }
+      },
+      "target_events": 651921
+    },
+    {
+      "fold": 2,
+      "relations": {
+        "transition": {
+          "edges": 26979,
+          "prob_mean": 0.05253804669281855,
+          "probability_median": 0.02857142873108387,
+          "RMS": 3.541978425044686,
+          "Train_weighted_normalized_RMS": 1.0,
+          "value_mean": 1.2058634757995605,
+          "corr_probability_target_pop": -0.10818517201119908,
+          "corr_value_target_pop": -0.683116902636507
+        },
+        "bridge": {
+          "edges": 29648,
+          "prob_mean": 0.059130670742963076,
+          "probability_median": 0.043409667909145355,
+          "RMS": 4.839398760179087,
+          "Train_weighted_normalized_RMS": 1.0,
+          "value_mean": 1.0261719226837158,
+          "corr_probability_target_pop": -0.06762362553195607,
+          "corr_value_target_pop": -0.7200424041346979
+        }
+      },
+      "target_events": 658616
+    }
+  ],
+  "seconds": 7.436398873105645,
+  "Train_only": true,
+  "Dev": false,
+  "Test": false
+}

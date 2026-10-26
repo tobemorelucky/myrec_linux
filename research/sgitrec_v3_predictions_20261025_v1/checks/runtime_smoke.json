@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "two_actual_Train_batches": true,
+  "original_Runner_class_tested": true,
+  "no_neighbor_item_reencoding": true,
+  "encoding_hook_counts": {
+    "epoch": 1,
+    "training_seconds": 2.018849824555218,
+    "peak_allocated_MiB": 0.0,
+    "batches": 2,
+    "unique_neighbors": 0,
+    "newly_encoded_items": 0,
+    "maximum_unique_neighbors": 0,
+    "history_slots_queried": 56,
+    "neighbor_slots_read": 1344,
+    "mean_unique_neighbors": 0.0,
+    "mean_newly_encoded_items": 0.0
+  },
+  "logging_writable": true,
+  "Dev": false,
+  "Test": false,
+  "no_saved_checkpoint": true
+}

@@ -1,0 +1,12 @@
+{
+  "dispatcher": 3567300,
+  "task": {
+    "name": "ml-1m_k3_s42_CITERRec-V1",
+    "dataset": "ml-1m",
+    "seed": 42,
+    "variant": "CITERRec-V1",
+    "graph_key": "predictions",
+    "estimated_minutes": 120
+  },
+  "GPU": 1
+}

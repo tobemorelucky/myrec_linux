@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "independent_direct_bridge_lookups": true,
+  "shared_SS_positive_diagonal_matches_candidate_scores": true,
+  "final_prior_exactly_once": true,
+  "candidate_order_and_duplicates_preserved": true,
+  "Runner_AST_identical": true,
+  "protected_source_graph_weights_unchanged": 201,
+  "new_source_sha256": {
+    "/home/yyx/hzgcode/pom2.0/models/sequential/SGITRecV3.py": "5ff9c35356f888c24bc80f0ed99c42e19fe9f8878f860f2a9cba0ead2351d116",
+    "/home/yyx/hzgcode/pom2.0/models/sequential/sgit_v3_components.py": "c67ef13998493e0574f0f3e826fedf2f88ce5cb55b5e16df31b0868073815b29",
+    "/home/yyx/hzgcode/pom2.0/tools/build_sgit_v3_index.py": "548ac46142ff8ce5b626a0b56bdfba18f9970ab608ba055cfbc67e32d1b3e888",
+    "/home/yyx/hzgcode/pom2.0/tools/diagnose_sgit_v3_dev.py": "ac9786f58f0a21fbafd982c326881059f3526177cc573f3697e970674a778b01",
+    "/home/yyx/hzgcode/pom2.0/tools/test_sgit_v3.py": "65d72cedf0b23fbd56b8bb78bf867e6bc08dc668a87d20f02d84ad083941c5b0",
+    "/home/yyx/hzgcode/pom2.0/tools/run_sgitrec_v3.py": "c7b3809868fe413e4bbaab3408e4dee182ade2553e52780fc09adde0c1e41215",
+    "/home/yyx/hzgcode/pom2.0/new_bash/run_sgitrec_v3.sh": "0d51b328a7a70b2bfb7fa08297478eafe6bac35f3da0d26137032106b2611827",
+    "/home/yyx/hzgcode/pom2.0/research/sgitrec_v3_20261025_v1/runtime_smoke.py": "2e3bcd74f481d88bc36a406dc3ee8d50050edff2a1b51cfad75ca9988b3ee02f"
+  },
+  "no_formal_V3_training": true,
+  "no_V3_Test": true,
+  "Dev_analysis": "ML128 complete; Beauty one pass failed before saving arrays, fixed serializer but no rerun",
+  "seconds": 7.93996705301106
+}

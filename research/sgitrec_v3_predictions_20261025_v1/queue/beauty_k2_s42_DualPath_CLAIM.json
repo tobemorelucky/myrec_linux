@@ -1,0 +1,12 @@
+{
+  "dispatcher": 3363792,
+  "task": {
+    "name": "beauty_k2_s42_DualPath",
+    "dataset": "beauty",
+    "seed": 42,
+    "variant": "DualPath",
+    "graph_key": "predictions",
+    "estimated_minutes": 18
+  },
+  "GPU": 1
+}

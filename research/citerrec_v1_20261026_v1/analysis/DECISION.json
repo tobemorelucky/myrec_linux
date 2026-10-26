@@ -1,0 +1,32 @@
+{
+  "proceed_with_two_CITER": true,
+  "authorized_tasks": 6,
+  "evidence": "Both fixed 1024-Dev samples have predeclared observable path/support strata favoring A and B, plus non-overlapping improved users.",
+  "caution": "Exploratory subgroups, independent-backbone confounding, substantial sampling fluctuation especially Beauty. Not a proof of fusion gains. No routing thresholds fit on Dev; continuous fixed feature definitions used.",
+  "ML_regions": {
+    "absent": {
+      "n": 582,
+      "A_minus_C1": 0.0006554707511946256,
+      "B_minus_C1": -0.002665923850092955
+    },
+    "support2to4": {
+      "n": 60,
+      "A_minus_C1": -0.01158097068272218,
+      "B_minus_C1": 0.013290410479248504
+    }
+  },
+  "Beauty_regions": {
+    "absent": {
+      "n": 915,
+      "A_minus_C1": 0.01686159022673704,
+      "B_minus_C1": 0.006997093625207687
+    },
+    "support1": {
+      "n": 47,
+      "A_minus_C1": -0.004058625285412343,
+      "B_minus_C1": 0.1553901054838145
+    }
+  },
+  "no_cross_dataset_length_causality_claim": true,
+  "ML_length20_fraction": 0.966796875
+}

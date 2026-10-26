@@ -1,0 +1,24 @@
+{
+  "pid": 3567300,
+  "utc": "2026-10-26T05:02:31Z",
+  "state": "RUNNING",
+  "running": {
+    "ml-1m_k3_s42_CITERRec-V1": {
+      "pid": 3576788,
+      "GPU": 1,
+      "run": "/home/yyx/hzgcode/pom2.0/research/citerrec_v1_20261026_v1/runs/ml-1m_k3_s42_CITERRec-V1",
+      "log": "/home/yyx/hzgcode/pom2.0/research/citerrec_v1_20261026_v1/runs/ml-1m_k3_s42_CITERRec-V1/train.log"
+    }
+  },
+  "pending": [],
+  "completed": [
+    "beauty_k2_s0_V3-A",
+    "beauty_k2_s0_V3-B",
+    "beauty_k2_s42_CITERRec-V1",
+    "ml-1m_k3_s0_V3-A",
+    "ml-1m_k3_s0_V3-B"
+  ],
+  "failures": [],
+  "poll_seconds": 20,
+  "policy": "GPU1 Beauty-first/GPU0 ML-first with work stealing; both GPUs interchangeable; one task per GPU; fail stops pending"
+}

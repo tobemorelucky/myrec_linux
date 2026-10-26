@@ -1,0 +1,12 @@
+{
+  "dispatcher": 3567300,
+  "task": {
+    "name": "beauty_k2_s0_V3-B",
+    "dataset": "beauty",
+    "seed": 0,
+    "variant": "V3-B",
+    "graph_key": "predictions",
+    "estimated_minutes": 10
+  },
+  "GPU": 1
+}
